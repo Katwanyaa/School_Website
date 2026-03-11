@@ -68,21 +68,14 @@ export default function ModernFooter() {
   const socialLinks = [
     {
       icon: SiFacebook,
-      href: 'https://facebook.com/katwanyaahighschool',
+      href: 'https://web.facebook.com/groups/414008468611340',
       label: 'Facebook',
       color: '#1877F2', // Facebook blue
       hoverColor: '#0A5CD0'
     },
     {
-      icon: SiX,
-      href: 'https://twitter.com/katwanyaahighschool',
-      label: 'Twitter',
-      color: '#000000', // Twitter black
-      hoverColor: '#333333'
-    },
-    {
       icon: SiYoutube,
-      href: 'https://youtube.com/katwanyaahighschool',
+      href: 'https://www.youtube.com/@A.I.C.-KATWANYAA-HIGH-SCHOOOL',
       label: 'YouTube',
       color: '#FF0000', // YouTube red
       hoverColor: '#CC0000'
@@ -162,31 +155,31 @@ export default function ModernFooter() {
     {
       icon: FiMapPin,
       text: 'Matungulu Machakos County, Kenya',
-      href: 'https://maps.google.com/?q=-0.416667,36.950000',
+      href: 'https://maps.app.goo.gl/CvZsLB55zaNhwbeG8',
       detail: 'Along Tala Kangudo kanzalu road'
     },
     {
       icon: FiPhone,
-      text: '+254 720 123 456',
-      href: 'tel:+254720123456',
+      text: '0710 894 145',
+      href: 'tel:0710 894 145',
       detail: 'Main Office Line'
     },
     {
       icon: FiPhone,
-      text: '+254 734 567 890',
-      href: 'tel:+254734567890',
+      text: '0710 894 145',
+      href: 'tel:0710 894 145',
       detail: 'Admissions Office'
     },
     {
       icon: FiMail,
-      text: 'info@katwanyaa.sc.ke',
-      href: 'mailto:info@katwanyaa.sc.ke',
+      text: 'Katzict@gmail.com',
+      href: 'mailto:katzict@gmail.com',
       detail: 'General Inquiries'
     },
     {
       icon: FiMail,
-      text: 'admissions@katwanyaa.sc.ke',
-      href: 'mailto:admissions@katwanyaa.sc.ke',
+      text: 'katwanyaa Contact email',
+      href: 'mailto:katzict@gmail.com',
       detail: 'Admissions'
     },
     {
