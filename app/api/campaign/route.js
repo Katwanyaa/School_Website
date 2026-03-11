@@ -155,7 +155,7 @@ const transporter = nodemailer.createTransport({
 const SCHOOL_NAME = 'Katwanyaa Senior School';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Education is Light';
-const SCHOOL_EMAIL = 'info@katwanyaahighschool.sc.ke';
+const SCHOOL_EMAIL = 'katzict@gmail.com';
 const SCHOOL_PHONE = '+254720123456';
 
 // Format date function

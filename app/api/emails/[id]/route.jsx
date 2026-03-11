@@ -154,21 +154,21 @@ const SCHOOL_NAME = process.env.SCHOOL_NAME || 'Katwanyaa Senior School';
 const SCHOOL_LOCATION = process.env.SCHOOL_LOCATION || 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = process.env.SCHOOL_MOTTO || 'Education is Light';
 const CONTACT_PHONE = process.env.CONTACT_PHONE || '+254720123456';
-const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'admissions@katwanyaahighschool.sc.ke';
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'katzict@gmail.com';
 const SCHOOL_WEBSITE = process.env.SCHOOL_WEBSITE || 'https://katwanyaa.vercel.app';
 
 // Social Media Configuration
 const SOCIAL_MEDIA = {
   facebook: {
-    url: process.env.SCHOOL_FACEBOOK || 'https://facebook.com/katwanyaa-highschool',
+    url: process.env.SCHOOL_FACEBOOK || 'https://facebook.com/katwanyaa-seniorschool',
     color: '#1877F2',
   },
   youtube: {
-    url: process.env.SCHOOL_YOUTUBE || 'https://youtube.com/c/katwanyaahighschool',
+    url: process.env.SCHOOL_YOUTUBE || 'https://youtube.com/c/katwanyaaseniorschool',
     color: '#FF0000',
   },
   linkedin: {
-    url: process.env.SCHOOL_LINKEDIN || 'https://linkedin.com/school/katwanyaa-high',
+    url: process.env.SCHOOL_LINKEDIN || 'https://linkedin.com/school/katwanyaa-senior',
     color: '#0A66C2',
   },
   twitter: {
@@ -916,8 +916,8 @@ async function sendModernEmails(campaign) {
         attachments: emailAttachments,
         headers: {
           'X-Priority': '1',
-          'X-MSMail-Priority': 'High',
-          'Importance': 'high'
+          'X-MSMail-Priority': 'senior',
+          'Importance': 'senior'
         }
       };
 

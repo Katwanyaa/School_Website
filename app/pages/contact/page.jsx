@@ -71,22 +71,22 @@ export default function ContactPage() {
     {
       id: 'admissions',
       name: 'Admissions Office',
-      email: 'admissions@maryimmaculate.sc.ke',
+      email: 'katwanyaahighschool.yahoo.com',
       phone: '+254 720 123 456',
       description: 'For enrollment, applications, and admission inquiries. We guide students through the admission process.',
       icon: <User className="w-4 h-4" />,
-      head: 'Mrs. Sarah Johnson',
+      head: 'Mrs ',
       hours: 'Mon-Fri: 8:00 AM - 4:00 PM',
       color: 'orange'
     },
     {
       id: 'academics',
       name: 'Academic Office',
-      email: 'academics@maryimmaculate.sc.ke',
+      email: 'katzict@gamail.com',
       phone: '+254 720 123 457',
       description: 'Curriculum, academic programs, examinations, and teacher coordination. Ensuring academic excellence.',
       icon: <Book className="w-4 h-4" />,
-      head: 'Dr. Michael Chen',
+      head: 'Mr Kanzi',
       hours: 'Mon-Fri: 7:30 AM - 3:30 PM',
       color: 'amber'
     },
@@ -97,7 +97,7 @@ export default function ContactPage() {
       phone: '+254 720 123 458',
       description: 'Student welfare, discipline, counseling, and extracurricular activities. Building holistic students.',
       icon: <Users className="w-4 h-4" />,
-      head: 'Mr. David Wilson',
+      head: 'Madam Eunice',
       hours: 'Mon-Fri: 8:00 AM - 4:30 PM',
       color: 'red'
     },
@@ -108,7 +108,7 @@ export default function ContactPage() {
       phone: '+254 720 123 459',
       description: 'Athletics, sports programs, competitions, and physical education. Developing champions.',
       icon: <Award className="w-4 h-4" />,
-      head: 'Coach Robert Garcia',
+      head: 'Mr Kim',
       hours: 'Mon-Sat: 6:00 AM - 6:00 PM',
       color: 'orange'
     }
@@ -712,7 +712,7 @@ export default function ContactPage() {
             <MessageSquare className="w-6 h-6" />
             <span className="text-xs mt-1 font-medium">Message</span>
           </button>
-          <a href="mailto:admissions@maryimmaculate.sc.ke" className="flex flex-col items-center text-slate-600 hover:text-orange-600 transition-colors p-2">
+          <a href="mailto:katzict@gmail.com" className="flex flex-col items-center text-slate-600 hover:text-orange-600 transition-colors p-2">
             <Mail className="w-6 h-6" />
             <span className="text-xs mt-1 font-medium">Email</span>
           </a>

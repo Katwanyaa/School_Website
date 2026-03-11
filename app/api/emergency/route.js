@@ -15,10 +15,10 @@ const transporter = nodemailer.createTransport({
 const SCHOOL_NAME = 'Katwanyaa Senior School';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Education is Light';
-const CONTACT_PHONE = '+254720123456';
-const CONTACT_EMAIL = 'info@Katwanyaa SeniorSchool.sc.ke';
+const CONTACT_PHONE = '0710894145';
+const CONTACT_EMAIL = 'katzict@gmail.com';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || CONTACT_EMAIL;
-const COUNSELOR_EMAIL = process.env.COUNSELOR_EMAIL || 'guidance@school.edu';
+const COUNSELOR_EMAIL = process.env.COUNSELOR_EMAIL || 'katzict@gmail.com';
 // ====================================================================
 // UTILITY FUNCTIONS
 // ====================================================================
@@ -42,7 +42,7 @@ function generateEmergencyReference() {
 function getUrgencyColor(urgency) {
   switch(urgency) {
     case 'critical': return '#dc2626'; // red-600
-    case 'high': return '#ea580c'; // orange-600
+    case 'senior': return '#ea580c'; // orange-600
     case 'medium': return '#ca8a04'; // yellow-600
     case 'low': return '#16a34a'; // green-600
     default: return '#4b5563'; // gray-600
@@ -52,7 +52,7 @@ function getUrgencyColor(urgency) {
 function getUrgencyLabel(urgency) {
   switch(urgency) {
     case 'critical': return '🚨 CRITICAL EMERGENCY';
-    case 'high': return '⚠️ HIGH PRIORITY';
+    case 'senior': return '⚠️ senior PRIORITY';
     case 'medium': return '📋 MEDIUM PRIORITY';
     case 'low': return '📝 LOW PRIORITY';
     default: return '📋 STANDARD';
@@ -163,7 +163,7 @@ async function sendEmergencyAlert(emergencyData, referenceNumber) {
             <!-- Action Required -->
             <div class="urgent">
               <h3 style="color: #dc2626; margin-top: 0;">⚠️ ACTION REQUIRED</h3>
-              <p>Please respond to this emergency within <strong>1 hour</strong> for critical/high priority cases.</p>
+              <p>Please respond to this emergency within <strong>1 hour</strong> for critical/senior priority cases.</p>
               <p>Contact the student/parent immediately and log the response in the school emergency system.</p>
             </div>
           </div>

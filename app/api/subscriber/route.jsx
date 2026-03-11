@@ -6,8 +6,8 @@ import nodemailer from 'nodemailer';
 const SCHOOL_NAME = 'Katwanyaa Senior School';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Education is Light';
-const CONTACT_PHONE = '+254720123456';
-const CONTACT_EMAIL = 'info@Katwanyaa SeniorSchool.sc.ke';
+const CONTACT_PHONE = '0710894145';
+const CONTACT_EMAIL = 'katzict@gmail.com';
 
 // Email Templates
 const emailTemplates = {
