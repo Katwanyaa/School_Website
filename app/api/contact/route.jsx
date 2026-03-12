@@ -17,7 +17,6 @@ const SCHOOL_NAME = 'Katwanyaa Senior  School';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Education is Light';
 const CONTACT_PHONE = '0710894145';
-const SCHOOL_EMAIL = 'katzict@gmail.com';
 const CONTACT_EMAIL = 'katzict@gmail.com';
 
 // ====================================================================
@@ -764,7 +763,7 @@ async function sendContactConfirmation(toEmail, name, subject, referenceNumber) 
                <a href="tel:${CONTACT_PHONE}" class="contact-btn">
                   <span>call us</span>
                 </a>
-                <a href="mailto:${SCHOOL_EMAIL}" class="contact-btn">
+                <a href="mailto:${CONTACT_EMAIL}" class="contact-btn">
                   <span>Email</span>
                 </a>
                
