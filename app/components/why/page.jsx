@@ -18,7 +18,6 @@ import {
   FiArrowRight,
   FiBookOpen,
   FiMonitor,
-  FiActivity,
   FiDollarSign,
   FiCpu,
   FiTree,
@@ -128,7 +127,7 @@ const ModernSchoolLayout = () => {
       highlight: "KShs 1.2M Funding",
       details: ["1,000kg Cylinder", "6 to 4 Cooks", "Faster Cooking", "Smoke-Free"],
       metrics: ["1.2M KShs", "40% Less", "4 Cooks"],
-      icon: <FiActivity />
+      icon: <FiGlobe />
     },
     {
       title: "Spiritual & Moral Formation",
@@ -147,7 +146,7 @@ const ModernSchoolLayout = () => {
       details: ["Career Counseling", "University Placement", "Alumni Network", "Guidance"],
       metrics: ["Univ Bound", "Alumni", "Career"],
       isPremium: true,
-      icon: <FiTrendingUp />
+      icon: <FiCalendar />
     }
   ];
 
