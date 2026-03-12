@@ -79,7 +79,7 @@ const whyChooseUs = [
     gradient: "from-blue-600 to-indigo-600",
     description: "Boys' rugby team won Machakos County games (2023), beating St. Augustine 14-0. Two-time national qualifiers under coach Mr. Simiyu.",
     metrics: "14-0 Victory",
-    icon: <FiActivity className="w-4 h-4" />
+    icon: <FiGlobe className="w-4 h-4" />
   },
   {
     title: "Environmental Conservation",
@@ -100,7 +100,7 @@ const whyChooseUs = [
       icon: <FiAward />
     },
     {
-      title: "975 Students Enrolled",
+      title: "800+ Students Enrolled",
       gradient: "from-blue-600 to-indigo-600",
       description: "Currently serving 975 students as a mixed day and boarding school in Matungulu, Machakos County with consistent enrollment growth.",
       highlight: "Growing Enrollment",
