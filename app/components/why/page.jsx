@@ -25,9 +25,13 @@ const ModernSchoolLayout = () => {
   const router = useRouter();
   
   const handleExplorePathways = () => {
-    router.push("/pages/apply-for-admissions");
+    router.push("/pages/admissions");
   };
 
+
+const handleExplorePathways2 = () => {
+    router.push("/pages/apply-for-admissions");
+  };
   const whyChooseUs = [
     {
       title: "Academic Excellence",
@@ -284,7 +288,7 @@ const ModernSchoolLayout = () => {
                     {isDark && (
                       <div className="mt-4 flex items-center justify-between border-t border-blue-800 pt-4">
                         <button 
-                          onClick={handleExplorePathways} 
+                          onClick={handleExplorePathways2} 
                           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[9px] font-black uppercase tracking-wider transition-all shadow-lg active:scale-95"
                         >
                           Apply Now
