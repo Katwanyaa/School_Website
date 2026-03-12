@@ -1274,7 +1274,7 @@ async function sendAdminNotification(contactData, referenceNumber) {
         <div class="container">
           <!-- HEADER -->
           <div class="header">
-            <h1>🚨 NEW CONTACT INQUIRY</h1>
+            <h1>NEW CONTACT INQUIRY</h1>
             <p>${SCHOOL_NAME}</p>
           </div>
           
