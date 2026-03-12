@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 // Enhanced Hero Slides with Actual Katwanyaa Senior School Information from Auditor-General Report
 const heroSlides = [
   {
-    title: "AIC Katwanyaa Secondary School",
+    title: "AIC Katwanyaa Senior School",
     subtitle: "Matungulu, Machakos County",
     gradient: "from-blue-500 via-cyan-400 to-purple-600",
     description: "A public secondary school in Matungulu sub-county, Machakos County. In 2023, received Kshs.11.5 million NG-CDF funding for a tuition block, though the project was stalled after Kshs.8.3 million was paid to the contractor who abandoned site.",
@@ -40,7 +40,7 @@ const heroSlides = [
   {
     title: "Stalled Development",
     subtitle: "Contractor Abandoned Site",
-    gradient: "from-orange-500 via-red-400 to-yellow-600",
+    gradient: "from-blue-500 via-cyan-400 to-purple-600",
     description: "The tuition block contractor abandoned site after receiving Kshs.8.3 million, citing financial difficulties. Two years later (as of 2025), the project remains stalled with no evidence of tender re-advertisement or recovery measures.",
     background: "bg-gradient-to-br from-orange-900/90 via-red-900/80 to-yellow-900/70",
     image: "/hero/katz1.jpeg",

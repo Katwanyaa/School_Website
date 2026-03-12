@@ -59,7 +59,7 @@ const ModernSchoolLayout = () => {
     router.push("/pages/apply-for-admissions");
   };
 
- const whyChooseUs = [
+const whyChooseUs = [
   {
     title: "3rd Best School in Matungulu",
     gradient: "from-blue-600 to-indigo-600",
@@ -68,28 +68,27 @@ const ModernSchoolLayout = () => {
     icon: <FiAward className="w-4 h-4" />
   },
   {
-    title: "KShs 6M ICT Transformation",
+    title: "KShs 7.2M Infrastructure Boost",
     gradient: "from-blue-600 to-indigo-600",
-    description: "Only school in Machakos County to receive 50+ laptop donation from Angaza ICT Literacy Centre (2023) - KShs 6 million value.",
-    metrics: "50+ Laptops",
+    description: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations.",
+    metrics: "KShs 7.2M Total",
     icon: <FiCpu className="w-4 h-4" />
   },
   {
-    title: "40% Cost Reduction",
+    title: "County Rugby Champions",
     gradient: "from-blue-600 to-indigo-600",
-    description: "Pioneered LPG adoption with KShs 1.2M KCB funding (2022). Reduced kitchen expenses from KShs 700K to KShs 420K per term.",
-    metrics: "KShs 280K Savings",
-    icon: <FiDollarSign className="w-4 h-4" />
+    description: "Boys' rugby team won Machakos County games (2023), beating St. Augustine 14-0. Two-time national qualifiers under coach Mr. Simiyu.",
+    metrics: "14-0 Victory",
+    icon: <FiActivity className="w-4 h-4" />
   },
   {
     title: "Environmental Conservation",
     gradient: "from-blue-600 to-indigo-600",
-    description: "LPG adoption reduced firewood consumption, conserving trees in surrounding area and contributing to sustainability efforts.",
+    description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees.",
     metrics: "Trees Conserved",
-    icon: <FiHeart className="w-4 h-4" />
+    icon: <FiTree className="w-4 h-4" />
   }
 ];
-
   const schoolFeatures = [
     {
       title: "Academic Excellence Recognition",
@@ -276,11 +275,10 @@ const ModernSchoolLayout = () => {
         <section className="mb-16 sm:mb-20 md:mb-24">
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-3">
-              Katwanyaa's Real Achievements
+              Katz's Senior School Achievements
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-              Documented accomplishments from 2019-2024 at Katwanyaa Senior School, Matungulu
-            </p>
+Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Senior School, Matungulu            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -411,25 +409,25 @@ const ModernSchoolLayout = () => {
         {/* Achievements Summary */}
         <section className="mt-16">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
-            <h4 className="text-sm font-black text-blue-800 mb-3">📋 Verified Achievements (2019-2024):</h4>
+            <h4 className="text-sm font-black text-blue-800 mb-3">Our School  Achievements (2019-Present):</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">🏆 3rd Best Public School in Matungulu Sub-county (2019) - A- candidate</p>
+                <p className="text-xs font-bold">3rd Best Public School in Matungulu Sub-county (2019) - A- candidate</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">💻 KShs 6M ICT Donation - 50+ laptops from Angaza Centre (2023) - Only school in Machakos</p>
+                <p className="text-xs font-bold">KShs 6M ICT Donation - 50+ laptops from Angaza Centre (2023) - Only school in Machakos</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">💰 KShs 1.2M KCB LPG Funding (2022) - 40% cost reduction (700K → 420K per term)</p>
+                <p className="text-xs font-bold">KShs 1.2M KCB LPG Funding (2022) - 40% cost reduction (700K → 420K per term)</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">📚 975 Students enrolled - Mixed day & boarding</p>
+                <p className="text-xs font-bold">800+ Students enrolled - Mixed day & boarding</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">🌳 Environmental Conservation - Reduced firewood usage, staff from 6 to 4 cooks</p>
+                <p className="text-xs font-bold">Environmental Conservation - Reduced firewood usage, staff from 6 to 4 cooks</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">📈 Top Improving School in KCSE (2024) - Matungulu Sub-county</p>
+                <p className="text-xs font-bold">Top Improving School in KCSE (2024) - Matungulu Sub-county</p>
               </div>
             </div>
           </div>
