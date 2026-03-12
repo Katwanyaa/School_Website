@@ -133,7 +133,7 @@ const ModernSchoolLayout = () => {
     {
       title: "Spiritual & Moral Formation",
       gradient: "from-blue-600 to-indigo-600",
-     description: "Christian values education with weekly worship, annual retreats, and Thursday devotions. Building character through a faith-based approach with our school chaplain, Postor Samuel Mutie.",    
+     description: "Christian values education with weekly worship, annual retreats, and Thursday devotions. Building character through a faith-based approach with our school chaplain, Pastor Samuel Mutie.",    
      highlight: "Values Education",
       details: ["Christian Teachings", "Character Building", "Thursday Devotion", "Retreats"],
       metrics: ["Weekly Worship", "Retreats", "Devotion"],
