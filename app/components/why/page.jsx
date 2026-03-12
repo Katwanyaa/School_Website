@@ -40,6 +40,7 @@ const ModernSchoolLayout = () => {
     const timer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % schoolImages.length);
     }, 5000);
+    
     return () => clearInterval(timer);
   }, [schoolImages.length]);
 

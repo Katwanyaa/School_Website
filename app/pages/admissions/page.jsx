@@ -1790,33 +1790,28 @@ const ModernUniformRequirementsSection = ({
     </div>
   );
 };
-
-
 const ModernFAQItem = ({ faq, index, openFaq, setOpenFaq }) => {
   const isOpen = openFaq === index;
 
   return (
-    <div className={`
-      group relative transition-all duration-500
-      ${isOpen ? 'scale-[1.02] md:scale-100' : 'hover:scale-[1.01]'}
-    `}>
+    <div className="relative transition-opacity duration-700">
       {/* Background Glow on Open */}
       {isOpen && (
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-2xl blur-xl" />
       )}
       
       <div className={`
-        relative bg-white rounded-2xl overflow-hidden border transition-all duration-500
+        relative bg-white rounded-2xl overflow-hidden border transition-all duration-700
         ${isOpen 
           ? 'border-emerald-200 shadow-2xl shadow-emerald-900/10' 
-          : 'border-slate-200 shadow-md hover:border-emerald-200/50'
+          : 'border-slate-200 shadow-md'
         }
       `}>
         {/* Top Accent Bar */}
         <div className={`
           absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500
-          transform origin-left transition-transform duration-500
-          ${isOpen ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}
+          transform origin-left transition-transform duration-700
+          ${isOpen ? 'scale-x-100' : 'scale-x-0'}
         `} />
 
         <button
@@ -1824,18 +1819,18 @@ const ModernFAQItem = ({ faq, index, openFaq, setOpenFaq }) => {
           className="w-full px-6 md:px-8 py-5 md:py-6 text-left relative"
         >
           <div className="flex items-start gap-4 md:gap-6">
-            {/* Animated Number Badge */}
+            {/* Number Badge */}
             <div className="relative">
               <div className={`
-                absolute inset-0 rounded-xl blur-md transition-opacity duration-500
+                absolute inset-0 rounded-xl blur-md transition-opacity duration-700
                 ${isOpen ? 'opacity-100 bg-emerald-500/30' : 'opacity-0'}
               `} />
               <div className={`
                 relative w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center
-                transition-all duration-500 font-black text-sm md:text-base
+                transition-all duration-700 font-black text-sm md:text-base
                 ${isOpen 
-                  ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg scale-110' 
-                  : 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100'
+                  ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg' 
+                  : 'bg-emerald-50 text-emerald-600'
                 }
               `}>
                 {String(index + 1).padStart(2, '0')}
@@ -1846,26 +1841,26 @@ const ModernFAQItem = ({ faq, index, openFaq, setOpenFaq }) => {
             <div className="flex-1 pt-1">
               <h3 className={`
                 font-black tracking-tight text-sm md:text-lg pr-8
-                transition-colors duration-500
+                transition-colors duration-700
                 ${isOpen ? 'text-emerald-600' : 'text-slate-900'}
               `}>
                 {faq.question}
               </h3>
             </div>
 
-            {/* Chevron with Animation */}
+            {/* Chevron */}
             <div className={`
               absolute right-6 top-1/2 -translate-y-1/2
               w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center
-              border-2 transition-all duration-500
+              border-2 transition-all duration-700
               ${isOpen 
                 ? 'rotate-180 border-emerald-200 bg-emerald-50' 
-                : 'border-slate-200 bg-white group-hover:border-emerald-200'
+                : 'border-slate-200 bg-white'
               }
             `}>
               <FiChevronDown className={`
-                transition-all duration-500 text-sm md:text-base
-                ${isOpen ? 'text-emerald-600' : 'text-slate-400 group-hover:text-emerald-500'}
+                transition-all duration-700 text-sm md:text-base
+                ${isOpen ? 'text-emerald-600' : 'text-slate-400'}
               `} />
             </div>
           </div>
@@ -1873,16 +1868,16 @@ const ModernFAQItem = ({ faq, index, openFaq, setOpenFaq }) => {
 
         {/* Answer Section */}
         <div className={`
-          grid transition-all duration-500 ease-in-out
+          grid transition-all duration-700 ease-in-out
           ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}
         `}>
           <div className="overflow-hidden">
             <div className="px-6 md:px-8 pb-6 md:pb-8">
               <div className="pl-[48px] md:pl-[64px]">
-                {/* Divider with Animation */}
+                {/* Divider */}
                 <div className={`
                   h-px bg-gradient-to-r from-emerald-200 via-teal-200 to-transparent
-                  transform origin-left transition-all duration-700 delay-300
+                  transform origin-left transition-transform duration-700
                   ${isOpen ? 'scale-x-100' : 'scale-x-0'}
                 `} />
                 
@@ -1917,7 +1912,6 @@ const ModernFAQItem = ({ faq, index, openFaq, setOpenFaq }) => {
     </div>
   );
 };
-
 export default function ComprehensiveAdmissions() {
   const [activeTab, setActiveTab] = useState('overview');
   const [openFaq, setOpenFaq] = useState(null);
