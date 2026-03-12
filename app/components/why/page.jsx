@@ -105,7 +105,7 @@ const whyChooseUs = [
       description: "Currently serving 975 students as a mixed day and boarding school in Matungulu, Machakos County with consistent enrollment growth.",
       highlight: "Growing Enrollment",
       details: ["Mixed Day", "Boarding", "Co-curricular", "Guidance"],
-      metrics: ["975 Std", "Mixed", "Day/Board"],
+      metrics: ["800+ Std", "Mixed", "Day/Board"],
       icon: <FiUsers />
     },
     {
