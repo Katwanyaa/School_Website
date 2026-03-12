@@ -1171,7 +1171,7 @@ if (loading) {
       <div className="max-w-9xl mx-auto space-y-6">
         {/* Header */}
 {/* Main Wrapper with Background - Add 'relative' and 'bg-slate-950' to the root */}
-<div className="relative  bg-slate-950 p-4 sm:p-8 overflow-hidden">
+<div className="relative  bg-slate-950 p-4 sm:p-8 overflow-hidden rounded-md md:rounded-lg">
   
   {/* Optional: Atmospheric Background Glows (The "Katwanyaa" look) */}
   <div className="absolute top-0 left-1/4 w-64 h-64 bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
@@ -1197,7 +1197,7 @@ if (loading) {
               School <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-purple-400">Events & News</span>
             </h1>
             <p className="text-slate-100 text-xs sm:text-lg mt-2 font-medium leading-relaxed max-w-2xl opacity-80">
-              Stay updated with the heartbeat and happenings at Katwanyaa Senior.
+              Stay updated with the heartbeat and happenings at Katwanyaa Senior school.
             </p>
           </div>
 
