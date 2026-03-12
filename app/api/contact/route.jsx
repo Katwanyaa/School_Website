@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const SCHOOL_NAME = 'Katwanyaa Senior  School';
+const SCHOOL_NAME = 'Katwanyaa Senior School';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Education is Light';
 const CONTACT_PHONE = '0710894145';
@@ -43,7 +43,7 @@ function generateReferenceNumber() {
 async function sendContactConfirmation(toEmail, name, subject, referenceNumber) {
   const mailOptions = {
     from: {
-      name: `${SCHOOL_NAME} Contact Center`,
+      name: `${SCHOOL_NAME} `,
       address: process.env.EMAIL_USER
     },
     to: toEmail,
@@ -841,7 +841,7 @@ async function sendAdminNotification(contactData, referenceNumber) {
   
   const mailOptions = {
     from: {
-      name: `${SCHOOL_NAME} Contact System`,
+      name: `${SCHOOL_NAME}`,
       address: process.env.EMAIL_USER
     },
     to: adminEmail,
@@ -1275,7 +1275,7 @@ async function sendAdminNotification(contactData, referenceNumber) {
           <!-- HEADER -->
           <div class="header">
             <h1>🚨 NEW CONTACT INQUIRY</h1>
-            <p>${SCHOOL_NAME} Contact System</p>
+            <p>${SCHOOL_NAME}</p>
           </div>
           
           <!-- ALERT BANNER -->
