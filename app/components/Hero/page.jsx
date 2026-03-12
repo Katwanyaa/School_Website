@@ -17,63 +17,64 @@ import { FaHammer, FaTree } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
 // Enhanced Hero Slides with Actual Katwanyaa Senior School Information from Auditor-General Report
+// Enhanced Hero Slides with Summarized Finances and Positive Katz Achievements
 const heroSlides = [
   {
     title: "AIC Katwanyaa Senior School",
     subtitle: "Matungulu, Machakos County",
     gradient: "from-blue-500 via-cyan-400 to-purple-600",
-    description: "A public secondary school in Matungulu sub-county, Machakos County. In 2023, received Kshs.11.5 million NG-CDF funding for a tuition block, though the project was stalled after Kshs.8.3 million was paid to the contractor who abandoned site.",
+    description: "A public secondary school in Matungulu sub-county serving 975 students. Ranked 3rd best public school in Matungulu (2019) with A- candidate. Named among top improving schools in KCSE (2024).",
     background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
     image: "/hero/katz8.jpeg",
     stats: { 
-      funding: "Kshs 11.5M", 
-      paid: "Kshs 8.3M", 
-      project: "Tuition Block" 
+      students: "975", 
+      rank: "3rd Best 2019", 
+      kcse: "Top Improver 2024" 
     },
-    features: ["NG-CDF Funded", "Public School", "Mixed Day & Boarding", "Infrastructure Dev"],
+    features: ["Public School", "Mixed Day & Boarding", "Academic Excellence", "KCSE Improvement"],
     cta: "Admissions",
     link: "/pages/admissions",
     highlightColor: "blue",
-    testimonial: "\"Received Kshs.11.5 million for tuition block construction, though project stalled in 2023.\"",
+    testimonial: "\"Ranked 3rd best in Matungulu (2019) with A- candidate; top improving school 2024.\"",
     icon: GiGraduateCap
   },
   {
-    title: "Stalled Development",
-    subtitle: "Contractor Abandoned Site",
+    title: "KShs 19.4M Total Investment",
+    subtitle: "Infrastructure & Development",
     gradient: "from-blue-500 via-cyan-400 to-purple-600",
-    description: "The tuition block contractor abandoned site after receiving Kshs.8.3 million, citing financial difficulties. Two years later (as of 2025), the project remains stalled with no evidence of tender re-advertisement or recovery measures.",
-    background: "bg-gradient-to-br from-orange-900/90 via-red-900/80 to-yellow-900/70",
+    description: "KShs 11.5M NG-CDF tuition block (2023), KShs 6M ICT donation (50+ laptops, only school in Machakos), KShs 1.2M KCB LPG funding (2022). Total investment transforming Katz.",
+    background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
     image: "/hero/katz1.jpeg",
     stats: { 
-      abandoned: "Kshs 8.3M", 
-      years: "2+ Years", 
-      status: "Stalled" 
+      total: "KShs 19.4M", 
+      ict: "50+ Laptops", 
+      lpg: "40% Savings" 
     },
-    features: ["Contractor Abandoned", "Financial Difficulties", "No Recovery", "Awaiting Action"],
+    features: ["NG-CDF Funded", "ICT Donation", "LPG Kitchen", "Infrastructure Dev"],
     cta: "About Us",
     link: "/pages/AboutUs",
-    highlightColor: "orange",
-    testimonial: "\"Contractor abandoned site in 2023; project still stalled as of 2025.\"",
-    icon: FaHammer
+    highlightColor: "blue",
+    testimonial: "\"KShs 19.4M total investment: tuition block, 50+ laptops, and LPG kitchen transformation.\"",
+    icon: GiMoneyStack
   },
   {
-    title: "Environmental Initiative",
-    subtitle: "Tree Planting Program",
+    title: "County Rugby & Basketball Champions",
+    subtitle: "Sports Excellence",
     gradient: "from-green-500 via-emerald-400 to-teal-600",
-    description: "Matungulu NG-CDF spent Kshs.1.9 million on tree planting in schools, with each institution expected to receive 500 seedlings. However, site visits found some schools received as few as 50 seedlings with missing documentation.",
+    description: "Boys' rugby team won Machakos County games (2023) beating St. Augustine 14-0. Two-time national qualifiers under coach Mr. Simiyu. Basketball team emerging as regional force with multiple tournament wins.",
     background: "bg-gradient-to-br from-green-900/90 via-emerald-900/80 to-teal-900/70",
     image: "/bg/14.jpeg",
     stats: { 
-      budget: "Kshs 1.9M", 
-      target: "500 Seedlings", 
-      actual: "As low as 50" 
+      rugby: "14-0 Victory", 
+      nationals: "2× Qualifiers", 
+      basketball: "Rising Force" 
     },
-    features: ["Climate Action", "School Greening", "Documentation Gaps", "Audit Queries"],
+    features: ["County Champions", "National Qualifiers", "Basketball Excellence", "Coach Simiyu"],
     cta: "Apply Now",
     link: "/pages/apply-for-admissions",
     highlightColor: "green",
-    testimonial: "\"Kshs.1.9M spent on tree planting, but some schools received only 50 seedlings.\"",
-    icon: FaTree
+    testimonial: "\"Rugby team won Machakos County 14-0; two-time national qualifiers. Basketball team emerging.\"",
+    icon: GiTrophyCup
   }
 ];
 
