@@ -40,7 +40,7 @@ const ModernSchoolLayout = () => {
     const timer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % schoolImages.length);
     }, 5000);
-    
+
     return () => clearInterval(timer);
   }, [schoolImages.length]);
 
@@ -75,13 +75,13 @@ const whyChooseUs = [
     metrics: "KShs 7.2M Total",
     icon: <FiCpu className="w-4 h-4" />
   },
-  {
-    title: "County Rugby Champions",
-    gradient: "from-blue-600 to-indigo-600",
-    description: "Boys' rugby team won Machakos County games (2023), beating St. Augustine 14-0. Two-time national qualifiers under coach Mr. Simiyu.",
-    metrics: "14-0 Victory",
-    icon: <FiGlobe className="w-4 h-4" />
-  },
+{
+  title: "Athletic Excellence & Coaching",
+  gradient: "from-blue-700 via-indigo-600 to-orange-600",
+  description: "A powerhouse in Machakos County sports: Featuring our championship-winning Rugby 7s program led by Mr. Simiyu, and our elite Basketball squad under the tactical leadership of Mr. Kioko (Mr. Kim). Both programs are consistent KSSSA regional contenders recognized for discipline and technical skill.",
+  metrics: "Multi-Sport Champions",
+  icon: <FiStar className="w-5 h-5" />
+},
   {
     title: "Environmental Conservation",
     gradient: "from-blue-600 to-indigo-600",
