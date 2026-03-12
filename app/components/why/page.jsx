@@ -33,8 +33,8 @@ const ModernSchoolLayout = () => {
   const schoolImages = [
     { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Building" },
     { src: "/bg/9.jpeg", alt: "Katwanyaa Senior School - Students" },
-    { src: "/hero/katz8.jpeg", alt: "Katwanyaa Senior School - Classroom" },
-    { src: "/hero/katz5.jpeg", alt: "Katwanyaa Senior School - Sports" }
+    { src: "/hero/katz3.jpeg", alt: "Katwanyaa Senior School - Classroom" },
+    { src: "hero/katz8.jpeg", alt: "Katwanyaa Senior School - Sports" }
   ];
 
   // Auto-rotate carousel every 5 seconds
@@ -153,9 +153,7 @@ const ModernSchoolLayout = () => {
   return (
     <div className="bg-white py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        
-        {/* --- HERO SECTION WITH IMAGE CAROUSEL --- */}
-        <section className="mb-16 sm:mb-20 md:mb-24">
+          <section className="mb-16 sm:mb-20 md:mb-24">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-200">
