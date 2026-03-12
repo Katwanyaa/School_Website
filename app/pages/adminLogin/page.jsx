@@ -1479,7 +1479,7 @@ const handlePasswordAfterVerification = async () => {
                       <button 
                         type="button"
                         onClick={() => (router.push("/pages/forgotpassword"))}
-                        className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
+                        className="text-xs hover:underline font-bold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
                       >
                         <Key className="w-2 h-2 sm:w-3 sm:h-3" />
                         <span className="hidden xs:inline">Forgot password</span>
