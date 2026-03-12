@@ -763,7 +763,7 @@ async function sendContactConfirmation(toEmail, name, subject, referenceNumber) 
                <a href="tel:${CONTACT_PHONE}" class="contact-btn">
                   <span>call us</span>
                 </a>
-                <a href="mailto:${CONTACT_EMAIL}" class="contact-btn">
+                <a href="mailto:${SCHOOL_EMAIL}" class="contact-btn">
                   <span>Email</span>
                 </a>
                
@@ -806,7 +806,7 @@ async function sendContactConfirmation(toEmail, name, subject, referenceNumber) 
 }
 
 async function sendAdminNotification(contactData, referenceNumber) {
-  const adminEmail = process.env.ADMIN_EMAIL || CONTACT_EMAIL;
+  const adminEmail = process.env.ADMIN_EMAIL || EMAIL_USER;
   
   const mailOptions = {
     from: {
