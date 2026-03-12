@@ -523,21 +523,20 @@ const router = useRouter();
                 <IoBusinessOutline size={18} className="sm:w-6 sm:h-6 md:w-6 md:h-6" />
               </div>
 
-              {/* Visible Download Button (Day Fees) */}
-              <div className="flex items-center gap-2">
-                <span className="text-[8px] sm:text-xs md:text-xs font-bold text-slate-400 uppercase">Day</span>
-                {documentData?.feesDayDistributionPdf && (
-                  <button
-                    onClick={() => handleDownloadPDF(documentData.feesDayDistributionPdf, documentData.feesDayPdfName)}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 text-sm font-bold transition-colors"
-                    title="Download Day Fees Document"
-                  >
-                    <FiDownload className="w-4 h-4" />
-                    <span className="hidden sm:inline">Download</span>
-                    <span className="sm:hidden text-[10px]">PDF</span>
-                  </button>
-                )}
-              </div>
+{/* Visible Download Button (Day Fees) */}
+<div className="flex items-center gap-2">
+  <span className="text-[8px] sm:text-xs md:text-xs font-bold text-slate-400 uppercase">Day</span>
+  {documentData?.feesDayDistributionPdf && (
+    <button
+      onClick={() => handleDownloadPDF(documentData.feesDayDistributionPdf, documentData.feesDayPdfName)}
+      className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 text-sm font-bold transition-colors"
+      title="Download Day Fees Document"
+    >
+      <FiDownload className="w-4 h-4" />
+      <span className="text-xs sm:text-sm">Download</span>
+    </button>
+  )}
+</div>
             </div>
             <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 mb-1">Day Scholars</h3>
             <p className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-2 leading-tight">
