@@ -22,7 +22,6 @@ import {
   FiDollarSign,
   FiCpu,
   FiTree,
-  FiTree
 } from 'react-icons/fi';
 
 const ModernSchoolLayout = () => {
