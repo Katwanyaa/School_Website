@@ -446,8 +446,7 @@ Katz        </div>
     </div>
   </div>
 </section>
-
-      {/* Location Section */}
+{/* Location & School Info Section */}
 <section className="py-12 sm:py-24 bg-gradient-to-br from-orange-50 to-amber-50 overflow-hidden">
   <div className="max-w-7xl mx-auto px-4 sm:px-6">
     <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
@@ -456,7 +455,7 @@ Katz        </div>
       <div className="lg:col-span-4 group relative overflow-hidden bg-gradient-to-br from-orange-600 to-amber-600 p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl shadow-orange-200/50 flex flex-col justify-between transition-all duration-500 hover:-translate-y-2">
         
         {/* Decorative background circle - scaled for mobile */}
-        <div className="absolute -top-10 -right-10 w-40 h-40 sm:w-64 sm:h-64 bg-orange-500 rounded-full opacity-40 transition-transform duration-700 "></div>
+        <div className="absolute -top-10 -right-10 w-40 h-40 sm:w-64 sm:h-64 bg-orange-500 rounded-full opacity-40 transition-transform duration-700 group-hover:scale-110"></div>
         
         <div className="relative z-10">
           <span className="inline-block px-3 py-1 mb-4 sm:mb-6 text-[9px] sm:text-[10px] font-black tracking-widest text-orange-100 uppercase bg-orange-700/50 rounded-full border border-orange-400/30">
@@ -472,9 +471,9 @@ Katz        </div>
                 <MapPin size={20} className="sm:w-[24px] sm:h-[24px]" />
               </div>
               <div>
-                <p className="text-orange-100 text-[9px] sm:text-xs uppercase font-black tracking-tighter mb-0.5 sm:mb-1 opacity-80">School  Address</p>
+                <p className="text-orange-100 text-[9px] sm:text-xs uppercase font-black tracking-tighter mb-0.5 sm:mb-1 opacity-80">School Address</p>
                 <p className="text-white text-sm sm:text-base font-bold leading-snug sm:leading-relaxed">
-                 School, Matungulu, Machakos 
+                  Katwanyaa High School, Matungulu, Machakos County
                 </p>
               </div>
             </div>
@@ -485,47 +484,141 @@ Katz        </div>
               </div>
               <div>
                 <p className="text-orange-100 text-[9px] sm:text-xs uppercase font-black tracking-tighter mb-0.5 sm:mb-1 opacity-80">Direct Line</p>
-                <p className="text-white text-sm sm:text-base font-bold">+254 123 456 789</p>
+                <p className="text-white text-sm sm:text-base font-bold">+254 712 345 678</p>
+                <p className="text-white/80 text-xs mt-1">+254 734 567 890</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 sm:gap-5 group/item items-start">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-orange-500/50 flex items-center justify-center text-white border border-orange-400/30 group-hover/item:bg-white group-hover/item:text-orange-600 transition-all shadow-lg">
+                <Mail size={20} className="sm:w-[24px] sm:h-[24px]" />
+              </div>
+              <div>
+                <p className="text-orange-100 text-[9px] sm:text-xs uppercase font-black tracking-tighter mb-0.5 sm:mb-1 opacity-80">Email</p>
+                <p className="text-white text-sm sm:text-base font-bold">info@katwanyaa.sc.ke</p>
+                <p className="text-white/80 text-xs">admin@katwanyaa.sc.ke</p>
               </div>
             </div>
           </div>
         </div>
-<div className="relative z-10 mt-8 sm:mt-12">
-  <a 
-    href="https://www.google.com/maps/search/?api=1&query=Katwanyaa+High+School" 
-    target="_blank" 
-    rel="noopener noreferrer"
-    className=" w-full py-3 sm:py-4 bg-white text-orange-600 font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xl transition-transform flex items-center justify-center gap-2 uppercase tracking-wider"
-  >
-    Google Maps
-    <ExternalLink size={16} />
-  </a>
-</div>
+        
+        <div className="relative z-10 mt-8 sm:mt-12">
+          <a 
+            href="https://www.google.com/maps/search/?api=1&query=Katwanyaa+High+School" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="w-full py-3 sm:py-4 bg-white text-orange-600 font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xl transition-transform hover:scale-105 flex items-center justify-center gap-2 uppercase tracking-wider"
+          >
+            Get Directions on Google Maps
+            <ExternalLink size={16} />
+          </a>
+        </div>
       </div>
 
-      {/* 2. Map Container - Fully Optimized */}
-      <div className="lg:col-span-8 group relative bg-white rounded-[2rem] sm:rounded-[2.5rem] p-3 sm:p-4 border border-slate-200 shadow-xl shadow-slate-200/40 transition-all duration-500 hover:border-orange-200">
+      {/* 2. School Information Panel - Replacing Map */}
+      <div className="lg:col-span-8 group relative bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 border border-slate-200 shadow-xl shadow-slate-200/40 transition-all duration-500 hover:border-orange-200">
         
-        <div className="flex items-center justify-between mb-3 sm:mb-4 px-2 sm:px-4 pt-1 sm:pt-2">
-          <h3 className="text-sm sm:text-lg lg:text-xl font-black text-slate-900 flex items-center gap-2 tracking-tight uppercase">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            Interactive Map
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
+            <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+            About Katwanyaa High School
           </h3>
-          
-          <div className="hidden xs:flex gap-1.5">
-            <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100"></div>
-            <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100"></div>
-          </div>
         </div>
         
-        <div className="relative h-[280px] sm:h-[400px] lg:h-full min-h-[280px] sm:min-h-[400px] rounded-[1.5rem] sm:rounded-[1.8rem] overflow-hidden border border-slate-100 shadow-inner">
-          <div className="absolute inset-0 transition-transform duration-[2000ms] ">
-            <MapComponent />
+        {/* School Info Grid - Fully Responsive */}
+        <div className="space-y-6 sm:space-y-8">
+          {/* Overview */}
+          <div className="bg-orange-50/50 rounded-2xl p-5 sm:p-6 border border-orange-100">
+            <h4 className="text-sm sm:text-base font-black text-orange-600 uppercase tracking-wider mb-3">Overview</h4>
+            <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
+              Katwanyaa High School is a reputable public secondary school located in Matungulu Sub-county, Machakos County. The institution is committed to academic excellence and holistic student development in a conducive learning environment.
+            </p>
           </div>
-          
-          <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-2xl border border-white/10">
-            <p className="text-[8px] sm:text-[10px] font-black text-white uppercase tracking-widest">
-              Matungulu, Machakos 
+
+          {/* Key Details Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <span className="text-orange-600 font-bold">📚</span>
+                </div>
+                <h5 className="font-black text-slate-900 text-sm uppercase">Category</h5>
+              </div>
+              <p className="text-slate-700 font-medium text-sm sm:text-base">Mixed Day & Boarding</p>
+              <p className="text-xs text-slate-500 mt-1">Public Secondary School</p>
+            </div>
+
+            <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <span className="text-orange-600 font-bold">🎓</span>
+                </div>
+                <h5 className="font-black text-slate-900 text-sm uppercase">Curriculum</h5>
+              </div>
+              <p className="text-slate-700 font-medium text-sm sm:text-base">8-4-4 & CBC</p>
+              <p className="text-xs text-slate-500 mt-1">Form 1-4</p>
+            </div>
+
+            <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <span className="text-orange-600 font-bold">⏰</span>
+                </div>
+                <h5 className="font-black text-slate-900 text-sm uppercase">School Hours</h5>
+              </div>
+              <p className="text-slate-700 font-medium text-sm sm:text-base">Mon - Fri: 7:45 AM - 4:30 PM</p>
+              <p className="text-xs text-slate-500 mt-1">Weekend: Closed</p>
+            </div>
+
+            <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <span className="text-orange-600 font-bold">📅</span>
+                </div>
+                <h5 className="font-black text-slate-900 text-sm uppercase">Founded</h5>
+              </div>
+              <p className="text-slate-700 font-medium text-sm sm:text-base">Est. 1985</p>
+              <p className="text-xs text-slate-500 mt-1">35+ Years of Excellence</p>
+            </div>
+          </div>
+
+          {/* Facilities & Achievements */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-200">
+              <h5 className="font-black text-slate-900 text-sm uppercase mb-3 flex items-center gap-2">
+                <span className="w-1 h-4 bg-orange-500 rounded-full"></span>
+                Key Facilities
+              </h5>
+              <ul className="space-y-2">
+                {['Modern Science Labs', 'Computer Lab', 'Library', 'Sports Fields'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-slate-700">
+                    <span className="text-orange-500">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-200">
+              <h5 className="font-black text-slate-900 text-sm uppercase mb-3 flex items-center gap-2">
+                <span className="w-1 h-4 bg-orange-500 rounded-full"></span>
+                Achievements
+              </h5>
+              <ul className="space-y-2">
+                {['High KCSE Performance', 'Sports Champions', 'Science Congress Winners'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-slate-700">
+                    <span className="text-orange-500">★</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Admission Notice */}
+          <div className="bg-orange-600/5 rounded-xl p-4 border border-orange-200/50">
+            <p className="text-xs sm:text-sm text-slate-600 italic">
+               For admission inquiries and school fees structure, please contact the school administration during office hours or visit during scheduled open days.
             </p>
           </div>
         </div>
