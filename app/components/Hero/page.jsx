@@ -16,65 +16,64 @@ import { IoRocketOutline } from 'react-icons/io5';
 import { FaHammer, FaTree } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
-// Enhanced Hero Slides with Actual Katwanyaa Senior School Information from Auditor-General Report
-// Enhanced Hero Slides with Summarized Finances and Positive Katz Achievements
+// Hero Slides with Accurate Katwanyaa Senior School Information
 const heroSlides = [
   {
-    title: "AIC Katwanyaa Senior School",
+    title: "Katwanyaa Senior School",
     subtitle: "Matungulu, Machakos County",
     gradient: "from-blue-500 via-cyan-400 to-purple-600",
-    description: "A public secondary school in Matungulu sub-county serving 975 students. Ranked 3rd best public school in Matungulu (2019) with A- candidate. Named among top improving schools in KCSE (2024).",
+    description: "A public secondary school in Matungulu sub-county serving the local community. Offers STEM, Social Sciences, and Arts & Sports pathways under the Competency Based Curriculum (CBC).",
     background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
     image: "/hero/katz8.jpeg",
     stats: { 
-      students: "975", 
-      rank: "3rd Best 2019", 
-      kcse: "Top Improver 2024" 
+      students: "C3 Status", 
+      pathways: "STEM + Arts", 
+      type: "Public School" 
     },
-    features: ["Public School", "Mixed Day & Boarding", "Academic Excellence", "KCSE Improvement"],
+    features: ["Public School", "Mixed Day & Boarding", "STEM Pathway", "Social Sciences"],
     cta: "Admissions",
     link: "/pages/admissions",
     highlightColor: "blue",
-    testimonial: "\"Ranked 3rd best in Matungulu (2019) with A- candidate; top improving school 2024.\"",
+    testimonial: "\"A public senior school offering Competency Based Curriculum pathways in Matungulu.\"",
     icon: GiGraduateCap
   },
   {
-    title: "KShs 19.4M Total Investment",
-    subtitle: "Infrastructure & Development",
-    gradient: "from-blue-500 via-cyan-400 to-purple-600",
-    description: "KShs 11.5M NG-CDF tuition block (2023), KShs 6M ICT donation (50+ laptops, only school in Machakos), KShs 1.2M KCB LPG funding (2022). Total investment transforming Katz.",
-    background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
+    title: "CBC Pathways Offered",
+    subtitle: "Curriculum & Programs",
+    gradient: "from-green-500 via-emerald-400 to-teal-600",
+    description: "Students transition from Junior School to specialize in STEM, Social Sciences, or Arts & Sports. The school supports academic counseling and student development programs.",
+    background: "bg-gradient-to-br from-green-900/90 via-emerald-900/80 to-teal-900/70",
     image: "/hero/katz1.jpeg",
     stats: { 
-      total: "KShs 19.4M", 
-      ict: "50+ Laptops", 
-      lpg: "40% Savings" 
+      stem: "Science/Tech", 
+      social: "Humanities", 
+      arts: "Sports/Arts" 
     },
-    features: ["NG-CDF Funded", "ICT Donation", "LPG Kitchen", "Infrastructure Dev"],
-    cta: "About Us",
-    link: "/pages/AboutUs",
-    highlightColor: "blue",
-    testimonial: "\"KShs 19.4M total investment: tuition block, 50+ laptops, and LPG kitchen transformation.\"",
-    icon: GiMoneyStack
+    features: ["STEM Pathway", "Social Sciences", "Arts & Sports", "Student Support"],
+    cta: "Learn More",
+    link: "/pages/about",
+    highlightColor: "green",
+    testimonial: "\"Students specialize in one of three main pathways under the CBC system.\"",
+    icon: GiGraduateCap
   },
   {
-    title: "County Rugby & Basketball Champions",
-    subtitle: "Sports Excellence",
-    gradient: "from-green-500 via-emerald-400 to-teal-600",
-    description: "Boys' rugby team won Machakos County games (2023) beating St. Augustine 14-0. Two-time national qualifiers under coach Mr. Simiyu. Basketball team emerging as regional force with multiple tournament wins.",
-    background: "bg-gradient-to-br from-green-900/90 via-emerald-900/80 to-teal-900/70",
+    title: "Community Focus",
+    subtitle: "Eastern Region School",
+    gradient: "from-blue-500 via-cyan-400 to-purple-600",
+    description: "Located in Matungulu Sub-County, Machakos County. As a C3 public senior school, it plays a vital role in the Eastern Region's education sector, serving students from the local community.",
+    background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
     image: "/bg/14.jpeg",
     stats: { 
-      rugby: "14-0 Victory", 
-      nationals: "2× Qualifiers", 
-      basketball: "Rising Force" 
+      region: "Eastern", 
+      status: "C3 Public", 
+      location: "Matungulu" 
     },
-    features: ["County Champions", "National Qualifiers", "Basketball Excellence", "Coach Simiyu"],
-    cta: "Apply Now",
-    link: "/pages/apply-for-admissions",
-    highlightColor: "green",
-    testimonial: "\"Rugby team won Machakos County 14-0; two-time national qualifiers. Basketball team emerging.\"",
-    icon: GiTrophyCup
+    features: ["Community School", "Local Access", "Day/Boarding", "Regional Impact"],
+    cta: "Contact Us",
+    link: "/pages/contact",
+    highlightColor: "blue",
+    testimonial: "\"A vital educational institution serving the Matungulu community in Machakos County.\"",
+    icon: GiGraduateCap
   }
 ];
 
@@ -114,7 +113,6 @@ const ModernHero = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setNavigationBlocked(false);
-      console.log('Navigation is now allowed');
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -137,12 +135,10 @@ const ModernHero = () => {
   }, [currentSlide, handleSlideChange]);
 
   const openVideoModal = useCallback(() => {
-    console.log('DEBUG: Opening video modal');
     setShowVideoModal(true);
   }, []);
 
   const closeVideoModal = useCallback(() => {
-    console.log('DEBUG: Closing video modal');
     setShowVideoModal(false);
     setSchoolData(null);
     setError(null);
@@ -150,16 +146,9 @@ const ModernHero = () => {
 
   // Safe navigation handler for slide buttons
   const handleSlideButtonClick = useCallback(() => {
-    if (navigationBlocked) {
-      console.log('DEBUG: Navigation blocked (cooling period)');
-      return;
-    }
+    if (navigationBlocked) return;
     
     const link = heroSlides[currentSlide].link;
-    console.log('DEBUG: Navigating to slide link:', link);
-    console.log('DEBUG: From slide index:', currentSlide);
-    
-    // Add a small delay to prevent accidental clicks
     setTimeout(() => {
       router.push(link);
     }, 100);
@@ -167,15 +156,10 @@ const ModernHero = () => {
 
   // Safe contact handler for modal button
   const handleContactClick = useCallback(() => {
-    console.log('DEBUG: Contact button clicked');
     closeVideoModal();
     
-    if (navigationBlocked) {
-      console.log('DEBUG: Navigation blocked (cooling period)');
-      return;
-    }
+    if (navigationBlocked) return;
     
-    // Navigate to About Us page with delay
     setTimeout(() => {
       router.push('/pages/AboutUs');
     }, 100);
@@ -184,7 +168,6 @@ const ModernHero = () => {
   // Fetch video data when modal opens
   useEffect(() => {
     if (showVideoModal) {
-      console.log('Fetching video data...');
       setLoading(true);
       setError(null);
       
@@ -197,11 +180,6 @@ const ModernHero = () => {
         })
         .then(data => {
           if (data.success && data.school) {
-            console.log('Video data loaded:', {
-              name: data.school.name,
-              videoType: data.school.videoType,
-              videoTour: data.school.videoTour
-            });
             setSchoolData(data.school);
             setError(null);
           } else {
@@ -221,10 +199,7 @@ const ModernHero = () => {
 
   // Auto-slide effect with safety check
   useEffect(() => {
-    if (showVideoModal) {
-      console.log('DEBUG: Auto-slide paused (modal open)');
-      return;
-    }
+    if (showVideoModal) return;
     
     const timer = setInterval(() => {
       nextSlide();
@@ -268,7 +243,7 @@ const ModernHero = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black font-sans">
-      {/* Background Image Layers with Enhanced Dark Overlay */}
+      {/* Background Image Layers */}
       {heroSlides.map((s, idx) => (
         <div
           key={idx}
@@ -282,178 +257,169 @@ const ModernHero = () => {
             style={{ backgroundImage: `url(${s.image})` }}
           />
           
-          {/* PRIMARY GRADIENT - Evenly distributed overlay */}
+          {/* Gradients */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/35 to-black/45" />
-          
-          {/* SECONDARY GRADIENT - Subtle radial enhancement */}
           <div className="absolute inset-0" style={{
             backgroundImage: 'radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.25) 100%)'
           }} />
-          
-          {/* MODERN VIGNETTE - Soft edge darkening */}
           <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.3)]" />
-          
-          {/* Color overlay - very subtle */}
           <div className={`absolute inset-0 opacity-5 mix-blend-overlay ${s.background}`} />
-          
-          {/* Bottom fade - extra dark at very bottom */}
           <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
         </div>
       ))}
 
-      {/* Main Content Area - Pushed higher for better visibility */}
-      <div className="relative z-20 h-full flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 lg:px-12 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4 px-2">
-          <div className="h-[1px] w-4 sm:w-6 md:w-8 bg-white/60" />
+      {/* Main Content Area - Fixed for mobile full width */}
+      <div className="relative z-20 h-full flex flex-col items-center justify-center px-0 sm:px-4 md:px-6 lg:px-12 text-center w-full max-w-full">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+            <div className="h-[1px] w-4 sm:w-6 md:w-8 bg-white/60" />
 
-          <span
-            className={`
-              uppercase
-              text-base xs:text-lg sm:text-base md:text-lg
-              tracking-[0.08em] xs:tracking-[0.1em] sm:tracking-[0.15em]
-              font-semibold sm:font-bold
-              text-center
-              leading-snug
-              drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]
-              ${getHighlightColorClass(slide.highlightColor)}
-            `}
-          >
-            {slide.subtitle}
-          </span>
-
-          <div className="h-[1px] w-4 sm:w-6 md:w-8 bg-white/60" />
-        </div>
-
-        {/* Dynamic Heading with stronger glow */}
-        <h1 className="
-          text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl
-          font-extrabold
-          text-white
-          leading-tight
-          mb-3 sm:mb-4 md:mb-5
-          drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)_0_0_20px_rgba(255,255,255,0.2)]
-          px-2
-        ">
-          {slide.title.split(' ').map((word, i) => (
             <span
-              key={i}
               className={`
-                ${i === slide.title.split(' ').length - 1 ? getHighlightColorClass(slide.highlightColor) : ""}
-                ${isMobile && word.length > 8 ? 'block' : ""}
-                drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]
+                uppercase
+                text-base xs:text-lg sm:text-base md:text-lg
+                tracking-[0.08em] xs:tracking-[0.1em] sm:tracking-[0.15em]
+                font-semibold sm:font-bold
+                text-center
+                leading-snug
+                drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]
+                ${getHighlightColorClass(slide.highlightColor)}
               `}
             >
-              {word}{' '}
+              {slide.subtitle}
             </span>
-          ))}
-        </h1>
 
-        {/* Description - better contrast */}
-        <p className="
-          text-sm xs:text-base sm:text-lg
-          text-gray-100
-          mb-4 sm:mb-5 md:mb-6
-          mx-auto
-          max-w-sm xs:max-w-md sm:max-w-xl md:max-w-2xl
-          font-medium
-          leading-relaxed
-          line-clamp-3 sm:line-clamp-none
-          drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]
-        ">
-          {isMobile ? slide.description.substring(0, 120) + '...' : slide.description}
-        </p>
-
-        {/* Stats - Enhanced with stronger backdrop */}
-        <div className="grid grid-cols-3 gap-1 xs:gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-2xl mx-auto">
-          {Object.entries(slide.stats).map(([key, value], i) => (
-            <div key={i} className="flex flex-col items-center justify-center bg-black/70 backdrop-blur-md border border-white/25 p-1 xs:p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl hover:bg-black/80 transition-all duration-300 shadow-2xl">
-              <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-bold ${getHighlightColorClass(slide.highlightColor)} mb-0.5 sm:mb-1 drop-shadow-[0_0_10px_currentColor]`}>
-                {value.split(' ')[0]}
-              </div>
-              <span className="text-white/95 text-[8px] xs:text-xs uppercase tracking-wider text-center leading-tight font-semibold">
-                {isMobile ? value.split(' ').slice(1, 2).join(' ') + '...' : value.split(' ').slice(1).join(' ')}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Features - Enhanced visibility */}
-        <div className="grid grid-cols-2 gap-1 xs:gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-8 max-w-xs xs:max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto">
-          {slide.features.map((feature, i) => (
-            <div key={i} className="flex items-center justify-center space-x-1 xs:space-x-2 
-              bg-black/70 backdrop-blur-md border border-white/25 p-1 xs:p-2 sm:p-3 rounded-lg sm:rounded-xl 
-              hover:bg-black/80 transition-all duration-300 group overflow-hidden shadow-2xl">
-              <IconComponent className={`w-3 h-3 xs:w-4 xs:h-4 ${getHighlightColorClass(slide.highlightColor)} flex-shrink-0 drop-shadow-[0_0_5px_currentColor]`} />
-              <span className="text-white font-semibold text-[10px] xs:text-xs sm:text-sm group-hover:text-white whitespace-nowrap overflow-hidden text-ellipsis drop-shadow-md">
-                {isMobile && feature.length > 12 ? feature.substring(0, 10) + '...' : feature}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Testimonial - Enhanced with glow */}
-        <div className="mb-3 sm:mb-4 md:mb-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-xl mx-auto">
-          <div className={`border-l-2 sm:border-l-4 ${getBorderColorClass(slide.highlightColor)} pl-2 sm:pl-3 md:pl-4 py-1 sm:py-2 bg-black/70 backdrop-blur-md rounded-r-lg shadow-2xl`}>
-            <p className="text-white/95 text-[10px] xs:text-xs sm:text-sm italic font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-              {isMobile ? slide.testimonial.substring(0, 80) + '...' : slide.testimonial}
-            </p>
+            <div className="h-[1px] w-4 sm:w-6 md:w-8 bg-white/60" />
           </div>
-        </div>
 
-        {/* Action Buttons - Enhanced with glow */}
-        <div className="
-          flex items-center justify-center gap-3
-          sm:flex-row sm:gap-4
-          px-2
-        ">
-          <button
-            onClick={handleSlideButtonClick}
-            disabled={navigationBlocked}
-            className="
-              group
-              px-4 sm:px-6
-              py-2 sm:py-3
-              bg-white text-black
-              rounded-full font-semibold
-              text-sm
-              hover:bg-gray-200
-              transition-all
-              flex items-center justify-center gap-2
-              shadow-[0_8px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.8)]
-              disabled:opacity-50 disabled:cursor-not-allowed
-              drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]
-            "
-          >
-            {slide.cta}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
+          {/* Fixed heading - full width on mobile */}
+          <h1 className="
+            text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl
+            font-extrabold
+            text-white
+            leading-tight
+            mb-3 sm:mb-4 md:mb-5
+            drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)_0_0_20px_rgba(255,255,255,0.2)]
+            px-0 w-full text-center
+          ">
+            {slide.title.split(' ').map((word, i) => (
+              <span
+                key={i}
+                className={`
+                  ${i === slide.title.split(' ').length - 1 ? getHighlightColorClass(slide.highlightColor) : ""}
+                  ${isMobile && word.length > 8 ? 'block w-full' : "inline"}
+                  drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]
+                `}
+              >
+                {word}{' '}
+              </span>
+            ))}
+          </h1>
 
-          <button
-            onClick={openVideoModal}
-            className="
-              group
-              px-4 sm:px-6
-              py-2 sm:py-3
-              bg-white/25
-              border border-white/40
-              text-white
-              rounded-full font-semibold
-              text-sm
-              hover:bg-white/35 hover:border-white/70
-              backdrop-blur-md
-              transition-all duration-300
-              flex items-center justify-center gap-2
-              shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.7)]
-              drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]
-            "
-          >
-            <Play className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            {isMobile ? 'Tour' : 'View Tour'}
-          </button>
+          {/* Description */}
+          <p className="
+            text-sm xs:text-base sm:text-lg
+            text-gray-100
+            mb-4 sm:mb-5 md:mb-6
+            mx-auto
+            max-w-sm xs:max-w-md sm:max-w-xl md:max-w-2xl
+            font-medium
+            leading-relaxed
+            line-clamp-3 sm:line-clamp-none
+            drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]
+            px-2
+          ">
+            {isMobile ? slide.description.substring(0, 120) + '...' : slide.description}
+          </p>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-1 xs:gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-2xl mx-auto">
+            {Object.entries(slide.stats).map(([key, value], i) => (
+              <div key={i} className="flex flex-col items-center justify-center bg-black/70 backdrop-blur-md border border-white/25 p-1 xs:p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl shadow-2xl">
+                <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-bold ${getHighlightColorClass(slide.highlightColor)} mb-0.5 sm:mb-1 drop-shadow-[0_0_10px_currentColor]`}>
+                  {value.split(' ')[0]}
+                </div>
+                <span className="text-white/95 text-[8px] xs:text-xs uppercase tracking-wider text-center leading-tight font-semibold">
+                  {value.split(' ').slice(1).join(' ')}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Features */}
+          <div className="grid grid-cols-2 gap-1 xs:gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-8 max-w-xs xs:max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto">
+            {slide.features.map((feature, i) => (
+              <div key={i} className="flex items-center justify-center space-x-1 xs:space-x-2 
+                bg-black/70 backdrop-blur-md border border-white/25 p-1 xs:p-2 sm:p-3 rounded-lg sm:rounded-xl 
+                overflow-hidden shadow-2xl">
+                <IconComponent className={`w-3 h-3 xs:w-4 xs:h-4 ${getHighlightColorClass(slide.highlightColor)} flex-shrink-0 drop-shadow-[0_0_5px_currentColor]`} />
+                <span className="text-white font-semibold text-[10px] xs:text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis drop-shadow-md">
+                  {feature}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Testimonial */}
+          <div className="mb-3 sm:mb-4 md:mb-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-xl mx-auto">
+            <div className={`border-l-2 sm:border-l-4 ${getBorderColorClass(slide.highlightColor)} pl-2 sm:pl-3 md:pl-4 py-1 sm:py-2 bg-black/70 backdrop-blur-md rounded-r-lg shadow-2xl`}>
+              <p className="text-white/95 text-[10px] xs:text-xs sm:text-sm italic font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                {slide.testimonial}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-center gap-3 sm:flex-row sm:gap-4 px-2">
+            <button
+              onClick={handleSlideButtonClick}
+              disabled={navigationBlocked}
+              className="
+                group
+                px-4 sm:px-6
+                py-2 sm:py-3
+                bg-white text-black
+                rounded-full font-semibold
+                text-sm
+                hover:bg-gray-200
+                transition-all
+                flex items-center justify-center gap-2
+                shadow-[0_8px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.8)]
+                disabled:opacity-50 disabled:cursor-not-allowed
+                drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]
+              "
+            >
+              {slide.cta}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <button
+              onClick={openVideoModal}
+              className="
+                group
+                px-4 sm:px-6
+                py-2 sm:py-3
+                bg-white/25
+                border border-white/40
+                text-white
+                rounded-full font-semibold
+                text-sm
+                hover:bg-white/35 hover:border-white/70
+                backdrop-blur-md
+                transition-all duration-300
+                flex items-center justify-center gap-2
+                shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.7)]
+                drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]
+              "
+            >
+              <Play className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              {isMobile ? 'Tour' : 'View Tour'}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Modern Controls - Mobile Responsive Position */}
+      {/* Navigation Controls */}
       <div className={`absolute z-30 flex space-x-3 sm:space-y-3 sm:flex-col ${isMobile ? 'bottom-4 right-4 flex-row' : 'bottom-10 right-8 flex-col'}`}>
         <button 
           onClick={prevSlide}
@@ -473,7 +439,7 @@ const ModernHero = () => {
         </button>
       </div>
 
-      {/* Progress Indicators - Mobile Responsive */}
+      {/* Desktop Progress Indicators */}
       {!isMobile && (
         <div className="absolute top-1/2 right-4 sm:right-6 md:right-8 -translate-y-1/2 z-30 hidden sm:flex flex-col space-y-4 sm:space-y-6">
           {heroSlides.map((_, index) => (
@@ -509,7 +475,7 @@ const ModernHero = () => {
         </div>
       )}
 
-      {/* Bottom Info Strip - Much darker */}
+      {/* Bottom Info Strip */}
       <div className={`absolute bottom-0 left-0 w-full z-10 py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 lg:px-12 
         border-t border-white/15 bg-black/95 backdrop-blur-md 
         ${isMobile ? 'flex flex-col items-center justify-center gap-1' : 'hidden md:flex items-center justify-between'} 
@@ -520,11 +486,11 @@ const ModernHero = () => {
             <div className="flex items-center space-x-4">
               <span className="flex items-center text-nowrap">
                 <BookOpen className="w-2 h-2 xs:w-3 xs:h-3 mr-1" />
-                Kshs 11.5M Project
+                Matungulu
               </span>
               <span className="flex items-center text-nowrap">
                 <Trophy className="w-2 h-2 xs:w-3 xs:h-3 mr-1" />
-                Stalled Since 2023
+                C3 Public School
               </span>
             </div>
             <button 
@@ -544,13 +510,13 @@ const ModernHero = () => {
               </span>
               <span className="flex items-center">
                 <Trophy className="w-3 h-3 mr-2" />
-                AIC Katwanyaa Secondary
+                Katwanyaa Senior School
               </span>
             </div>
             <div className="flex space-x-4 md:space-x-6 lg:space-x-8">
               <span className="flex items-center">
                 <Clock className="w-3 h-3 mr-2" />
-                Kshs 11.5M NG-CDF Funded
+                CBC Pathways
               </span>
               <button 
                 onClick={openVideoModal}
@@ -564,6 +530,7 @@ const ModernHero = () => {
         )}
       </div>
 
+      {/* Video Modal */}
       {showVideoModal && (
         <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="relative w-full max-w-full sm:max-w-4xl md:max-w-5xl lg:max-w-6xl rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
@@ -577,7 +544,7 @@ const ModernHero = () => {
                 <div className="overflow-hidden">
                   <h4 className="text-white font-bold text-xs sm:text-sm md:text-base truncate">Katz High School Tour</h4>
                   <p className="text-white/60 text-[10px] sm:text-xs md:text-sm truncate">
-                    {schoolData?.name || 'AIC Katwanyaa Secondary'} - {schoolData?.videoType === 'youtube' ? 'YouTube Video' : schoolData?.videoType === 'file' ? 'MP4 Video' : 'Loading...'}
+                    {schoolData?.name || 'Katwanyaa Senior School'} - Virtual Tour
                   </p>
                 </div>
               </div>
@@ -595,13 +562,11 @@ const ModernHero = () => {
             {/* Video Container */}
             <div className="relative bg-black aspect-video">
               {loading ? (
-                // Loading state
                 <div className="w-full h-full flex flex-col items-center justify-center">
                   <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-white mb-2 sm:mb-4"></div>
                   <p className="text-white text-sm sm:text-base">Loading video tour...</p>
                 </div>
               ) : error ? (
-                // Error state
                 <div className="w-full h-full flex flex-col items-center justify-center p-4 sm:p-8">
                   <div className="text-3xl sm:text-4xl md:text-5xl text-red-500 mb-2 sm:mb-4">!</div>
                   <p className="text-white text-center text-xs sm:text-sm md:text-base mb-2 sm:mb-4 px-2">{error}</p>
@@ -614,7 +579,6 @@ const ModernHero = () => {
                   </button>
                 </div>
               ) : schoolData?.videoType === 'youtube' && schoolData?.videoTour ? (
-                // YouTube Video
                 <iframe
                   src={`https://www.youtube.com/embed/${extractYouTubeId(schoolData.videoTour)}?autoplay=1&rel=0&modestbranding=1&controls=1`}
                   className="w-full h-full"
@@ -623,7 +587,6 @@ const ModernHero = () => {
                   title={`${schoolData.name} Virtual Tour`}
                 />
               ) : schoolData?.videoType === 'file' && schoolData?.videoTour ? (
-                // Local MP4 Video
                 <div className="relative w-full h-full">
                   <video
                     src={schoolData.videoTour}
@@ -632,29 +595,13 @@ const ModernHero = () => {
                     controls
                     title={`${schoolData.name} Virtual Tour`}
                     poster={schoolData?.videoThumbnail}
-                    onLoadedData={() => console.log('Video loaded successfully')}
-                  >
-                    {/* Fallback message */}
-                    <div className="w-full h-full flex flex-col items-center justify-center p-4 sm:p-8">
-                      <div className="text-3xl sm:text-4xl md:text-5xl text-gray-400 mb-2 sm:mb-4">!</div>
-                      <p className="text-white text-center text-sm sm:text-base">
-                        Your browser does not support the video tag.
-                      </p>
-                    </div>
-                  </video>
+                  />
                 </div>
               ) : (
-                // No video available or no schoolData yet
                 <div className="w-full h-full flex flex-col items-center justify-center p-4 sm:p-8">
                   <div className="text-3xl sm:text-4xl md:text-5xl text-gray-400 mb-2 sm:mb-4">!</div>
                   <p className="text-white text-center text-xs sm:text-sm md:text-base mb-2 sm:mb-4">
-                    {schoolData ? 'No video tour available' : 'Loading...'}
-                  </p>
-                  <p className="text-white/60 text-xs sm:text-sm text-center px-2">
-                    {schoolData 
-                      ? 'Please check back later for our virtual tour' 
-                      : 'Fetching video data...'
-                    }
+                    No video tour available
                   </p>
                 </div>
               )}
@@ -664,7 +611,7 @@ const ModernHero = () => {
             <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-r from-transparent to-black/80 p-2 sm:p-3 md:p-4">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
                 <div className="text-white/80 text-xs sm:text-sm hidden sm:block truncate">
-                  {schoolData?.description?.substring(0, isMobile ? 50 : 100) + '...' || 'Experience AIC Katwanyaa Secondary from anywhere in the world'}
+                  Experience Katwanyaa Senior School from anywhere
                 </div>
                 <button
                   onClick={handleContactClick}
@@ -682,12 +629,12 @@ const ModernHero = () => {
         </div>
       )}
 
-      {/* Navigation Blocker Overlay (temporary) */}
+      {/* Navigation Blocker Overlay */}
       {navigationBlocked && (
         <div className="absolute inset-0 z-40 pointer-events-none">
           <div className="absolute bottom-20 sm:bottom-24 left-1/2 transform -translate-x-1/2 
             bg-black/70 text-white text-[10px] xs:text-xs px-3 py-1.5 rounded-full backdrop-blur-sm">
-            Navigation cooling period... {new Date().getSeconds() % 2 === 0 ? '▰▰▰▰▰' : '▰▰▱▱▱'}
+            Loading...
           </div>
         </div>
       )}
@@ -699,7 +646,6 @@ const getHighlightColorClass = (color) => {
   switch(color) {
     case 'blue': return 'text-blue-400';
     case 'green': return 'text-emerald-400';
-    case 'orange': return 'text-orange-400';
     default: return 'text-blue-400';
   }
 };
@@ -708,7 +654,6 @@ const getBorderColorClass = (color) => {
   switch(color) {
     case 'blue': return 'border-blue-500';
     case 'green': return 'border-emerald-500';
-    case 'orange': return 'border-orange-500';
     default: return 'border-blue-500';
   }
 };
@@ -717,7 +662,6 @@ const getProgressColorClass = (color) => {
   switch(color) {
     case 'blue': return 'bg-blue-500';
     case 'green': return 'bg-emerald-500';
-    case 'orange': return 'bg-orange-500';
     default: return 'bg-blue-500';
   }
 };
@@ -726,7 +670,6 @@ const getProgressColorValue = (color) => {
   switch(color) {
     case 'blue': return '#3b82f6';
     case 'green': return '#10b981';
-    case 'orange': return '#f97316';
     default: return '#3b82f6';
   }
 };
