@@ -86,7 +86,7 @@ const whyChooseUs = [
     gradient: "from-blue-600 to-indigo-600",
     description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees.",
     metrics: "Trees Conserved",
-    icon: <FiTree className="w-4 h-4" />
+    icon: <FiHeart className="w-4 h-4" />
   }
 ];
   const schoolFeatures = [
