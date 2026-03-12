@@ -21,6 +21,7 @@ import {
   FiActivity,
   FiDollarSign,
   FiCpu,
+  FiTree,
   FiTree
 } from 'react-icons/fi';
 

@@ -7,69 +7,73 @@ import {
 } from 'lucide-react';
 import { 
   GiGraduateCap, 
-  GiTrophyCup 
+  GiTrophyCup,
+  GiMoneyStack,
+  GiSchoolBag,
+  GiTeacher
 } from 'react-icons/gi';
 import { IoRocketOutline } from 'react-icons/io5';
+import { FaHammer, FaTree } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
-// Enhanced Hero Slides with Modern Design - Updated with accurate Katwanyaa Senior School in Matungulu information
+// Enhanced Hero Slides with Actual Katwanyaa Senior School Information from Auditor-General Report
 const heroSlides = [
   {
-    title: "Katwanyaa senior School",
+    title: "AIC Katwanyaa Secondary School",
     subtitle: "Matungulu, Machakos County",
     gradient: "from-blue-500 via-cyan-400 to-purple-600",
-    description: "Katwanyaa Senior School is a public secondary school located in Matungulu sub-county, Machakos County, Kenya. The school is committed to providing quality education and holistic development to students from the region.",
+    description: "A public secondary school in Matungulu sub-county, Machakos County. In 2023, received Kshs.11.5 million NG-CDF funding for a tuition block, though the project was stalled after Kshs.8.3 million was paid to the contractor who abandoned site.",
     background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
     image: "/hero/katz8.jpeg",
     stats: { 
-      students: "Public School", 
-      excellence: "Quality Education", 
-      years: "Serving Community" 
+      funding: "Kshs 11.5M", 
+      paid: "Kshs 8.3M", 
+      project: "Tuition Block" 
     },
-    features: ["Academic Excellence", "Co-curricular Activities", "Character Building", "Community Focus"],
+    features: ["NG-CDF Funded", "Public School", "Mixed Day & Boarding", "Infrastructure Dev"],
     cta: "Admissions",
     link: "/pages/admissions",
     highlightColor: "blue",
-    testimonial: "\"A school dedicated to nurturing talents and academic potential of students in Matungulu.\"",
+    testimonial: "\"Received Kshs.11.5 million for tuition block construction, though project stalled in 2023.\"",
     icon: GiGraduateCap
   },
   {
-    title: "Holistic Education",
-    subtitle: "Beyond Academics",
-    gradient: "from-emerald-500 via-teal-400 to-green-600",
-    description: "The school emphasizes all-round development through sports, clubs, and community engagement. Students are encouraged to participate in various activities to develop leadership and life skills.",
-    background: "bg-gradient-to-br from-emerald-900/90 via-green-900/80 to-teal-900/70",
+    title: "Stalled Development",
+    subtitle: "Contractor Abandoned Site",
+    gradient: "from-orange-500 via-red-400 to-yellow-600",
+    description: "The tuition block contractor abandoned site after receiving Kshs.8.3 million, citing financial difficulties. Two years later (as of 2025), the project remains stalled with no evidence of tender re-advertisement or recovery measures.",
+    background: "bg-gradient-to-br from-orange-900/90 via-red-900/80 to-yellow-900/70",
     image: "/hero/katz1.jpeg",
     stats: { 
-      teams: "Sports Programs", 
-      clubs: "Student Societies", 
-      success: "Talent Nurturing" 
+      abandoned: "Kshs 8.3M", 
+      years: "2+ Years", 
+      status: "Stalled" 
     },
-    features: ["Sports Development", "Music & Arts", "Leadership Programs", "Agricultural Projects"],
+    features: ["Contractor Abandoned", "Financial Difficulties", "No Recovery", "Awaiting Action"],
     cta: "About Us",
     link: "/pages/AboutUs",
-    highlightColor: "green",
-    testimonial: "\"The school provides opportunities for students to discover and develop their talents.\"",
-    icon: GiTrophyCup
+    highlightColor: "orange",
+    testimonial: "\"Contractor abandoned site in 2023; project still stalled as of 2025.\"",
+    icon: FaHammer
   },
   {
-    title: "Community Partnership",
-    subtitle: "Local Engagement",
-    gradient: "from-cyan-500 via-blue-400 to-indigo-600",
-    description: "As a community-based institution in Matungulu, Katwanyaa Senior School works closely with parents and local stakeholders to provide relevant education that addresses community needs.",
-    background: "bg-gradient-to-br from-cyan-900/90 via-blue-900/80 to-indigo-900/70",
+    title: "Environmental Initiative",
+    subtitle: "Tree Planting Program",
+    gradient: "from-green-500 via-emerald-400 to-teal-600",
+    description: "Matungulu NG-CDF spent Kshs.1.9 million on tree planting in schools, with each institution expected to receive 500 seedlings. However, site visits found some schools received as few as 50 seedlings with missing documentation.",
+    background: "bg-gradient-to-br from-green-900/90 via-emerald-900/80 to-teal-900/70",
     image: "/bg/14.jpeg",
     stats: { 
-      labs: "Practical Learning", 
-      tech: "Skill Development", 
-      innovation: "Local Solutions" 
+      budget: "Kshs 1.9M", 
+      target: "500 Seedlings", 
+      actual: "As low as 50" 
     },
-    features: ["Parent Engagement", "Local Partnerships", "Skill Training", "Career Preparation"],
+    features: ["Climate Action", "School Greening", "Documentation Gaps", "Audit Queries"],
     cta: "Apply Now",
     link: "/pages/apply-for-admissions",
-    highlightColor: "cyan",
-    testimonial: "\"An important educational institution serving the Matungulu community.\"",
-    icon: IoRocketOutline
+    highlightColor: "green",
+    testimonial: "\"Kshs.1.9M spent on tree planting, but some schools received only 50 seedlings.\"",
+    icon: FaTree
   }
 ];
 
@@ -103,25 +107,6 @@ const ModernHero = () => {
     window.addEventListener('resize', checkMobile);
     
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // DEBUG: Add this to track automatic navigation
-  useEffect(() => {
-    console.log('=== DEBUG: ModernHero Component Mounted ===');
-    console.log('Initial state - showVideoModal:', showVideoModal);
-    console.log('Initial state - currentSlide:', currentSlide);
-    console.log('Initial slide link:', heroSlides[currentSlide].link);
-    
-    // Check if there's any automatic navigation attempt on mount
-    if (typeof window !== 'undefined') {
-      console.log('Current URL:', window.location.href);
-      
-      // Clear any hash that might trigger navigation
-      if (window.location.hash) {
-        console.log('Found hash, clearing:', window.location.hash);
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
-    }
   }, []);
 
   // Block automatic navigation for first 2 seconds
@@ -195,14 +180,13 @@ const ModernHero = () => {
     }, 100);
   }, [closeVideoModal, router, navigationBlocked]);
 
-  // Fetch video data when modal opens - USING .then() instead of async/await
+  // Fetch video data when modal opens
   useEffect(() => {
     if (showVideoModal) {
       console.log('Fetching video data...');
       setLoading(true);
       setError(null);
       
-      // Use .then() syntax instead of async/await
       fetch('/api/school')
         .then(response => {
           if (!response.ok) {
@@ -236,7 +220,6 @@ const ModernHero = () => {
 
   // Auto-slide effect with safety check
   useEffect(() => {
-    // Don't auto-slide if modal is open
     if (showVideoModal) {
       console.log('DEBUG: Auto-slide paused (modal open)');
       return;
@@ -284,14 +267,14 @@ const ModernHero = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black font-sans">
-      {/* Background Image Layers with Enhanced Dark Overlay - STRONGER TOP VISIBILITY, DARKER BOTTOM */}
-    {heroSlides.map((s, idx) => (
-  <div
-    key={idx}
-    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-      idx === currentSlide ? 'opacity-100' : 'opacity-0'
-    }`}
-  >
+      {/* Background Image Layers with Enhanced Dark Overlay */}
+      {heroSlides.map((s, idx) => (
+        <div
+          key={idx}
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+            idx === currentSlide ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
           {/* Background Image */}
           <div 
             className="absolute inset-0 bg-cover bg-center scale-105 animate-slow-zoom"
@@ -536,11 +519,11 @@ const ModernHero = () => {
             <div className="flex items-center space-x-4">
               <span className="flex items-center text-nowrap">
                 <BookOpen className="w-2 h-2 xs:w-3 xs:h-3 mr-1" />
-                Matungulu
+                Kshs 11.5M Project
               </span>
               <span className="flex items-center text-nowrap">
                 <Trophy className="w-2 h-2 xs:w-3 xs:h-3 mr-1" />
-                Public School
+                Stalled Since 2023
               </span>
             </div>
             <button 
@@ -560,13 +543,13 @@ const ModernHero = () => {
               </span>
               <span className="flex items-center">
                 <Trophy className="w-3 h-3 mr-2" />
-                Public Secondary School
+                AIC Katwanyaa Secondary
               </span>
             </div>
             <div className="flex space-x-4 md:space-x-6 lg:space-x-8">
               <span className="flex items-center">
                 <Clock className="w-3 h-3 mr-2" />
-                Quality Education
+                Kshs 11.5M NG-CDF Funded
               </span>
               <button 
                 onClick={openVideoModal}
@@ -580,7 +563,7 @@ const ModernHero = () => {
         )}
       </div>
 
-   {showVideoModal && (
+      {showVideoModal && (
         <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="relative w-full max-w-full sm:max-w-4xl md:max-w-5xl lg:max-w-6xl rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
             {/* Modal Header */}
@@ -593,7 +576,7 @@ const ModernHero = () => {
                 <div className="overflow-hidden">
                   <h4 className="text-white font-bold text-xs sm:text-sm md:text-base truncate">Katz High School Tour</h4>
                   <p className="text-white/60 text-[10px] sm:text-xs md:text-sm truncate">
-                    {schoolData?.name || 'Katwanyaa Senior School'} - {schoolData?.videoType === 'youtube' ? 'YouTube Video' : schoolData?.videoType === 'file' ? 'MP4 Video' : 'Loading...'}
+                    {schoolData?.name || 'AIC Katwanyaa Secondary'} - {schoolData?.videoType === 'youtube' ? 'YouTube Video' : schoolData?.videoType === 'file' ? 'MP4 Video' : 'Loading...'}
                   </p>
                 </div>
               </div>
@@ -680,7 +663,7 @@ const ModernHero = () => {
             <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-r from-transparent to-black/80 p-2 sm:p-3 md:p-4">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
                 <div className="text-white/80 text-xs sm:text-sm hidden sm:block truncate">
-                  {schoolData?.description?.substring(0, isMobile ? 50 : 100) + '...' || 'Experience Katwanyaa Senior School from anywhere in the world'}
+                  {schoolData?.description?.substring(0, isMobile ? 50 : 100) + '...' || 'Experience AIC Katwanyaa Secondary from anywhere in the world'}
                 </div>
                 <button
                   onClick={handleContactClick}
@@ -715,7 +698,7 @@ const getHighlightColorClass = (color) => {
   switch(color) {
     case 'blue': return 'text-blue-400';
     case 'green': return 'text-emerald-400';
-    case 'cyan': return 'text-cyan-400';
+    case 'orange': return 'text-orange-400';
     default: return 'text-blue-400';
   }
 };
@@ -724,7 +707,7 @@ const getBorderColorClass = (color) => {
   switch(color) {
     case 'blue': return 'border-blue-500';
     case 'green': return 'border-emerald-500';
-    case 'cyan': return 'border-cyan-500';
+    case 'orange': return 'border-orange-500';
     default: return 'border-blue-500';
   }
 };
@@ -733,7 +716,7 @@ const getProgressColorClass = (color) => {
   switch(color) {
     case 'blue': return 'bg-blue-500';
     case 'green': return 'bg-emerald-500';
-    case 'cyan': return 'bg-cyan-500';
+    case 'orange': return 'bg-orange-500';
     default: return 'bg-blue-500';
   }
 };
@@ -742,7 +725,7 @@ const getProgressColorValue = (color) => {
   switch(color) {
     case 'blue': return '#3b82f6';
     case 'green': return '#10b981';
-    case 'cyan': return '#06b6d4';
+    case 'orange': return '#f97316';
     default: return '#3b82f6';
   }
 };
