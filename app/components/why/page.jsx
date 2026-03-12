@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { 
@@ -22,11 +22,38 @@ import {
   FiDollarSign,
   FiCpu,
   FiTree,
+  FiChevronLeft,
+  FiChevronRight
 } from 'react-icons/fi';
 
 const ModernSchoolLayout = () => {
   const router = useRouter();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
+  // School images array for carousel
+  const schoolImages = [
+    { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Building" },
+    { src: "/hero/katz1.jpeg", alt: "Katwanyaa Senior School - Students" },
+    { src: "/hero/katz8.jpeg", alt: "Katwanyaa Senior School - Classroom" },
+    { src: "/hero/katz5.jpeg", alt: "Katwanyaa Senior School - Sports" }
+  ];
+
+  // Auto-rotate carousel every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % schoolImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [schoolImages.length]);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % schoolImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + schoolImages.length) % schoolImages.length);
+  };
+
   const handleExplorePathways = () => {
     router.push("/pages/admissions");
   };
@@ -106,8 +133,8 @@ const ModernSchoolLayout = () => {
     {
       title: "Spiritual & Moral Formation",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Christian values education with weekly worship, annual retreats, and Thursday devotions. Building character through faith-based approach.",
-      highlight: "Values Education",
+     description: "Christian values education with weekly worship, annual retreats, and Thursday devotions. Building character through a faith-based approach with our school chaplain, Postor Samuel Mutie.",    
+     highlight: "Values Education",
       details: ["Christian Teachings", "Character Building", "Thursday Devotion", "Retreats"],
       metrics: ["Weekly Worship", "Retreats", "Devotion"],
       icon: <FiHeart />
@@ -128,7 +155,7 @@ const ModernSchoolLayout = () => {
     <div className="bg-white py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto">
         
-        {/* --- HERO SECTION --- */}
+        {/* --- HERO SECTION WITH IMAGE CAROUSEL --- */}
         <section className="mb-16 sm:mb-20 md:mb-24">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div className="space-y-6">
@@ -184,16 +211,63 @@ const ModernSchoolLayout = () => {
               </div>
             </div>
 
-            <div className="relative h-[400px] rounded-[2rem] overflow-hidden shadow-2xl">
-              <Image
-                src="/bg/14.jpeg"
-                alt="Katwanyaa Senior School"
-                fill
-                className="object-cover"
-                priority
-              />
+            {/* Image Carousel */}
+            <div className="relative h-[400px] rounded-[2rem] overflow-hidden shadow-2xl group">
+              {/* Images */}
+              {schoolImages.map((image, idx) => (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                    idx === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    className="object-cover"
+                    priority={idx === 0}
+                  />
+                </div>
+              ))}
+              
+              {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <div className="absolute bottom-6 left-6 right-6">
+              
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70 z-10"
+                aria-label="Previous image"
+              >
+                <FiChevronLeft size={24} />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70 z-10"
+                aria-label="Next image"
+              >
+                <FiChevronRight size={24} />
+              </button>
+              
+              {/* Image Indicators */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {schoolImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      idx === currentImageIndex 
+                        ? 'w-6 bg-white' 
+                        : 'bg-white/50 hover:bg-white/80'
+                    }`}
+                    aria-label={`Go to image ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              
+              {/* Caption */}
+              <div className="absolute bottom-20 left-6 right-6 z-10">
                 <div className="backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20">
                   <p className="text-white text-lg font-black tracking-tight">Katwanyaa Senior School</p>
                   <p className="text-white/70 text-xs font-bold uppercase tracking-wider">Education is Light</p>
@@ -354,13 +428,13 @@ const ModernSchoolLayout = () => {
                 <p className="text-xs font-bold">💰 KShs 1.2M KCB LPG Funding (2022) - 40% cost reduction (700K → 420K per term)</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">975 Students enrolled - Mixed day & boarding</p>
+                <p className="text-xs font-bold">📚 975 Students enrolled - Mixed day & boarding</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold"> Environmental Conservation - Reduced firewood usage, staff from 6 to 4 cooks</p>
+                <p className="text-xs font-bold">🌳 Environmental Conservation - Reduced firewood usage, staff from 6 to 4 cooks</p>
               </div>
               <div className="bg-white p-3 rounded-xl border border-blue-100">
-                <p className="text-xs font-bold">Top Improving School in KCSE (2024) - Matungulu Sub-county</p>
+                <p className="text-xs font-bold">📈 Top Improving School in KCSE (2024) - Matungulu Sub-county</p>
               </div>
             </div>
           </div>
