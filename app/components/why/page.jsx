@@ -106,7 +106,7 @@ const handleExplorePathways2 = () => {
       description: "As a Christian institution, we emphasize spiritual growth, moral values, and character development through religious education and community service.",
       highlight: "Values Education",
       details: ["Christian Teachings", "Character Building", "Community Service", "Retreats"],
-      metrics: ["Weekly Mass", "Annual Retreats", "Outreach"],
+      metrics: ["Weekly worship", "Annual Retreats", "Thursday Devotion"],
       icon: <FiHeart />
     },
     {
@@ -169,8 +169,8 @@ const handleExplorePathways2 = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
                 {[
                   { label: 'Students', value: '800+' },
-                  { label: 'Teachers', value: '40' },
-                  { label: 'KCSE Mean', value: '7.5+' },
+                  { label: 'Teachers', value: '25+' },
+                  { label: 'KCSE Mean Target', value: '6.0+' },
                   { label: 'Motto', value: 'Education is Light' }
                 ].map((stat, idx) => (
                   <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
