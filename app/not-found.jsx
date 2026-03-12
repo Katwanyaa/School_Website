@@ -226,7 +226,7 @@ const Modern404 = () => {
               </p>
               <div className="flex items-baseline gap-2 flex-nowrap">
                 <span className="text-2xl sm:text-3xl font-black text-amber-300 drop-shadow">
-                  1200+
+                  800+
                 </span>
                 <span className="text-xs sm:text-sm text-slate-300 italic">
                   Active students

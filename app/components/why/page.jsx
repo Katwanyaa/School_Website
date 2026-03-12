@@ -11,7 +11,6 @@ import {
   FiCalendar,
   FiShield,
   FiStar,
-  FiTrendingUp,
   FiGlobe,
   FiMail,
   FiPhone,
@@ -20,7 +19,6 @@ import {
   FiMonitor,
   FiDollarSign,
   FiCpu,
-  FiTree,
   FiChevronLeft,
   FiChevronRight
 } from 'react-icons/fi';
@@ -88,7 +86,7 @@ const ModernSchoolLayout = () => {
     gradient: "from-blue-600 to-indigo-600",
     description: "LPG adoption reduced firewood consumption, conserving trees in surrounding area and contributing to sustainability efforts.",
     metrics: "Trees Conserved",
-    icon: <FiTree className="w-4 h-4" />
+    icon: <FiHeart className="w-4 h-4" />
   }
 ];
 
