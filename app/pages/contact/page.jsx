@@ -428,6 +428,11 @@ export default function ContactPage() {
         className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none appearance-none"
       >
         <option value="">Select Grade</option>
+        <option value="Grade 8">Grade 8</option>
+        <option value="Grade 9">Grade 9</option>
+        <option value="Grade 10">Grade 10</option>
+        <option value="Grade 11">Grade 11</option>
+        <option value="Grade 12">Grade 12</option>
         <option value="Form 1">Form 1</option>
         <option value="Form 2">Form 2</option>
         <option value="Form 3">Form 3</option>
