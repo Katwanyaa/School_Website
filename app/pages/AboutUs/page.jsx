@@ -1,7 +1,6 @@
 "use client";
 import React from 'react';
 import { MapPin, Users, BookOpen, Mail, Trophy, Target, Globe,Clock , TrendingUp , Lightbulb , ExternalLink , ShieldCheck, ArrowRight, Phone, Sparkles, Heart, Zap } from 'lucide-react';
-import MapComponent from '../../components/mapcomponent/page';
 import Image from 'next/image';
 import Link from "next/link";
 
