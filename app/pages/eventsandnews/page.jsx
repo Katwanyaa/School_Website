@@ -1172,7 +1172,7 @@ if (loading) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 p-4 md:p-6">
       <Toaster position="top-right" richColors />
       
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-9xl mx-auto space-y-6">
         {/* Header */}
 {/* Main Wrapper with Background - Add 'relative' and 'bg-slate-950' to the root */}
 <div className="relative  bg-slate-950 p-4 sm:p-8 overflow-hidden">
@@ -1197,10 +1197,10 @@ if (loading) {
         <div className="flex flex-col gap-3">
           {/* Title & Subtitle */}
           <div className="max-w-full">
-            <h1 className="text-2xl sm:text-4xl lg:text-6xl font-black text-white tracking-tighter leading-[1.1]">
+            <h1 className="text-xl sm:text-2xl lg:text-4xl font-black text-white tracking-tighter leading-[1.1]">
               School <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-purple-400">Events & News</span>
             </h1>
-            <p className="text-slate-400 text-xs sm:text-lg mt-2 font-medium leading-relaxed max-w-2xl opacity-80">
+            <p className="text-slate-100 text-xs sm:text-lg mt-2 font-medium leading-relaxed max-w-2xl opacity-80">
               Stay updated with the heartbeat and happenings at Katwanyaa Senior.
             </p>
           </div>
