@@ -306,6 +306,34 @@ async function sendContactConfirmation(toEmail, name, subject, referenceNumber) 
             }
           }
           
+         .contact-actions-container {
+            display: flex;
+            display: -webkit-flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+          }
+
+        .contact-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 10px 24px;
+          background-color: #2563eb;
+          color: #ffffff;
+          text-decoration: none;
+          font-weight: 700;
+          border-radius: 12px;
+          transition: all 0.3s ease;
+          min-width: 120px;
+        }
+
+        .contact-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+          }
+
           .contact-btn {
             display: flex;
             align-items: center;
@@ -761,12 +789,14 @@ async function sendContactConfirmation(toEmail, name, subject, referenceNumber) 
                 Contact our team directly:
               </p>
 
-               <a href="tel:${CONTACT_PHONE}" class="contact-btn">
-                  <span>call us</span>
-                </a>
-                <a href="mailto:${CONTACT_EMAIL}" class="contact-btn">
-                  <span>Email</span>
-                </a>
+              <div class="contact-actions-container">
+              <a href="tel:${CONTACT_PHONE}" class="contact-btn">
+                <span>Call us</span>
+              </a>
+              <a href="mailto:${CONTACT_EMAIL}" class="contact-btn">
+                <span>Email</span>
+              </a>
+            </div>
                
               <p style="margin-top: 12px; font-size: 12px; opacity: 0.95;">
                 Office Hours: Monday - Friday, 8:00 AM - 5:00 PM
