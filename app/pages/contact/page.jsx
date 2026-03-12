@@ -379,7 +379,7 @@ export default function ContactPage() {
         value={formData.name}
         onChange={handleInputChange}
         className="w-full px-4 sm:px-5 font-semibold py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:bg-white focus:border-transparent transition-all outline-none"
-        placeholder="John Doe"
+        placeholder="Joseph Mutua"
       />
     </div>
     <div className="space-y-1 sm:space-y-2">
@@ -393,7 +393,7 @@ export default function ContactPage() {
         value={formData.email}
         onChange={handleInputChange}
         className="w-full px-4 sm:px-5 font-semibold py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:bg-white focus:border-transparent transition-all outline-none"
-        placeholder="john@example.com"
+        placeholder="mary@example.com"
       />
     </div>
   </div>
