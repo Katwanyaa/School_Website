@@ -961,28 +961,24 @@ export default function ModernEventsNewsPage() {
   const stats = [
     { 
       icon: IoCalendarClearOutline, 
-      number: '15+', 
       label: 'Upcoming Events', 
       sublabel: 'This month',
       gradient: 'from-blue-500 to-cyan-500'
     },
     { 
       icon: IoNewspaperOutline, 
-      number: '8+', 
       label: 'News Articles', 
       sublabel: 'Latest updates',
       gradient: 'from-purple-500 to-pink-500'
     },
     { 
       icon: IoRibbonOutline, 
-      number: '5', 
       label: 'Featured', 
       sublabel: 'Highlights',
       gradient: 'from-amber-500 to-orange-500'
     },
     { 
       icon: IoPeopleCircle, 
-      number: '100%', 
       label: 'Engagement', 
       sublabel: 'Community',
       gradient: 'from-emerald-500 to-green-500'
@@ -1289,12 +1285,6 @@ if (loading) {
             {stat.label}
           </p>
           
-          <div className="flex items-baseline gap-1">
-            {/* Number: Responsive font sizes */}
-            <h3 className="text-xl md:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900">
-              {stat.number}
-            </h3>
-          </div>
 
           {/* Sublabel: Truncate on mobile to prevent layout breaking */}
           <p className="text-[10px] md:text-sm font-medium text-slate-500 leading-tight line-clamp-1 md:line-clamp-none">
