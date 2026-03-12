@@ -57,7 +57,7 @@ const date = new Date(); // Add this line!
 
           {/* Refined Title - Significantly Smaller & Tighter */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-6 tracking-tighter leading-none">
-            Katwanyaa <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-300 to-white/70">High School.</span>
+            Katwanyaa <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-300 to-white/70">Senior School.</span>
           </h1>
 
           {/* Expanded Rich Description */}
