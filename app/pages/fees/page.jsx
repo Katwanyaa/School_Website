@@ -26,7 +26,7 @@ import {
   FiBookOpen,
   FiTruck,
   FiHeart,
-  FiCheckmarkCircleOutline,
+  FiCheckCircle,
   FiShield,
   FiWifi,
   FiCoffee,
@@ -108,7 +108,7 @@ const FeeBreakdownCard = ({ item, onInfo }) => {
       'Activity': <FiHeart className="text-pink-600" />,
       'Application': <FiCreditCard className="text-indigo-600" />,
       'Registration': <FiUser className="text-cyan-600" />,
-      'Acceptance': <FiCheckmarkCircleOutline className="text-green-600" />,
+      'Acceptance': <FiCheckCircle className="text-green-600" />,
       'Development': <FiHome className="text-orange-600" />,
       'Deposit': <FiDollarSign className="text-teal-600" />
     };
