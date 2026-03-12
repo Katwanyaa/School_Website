@@ -106,7 +106,7 @@ const handleExplorePathways2 = () => {
       description: "As a Christian institution, we emphasize spiritual growth, moral values, and character development through religious education and community service.",
       highlight: "Values Education",
       details: ["Christian Teachings", "Character Building", "Community Service", "Retreats"],
-      metrics: ["Weekly worship", "Annual Retreats", "Thursday Devotion"],
+      metrics: ["Weekly Worship", "Annual Retreats", "Thursday Devotion"],
       icon: <FiHeart />
     },
     {
