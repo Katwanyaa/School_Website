@@ -57,7 +57,7 @@ const ModernStaffLeadership = () => {
   const [featuredStaff, setFeaturedStaff] = useState(null);
   const [academicsDeputy, setAcademicsDeputy] = useState(null);
   const [adminDeputy, setAdminDeputy] = useState(null);
-  const [teacher, setTeacher] = useState(null);
+  const [randomTeacher, setRandomTeacher] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -96,41 +96,75 @@ const ModernStaffLeadership = () => {
           setPrincipal(foundPrincipal);
           setFeaturedStaff(foundPrincipal);
 
- // Find all deputies
-const allDeputies = allStaff.filter(s => 
-  s.role?.toLowerCase().includes('deputy') || 
-  s.position?.toLowerCase().includes('deputy')
-);
+          // Find all deputies
+          const allDeputies = allStaff.filter(s => 
+            s.role?.toLowerCase().includes('deputy') || 
+            s.position?.toLowerCase().includes('deputy')
+          );
 
-// Academics Deputy - based on position containing "academics"
-const foundAcademicsDeputy = allDeputies.find(s => 
-  s.position?.toLowerCase().includes('academics')
-);
+          // Academics Deputy - based on position containing "academics"
+          const foundAcademicsDeputy = allDeputies.find(s => 
+            s.position?.toLowerCase().includes('academics')
+          );
 
-// Administration Deputy - based on position containing "admin" or "administration"
-const foundAdminDeputy = allDeputies.find(s => 
-  s.position?.toLowerCase().includes('admin') || 
-  s.position?.toLowerCase().includes('administration')
-);
-
-
-
+          // Administration Deputy - based on position containing "admin" or "administration"
+          const foundAdminDeputy = allDeputies.find(s => 
+            s.position?.toLowerCase().includes('admin') || 
+            s.position?.toLowerCase().includes('administration')
+          );
 
           setAcademicsDeputy(foundAcademicsDeputy || null);
           setAdminDeputy(foundAdminDeputy || null);
 
-          // 3. Find Mr. Denis Kanzi (Teacher - id: 4)
-          const denisKanzi = allStaff.find(s => s.id === 4);
+          // 3. Find a random teacher from teaching staff (excluding principals and deputies)
+          const teachingStaff = allStaff.filter(s => {
+            const role = s.role?.toLowerCase() || '';
+            const position = s.position?.toLowerCase() || '';
+            
+            // Include if they are a teacher or teaching staff
+            const isTeacher = role.includes('teacher') || 
+                             role.includes('teaching') || 
+                             position.includes('teacher') ||
+                             position.includes('teaching');
+            
+            // Exclude principals and deputies
+            const isLeadership = role.includes('principal') || 
+                                role.includes('deputy') || 
+                                position.includes('principal') ||
+                                position.includes('deputy');
+            
+            return isTeacher && !isLeadership;
+          });
+
+          // Also include any staff that might be teachers but not caught by the filter
+          const otherPotentialTeachers = allStaff.filter(s => {
+            if (teachingStaff.includes(s)) return false;
+            
+            const id = s.id;
+            // Include by ID if they're known teachers (ids 4, 5, 6, etc. - adjust based on your data)
+            return [4, 5, 6, 7, 8, 9, 10].includes(id);
+          });
+
+          const allTeachers = [...teachingStaff, ...otherPotentialTeachers];
           
-          if (denisKanzi) {
-            setTeacher(denisKanzi);
+          if (allTeachers.length > 0) {
+            // Select a random teacher
+            const randomIndex = Math.floor(Math.random() * allTeachers.length);
+            setRandomTeacher(allTeachers[randomIndex]);
           } else {
-            // Fallback: find any teacher
-            const anyTeacher = allStaff.find(s => 
-              s.role?.toLowerCase().includes('teacher') || 
-              s.position?.toLowerCase().includes('teacher')
+            // Fallback: find any staff member that's not principal or deputies
+            const nonLeadershipStaff = allStaff.filter(s => 
+              s.id !== foundPrincipal?.id && 
+              s.id !== foundAcademicsDeputy?.id && 
+              s.id !== foundAdminDeputy?.id
             );
-            setTeacher(anyTeacher || null);
+            
+            if (nonLeadershipStaff.length > 0) {
+              const randomIndex = Math.floor(Math.random() * nonLeadershipStaff.length);
+              setRandomTeacher(nonLeadershipStaff[randomIndex]);
+            } else {
+              setRandomTeacher(null);
+            }
           }
 
         } else {
@@ -249,7 +283,7 @@ const foundAdminDeputy = allDeputies.find(s =>
 
   <div className="space-y-1 text-center">
     <h3 className="text-lg font-black text-slate-900 tracking-tight">
-      Fetching our Fauculty
+      Fetching our Faculty
     </h3>
     <p className="text-sm font-bold text-slate-500 animate-pulse">
       Please wait a moment...
@@ -502,7 +536,7 @@ const foundAdminDeputy = allDeputies.find(s =>
             </div>
           </div>
 
-          {/* ========== SUB-CARD SIDEBAR - 4 CARDS: Principal + Academics Deputy + Admin Deputy + Denis Kanzi ========== */}
+          {/* ========== SUB-CARD SIDEBAR - 4 CARDS: Principal + Academics Deputy + Admin Deputy + Random Teacher ========== */}
           <div className="lg:col-span-4 space-y-3 sm:space-y-4 md:space-y-6 mt-4 sm:mt-5 md:mt-6 lg:mt-0">
             
             {/* 1. PRINCIPAL CARD - Mr. David Muange */}
@@ -661,24 +695,24 @@ const foundAdminDeputy = allDeputies.find(s =>
               </button>
             )}
 
-            {/* 4. TEACHER CARD - Mr. Denis Kanzi - ALWAYS SHOW ON ALL SCREEN SIZES */}
-            {teacher && (
+            {/* 4. RANDOM TEACHER CARD - Randomly selected from teaching staff */}
+            {randomTeacher && (
               <button
-                onClick={() => handleStaffClick(teacher)}
+                onClick={() => handleStaffClick(randomTeacher)}
                 className={`w-full group relative bg-white rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 shadow border-2 ${
-                  featuredStaff?.id === teacher.id ? 'border-green-500' : 'border-slate-100'
+                  featuredStaff?.id === randomTeacher.id ? 'border-green-500' : 'border-slate-100'
                 } hover:border-green-300 hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 text-left overflow-hidden`}
               >
                 <div className="flex items-start gap-2.5 sm:gap-3 md:gap-4">
                   <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 flex-shrink-0 rounded-lg sm:rounded-xl overflow-hidden">
-                    {teacher.image ? (
+                    {randomTeacher.image ? (
                       <img
-                        src={getImageUrl(teacher.image)}
-                        alt={teacher.name}
+                        src={getImageUrl(randomTeacher.image)}
+                        alt={randomTeacher.name}
                         className="w-full h-full object-cover object-top group-hover:scale-100 transition-transform duration-500"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacher.name)}&background=10b981&color=fff&bold=true&size=128`;
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(randomTeacher.name)}&background=10b981&color=fff&bold=true&size=128`;
                         }}
                       />
                     ) : (
@@ -690,19 +724,19 @@ const foundAdminDeputy = allDeputies.find(s =>
                   <div className="flex-grow min-w-0">
                     <div className="flex items-center justify-between mb-1 sm:mb-2">
                       <span className="px-2 sm:px-2.5 md:px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest rounded-full">
-                        {teacher.role || 'Teaching Staff'}
+                        {randomTeacher.role || 'Teaching Staff'}
                       </span>
-                      {featuredStaff?.id === teacher.id && (
+                      {featuredStaff?.id === randomTeacher.id && (
                         <span className="flex items-center gap-1 text-green-600 text-[9px] sm:text-[10px] md:text-xs font-bold">
                           <FiCheck className="text-xs" /> Viewing
                         </span>
                       )}
                     </div>
                     <h3 className="font-bold text-slate-900 group-hover:text-green-600 transition-colors truncate text-sm sm:text-base md:text-lg">
-                      {teacher.name}
+                      {randomTeacher.name}
                     </h3>
                     <p className="text-slate-500 text-xs md:text-sm mt-0.5 sm:mt-1 truncate">
-                      {teacher.position || teacher.department}
+                      {randomTeacher.position || randomTeacher.department || 'Teaching Staff'}
                     </p>
                     <div className="flex items-center gap-1 text-[9px] sm:text-[10px] md:text-xs text-green-600 mt-1.5 sm:mt-2 md:mt-3 font-bold tracking-tighter">
                       View Profile <FiChevronRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
