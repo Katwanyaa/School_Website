@@ -18,7 +18,10 @@ import {
   FiArrowRight,
   FiBookOpen,
   FiMonitor,
-  FiActivity
+  FiActivity,
+  FiDollarSign,
+  FiCpu,
+  FiTree
 } from 'react-icons/fi';
 
 const ModernSchoolLayout = () => {
@@ -28,94 +31,94 @@ const ModernSchoolLayout = () => {
     router.push("/pages/admissions");
   };
 
-
-const handleExplorePathways2 = () => {
+  const handleExplorePathways2 = () => {
     router.push("/pages/apply-for-admissions");
   };
+
   const whyChooseUs = [
     {
-      title: "Academic Excellence",
+      title: "3rd Best School in Matungulu",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Consistently ranked among top-performing mixed schools in Machakos County, Matungulu subcounty with impressive KCSE results.",
-      metrics: "Top Performer Machakos",
+      description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
+      metrics: "Top Performer 2019",
       icon: <FiAward className="w-4 h-4" />
     },
     {
-      title: "Holistic Development",
+      title: "KShs 6M ICT Transformation",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Balancing academic rigor with spiritual growth, sports, music, drama, and leadership programs for well-rounded students.",
-      metrics: "Complete Education",
-      icon: <FiUsers className="w-4 h-4" />
+      description: "Only school in Machakos County to receive 50+ laptop donation from Angaza ICT Literacy Centre (2023) - KShs 6 million value.",
+      metrics: "50+ Laptops",
+      icon: <FiCpu className="w-4 h-4" />
     },
     {
-      title: "Christian Values",
+      title: "40% Cost Reduction",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Founded on strong Christian principles, nurturing students with moral integrity, discipline, and service to community.",
-      metrics: "Values-Based Education",
-      icon: <FiHeart className="w-4 h-4" />
+      description: "Pioneered LPG adoption with KShs 1.2M KCB funding (2022). Reduced kitchen expenses from KShs 700K to KShs 420K per term.",
+      metrics: "KShs 280K Savings",
+      icon: <FiDollarSign className="w-4 h-4" />
     },
     {
-      title: "School Facilities",
+      title: "Environmental Conservation",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Well-equipped science laboratories, computer labs, library, and serene learning environment in Matungulu's beautiful landscape.",
-      metrics: "Premier Infrastructure",
-      icon: <FiMonitor className="w-4 h-4" />
+      description: "LPG adoption reduced firewood consumption, conserving trees in surrounding area and contributing to sustainability efforts.",
+      metrics: "Trees Conserved",
+      icon: <FiTree className="w-4 h-4" />
     }
   ];
 
   const schoolFeatures = [
     {
-      title: "Proven Academic Excellence",
+      title: "Academic Excellence Recognition",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Katwanyaa Senior School maintains outstanding academic performance with consistent high KCSE results. Our dedicated faculty ensures students excel in sciences, humanities, and technical subjects.",
-      highlight: "Academic Distinction",
-      details: ["Mean Score 5.0+", "University Transition", "Merit Awards", "Science Excellence"],
-      metrics: [" Alumini Success", "100+ Univ", "30+ Awards"],
+      description: "Named among top improving schools in Matungulu Sub-county (2024) with commendable KCSE results. Produced A- candidate in 2019.",
+      highlight: "3rd Best 2019",
+      details: ["A- Candidate", "Top Improver 2024", "University Placement", "Merit Awards"],
+      metrics: ["A- Grade", "Top 3", "Univ Bound"],
       icon: <FiAward />
     },
     {
-      title: "Experienced Teaching Faculty",
+      title: "975 Students Enrolled",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Our team comprises qualified, experienced educators with specialized training. Small teacher-student ratios ensure personalized attention and mentorship for every learner.",
-      highlight: "Qualified Educators",
-      details: ["TSC Certified", "Subject Specialists", "Mentorship", "Continuous Training"],
-      metrics: ["40 Teachers", "15+ Years", "100% TSC"],
+      description: "Currently serving 975 students as a mixed day and boarding school in Matungulu, Machakos County with consistent enrollment growth.",
+      highlight: "Growing Enrollment",
+      details: ["Mixed Day", "Boarding", "Co-curricular", "Guidance"],
+      metrics: ["975 Std", "Mixed", "Day/Board"],
       icon: <FiUsers />
     },
     {
-      title: "Modern Learning Environment",
+      title: "ICT Integration Leadership",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Located in scenic Matungulu, our campus features well-equipped science laboratories, computer labs, digital resources, and spacious classrooms.",
-      highlight: "Advanced Facilities",
-      details: ["Science Labs", "Computer Labs", "Library", "Sports Fields"],
-      metrics: ["Labs", " Comp Labs", "10,000 Books"],
-      icon: <FiMapPin />
+      description: "Received 50+ laptop donation (2023) from Angaza ICT Literacy Centre - the only school in Machakos County selected for this KShs 6M program.",
+      highlight: "KShs 6M Donation",
+      details: ["50+ Laptops", "1:1 Learning", "Digital Literacy", "ICT Labs"],
+      metrics: ["6M KShs", "50+ Devices", "Only School"],
+      icon: <FiMonitor />
     },
     {
-      title: "Comprehensive Co-curricular",
+      title: "KCB LPG Transformation",
       gradient: "from-blue-600 to-indigo-600",
-      description: "We offer diverse extracurricular activities including sports, music, drama, clubs, and leadership programs that develop talents and teamwork skills.",
-      highlight: "12+ Activities",
-      details: ["Athletics", "Ball Games", "Music & Drama", "Journalism"],
-      metrics: ["8 Sports", "12 Clubs", "Annual Events"],
+      description: "Beneficiary of KShs 1.2M KCB LPG financing (Sept 2022). Acquired 1,000kg LPG cylinder, reducing kitchen staff from 6 to 4.",
+      highlight: "KShs 1.2M Funding",
+      details: ["1,000kg Cylinder", "6 to 4 Cooks", "Faster Cooking", "Smoke-Free"],
+      metrics: ["1.2M KShs", "40% Less", "4 Cooks"],
       icon: <FiActivity />
     },
     {
       title: "Spiritual & Moral Formation",
       gradient: "from-blue-600 to-indigo-600",
-      description: "As a Christian institution, we emphasize spiritual growth, moral values, and character development through religious education and community service.",
+      description: "Christian values education with weekly worship, annual retreats, and Thursday devotions. Building character through faith-based approach.",
       highlight: "Values Education",
-      details: ["Christian Teachings", "Character Building", "Community Service", "Retreats"],
-      metrics: ["Weekly Worship", "Annual Retreats", "Thursday Devotion"],
+      details: ["Christian Teachings", "Character Building", "Thursday Devotion", "Retreats"],
+      metrics: ["Weekly Worship", "Retreats", "Devotion"],
       icon: <FiHeart />
     },
     {
-      title: "University & Career Preparation",
+      title: "University & Career Pathways",
       gradient: "from-blue-700 to-indigo-700",
-      description: "We provide comprehensive career guidance, university linkage programs, and mentorship partnerships with leading Kenyan universities for higher education success.",
-      highlight: "University Pathways",
-      details: ["Career Counseling", "University Tours", "Alumni Network", "Scholarships"],
-      metrics: ["10+ Partners", "Career Fairs", "Alumni Success"],
+      description: "Comprehensive career guidance and university preparation programs. Consistent placement of students to Kenyan universities with alumni success.",
+      highlight: "University Bound",
+      details: ["Career Counseling", "University Placement", "Alumni Network", "Guidance"],
+      metrics: ["Univ Bound", "Alumni", "Career"],
       isPremium: true,
       icon: <FiTrendingUp />
     }
@@ -168,9 +171,9 @@ const handleExplorePathways2 = () => {
               
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
                 {[
-                  { label: 'Students', value: '800+' },
-                  { label: 'Teachers', value: '25+' },
-                  { label: 'KCSE Mean Target', value: '6.0+' },
+                  { label: 'Students', value: '975' },
+                  { label: 'Teachers', value: '40+' },
+                  { label: 'KShs 6M', value: 'ICT Grant' },
                   { label: 'Motto', value: 'Education is Light' }
                 ].map((stat, idx) => (
                   <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -200,20 +203,20 @@ const handleExplorePathways2 = () => {
           </div>
         </section>
 
-        {/* --- WHY CHOOSE US SECTION --- */}
+        {/* --- WHY CHOOSE US SECTION - REAL ACHIEVEMENTS --- */}
         <section className="mb-16 sm:mb-20 md:mb-24">
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-3">
-              Why Choose Katwanyaa Senior School?
+              Katwanyaa's Real Achievements
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-              A premier mixed day and boarding school committed to academic excellence and holistic development
+              Documented accomplishments from 2019-2024 at Katwanyaa Senior School, Matungulu
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {whyChooseUs.map((item, idx) => (
-              <div key={idx} className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm  transition-all duration-300">
+              <div key={idx} className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg">
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white mb-4 shadow-lg`}>
                   {item.icon}
                 </div>
@@ -229,14 +232,14 @@ const handleExplorePathways2 = () => {
           </div>
         </section>
 
-        {/* --- SCHOOL FEATURES: BENTO GRID --- */}
+        {/* --- SCHOOL FEATURES: BENTO GRID WITH REAL DATA --- */}
         <section>
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-3">
               Our Educational Pillars
             </h3>
             <p className="text-slate-600 text-sm sm:text-base">
-              Building academic excellence, strong character, and future-ready skills at Katwanyaa Senior School
+              Building on real achievements at Katwanyaa Senior School
             </p>
           </div>
 
@@ -250,7 +253,7 @@ const handleExplorePathways2 = () => {
                   key={index} 
                   className={`${spans[index] || "md:col-span-2"} relative overflow-hidden ${
                     isDark ? 'bg-blue-900 text-white' : 'bg-white text-slate-900'
-                  } border ${isDark ? 'border-blue-800' : 'border-slate-200'} rounded-2xl p-5  shadow-sm`}
+                  } border ${isDark ? 'border-blue-800' : 'border-slate-200'} rounded-2xl p-5 shadow-sm`}
                 >
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-[0.03] rounded-bl-full`}></div>
                   
@@ -289,7 +292,7 @@ const handleExplorePathways2 = () => {
                       <div className="mt-4 flex items-center justify-between border-t border-blue-800 pt-4">
                         <button 
                           onClick={handleExplorePathways2} 
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-[9px] font-black uppercase tracking-wider transition-all shadow-lg active:scale-95"
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[9px] font-black uppercase tracking-wider transition-all shadow-lg active:scale-95"
                         >
                           Apply Now
                           <FiArrowRight size={12} />
@@ -328,11 +331,38 @@ const handleExplorePathways2 = () => {
           <div className="mt-8 text-center">
             <button
               onClick={handleExplorePathways}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-200 "
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95"
             >
               Apply for Admissions
               <FiArrowRight size={14} />
             </button>
+          </div>
+        </section>
+
+        {/* Achievements Summary */}
+        <section className="mt-16">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
+            <h4 className="text-sm font-black text-blue-800 mb-3">📋 Verified Achievements (2019-2024):</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="bg-white p-3 rounded-xl border border-blue-100">
+                <p className="text-xs font-bold">🏆 3rd Best Public School in Matungulu Sub-county (2019) - A- candidate</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl border border-blue-100">
+                <p className="text-xs font-bold">💻 KShs 6M ICT Donation - 50+ laptops from Angaza Centre (2023) - Only school in Machakos</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl border border-blue-100">
+                <p className="text-xs font-bold">💰 KShs 1.2M KCB LPG Funding (2022) - 40% cost reduction (700K → 420K per term)</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl border border-blue-100">
+                <p className="text-xs font-bold">975 Students enrolled - Mixed day & boarding</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl border border-blue-100">
+                <p className="text-xs font-bold"> Environmental Conservation - Reduced firewood usage, staff from 6 to 4 cooks</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl border border-blue-100">
+                <p className="text-xs font-bold">Top Improving School in KCSE (2024) - Matungulu Sub-county</p>
+              </div>
+            </div>
           </div>
         </section>
 
