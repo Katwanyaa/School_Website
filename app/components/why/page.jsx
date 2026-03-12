@@ -33,7 +33,7 @@ const ModernSchoolLayout = () => {
   // School images array for carousel
   const schoolImages = [
     { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Building" },
-    { src: "/hero/katz1.jpeg", alt: "Katwanyaa Senior School - Students" },
+    { src: "/bg/9.jpeg", alt: "Katwanyaa Senior School - Students" },
     { src: "/hero/katz8.jpeg", alt: "Katwanyaa Senior School - Classroom" },
     { src: "/hero/katz5.jpeg", alt: "Katwanyaa Senior School - Sports" }
   ];
@@ -62,36 +62,36 @@ const ModernSchoolLayout = () => {
     router.push("/pages/apply-for-admissions");
   };
 
-  const whyChooseUs = [
-    {
-      title: "3rd Best School in Matungulu",
-      gradient: "from-blue-600 to-indigo-600",
-      description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
-      metrics: "Top Performer 2019",
-      icon: <FiAward className="w-4 h-4" />
-    },
-    {
-      title: "KShs 6M ICT Transformation",
-      gradient: "from-blue-600 to-indigo-600",
-      description: "Only school in Machakos County to receive 50+ laptop donation from Angaza ICT Literacy Centre (2023) - KShs 6 million value.",
-      metrics: "50+ Laptops",
-      icon: <FiCpu className="w-4 h-4" />
-    },
-    {
-      title: "40% Cost Reduction",
-      gradient: "from-blue-600 to-indigo-600",
-      description: "Pioneered LPG adoption with KShs 1.2M KCB funding (2022). Reduced kitchen expenses from KShs 700K to KShs 420K per term.",
-      metrics: "KShs 280K Savings",
-      icon: <FiDollarSign className="w-4 h-4" />
-    },
-    {
-      title: "Environmental Conservation",
-      gradient: "from-blue-600 to-indigo-600",
-      description: "LPG adoption reduced firewood consumption, conserving trees in surrounding area and contributing to sustainability efforts.",
-      metrics: "Trees Conserved",
-      icon: <FiTree className="w-4 h-4" />
-    }
-  ];
+ const whyChooseUs = [
+  {
+    title: "3rd Best School in Matungulu",
+    gradient: "from-blue-600 to-indigo-600",
+    description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
+    metrics: "Top Performer 2019",
+    icon: <FiAward className="w-4 h-4" />
+  },
+  {
+    title: "KShs 6M ICT Transformation",
+    gradient: "from-blue-600 to-indigo-600",
+    description: "Only school in Machakos County to receive 50+ laptop donation from Angaza ICT Literacy Centre (2023) - KShs 6 million value.",
+    metrics: "50+ Laptops",
+    icon: <FiCpu className="w-4 h-4" />
+  },
+  {
+    title: "40% Cost Reduction",
+    gradient: "from-blue-600 to-indigo-600",
+    description: "Pioneered LPG adoption with KShs 1.2M KCB funding (2022). Reduced kitchen expenses from KShs 700K to KShs 420K per term.",
+    metrics: "KShs 280K Savings",
+    icon: <FiDollarSign className="w-4 h-4" />
+  },
+  {
+    title: "Environmental Conservation",
+    gradient: "from-blue-600 to-indigo-600",
+    description: "LPG adoption reduced firewood consumption, conserving trees in surrounding area and contributing to sustainability efforts.",
+    metrics: "Trees Conserved",
+    icon: <FiTree className="w-4 h-4" />
+  }
+];
 
   const schoolFeatures = [
     {
