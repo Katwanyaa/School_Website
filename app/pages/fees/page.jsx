@@ -479,7 +479,7 @@ const router = useRouter();
                   School <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-purple-400">Fees</span>
                 </h1>
                 <p className="text-slate-400 text-sm sm:text-lg mt-2 font-medium max-w-2xl">
-                  Transparent fee structure for all programs at Katwanyaa Senior School.
+                  Transparent fee structure for all boarders and day scholars at Katwanyaa Senior School
                 </p>
               </div>
               
