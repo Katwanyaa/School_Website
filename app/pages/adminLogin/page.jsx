@@ -1138,7 +1138,7 @@ const handlePasswordAfterVerification = async () => {
   ];
 
   const systemMetrics = [
-    { label: "Manage Students", value: "1000+", icon: <Users className="w-4 h-4" /> },
+    { label: "Manage Students", value: "700+", icon: <Users className="w-4 h-4" /> },
     { label: "School Status", value: "Online", icon: <Server className="w-4 h-4" /> },
     { label: "Manage Events", value: "12", icon: <Shield className="w-4 h-4" /> },
   ];
@@ -1601,7 +1601,7 @@ const handlePasswordAfterVerification = async () => {
                   <div className="flex items-center gap-2 sm:gap-3">
                     <Globe className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
                     <p className="text-xs text-slate-500 font-medium text-center sm:text-left">
-                      Data Center: Matungulu, Machakos
+                    Matungulu, Machakos
                     </p>
                   </div>
                   <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6">

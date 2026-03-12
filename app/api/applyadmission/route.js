@@ -676,7 +676,7 @@ async function sendApplicantConfirmation(toEmail, applicantName, applicationNumb
               <h3 class="school-info-title">About ${SCHOOL_NAME}</h3>
               <p class="school-info-text">
                 ${SCHOOL_NAME} is a Public Girl's Boarding School located in ${SCHOOL_LOCATION}. 
-                We provide quality education to 1K+ students through the 8-4-4 and CBC curriculum system. 
+                We provide quality education to 700+ students through the 8-4-4 and CBC curriculum system. 
                 Our motto is "<strong>${SCHOOL_MOTTO}</strong>".
               </p>
             </div>

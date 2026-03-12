@@ -6,9 +6,9 @@ import Link from "next/link";
 
 export default function AboutPage() {
   const stats = [
-    { icon: <Users className="w-5 h-5" />, label: "Students", value: "1200+" },
+    { icon: <Users className="w-5 h-5" />, label: "Students", value: "700+" },
     { icon: <BookOpen className="w-5 h-5" />, label: "Curriculums", value: "12" },
-    { icon: <Trophy className="w-5 h-5" />, label: "Awards", value: "45" },
+    { icon: <Trophy className="w-5 h-5" />, label: "Awards", value: "45+" },
 { icon: <ShieldCheck className="w-5 h-5" />, label: "Completion Rate", value: "88%" },
   ];
 
@@ -51,7 +51,7 @@ const date = new Date(); // Add this line!
               <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
             </span>
             <span className="text-[10px] font-black tracking-[0.3em] text-orange-200 uppercase">
-           Registration Open • {new Date().getFullYear()} Academic Year      </span>
+           Registration Open • {new Date().getFullYear()} Academic Year     </span>
           </div>
 
           {/* Refined Title - Significantly Smaller & Tighter */}

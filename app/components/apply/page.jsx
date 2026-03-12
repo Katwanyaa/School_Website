@@ -94,7 +94,7 @@ const PortalHeader = ({ stats = { today: 45 }, refreshing = false, fetchEvents =
                       bg-gradient-to-r from-blue-800/40 to-indigo-800/40 backdrop-blur-sm 
                       rounded-full border border-white/10">
                       <span className="text-xs xs:text-sm font-bold text-cyan-200 tracking-wide">
-                        🚀 Education is Light
+                        Education is Light
                       </span>
                     </div>
                   </div>
@@ -123,7 +123,7 @@ const PortalHeader = ({ stats = { today: 45 }, refreshing = false, fetchEvents =
     <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 
                     rounded-full border-2 border-orange-800 bg-white/25 backdrop-blur-sm 
                     flex items-center justify-center text-[10px] xs:text-xs font-black text-white z-[11]">
-      1k+
+      700+
     </div>
   </div>
   
@@ -131,7 +131,7 @@ const PortalHeader = ({ stats = { today: 45 }, refreshing = false, fetchEvents =
   <div className="flex flex-col min-w-0">
     <div className="flex items-center gap-1 xs:gap-1.5">
       <span className="text-[11px] xs:text-sm font-black text-white tracking-tight truncate uppercase">
-        Join 1k+ Successful students
+        Join 700+ Successful students
       </span>
       <TrendingUp size={12} className="xs:size-4 text-emerald-400 flex-shrink-0" />
     </div>
