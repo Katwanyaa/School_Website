@@ -18,6 +18,7 @@ const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Education is Light';
 const CONTACT_PHONE = '0710894145';
 const SCHOOL_EMAIL = 'katzict@gmail.com';
+const CONTACT_EMAIL = 'katzict@gmail.com';
 
 // ====================================================================
 // UTILITY FUNCTIONS
