@@ -726,7 +726,7 @@ async function sendContactConfirmation(toEmail, name, subject, referenceNumber) 
         <div class="container">
           <!-- HEADER -->
           <div class="header">
-            <h1>📞 ${SCHOOL_NAME}</h1>
+            <h1> ${SCHOOL_NAME}</h1>
             <p>${SCHOOL_LOCATION}</p>
             <p class="header-subtitle">${SCHOOL_MOTTO}</p>
             <div class="badge">Contact Form Received</div>
