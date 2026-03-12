@@ -55,7 +55,7 @@ const handleExplorePathways2 = () => {
       icon: <FiHeart className="w-4 h-4" />
     },
     {
-      title: "Modern Facilities",
+      title: "School Facilities",
       gradient: "from-blue-600 to-indigo-600",
       description: "Well-equipped science laboratories, computer labs, library, and serene learning environment in Matungulu's beautiful landscape.",
       metrics: "Premier Infrastructure",
@@ -69,8 +69,8 @@ const handleExplorePathways2 = () => {
       gradient: "from-blue-600 to-indigo-600",
       description: "Katwanyaa Senior School maintains outstanding academic performance with consistent high KCSE results. Our dedicated faculty ensures students excel in sciences, humanities, and technical subjects.",
       highlight: "Academic Distinction",
-      details: ["Mean Score 7.5+", "University Transition", "Merit Awards", "Science Excellence"],
-      metrics: ["85% KCSE", "100+ Univ", "30 Awards"],
+      details: ["Mean Score 5.0+", "University Transition", "Merit Awards", "Science Excellence"],
+      metrics: [" Alumini Success", "100+ Univ", "30+ Awards"],
       icon: <FiAward />
     },
     {
@@ -87,8 +87,8 @@ const handleExplorePathways2 = () => {
       gradient: "from-blue-600 to-indigo-600",
       description: "Located in scenic Matungulu, our campus features well-equipped science laboratories, computer labs, digital resources, and spacious classrooms.",
       highlight: "Advanced Facilities",
-      details: ["4 Science Labs", "2 Computer Labs", "Library", "Sports Fields"],
-      metrics: ["4 Labs", "2 Comp Labs", "10,000 Books"],
+      details: ["Science Labs", "Computer Labs", "Library", "Sports Fields"],
+      metrics: ["Labs", " Comp Labs", "10,000 Books"],
       icon: <FiMapPin />
     },
     {
@@ -213,7 +213,7 @@ const handleExplorePathways2 = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {whyChooseUs.map((item, idx) => (
-              <div key={idx} className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div key={idx} className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm  transition-all duration-300">
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white mb-4 shadow-lg`}>
                   {item.icon}
                 </div>
@@ -250,9 +250,9 @@ const handleExplorePathways2 = () => {
                   key={index} 
                   className={`${spans[index] || "md:col-span-2"} relative overflow-hidden ${
                     isDark ? 'bg-blue-900 text-white' : 'bg-white text-slate-900'
-                  } border ${isDark ? 'border-blue-800' : 'border-slate-200'} rounded-2xl p-5 group hover:border-blue-400 transition-all duration-300 shadow-sm`}
+                  } border ${isDark ? 'border-blue-800' : 'border-slate-200'} rounded-2xl p-5  shadow-sm`}
                 >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-[0.03] group-hover:opacity-10 transition-opacity rounded-bl-full`}></div>
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-[0.03] rounded-bl-full`}></div>
                   
                   <div className="relative z-10 flex flex-col h-full">
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center text-white shadow-lg mb-4`}>
@@ -289,7 +289,7 @@ const handleExplorePathways2 = () => {
                       <div className="mt-4 flex items-center justify-between border-t border-blue-800 pt-4">
                         <button 
                           onClick={handleExplorePathways2} 
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[9px] font-black uppercase tracking-wider transition-all shadow-lg active:scale-95"
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-[9px] font-black uppercase tracking-wider transition-all shadow-lg active:scale-95"
                         >
                           Apply Now
                           <FiArrowRight size={12} />
@@ -328,7 +328,7 @@ const handleExplorePathways2 = () => {
           <div className="mt-8 text-center">
             <button
               onClick={handleExplorePathways}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-200 "
             >
               Apply for Admissions
               <FiArrowRight size={14} />
