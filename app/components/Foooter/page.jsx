@@ -190,13 +190,15 @@ export default function ModernFooter() {
     }
   ];
 
-  // Achievements
-  const achievements = [
-    'Top Performing School in Matungulu Machakos County',
-    'Excellence in Science & Mathematics',
-    '60% University Placement Rate',
-    'Sports Excellence Award 2023',
-  ];
+// Achievements
+const achievements = [
+  '3rd Best Public School in Matungulu Sub-county (2019) - Produced A- candidate',
+  'Top Improving School in KCSE (2024) - Matungulu Sub-county',
+  'KShs 6 Million ICT Donation (2023) - 50+ laptops from Angaza Centre',
+  '40% Cost Reduction (2022) - LPG adoption with KCB KShs 1.2M funding',
+  '975 Students Enrolled - Mixed day & boarding',
+  'Consistent University Placement - Kenyan universities'
+];
 
   return (
     <footer className="w-full  bg-slate-900 text-white">
@@ -232,7 +234,7 @@ export default function ModernFooter() {
               {/* Description */}
               <p className="text-gray-300 text-sm sm:text-base font-normal leading-relaxed break-words max-w-prose">
                 A County learning institution in Matungulu Machakos, dedicated to academic excellence, 
-                holistic development, and nurturing future leaders through quality education since 1990.
+                holistic development, and nurturing future leaders through quality education since 1976.
               </p>
 
               {/* Contact List */}
@@ -461,7 +463,7 @@ export default function ModernFooter() {
               <div className="flex items-center justify-center gap-2 mt-3 flex-wrap">
                 <span>Empowering Future Leaders with</span>
                 <span className="text-lg">❤️</span>
-                <span>since 1995..Education is Light</span>
+                <span>since 1976..Education is Light</span>
               </div>
 <div className="mt-12 py-6 border-t border-white/10">
   <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4">

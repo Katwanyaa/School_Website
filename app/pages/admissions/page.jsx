@@ -1439,7 +1439,7 @@ const VisionMissionSection = ({ vision, mission, motto, videoTour, videoType, vi
             <div className="pt-4">
               <div className="flex items-center gap-2 text-emerald-600">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-                <span className="text-[10px] font-black uppercase tracking-wider">Est. 1985 • Excellence Since</span>
+                <span className="text-[10px] font-black uppercase tracking-wider">Est. 1976 • Excellence Since</span>
               </div>
             </div>
           </div>

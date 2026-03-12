@@ -85,7 +85,7 @@ const PortalHeader = ({ stats = { today: 45 }, refreshing = false, fetchEvents =
                   {/* Subtitle - Increased font size */}
                   <p className="text-blue-100/90 mt-2 xs:mt-3 text-sm xs:text-base sm:text-lg font-medium max-w-2xl leading-relaxed">
                     Secure digital gateway for student applications and admission coordination. 
-                    Excellence in education since 1995.
+                    Excellence in education since 1976.
                   </p>
 
                   {/* Motto Section */}

@@ -62,7 +62,7 @@ const date = new Date(); // Add this line!
           {/* Expanded Rich Description */}
           <div className="max-w-3xl mx-auto space-y-6 mb-12">
             <p className="text-sm md:text-base text-slate-200 font-medium leading-relaxed mb-8">
-              Since 1998, a cornerstone of <span className="text-amber-400">academic distinction</span>, 
+              Since 1976, a cornerstone of <span className="text-amber-400">academic distinction</span>, 
               crafting a holistic pathway for future  leaders.
             </p>
 
@@ -576,7 +576,7 @@ Katz        </div>
                 </div>
                 <h5 className="font-black text-slate-900 text-sm uppercase">Founded</h5>
               </div>
-              <p className="text-slate-700 font-medium text-sm sm:text-base">Est. 1985</p>
+              <p className="text-slate-700 font-medium text-sm sm:text-base">Est. 1976</p>
               <p className="text-xs text-slate-500 mt-1">35+ Years of Excellence</p>
             </div>
           </div>
