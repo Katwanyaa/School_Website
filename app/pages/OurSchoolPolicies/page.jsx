@@ -453,7 +453,7 @@ export default function TermsAndConditions() {
           <div className="text-center mt-8">
             <p className="text-xs text-slate-500">
               © 2024 Katwanyaa Senior School. All rights reserved. 
-              <span className="block mt-1">For queries, contact: principal@katwanyaa.sc.ke | Tel: +254 712 345 678</span>
+              <span className="block mt-1">For queries, contact: katzict@gmail.com | Tel: +254 710 894 145</span>
             </p>
           </div>
         </div>
