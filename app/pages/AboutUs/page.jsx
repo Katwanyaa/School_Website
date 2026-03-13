@@ -118,7 +118,7 @@ const date = new Date(); // Add this line!
     {stats.map((stat, idx) => (
       <div 
         key={idx} 
-        className="relative bg-white rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-7 shadow-xl shadow-slate-900/5 border border-slate-100 flex flex-col items-start overflow-hidden transition-transform hover:-translate-y-1 duration-300"
+        className="relative bg-white rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-7 shadow-xl shadow-slate-900/5 border border-slate-100 flex flex-col items-start overflow-hidden"
       >
         {/* Subtle Background Accent - Scaled for mobile */}
         <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 bg-orange-50/50 rounded-bl-[2.5rem] sm:rounded-bl-[4rem] -z-0" />
@@ -254,7 +254,7 @@ Katz        </div>
     <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
       
     <div className="relative group px-2">
-  <div className="absolute -inset-2 bg-orange-100/50 rounded-[2.5rem] -rotate-1 -z-10 transition-transform group-hover:rotate-1  duration-500"></div>
+  <div className="absolute -inset-2 bg-orange-100/50 rounded-[2.5rem] -rotate-1 -z-10   duration-500"></div>
   
   <div className="relative overflow-hidden  aspect-square sm:aspect-video lg:aspect-square rounded-md shadow-2xl border border-orange-100/20">
     <Image
@@ -506,7 +506,7 @@ Katz        </div>
             href="https://www.google.com/maps/search/?api=1&query=Katwanyaa+High+School" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="w-full py-3 sm:py-4 bg-white text-orange-600 font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xl transition-transform hover:scale-105 flex items-center justify-center gap-2 uppercase tracking-wider"
+            className="w-full py-3 sm:py-4 bg-white text-orange-600 font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xl transition-transform hover:scale-100 flex items-center justify-center gap-2 uppercase tracking-wider"
           >
              Google Maps
             <ExternalLink size={16} />
