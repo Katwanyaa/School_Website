@@ -528,10 +528,6 @@ if (viewMode === 'grid') {
 
         {/* 3. Bento Grid: Hidden on mobile, replaced by a single minimalist line */}
         <div className="hidden sm:grid grid-cols-2 gap-3 mb-6">
-          <div className="flex items-center gap-2 p-2 rounded-2xl bg-slate-50 border border-slate-100/50 truncate">
-             <FiPhone className={roleStyle.iconColor} size={14} />
-             <span className="text-[11px] font-bold text-slate-700 truncate">{member.phone || 'No Phone'}</span>
-          </div>
           <div className="flex items-center gap-2 p-2 rounded-2xl bg-slate-50 border border-slate-100/50">
              <FiMail className={roleStyle.iconColor} size={14} />
              <span className="text-[11px] font-bold text-slate-700 uppercase">Email</span>
@@ -608,22 +604,7 @@ if (viewMode === 'grid') {
             </p>
           </div>
 
-          {/* Footer: Details & Action */}
-          <div className="flex items-center justify-between mt-auto">
-            <div className="flex items-center gap-3 text-xs text-slate-500">
-              {member.phone && (
-                <div className="flex items-center gap-1">
-                  <FiPhone className="text-slate-400" size={12} />
-                  <span className="font-semibold">{member.phone}</span>
-                </div>
-              )}
-            </div>
-            
-            <div className="flex items-center gap-1 text-blue-600 font-bold text-[11px] uppercase tracking-wider">
-              Contact
-              <FiArrowRight size={12} />
-            </div>
-          </div>
+        
         </div>
       </div>
     </div>
