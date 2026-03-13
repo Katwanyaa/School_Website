@@ -1005,7 +1005,7 @@ const handleLogout = () => {
 
           <div className="flex flex-col">
             <h1 className="text-lg md:text-xl font-black text-gray-900 tracking-tight leading-none uppercase italic">
-              Katwanyaa <span className="text-blue-600 group-hover:text-indigo-600 transition-colors">High</span>
+              Katwanyaa <span className="text-blue-600 group-hover:text-indigo-600 transition-colors">Senior</span>
             </h1>
             
             <div className="flex items-center gap-2 mt-1">

@@ -472,7 +472,7 @@ Katz        </div>
               <div>
                 <p className="text-orange-100 text-[9px] sm:text-xs uppercase font-black tracking-tighter mb-0.5 sm:mb-1 opacity-80">School Address</p>
                 <p className="text-white text-sm sm:text-base font-bold leading-snug sm:leading-relaxed">
-                  Katwanyaa High School, Matungulu, Machakos County
+                  Katwanyaa Senior School, Matungulu, Machakos County
                 </p>
               </div>
             </div>
@@ -520,7 +520,7 @@ Katz        </div>
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
             <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
-            About Katwanyaa High School
+            About Katwanyaa Senior School
           </h3>
         </div>
         
@@ -530,7 +530,7 @@ Katz        </div>
           <div className="bg-orange-50/50 rounded-2xl p-5 sm:p-6 border border-orange-100">
             <h4 className="text-sm sm:text-base font-black text-orange-600 uppercase tracking-wider mb-3">Overview</h4>
             <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-              Katwanyaa High School is a reputable public secondary school located in Matungulu Sub-county, Machakos County. The institution is committed to academic excellence and holistic student development in a conducive learning environment.
+              Katwanyaa Senior School is a reputable public secondary school located in Matungulu Sub-county, Machakos County. The institution is committed to academic excellence and holistic student development in a conducive learning environment.
             </p>
           </div>
 
@@ -604,7 +604,7 @@ Katz        </div>
                 Achievements
               </h5>
               <ul className="space-y-2">
-                {['High KCSE Performance', 'Sports Champions', 'Science Congress Winners'].map((item, i) => (
+                {['Good KCSE Performance', 'Sports Champions', 'Science And Mathematics Congress Winners'].map((item, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-700">
                     <span className="text-orange-500">★</span>
                     {item}
