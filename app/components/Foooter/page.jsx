@@ -82,14 +82,14 @@ export default function ModernFooter() {
     },
     {
       icon: SiLinkedin,
-      href: 'https://linkedin.com/school/katwanyaahighschool',
+      href: 'https://www.linkedin.com/in/katwanyaa-senior-school-8662113b7/',
       label: 'LinkedIn',
       color: '#0A66C2', // LinkedIn blue
       hoverColor: '#004182'
     },
     {
       icon: SiWhatsapp,
-      href: 'https://wa.me/254720123456',
+      href: 'https://wa.me/25471089415',
       label: 'WhatsApp',
       color: '#25D366', // WhatsApp green
       hoverColor: '#1DA851'

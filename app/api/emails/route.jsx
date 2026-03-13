@@ -162,15 +162,15 @@ const SCHOOL_WEBSITE = process.env.SCHOOL_WEBSITE || 'https://katwanyaa.vercel.a
 // Social Media Configuration
 const SOCIAL_MEDIA = {
   facebook: {
-    url: process.env.SCHOOL_FACEBOOK || 'https://facebook.com/katwanyaa-seniorschool',
+    url: process.env.SCHOOL_FACEBOOK || 'https://web.facebook.com/groups/414008468611340',
     color: '#1877F2',
   },
   youtube: {
-    url: process.env.SCHOOL_YOUTUBE || 'https://youtube.com/c/katwanyaaseniorschool',
+    url: process.env.SCHOOL_YOUTUBE || 'https://www.youtube.com/@A.I.C.-KATWANYAA-HIGH-SCHOOOL',
     color: '#FF0000',
   },
   linkedin: {
-    url: process.env.SCHOOL_LINKEDIN || 'https://linkedin.com/school/katwanyaa-senior',
+    url: process.env.SCHOOL_LINKEDIN || 'https://www.linkedin.com/in/katwanyaa-senior-school-8662113b7/',
     color: '#0A66C2',
   },
   twitter: {
