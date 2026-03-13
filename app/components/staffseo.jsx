@@ -691,7 +691,7 @@ className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 sm:bg-gradient-to-br sm:from-gray
           )}
         </div>
         <div className="flex items-center gap-1.5 text-[8px] sm:text-[10px] lg:text-xs text-gray-400">
-          <span className="whitespace-nowrap">Updated 2024</span>
+          <span className="whitespace-nowrap">Updated {new Date().getFullYear()}</span>
           <span className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-gray-300 rounded-full"></span>
           <span className="whitespace-nowrap">Katwanyaa Senior School</span>
         </div>
