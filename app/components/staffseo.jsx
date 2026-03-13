@@ -731,7 +731,7 @@ className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 sm:bg-gradient-to-br sm:from-gray
       {/* Meta Information */}
       <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-slate-400">
         <p className="text-[10px] sm:text-xs font-black uppercase tracking-tighter">
-          Excellence in Education
+        Education Is Light 
         </p>
         <div className="w-1 h-1 rounded-full bg-slate-200" />
         <p className="text-[10px] sm:text-xs font-black uppercase tracking-tighter">
