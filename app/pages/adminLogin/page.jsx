@@ -1460,7 +1460,7 @@ const handlePasswordAfterVerification = async () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      placeholder="admin@katwanyaahighschool.sc.ke"
+                      placeholder="adminKatz@gmail.com"
                       className="w-full pl-10 sm:pl-12 pr-4 sm:pr-6 py-3 sm:py-4 bg-slate-50 border-2 border-slate-200 rounded-xl sm:rounded-2xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 font-medium text-slate-900 placeholder-slate-400 text-sm sm:text-base"
                     />
                     <Mail className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />

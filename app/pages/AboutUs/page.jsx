@@ -494,8 +494,8 @@ Katz        </div>
               </div>
               <div>
                 <p className="text-orange-100 text-[9px] sm:text-xs uppercase font-black tracking-tighter mb-0.5 sm:mb-1 opacity-80">Email</p>
-                <p className="text-white text-sm sm:text-base font-bold">info@katwanyaa.sc.ke</p>
-                <p className="text-white/80 text-xs">admin@katwanyaa.sc.ke</p>
+                <p className="text-white text-sm sm:text-base font-bold">katzict@gmail.com</p>
+                <p className="text-white/80 text-xs">katzict@gmail.com</p>
               </div>
             </div>
           </div>

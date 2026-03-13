@@ -93,7 +93,7 @@ export default function ContactPage() {
     {
       id: 'student-affairs',
       name: 'Student Affairs',
-      email: 'affairs@maryimmaculate.sc.ke',
+      email: 'katzict@gmail.com',
       phone: '+254 720 123 458',
       description: 'Student welfare, discipline, counseling, and extracurricular activities. Building holistic students.',
       icon: <Users className="w-4 h-4" />,
@@ -104,7 +104,7 @@ export default function ContactPage() {
     {
       id: 'sports',
       name: 'Sports Department',
-      email: 'sports@maryimmaculate.sc.ke',
+      email: 'katzict@gmail.com',
       phone: '+254 720 123 459',
       description: 'Athletics, sports programs, competitions, and physical education. Developing champions.',
       icon: <Award className="w-4 h-4" />,

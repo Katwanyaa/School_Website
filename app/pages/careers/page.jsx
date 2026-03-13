@@ -630,10 +630,10 @@ return (
                       Send your CV, certificates, and cover letter to:
                     </p>
                     <a 
-                      href={`mailto:${job.contactEmail || 'careers@katwanyaa.sc.ke'}?subject=Job Application: ${job.jobTitle}`}
+                      href={`mailto:${job.contactEmail || 'katzict@gmail.com'}?subject=Job Application: ${job.jobTitle}`}
                       className="text-blue-600 font-medium hover:text-blue-800 text-sm sm:text-base break-all"
                     >
-                      {job.contactEmail || 'careers@katwanyaa.sc.ke'}
+                      {job.contactEmail || 'katzict@gmail.com'}
                     </a>
                   </div>
                   
@@ -1077,7 +1077,7 @@ return (
                   <FiMail className="text-blue-500 w-4 h-4 sm:w-5 sm:h-5" />
                   <div>
                     <p className="text-xs sm:text-sm font-bold text-slate-900">HR Email</p>
-                    <p className="text-[10px] sm:text-xs text-slate-500">careers@katwanyaa.sc.ke</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500">katzict@gmail.com</p>
                   </div>
                 </div>
 
@@ -1085,7 +1085,7 @@ return (
                   <FiPhone className="text-emerald-500 w-4 h-4 sm:w-5 sm:h-5" />
                   <div>
                     <p className="text-xs sm:text-sm font-bold text-slate-900">Contact</p>
-                    <p className="text-[10px] sm:text-xs text-slate-500">+254 712 345 678</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500">+254 710894145</p>
                   </div>
                 </div>
 

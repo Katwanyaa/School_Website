@@ -1658,7 +1658,7 @@ kjseaGrade: '',         // Changed from meanGrade
         </div>
         <div className="text-left md:text-center min-w-0">
           <p className="text-[8px] font-bold text-gray-400 uppercase tracking-tight">Admissions</p>
-          <p className="text-[11px] md:text-xs font-semibold text-gray-900">0712 345 678</p>
+          <p className="text-[11px] md:text-xs font-semibold text-gray-900">0710 894 145</p>
         </div>
       </div>
 
@@ -1669,7 +1669,7 @@ kjseaGrade: '',         // Changed from meanGrade
         </div>
         <div className="text-left md:text-center min-w-0 overflow-hidden">
           <p className="text-[8px] font-bold text-gray-400 uppercase tracking-tight">Email Support</p>
-          <p className="text-[11px] md:text-xs font-semibold text-gray-900 truncate">admissions@katwanyaa.ac.ke</p>
+          <p className="text-[11px] md:text-xs font-semibold text-gray-900 truncate">katzict@gmail.com</p>
         </div>
       </div>
 
