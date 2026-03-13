@@ -414,15 +414,7 @@ const StaffCard = ({ staff }) => {
               <span className="hidden sm:inline">Email</span>
             </a>
           )}
-          {staff.phone && (
-            <a 
-              href={`tel:${staff.phone}`} 
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium"
-            >
-              <FiPhone size={16} />
-              <span className="hidden sm:inline">Call</span>
-            </a>
-          )}
+
         </div>
 
         {/* Profile Button */}

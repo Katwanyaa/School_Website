@@ -494,14 +494,6 @@ className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 sm:bg-gradient-to-br sm:from-gray
               <FiMail size={18} className="hidden lg:block" />
             </a>
           )}
-          {staff.phone && (
-            <a href={`tel:${staff.phone}`} 
-               className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-green-50 rounded-lg sm:rounded-xl flex items-center justify-center text-green-600 hover:bg-green-100 transition-all hover:scale-110">
-              <FiPhone size={14} className="sm:hidden" />
-              <FiPhone size={16} className="hidden sm:block lg:hidden" />
-              <FiPhone size={18} className="hidden lg:block" />
-            </a>
-          )}
           <button                  onClick={() => setShowShareModal(true)}
  className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-purple-50 rounded-lg sm:rounded-xl flex items-center justify-center text-purple-600 hover:bg-purple-100 transition-all hover:scale-110">
 
@@ -695,15 +687,6 @@ className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 sm:bg-gradient-to-br sm:from-gray
               <FiMail size={16} className="hidden lg:block" />
               <span className="hidden sm:inline">{staff.email}</span>
               <span className="sm:hidden">Email</span>
-            </a>
-          )}
-          {staff.phone && (
-            <a href={`tel:${staff.phone}`} className="flex items-center gap-1 sm:gap-1.5 lg:gap-2 text-gray-600 hover:text-green-600 transition-colors text-[10px] sm:text-xs lg:text-sm">
-              <FiPhone size={12} className="sm:hidden" />
-              <FiPhone size={14} className="hidden sm:block lg:hidden" />
-              <FiPhone size={16} className="hidden lg:block" />
-              <span className="hidden sm:inline">{staff.phone}</span>
-              <span className="sm:hidden">Call</span>
             </a>
           )}
         </div>
