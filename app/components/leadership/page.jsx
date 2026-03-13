@@ -503,22 +503,7 @@ const ModernStaffLeadership = () => {
                           </div>
                         </div>
                         
-                        {featuredStaff?.phone && (
-                          <div className="flex items-center gap-2 md:gap-3">
-                            <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg sm:rounded-lg md:rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
-                              <FiPhone className="text-green-600 text-xs sm:text-xs md:text-sm" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-xs text-slate-500">Phone Number</p>
-                              <a 
-                                href={`tel:${featuredStaff.phone}`}
-                                className="text-slate-900 hover:text-blue-600 font-medium text-xs sm:text-xs md:text-sm truncate block"
-                              >
-                                {formatPhone(featuredStaff.phone)}
-                              </a>
-                            </div>
-                          </div>
-                        )}
+      
                       </div>
                     </div>
                   </div>
