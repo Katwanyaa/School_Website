@@ -397,15 +397,6 @@ const ModernStaffLeadership = () => {
                       <FiMapPin className="text-blue-400 w-3 h-3 sm:w-4 sm:h-4" />
                       {featuredStaff?.department || 'Administration'}
                     </span>
-                    {featuredStaff?.phone && (
-                      <>
-                        <span className="hidden sm:inline w-1 h-1 sm:w-1.5 sm:h-1.5 bg-blue-500 rounded-full"></span>
-                        <a href={`tel:${featuredStaff.phone}`} className="flex items-center gap-1.5 text-xs sm:text-sm md:text-base hover:text-white transition-colors">
-                          <FiPhone className="text-blue-400 w-3 h-3 sm:w-4 sm:h-4" />
-                          {formatPhone(featuredStaff.phone)}
-                        </a>
-                      </>
-                    )}
                   </div>
                 </div>
               </div>
