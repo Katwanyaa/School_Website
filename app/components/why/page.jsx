@@ -184,9 +184,9 @@ const whyChooseUs = [
               
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
                 {[
-                  { label: 'Students', value: '975' },
-                  { label: 'Teachers', value: '40+' },
-                  { label: 'KShs 6M', value: 'ICT Grant' },
+                  { label: 'Students', value: '800+' },
+                  { label: 'Teachers', value: '20+' },
+                  { label: 'KCSE Target', value: '6.0' },
                   { label: 'Motto', value: 'Education is Light' }
                 ].map((stat, idx) => (
                   <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
