@@ -102,7 +102,7 @@ const allTerms = [
     intro: "Comprehensive assessment system to monitor and evaluate student progress.",
     subSections: [
       { subTitle: "10.1. Continuous Assessment:", content: "Three CATs per term. End-term examinations each term. Form 4: Mock exams Terms 1 and 2." },
-      { subTitle: "10.2. Grading System:", content: "CATs: 30%, End-term: 70%. Minimum passing grade: D+. Promotion to next form requires passing all subjects." },
+      { subTitle: "10.2. Grading System:", content: "CATs: 40%, End-term: 60%. Minimum passing grade: C-. Promotion to next form requires passing all subjects." },
       { subTitle: "10.3. KCSE Preparation:", content: "Form 4 students: Special revision classes Saturday mornings. Past paper practice from Term 2." }
     ]
   },
