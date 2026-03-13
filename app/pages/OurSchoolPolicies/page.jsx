@@ -2,158 +2,156 @@
 
 import React, { useState } from "react";
 
-// Data for all terms and conditions with detailed descriptions for Katwanyaa Senior School
-
-
+// Updated rules for Katwanyaa High School (COVID-19 protocols removed)
 const allTerms = [
   { 
     id: 1,
-    title: "1. School Registration and Enrollment",
-    intro: "Katwanyaa Senior School maintains rigorous standards for student enrollment to ensure academic excellence and maintain our reputation as a leading educational institution.",
+    title: "1. Registration and Admission",
+    intro: "Katwanyaa High School maintains高标准 admission standards to ensure quality education and student success.",
     subSections: [
-      { subTitle: "1.1. Eligibility Criteria:", content: "Admission is open to students who have completed primary education (Class 8) and attained the minimum required KCPE score as determined by the school board annually." },
-      { subTitle: "1.2. Documentation Required:", content: "Original birth certificate, KCPE result slip, transfer letter (if applicable), medical records, and four passport-sized photographs must be submitted during registration." },
-      { subTitle: "1.3. Age Requirement:", content: "Students must be between 13-15 years at the time of admission to Form 1. Special consideration may be given for exceptional circumstances upon board review." }
+      { subTitle: "1.1. Entry Requirements:", content: "Admission to Form 1 requires a minimum KCPE score of 250 marks. Transfer students must present original leaving certificate and report from previous school." },
+      { subTitle: "1.2. Registration Documents:", content: "Original birth certificate, KCPE result slip, transfer letter, baptism card (optional), and 4 passport photos must be submitted on reporting day." },
+      { subTitle: "1.3. Reporting Day:", content: "Form 1 students report on the date specified in admission letter. Reporting time: 8:00 AM - 12:00 PM. Late reporting requires prior approval." }
     ]
   },
   { 
     id: 2,
-    title: "2. Academic Requirements and Expectations",
-    intro: "Katwanyaa Senior School is committed to academic excellence and expects students to maintain high standards of academic performance and conduct.",
+    title: "2. Academics and Class Attendance",
+    intro: "Academic excellence is the core mandate of Katwanyaa High School, and students must demonstrate commitment to their studies.",
     subSections: [
-      { subTitle: "2.1. Minimum Attendance:", content: "Students must maintain at least 85% attendance in all subjects. Medical certificates must be provided for any absence exceeding two days." },
-      { subTitle: "2.2. Academic Performance:", content: "Students must maintain a minimum grade of C- in all subjects. Those failing two or more subjects will be placed on academic probation with mandatory remedial classes." },
-      { subTitle: "2.3. Examination Rules:", content: "Strict adherence to KNEC examination rules during national exams. Any form of examination malpractice will result in immediate expulsion and blacklisting from national exams." }
+      { subTitle: "2.1. Attendance:", content: "Minimum class attendance: 90%. Any absence requires a written explanation from parent/guardian. Absence exceeding 3 days needs a doctor's note." },
+      { subTitle: "2.2. Academic Performance:", content: "Students must maintain a mean grade of C plain and above. Those scoring below D+ in two subjects attend mandatory holiday tuition." },
+      { subTitle: "2.3. Study Hours:", content: "Preps: Morning 5:30 AM - 6:30 AM, Evening 7:00 PM - 9:30 PM. No loitering during prep time. Silence must be observed in classrooms." }
     ]
   },
   { 
     id: 3,
-    title: "3. School Fees and Financial Obligations",
-    intro: "Timely payment of school fees is essential for the smooth operation of the school and continued access to educational resources.",
+    title: "3. Fee Structure and Payments",
+    intro: "School fees must be paid promptly to facilitate smooth school operations and resource availability.",
     subSections: [
-      { subTitle: "3.1. Fee Structure:", content: "School fees are payable in three installments: 40% in Term 1, 35% in Term 2, and 25% in Term 3. Fees include tuition, boarding, laboratory charges, and extracurricular activities." },
-      { subTitle: "3.2. Payment Deadlines:", content: "Fees must be paid within the first two weeks of each term. Students with outstanding fees after the third week will be sent home until payment is cleared." },
-      { subTitle: "3.3. Additional Charges:", content: "Extra charges apply for damage to school property, lost textbooks, and specialized activities. These must be settled before end of term." }
+      { subTitle: "3.1. Fee Payment:", content: "Fees payable in full by the second week of each term. Bank payments to Katwanyaa High School Account No: 0112876543210, Cooperative Bank." },
+      { subTitle: "3.2. Fee Breakdown:", content: "Term 1: KES 45,000, Term 2: KES 40,000, Term 3: KES 35,000. Includes tuition, boarding, meals, and examination fees." },
+      { subTitle: "3.3. Penalties:", content: "Late payment attracts a penalty of KES 500 per week. Students with fee balances will not receive end-term reports or be allowed to sit for exams." }
     ]
   },
   { 
     id: 4,
     title: "4. Code of Conduct and Discipline",
-    intro: "Katwanyaa Senior School maintains high standards of discipline to create a conducive learning environment for all students.",
+    intro: "Katwanyaa High School upholds strict discipline to create a conducive learning environment.",
     subSections: [
-      { subTitle: "4.1. School Uniform:", content: "Complete school uniform must be worn at all times during school hours. Uniform includes prescribed shoes, socks, tie, and badge. No alterations allowed." },
-      { subTitle: "4.2. Prohibited Items:", content: "Mobile phones, electronic devices, drugs, alcohol, tobacco products, weapons, and inappropriate literature are strictly prohibited on school premises." },
-      { subTitle: "4.3. Disciplinary Actions:", content: "Minor offenses: Detention. Moderate offenses: Manual work. Serious offenses: Suspension or expulsion depending on severity and frequency." }
+      { subTitle: "4.1. School Uniform:", content: "Full school uniform must be worn at all times: blue checked shirt, navy blue sweater, grey shorts/trousers, white socks, and black shoes. School tie and badge compulsory." },
+      { subTitle: "4.2. Prohibited Items:", content: "STRICTLY PROHIBITED: Mobile phones, smartphones, smartwatches, alcohol, cigarettes, bhang, weapons, playing cards, and inappropriate magazines." },
+      { subTitle: "4.3. Discipline Structure:", content: "Minor offenses: Manual work/counseling. Serious offenses: Suspension. Gross offenses: Expulsion (drugs, fighting, theft, vandalism)." }
     ]
   },
   { 
     id: 5,
-    title: "5. Boarding School Regulations",
-    intro: "As a boarding school, we provide structured residential facilities with specific rules to ensure safety and proper development.",
+    title: "5. Boarding and Accommodation",
+    intro: "As a fully boarding school, Katwanyaa provides structured residential facilities with clear guidelines.",
     subSections: [
-      { subTitle: "5.1. Dormitory Rules:", content: "Lights out at 9:30 PM. Morning wake-up at 5:00 AM. Dormitory inspection daily at 7:00 AM. No visitors in dormitories without permission." },
-      { subTitle: "5.2. Weekend Passes:", content: "Students may go home on weekends with written permission from parents/guardians. Must sign out and return by Sunday 6:00 PM." },
-      { subTitle: "5.3. Health and Hygiene:", content: "Daily showers mandatory. Bedding washed weekly. Regular room cleaning. Medical check-ups monthly." }
+      { subTitle: "5.1. Daily Routine:", content: "Wake up: 5:00 AM. Breakfast: 6:30 AM. Lunch: 1:00 PM. Supper: 6:30 PM. Lights out: 10:00 PM (Form 3-4), 9:30 PM (Form 1-2)." },
+      { subTitle: "5.2. Dormitory Rules:", content: "Beds made by 6:00 AM. Personal belongings locked in boxes. No food in dormitories. Cleaning roster strictly followed." },
+      { subTitle: "5.3. Visiting Days:", content: "Last Sunday of each term, 10:00 AM - 4:00 PM. Parents must sign visitor's book. No visiting on examination days." }
     ]
   },
   { 
     id: 6,
-    title: "6. Academic Resources and Facilities",
-    intro: "The school provides various academic resources to support student learning and development.",
+    title: "6. Movement and School Boundaries",
+    intro: "Student movement within and outside school is controlled for safety and accountability.",
     subSections: [
-      { subTitle: "6.1. Library Access:", content: "Library open Monday-Friday 7:30 AM to 6:00 PM, Saturday 8:00 AM to 1:00 PM. Maximum two books borrowed for two weeks." },
-      { subTitle: "6.2. Laboratory Usage:", content: "Science laboratories accessible during practical lessons and supervised study sessions. Strict safety protocols must be followed." },
-      { subTitle: "6.3. Computer Lab:", content: "Computer lab available for ICT lessons and research. Internet access filtered for educational purposes only." }
+      { subTitle: "6.1. School Compound:", content: "Students must remain within school bounds at all times. Leaving school requires written parental permission approved by Principal." },
+      { subTitle: "6.2. Half-Term Breaks:", content: "Half-term break: Thursday to Sunday. Students must sign out and indicate destination. Return by Sunday 5:00 PM." },
+      { subTitle: "6.3. Day Scholars:", content: "Day scholars (if any) must arrive by 7:30 AM and leave by 5:00 PM. No day scholars in dormitories." }
     ]
   },
   { 
     id: 7,
-    title: "7. Extracurricular Activities",
-    intro: "Participation in extracurricular activities is encouraged for holistic development of students.",
+    title: "7. Health and Medical Care",
+    intro: "Student health and wellness are prioritized with comprehensive medical support systems.",
     subSections: [
-      { subTitle: "7.1. Sports and Games:", content: "Mandatory participation in at least one sport. Training sessions Monday, Wednesday, Friday 4:00-6:00 PM. Inter-school competitions monthly." },
-      { subTitle: "7.2. Clubs and Societies:", content: "Each student must join at least two clubs. Club meetings every Tuesday and Thursday 4:00-5:30 PM." },
-      { subTitle: "7.3. Cultural Activities:", content: "Music, drama, and art competitions held each term. Participation in annual music festival mandatory." }
+      { subTitle: "7.1. School Dispensary:", content: "School nurse on duty 24/7. Minor ailments treated at school dispensary. Serious cases referred to Katwanyaa Health Centre." },
+      { subTitle: "7.2. Medical Checkups:", content: "Routine medical checkups conducted every term. Parents must provide updated medical history and allergy information." },
+      { subTitle: "7.3. Emergency Contacts:", content: "Parents notified immediately of serious illness/accident. Emergency contacts must be kept updated: Principal: 0710 894 145, Nurse: 0722 123 456." }
     ]
   },
   { 
     id: 8,
-    title: "8. Health and Safety Regulations",
-    intro: "Student health and safety are our top priorities with comprehensive policies in place.",
+    title: "8. Co-Curricular Activities",
+    intro: "Participation in co-curricular activities is mandatory for holistic student development.",
     subSections: [
-      { subTitle: "8.1. Medical Care:", content: "School nurse available 24/7. Serious cases referred to Katwanyaa Health Center. Parents notified immediately of any serious illness." },
-      { subTitle: "8.2. Emergency Procedures:", content: "Fire drills conducted monthly. Emergency evacuation plans displayed in all rooms. First aid kits in every classroom and dormitory." },
-      { subTitle: "8.3. COVID-19 Protocols:", content: "Masks mandatory in crowded areas. Hand sanitizers at all entrances. Temperature checks daily. Isolation room for suspected cases." }
+      { subTitle: "8.1. Sports:", content: "Every student must join at least one sport: football, volleyball, rugby, athletics, or handball. Sports days: Tuesday and Thursday 4:00-6:00 PM." },
+      { subTitle: "8.2. Clubs and Societies:", content: "Students choose minimum one club: Debate, Journalism, Science, Drama, Red Cross, or Christian Union. Meetings: Wednesday 4:00-5:30 PM." },
+      { subTitle: "8.3. Music and Drama:", content: "Music and drama festivals participation encouraged. Practice sessions: Saturday 9:00 AM - 12:00 PM." }
     ]
   },
   { 
     id: 9,
-    title: "9. Parent/Guardian Involvement",
-    intro: "We believe in strong partnership between school and parents for student success.",
+    title: "9. Examinations and Assessment",
+    intro: "Regular assessment ensures academic progress and KCSE readiness.",
     subSections: [
-      { subTitle: "9.1. Parent Meetings:", content: "PTA meetings held each term (second Saturday). Individual parent-teacher consultations available by appointment." },
-      { subTitle: "9.2. Communication:", content: "School newsletter monthly. Progress reports end of each term. Emergency contacts updated annually." },
-      { subTitle: "9.3. Visiting Days:", content: "Official visiting days: First Saturday of each month 9:00 AM - 4:00 PM. Special visits require prior approval." }
+      { subTitle: "9.1. Continuous Assessment:", content: "2 CATs per term. End-term examinations in Week 14. Form 3 and 4 have monthly mock examinations starting Term 2." },
+      { subTitle: "9.2. Examination Rules:", content: "NO cheating. Latecomers not admitted. Mobile phones strictly forbidden in exam rooms. KCSE rules apply to all internal exams." },
+      { subTitle: "9.3. KCSE Preparation:", content: "Form 4: Saturday morning tuition 8:00 AM - 12:00 PM. Holiday coaching for candidates: April and August holidays." }
     ]
   },
   { 
     id: 10,
-    title: "10. Examination and Assessment Policy",
-    intro: "Comprehensive assessment system to monitor and evaluate student progress.",
+    title: "10. Dress Code and Grooming",
+    intro: "Proper grooming reflects the discipline and identity of Katwanyaa High School.",
     subSections: [
-      { subTitle: "10.1. Continuous Assessment:", content: "Three CATs per term. End-term examinations each term. Form 4: Mock exams Terms 1 and 2." },
-      { subTitle: "10.2. Grading System:", content: "CATs: 40%, End-term: 60%. Minimum passing grade: C-. Promotion to next form requires passing all subjects." },
-      { subTitle: "10.3. KCSE Preparation:", content: "Form 4 students: Special revision classes Saturday mornings. Past paper practice from Term 2." }
+      { subTitle: "10.1. Hair Rules:", content: "Boys: Short, neat, above collar, no shaved lines. Girls: Natural hair, neatly combed, no extensions, no coloring. Dreadlocks not allowed." },
+      { subTitle: "10.2. Personal Effects:", content: "NO jewelry except simple watches. No makeup, nail polish, or cosmetics. No visible tattoos or piercings." },
+      { subTitle: "10.3. General Grooming:", content: "Nails short and clean. Uniforms clean and ironed. Shirts tucked in. Shoes polished daily." }
     ]
   },
   { 
     id: 11,
-    title: "11. Dress Code and Appearance",
-    intro: "Maintaining proper appearance is part of instilling discipline and pride in the school.",
+    title: "11. Library and Resource Center",
+    intro: "The school library provides essential resources to support academic work.",
     subSections: [
-      { subTitle: "11.1. Hair Regulations:", content: "Boys: Hair clean, neat, above collar. Girls: Hair tied back, no elaborate hairstyles. No coloring or styling products allowed." },
-      { subTitle: "11.2. Accessories:", content: "Simple watches allowed. No jewelry except small stud earrings for girls. No visible tattoos or body piercings." },
-      { subTitle: "11.3. Sports Attire:", content: "Prescribed sports uniform for games. No personal sports gear allowed during school activities." }
+      { subTitle: "11.1. Library Hours:", content: "Monday-Friday: 7:30 AM - 6:00 PM, Saturday: 8:00 AM - 1:00 PM. Closed on Sundays and public holidays." },
+      { subTitle: "11.2. Borrowing Rules:", content: "Maximum 2 books for 2 weeks. Late return fine: KES 20 per day. Lost books: Replace or pay full cost." },
+      { subTitle: "11.3. Library Conduct:", content: "Absolute silence. NO eating or drinking. Bags not allowed inside. Reference books NOT for borrowing." }
     ]
   },
   { 
     id: 12,
-    title: "12. Technology and Internet Usage",
-    intro: "Responsible use of technology to enhance learning while maintaining safety.",
+    title: "12. Chapel and Religious Activities",
+    intro: "Spiritual growth is encouraged through organized religious activities.",
     subSections: [
-      { subTitle: "12.1. Device Policy:", content: "Calculators allowed for Mathematics and Sciences only. No personal laptops, tablets, or smartphones on school premises." },
-      { subTitle: "12.2. Internet Access:", content: "Filtered internet available in computer lab only. Social media access blocked. All browsing monitored and logged." },
-      { subTitle: "12.3. Cyber Safety:", content: "No sharing of personal information online. Reporting of cyberbullying mandatory. Digital citizenship lessons monthly." }
+      { subTitle: "12.1. Chapel Services:", content: "Sunday service: 8:00 AM - 10:00 AM (compulsory). Thursday Afternoon fellowship: 12:00 PM - 2:00 PM (compulsory)." },
+      { subTitle: "12.2. Religious Groups:", content: "Christian Union, Catholic Action, and Muslim students provided with facilities for worship. Respect for all faiths mandatory." },
+      { subTitle: "12.3. Conduct in Chapel:", content: "Proper attire required. Phones NOT allowed. Active participation encouraged. Offerings voluntary." }
     ]
   },
   { 
     id: 13,
-    title: "13. Transportation and Travel",
-    intro: "Safety regulations for student movement within and outside school.",
+    title: "13. Dining Hall and Meals",
+    intro: "Proper conduct in the dining hall ensures orderly and hygienic meal times.",
     subSections: [
-      { subTitle: "13.1. School Transport:", content: "School buses available for official trips only. Seat belts mandatory. No standing in moving vehicles." },
-      { subTitle: "13.2. Travel Authorization:", content: "Written permission required for any travel outside school. Parent/guardian must sign consent forms." },
-      { subTitle: "13.3. Emergency Travel:", content: "School vehicle available for medical emergencies. Parents responsible for transport costs for non-emergencies." }
+      { subTitle: "13.1. Meal Times:", content: "Breakfast: 6:30 AM, Lunch: 1:00 PM, Supper: 6:30 PM. Students must be punctual. Grace said before meals." },
+      { subTitle: "13.2. Dining Rules:", content: "Queue orderly. NO food wastage. Use own plates and cutlery. Return utensils after meals. NO food out of dining hall." },
+      { subTitle: "13.3. Special Diets:", content: "Medical cases provided special diet upon doctor's recommendation. Written parental request required." }
     ]
   },
   { 
     id: 14,
-    title: "14. Counseling and Guidance",
-    intro: "Comprehensive support system for student welfare and career development.",
+    title: "14. Communication and Parent-School Partnership",
+    intro: "Strong communication between school and parents enhances student success.",
     subSections: [
-      { subTitle: "14.1. Guidance Office:", content: "Open Monday-Friday 8:00 AM-5:00 PM. Confidential counseling sessions available. Appointment system for privacy." },
-      { subTitle: "14.2. Career Guidance:", content: "Career talks each term. University and college visits Form 3 and 4. Career profiling and subject selection assistance." },
-      { subTitle: "14.3. Peer Counseling:", content: "Trained peer counselors available. Anonymous reporting system for sensitive issues." }
+      { subTitle: "14.1. Parent Meetings:", content: "Annual general meeting: First Saturday of Term 1. PTA meetings: Second Saturday of Term 2 and 3. Class-specific meetings as called." },
+      { subTitle: "14.2. Reporting:", content: "Progress reports issued end of each term. Mid-term reports for students with performance issues. Principal's report in school newsletter." },
+      { subTitle: "14.3. Parent Queries:", content: "Contact class teacher for academic issues. Contact housemaster for boarding issues. Principal's office: katzihigh@gmail.com." }
     ]
   },
   { 
     id: 15,
-    title: "15. Environmental Conservation",
-    intro: "Instilling responsibility towards the environment as part of holistic education.",
+    title: "15. Environmental and Property Care",
+    intro: "Students are responsible for maintaining a clean environment and caring for school property.",
     subSections: [
-      { subTitle: "15.1. Cleanliness:", content: "Daily cleaning of classrooms and compounds. Monthly environmental clean-up exercises. No littering policy strictly enforced." },
-      { subTitle: "15.2. Conservation Projects:", content: "Tree planting each rainy season. Water conservation education. Renewable energy projects." },
-      { subTitle: "15.3. Waste Management:", content: "Separate bins for biodegradable and non-biodegradable waste. Recycling program for paper and plastics." }
+      { subTitle: "15.1. Cleanliness:", content: "Daily cleaning of classes and compound. Friday general cleaning: 4:00-6:00 PM. NO littering - dustbins provided." },
+      { subTitle: "15.2. Property Care:", content: "Vandalism attracts heavy penalties (repair cost plus disciplinary action). Report any damage immediately." },
+      { subTitle: "15.3. Environmental Projects:", content: "Tree planting every term. School farm participation for Agriculture students. Water conservation practices." }
     ]
   }
 ];
@@ -198,13 +196,13 @@ export default function TermsAndConditions() {
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">KH</span>
                 </div>
-                <span className="text-sm font-bold text-blue-900 uppercase tracking-wider">Katwanyaa Senior School</span>
+                <span className="text-sm font-bold text-blue-900 uppercase tracking-wider">Katwanyaa High School</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-2 leading-tight">
                 School Rules & Regulations
               </h1>
               <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
-                Official policies and guidelines governing student conduct, academics, and school operations at Katwanyaa Senior School
+                Official policies and guidelines governing student conduct, academics, and school operations at Katwanyaa High School
               </p>
             </div>
             
@@ -442,7 +440,7 @@ export default function TermsAndConditions() {
             </div>
             <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-100">
               <h4 className="font-bold text-emerald-900 mb-2">Last Updated</h4>
-              <p className="text-sm text-slate-700">January 6, {new Date().getFullYear()}. Rules are reviewed annually and may be updated.</p>
+              <p className="text-sm text-slate-700">January 6, {new Date().getFullYear()}. Rules reviewed annually and may be updated.</p>
             </div>
             <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl p-4 border border-purple-100">
               <h4 className="font-bold text-purple-900 mb-2">Enforcement</h4>
@@ -452,8 +450,8 @@ export default function TermsAndConditions() {
           
           <div className="text-center mt-8">
             <p className="text-xs text-slate-500">
-              © 2024 Katwanyaa Senior School. All rights reserved. 
-              <span className="block mt-1">For queries, contact: katzict@gmail.com | Tel: +254 710 894 145</span>
+              © 2024 Katwanyaa High School. All rights reserved. 
+              <span className="block mt-1">For queries, contact: katzihigh@gmail.com | Tel: 0710 894 145</span>
             </p>
           </div>
         </div>
