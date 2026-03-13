@@ -459,15 +459,13 @@ const achievements = [
             </div>
 
             <div className="mt-6 text-center text-sm text-gray-300 font-normal break-words px-4">
-              <p>Accredited by the Ministry of Education • KNEC Centre Code: 12345678</p>
               <div className="flex items-center justify-center gap-2 mt-3 flex-wrap">
                 <span>Empowering Future Leaders with</span>
-                <span className="text-lg">❤️</span>
+                <span className="text-lg">💚</span>
                 <span>since 1976..Education is Light</span>
               </div>
 <div className="mt-12 py-6 border-t border-white/10">
   <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4">
-    {/* Minimalist Brand Tag */}
     <div className="flex items-center gap-2">
       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
