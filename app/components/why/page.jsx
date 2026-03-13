@@ -103,7 +103,7 @@ const whyChooseUs = [
     {
       title: "800+ Students Enrolled",
       gradient: "from-blue-600 to-indigo-600",
-      description: "Currently serving 975 students as a mixed day and boarding school in Matungulu, Machakos County with consistent enrollment growth.",
+      description: "Currently serving 800+ students as a mixed day and boarding school in Matungulu, Machakos County with consistent enrollment growth.",
       highlight: "Growing Enrollment",
       details: ["Mixed Day", "Boarding", "Co-curricular", "Guidance"],
       metrics: ["800+ Std", "Mixed", "Day/Board"],
@@ -117,15 +117,6 @@ const whyChooseUs = [
       details: ["50+ Laptops", "1:1 Learning", "Digital Literacy", "ICT Labs"],
       metrics: ["6M KShs", "50+ Devices", "Only School"],
       icon: <FiMonitor />
-    },
-    {
-      title: "KCB LPG Transformation",
-      gradient: "from-blue-600 to-indigo-600",
-      description: "Beneficiary of KShs 1.2M KCB LPG financing (Sept 2022). Acquired 1,000kg LPG cylinder, reducing kitchen staff from 6 to 4.",
-      highlight: "KShs 1.2M Funding",
-      details: ["1,000kg Cylinder", "6 to 4 Cooks", "Faster Cooking", "Smoke-Free"],
-      metrics: ["1.2M KShs", "40% Less", "4 Cooks"],
-      icon: <FiGlobe />
     },
     {
       title: "Spiritual & Moral Formation",
