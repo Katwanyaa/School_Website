@@ -483,8 +483,8 @@ Katz        </div>
               </div>
               <div>
                 <p className="text-orange-100 text-[9px] sm:text-xs uppercase font-black tracking-tighter mb-0.5 sm:mb-1 opacity-80">Direct Line</p>
-                <p className="text-white text-sm sm:text-base font-bold">+254 712 345 678</p>
-                <p className="text-white/80 text-xs mt-1">+254 734 567 890</p>
+                <p className="text-white text-sm sm:text-base font-bold">+254 710 894 145</p>
+                <p className="text-white/80 text-xs mt-1">+254 710 894 145</p>
               </div>
             </div>
 
@@ -508,7 +508,7 @@ Katz        </div>
             rel="noopener noreferrer"
             className="w-full py-3 sm:py-4 bg-white text-orange-600 font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xl transition-transform hover:scale-105 flex items-center justify-center gap-2 uppercase tracking-wider"
           >
-            Get Directions on Google Maps
+             Google Maps
             <ExternalLink size={16} />
           </a>
         </div>
