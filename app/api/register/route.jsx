@@ -948,8 +948,39 @@ const validateInput = (name, email, password, role) => {
 };
 
 // Main POST
+// Main POST
 export async function POST(request) {
   try {
+    // ================ ADD THIS AUTHENTICATION CHECK HERE ================
+    // Authenticate request first - only ADMIN and SUPER_ADMIN can create users
+    const auth = authenticateRequest(request);
+    if (!auth.authenticated) {
+      return auth.response;
+    }
+    
+    // Check if user has permission to create new users (only ADMIN or SUPER_ADMIN)
+    const adminRoles = ['ADMIN', 'SUPER_ADMIN', 'administrator', 'PRINCIPAL'];
+    if (!adminRoles.includes(auth.user.role?.toUpperCase())) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Permission Denied",
+          message: "Only administrators can create new users"
+        },
+        { status: 403 }
+      );
+    }
+    
+    // Log the user creation attempt for audit
+    console.log('👤 User creation attempt:', {
+      createdBy: auth.user.name,
+      createdById: auth.user.id,
+      createdByRole: auth.user.role,
+      device: auth.deviceInfo,
+      timestamp: new Date().toISOString()
+    });
+    
+    // ================ REST OF YOUR EXISTING CODE CONTINUES HERE ================
     const { name, email, password, phone, role = 'ADMIN' } = await request.json();
 
     if (!name || !email || !password) {
@@ -1000,12 +1031,24 @@ export async function POST(request) {
     // Generate token
     const token = generateToken(user);
 
+    // Log successful creation
+    console.log('✅ User created successfully:', {
+      createdBy: auth.user.name,
+      newUser: user.email,
+      newUserRole: user.role,
+      timestamp: new Date().toISOString()
+    });
+
     return NextResponse.json(
       {
         success: true,
         message: 'User registered successfully',
         user: sanitizeUser(user),
         token,
+        createdBy: {
+          name: auth.user.name,
+          role: auth.user.role
+        }
       },
       { status: 201 }
     );
