@@ -39,7 +39,7 @@ export const metadata = {
   },
 
   description:
-    "The official website of A.I.C Katwanyaa Senior School in Matungulu, Machakos County. Dedicated to academic excellence, Christian values, and holistic student development in Kenya.",
+    "The official website of A.I.C Katwanyaa Senior School.",
   
   keywords: [
     "Katwanyaa Senior High School",
