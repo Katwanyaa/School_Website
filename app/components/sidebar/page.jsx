@@ -441,7 +441,7 @@ const handleLogout = () => {
               </div>
               <div className="min-w-0">
                 <h1 className="text-sm lg:text-lg font-bold text-gray-800 truncate">
-                  Katz High School
+                  Katz Senior School
                 </h1>
                 <p className="text-gray-600 text-xs lg:text-sm font-medium truncate">Admin Portal</p>
               </div>
