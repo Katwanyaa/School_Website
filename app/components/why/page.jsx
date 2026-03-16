@@ -10,6 +10,7 @@ import {
   FiUsers, 
   FiCalendar,
   FiShield,
+  FiTree, 
   FiStar,
   FiGlobe,
   FiMail,
