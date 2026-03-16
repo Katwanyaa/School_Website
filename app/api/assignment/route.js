@@ -79,6 +79,7 @@ class DeviceTokenManager {
     }
   }
 
+  
   static validateDeviceToken(token) {
     try {
       const payloadStr = Buffer.from(token, 'base64').toString('utf-8');

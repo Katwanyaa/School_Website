@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-const SCHOOL_NAME = ' Katwnayaa Senior  School';
+const SCHOOL_NAME = ' katwanyaa Senior  School';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Education Is Light';
 const CONTACT_PHONE = '0710894145';
