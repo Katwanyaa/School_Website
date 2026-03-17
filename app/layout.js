@@ -68,7 +68,22 @@ export const metadata = {
     "Katwanyaa school curriculum",
     "Katwanyaa school fees",
     "Katwanyaa school uniform",
-    "Katwanyaa school alumni",    
+    "Katwanyaa school alumni", 
+    "Katwanyaa school results",
+    "Katwanyaa school contacts",
+    "Katwanyaa school location",
+    "Katwanyaa alumni",
+    "Katwanyaa school history",
+    "Katwanyaa school principal",
+    
+    // Long tail
+    "Best day schools in Matungulu",
+    "Schools near Matungulu",
+    
+    // Misspellings (for SEO)
+    "Katwanya school",
+    "Katanyaa school",
+    "Katz senior school",   
     
   ],
 
@@ -122,7 +137,8 @@ export const metadata = {
   },
 
   verification: {
-    google: "googlef8123d1ff1ecb88f",
+    google: "google16e979b115c09244",
+    
   },
 };
 
@@ -139,7 +155,7 @@ export default function RootLayout({ children }) {
     "url": "https://katwanyaasenior.school",
     "logo": "https://katwanyaasenior.school/katz.jpeg",
     "image": "https://katwanyaasenior.school/katz.jpeg",
-    "description": "A premier public secondary school in Matungulu, Machakos County, Kenya.",
+    "description": "A public Senior school in Matungulu, Machakos County, Kenya.",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Matungulu",
