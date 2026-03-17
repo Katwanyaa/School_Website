@@ -597,6 +597,70 @@ export default function ContactPage() {
         </div>
       </section>
 
+      {/* Google Maps Location Section - NEW */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="bg-gradient-to-br from-slate-50 to-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <span className="inline-block px-4 py-2 mb-3 text-xs font-bold tracking-[0.1em] text-orange-700 uppercase bg-orange-50 rounded-full">
+                Visit Us
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                Our <span className="text-orange-600">Location</span>
+              </h2>
+            </div>
+            
+            {/* Quick location info */}
+            <div className="flex items-center gap-3 text-slate-600 bg-white px-4 py-2 rounded-full border border-slate-200">
+              <MapPin className="w-4 h-4 text-orange-600" />
+              <span className="text-sm font-medium">Matungulu, Machakos County</span>
+              <a 
+                href="https://maps.app.goo.gl/q6ubZsEk5KWxzAUv9" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="ml-2 p-1.5 bg-orange-100 text-orange-700 rounded-full hover:bg-orange-200 transition-colors"
+                aria-label="Open in Google Maps"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Map Container with proper aspect ratio */}
+          <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[450px] rounded-2xl overflow-hidden shadow-lg border border-slate-200">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.1234!2d37.2618!3d-1.2921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMTcnMzEuNiJTIDM3wrAxNSc0Mi41IkU!5e0!3m2!1sen!2ske!4v1234567890"
+              width="100%"
+              height="100%"
+              style={{ border: 0, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Katwanyaa Senior School Location"
+              className="rounded-2xl"
+            ></iframe>
+          </div>
+
+          {/* Map Footer with directions button */}
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-slate-600 flex items-center gap-2">
+              <Navigation className="w-4 h-4 text-orange-600" />
+              A.I.C Katwanyaa Senior School, Matungulu, Machakos County
+            </p>
+            <a
+              href="https://maps.app.goo.gl/q6ubZsEk5KWxzAUv9"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20 text-sm"
+            >
+              <MapPin className="w-4 h-4" />
+              Get Directions
+              <ExternalLink className="w-3.5 h-3.5 ml-1" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Modernized Department Detail Modal */}
       {selectedDepartment && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">

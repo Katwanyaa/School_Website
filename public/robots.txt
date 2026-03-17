@@ -1,57 +1,93 @@
-# ============================================
-# Katwanyaa School - Search Engine Directives
-# ============================================
+# https://katwanyaasenior.school/robots.txt
+# Created: 2026-03-17
+# Last Updated: 2026-03-17
 
+# Allow all search engines to crawl the site
 User-agent: *
 Allow: /
+
+# Disallow private/admin areas - these should not be indexed
+Disallow: /MainDashboard
+Disallow: /pages/adminLogin
 Disallow: /api/
-Disallow: /adminLogin
-Disallow: /pages/forgotpassword
-Disallow: /MainDashboard*
-Disallow: /admin/
+Disallow: /_next/
 Disallow: /private/
-Disallow: /secure/
-Disallow: /*.php$
-Disallow: /*?*
-Disallow: /search/
+Disallow: /temp/
+Disallow: /draft/
+Disallow: /preview/
 
-# ========== CRAWL DELAY ==========
-# For respectful crawling
-Crawl-delay: 2
-
-# ========== SITEMAP LOCATIONS ==========
-# Primary sitemap
-Sitemap: https://katwanyaasenior.school/sitemap.xml
-
-# Optional: Image sitemap (if available)
-Sitemap: https://katwanyaasenior.school/sitemap-images.xml
-
-# Optional: Video sitemap (if available)
-Sitemap: https://katwanyaasenior.school/sitemap-video.xml
-
-# ========== SPECIFIC BOTS ==========
-# GoogleBot Specific
+# Specific rules for different bots
 User-agent: Googlebot
+Allow: /
 Allow: /pages/
 Allow: /images/
-Disallow: /api/*
-Disallow: /MainDashboard/*
-Disallow: /user/*/private
+Disallow: /MainDashboard
+Disallow: /pages/adminLogin
+Disallow: /*?*
+Crawl-delay: 1
 
-# BingBot Specific
-User-agent: bingbot
-Crawl-delay: 3
-Disallow: /api/
-
-# ========== BAD BOTS ==========
-User-agent: AhrefsBot
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.webp$
 Disallow: /
 
-User-agent: SemrushBot
-Disallow: /
+User-agent: Bingbot
+Allow: /
+Disallow: /MainDashboard
+Disallow: /pages/adminLogin
+Crawl-delay: 1
 
-User-agent: MJ12bot
-Disallow: /
+User-agent: Slurp  # Yahoo
+Allow: /
+Disallow: /MainDashboard
+Disallow: /pages/adminLogin
+Crawl-delay: 1
 
-User-agent: DotBot
-Disallow: /
+User-agent: Baiduspider  # Baidu (China)
+Allow: /
+Disallow: /MainDashboard
+Disallow: /pages/adminLogin
+Crawl-delay: 2
+
+User-agent: Yandex  # Yandex (Russia)
+Allow: /
+Disallow: /MainDashboard
+Disallow: /pages/adminLogin
+Crawl-delay: 1
+
+User-agent: DuckDuckBot  # DuckDuckGo
+Allow: /
+Disallow: /MainDashboard
+Disallow: /pages/adminLogin
+
+User-agent: FacebookExternalHit
+Allow: /
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+
+# Crawl delay to be gentle on server
+Crawl-delay: 1
+
+# Sitemap location - CRITICAL for SEO
+Sitemap: https://katwanyaasenior.school/sitemap.xml
+
+# Host directive (helps search engines know the canonical version)
+Host: https://katwanyaasenior.school
+
+# Disallow specific file types from being indexed (optional)
+Disallow: /*.pdf$  # Comment this out if you want PDFs indexed
+Disallow: /*.doc$
+Disallow: /*.docx$
+Disallow: /*.xls$
+Disallow: /*.xlsx$
+
+# Noarchive for certain pages (prevents caching)
+User-agent: *
+Noarchive: /MainDashboard
+Noarchive: /pages/adminLogin
