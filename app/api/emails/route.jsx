@@ -157,7 +157,7 @@ const SCHOOL_LOCATION = process.env.SCHOOL_LOCATION || 'Matungulu, Machakos Coun
 const SCHOOL_MOTTO = process.env.SCHOOL_MOTTO || 'Education is Light';
 const CONTACT_PHONE = process.env.CONTACT_PHONE || '+254720123456';
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL ||'katzict@gmail.com';
-const SCHOOL_WEBSITE = process.env.SCHOOL_WEBSITE || 'https://katwanyaa.vercel.app';
+const SCHOOL_WEBSITE = process.env.SCHOOL_WEBSITE || 'https://katwanyaasenior.school';
 
 // Social Media Configuration
 const SOCIAL_MEDIA = {

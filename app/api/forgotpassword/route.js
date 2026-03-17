@@ -52,7 +52,7 @@ export async function POST(req) {
       },
     });
 
-    const baseUrl = 'https://katwanyaa.vercel.app';
+    const baseUrl = 'https://katwanyaasenior.school';
     
     const resetLink = `${baseUrl}/pages/resetpassword?token=${token}`;
     

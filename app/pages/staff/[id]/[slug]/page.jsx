@@ -35,7 +35,7 @@ export async function generateMetadata({ params }) {
         description: "Professional educators dedicated to student success",
         images: [
           {
-            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaa.vercel.app'}/katz.jpeg`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaasenior.school'}/katz.jpeg`,
             width: 1200,
             height: 630,
             alt: 'Katwanyaa Senior School Staff'
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }) {
   const description = staff.bio || `Meet ${staff.name}, a dedicated ${staff.position} at Katwanyaa Senior School specializing in ${staff.department}.`;
   
   // Fix the image URL
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaa.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaasenior.school';
   const imageUrl = staff.image 
     ? staff.image.startsWith('http') 
       ? staff.image 
@@ -115,7 +115,7 @@ export async function generateStaticParams() {
   
   // ALTERNATIVE: If you want to fetch from API but avoid build errors:
   // try {
-  //   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaa.vercel.app';
+  //   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaasenior.school';
   //   const res = await fetch(`${baseUrl}/api/staff`, { next: { revalidate: 3600 } });
   //   
   //   if (res.ok) {

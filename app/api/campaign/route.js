@@ -289,7 +289,7 @@ const emailTemplates = {
               
               <!-- CTA Button -->
               <div style="text-align: center; margin: 8% 0;">
-                <a href="https://katwanyaa.vercel.app/pages/apply-for-admissions" 
+                <a href="https://katwanyaasenior.school/pages/apply-for-admissions" 
                    style="display: inline-block; 
                           width: 100%; 
                           max-width: 280px; 

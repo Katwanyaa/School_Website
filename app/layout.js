@@ -31,7 +31,7 @@ export const viewport = {
 /* METADATA                                  */
 /* -------------------------------------------------------------------------- */
 export const metadata = {
-  metadataBase: new URL("https://katwanyaa.vercel.app"),
+  metadataBase: new URL("https://katwanyaasenior.school"),
 
   title: {
     default: "A.I.C Katwanyaa Senior School",
@@ -82,7 +82,7 @@ export const metadata = {
   openGraph: {
     title: "A.I.C Katwanyaa School",
     description: "Official school website.",
-    url: "https://katwanyaa.vercel.app",
+    url: "https://katwanyaasenior.school",
     siteName: "Katwanyaa Senior School",
     locale: "en_KE",
     type: "website",
@@ -136,9 +136,9 @@ export default function RootLayout({ children }) {
     "@type": "School",
     "name": "A.I.C Katwanyaa Senior School",
     "alternateName": "Katwanyaa Senior School",
-    "url": "https://katwanyaa.vercel.app",
-    "logo": "https://katwanyaa.vercel.app/katz.jpeg",
-    "image": "https://katwanyaa.vercel.app/katz.jpeg",
+    "url": "https://katwanyaasenior.school",
+    "logo": "https://katwanyaasenior.school/katz.jpeg",
+    "image": "https://katwanyaasenior.school/katz.jpeg",
     "description": "A premier public secondary school in Matungulu, Machakos County, Kenya.",
     "address": {
       "@type": "PostalAddress",

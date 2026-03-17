@@ -116,7 +116,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'School',
   name: 'Katwanyaa Senior School',
-  image: 'https://katwanyaa.vercel.app/katz.jpeg',
+  image: 'https://katwanyaasenior.school/katz.jpeg',
   description: 'A secondary school committed to academic excellence, integrity, and holistic student development.',
   address: {
     '@type': 'PostalAddress',
@@ -125,7 +125,7 @@ const jsonLd = {
     'addressRegion': 'Machakos County',
     'addressCountry': 'KE'
   },
-  url: 'https://katwanyaa.vercel.app',
+  url: 'https://katwanyaasenior.school',
   telephone: '+254700000000', // Update with the actual school office line
   sameAs: [
     'https://facebook.com/katwanyaahigh',
