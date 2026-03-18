@@ -27,7 +27,6 @@ const ModernSchoolLayout = () => {
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // School images array for carousel
   const schoolImages = [
     { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Building" },
     { src: "/bg/9.jpeg", alt: "Katwanyaa Senior School - Students" },
