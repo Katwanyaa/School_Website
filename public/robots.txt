@@ -2,10 +2,9 @@
 # Created: 2026-03-17
 # Last Updated: 2026-03-17
 
-# Allow all search engines to crawl the site
+# --- RULES FOR ALL BOTS (Catch-all) ---
 User-agent: *
 Allow: /
-
 # Disallow private/admin areas - these should not be indexed
 Disallow: /MainDashboard
 Disallow: /pages/adminLogin
@@ -15,8 +14,16 @@ Disallow: /private/
 Disallow: /temp/
 Disallow: /draft/
 Disallow: /preview/
+# Optional: Uncomment lines below to block file types from indexing
+# Disallow: /*.pdf$
+# Disallow: /*.doc$
+# Disallow: /*.docx$
+# Disallow: /*.xls$
+# Disallow: /*.xlsx$
 
-# Specific rules for different bots
+# --- RULES FOR SPECIFIC BOTS ---
+
+# Google's main crawler
 User-agent: Googlebot
 Allow: /
 Allow: /pages/
@@ -26,6 +33,7 @@ Disallow: /pages/adminLogin
 Disallow: /*?*
 Crawl-delay: 1
 
+# Google's image crawler (crucial for your gallery)
 User-agent: Googlebot-Image
 Allow: /images/
 Allow: /*.jpg$
@@ -35,35 +43,41 @@ Allow: /*.gif$
 Allow: /*.webp$
 Disallow: /
 
+# Microsoft Bing
 User-agent: Bingbot
 Allow: /
 Disallow: /MainDashboard
 Disallow: /pages/adminLogin
 Crawl-delay: 1
 
-User-agent: Slurp  # Yahoo
+# Yahoo (uses Slurp)
+User-agent: Slurp
 Allow: /
 Disallow: /MainDashboard
 Disallow: /pages/adminLogin
 Crawl-delay: 1
 
-User-agent: Baiduspider  # Baidu (China)
+# Baidu (China)
+User-agent: Baiduspider
 Allow: /
 Disallow: /MainDashboard
 Disallow: /pages/adminLogin
 Crawl-delay: 2
 
-User-agent: Yandex  # Yandex (Russia)
+# Yandex (Russia)
+User-agent: Yandex
 Allow: /
 Disallow: /MainDashboard
 Disallow: /pages/adminLogin
 Crawl-delay: 1
 
-User-agent: DuckDuckBot  # DuckDuckGo
+# DuckDuckGo
+User-agent: DuckDuckBot
 Allow: /
 Disallow: /MainDashboard
 Disallow: /pages/adminLogin
 
+# Facebook (for link previews)
 User-agent: FacebookExternalHit
 Allow: /
 Allow: /*.jpg$
@@ -71,23 +85,17 @@ Allow: /*.jpeg$
 Allow: /*.png$
 Allow: /*.gif$
 
-# Crawl delay to be gentle on server
+# --- GLOBAL DIRECTIVES ---
+# A general crawl delay to be gentle on your server
 Crawl-delay: 1
 
-# Sitemap location - CRITICAL for SEO
+# Prevent search engines from showing cached versions of admin pages
+User-agent: *
+Noarchive: /MainDashboard
+Noarchive: /pages/adminLogin
+
+# --- IMPORTANT: SITEMAP LOCATION ---
 Sitemap: https://katwanyaasenior.school/sitemap.xml
 
 # Host directive (helps search engines know the canonical version)
 Host: https://katwanyaasenior.school
-
-# Disallow specific file types from being indexed (optional)
-Disallow: /*.pdf$  # Comment this out if you want PDFs indexed
-Disallow: /*.doc$
-Disallow: /*.docx$
-Disallow: /*.xls$
-Disallow: /*.xlsx$
-
-# Noarchive for certain pages (prevents caching)
-User-agent: *
-Noarchive: /MainDashboard
-Noarchive: /pages/adminLogin

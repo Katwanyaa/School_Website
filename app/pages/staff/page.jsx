@@ -765,11 +765,13 @@ export default function StaffDirectory() {
           <div className="flex items-center gap-2 sm:gap-4">
             <button
               onClick={fetchStaffData}
-              className="p-2 sm:p-2.5 text-gray-600 hover:text-blue-600 transition-colors"
+              disabled={loading}
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-400 hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed transition-all text-xs sm:text-sm font-semibold shadow-sm"
               title="Refresh staff data"
               aria-label="Refresh"
             >
-              <FiRefreshCw size={18} />
+              <FiRefreshCw size={16} className={loading ? 'animate-spin text-blue-500' : ''} />
+              <span className="hidden sm:inline">{loading ? 'Loading...' : 'Refresh'}</span>
             </button>
             
             <div className="hidden sm:flex bg-white p-1 rounded-2xl border border-gray-200/50 shadow-sm">
@@ -1128,21 +1130,21 @@ export default function StaffDirectory() {
 
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center py-16 sm:py-24 px-4 sm:px-6 text-center bg-white rounded-2xl sm:rounded-3xl border border-dashed border-gray-300 shadow-sm sm:shadow-lg">
-                <div className="w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-8 shadow-lg">
-                  <FiSearch className="text-2xl sm:text-4xl text-gray-400" />
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">No staff members found</h3>
-                <p className="text-gray-600 max-w-md text-sm sm:text-lg mb-6 sm:mb-8 leading-relaxed">
-                  We couldn't find anyone matching your current search criteria. Try adjusting your filters or search terms to discover our talented team members.
-                </p>
-                <button
-                  onClick={clearAllFilters}
-                  className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg sm:rounded-2xl font-bold shadow-lg w-full sm:w-auto"
-                >
-                  Clear All Filters & Search
-                </button>
-              </div>
+             <div className="flex flex-col items-center justify-center py-8 sm:py-24 px-3 sm:px-6 text-center bg-white rounded-xl sm:rounded-3xl border border-dashed border-gray-300 shadow-sm sm:shadow-lg">
+  <div className="w-12 h-12 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl sm:rounded-3xl flex items-center justify-center mx-auto mb-2 sm:mb-8 shadow-md sm:shadow-lg">
+    <FiSearch className="text-lg sm:text-4xl text-gray-400" />
+  </div>
+  <h3 className="text-base sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-4">No staff members found</h3>
+  <p className="text-gray-600 max-w-md text-xs sm:text-lg mb-4 sm:mb-8 leading-relaxed px-2 sm:px-0">
+    We couldn't find anyone matching your current search criteria. Try adjusting your filters or search terms to discover our talented team members.
+  </p>
+  <button
+    onClick={clearAllFilters}
+    className="px-4 sm:px-8 py-2.5 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg sm:rounded-2xl font-bold text-sm sm:text-base shadow-md sm:shadow-lg w-auto sm:w-auto"
+  >
+    Clear All Filters & Search
+  </button>
+</div>
             )}
             
           </main>

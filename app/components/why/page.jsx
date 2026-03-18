@@ -27,30 +27,64 @@ import {
 const ModernSchoolLayout = () => {
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [shuffledImages, setShuffledImages] = useState([]);
   
   // School images array for carousel
   const schoolImages = [
     { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Building" },
     { src: "/bg/9.jpeg", alt: "Katwanyaa Senior School - Students" },
     { src: "/hero/katz3.jpeg", alt: "Katwanyaa Senior School - Classroom" },
-    { src: "hero/katz8.jpeg", alt: "Katwanyaa Senior School - Sports" }
+    { src: "/hero/katz8.jpeg", alt: "Katwanyaa Senior School - Sports" },
+    { src: "/hero/s.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s1.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s2.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s3.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s4.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s5.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s6.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s7.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s8.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s9.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s10.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s11.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s12.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s13.jpeg", alt: "Katwanyaa Senior School" },
+    { src: "/hero/s14.jpeg", alt: "Katwanyaa Senior School" },
   ];
+
+  // Shuffle images on component mount - random order every time
+  useEffect(() => {
+    // Fisher-Yates shuffle algorithm
+    const shuffleArray = (array) => {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    };
+
+    setShuffledImages(shuffleArray(schoolImages));
+    setCurrentImageIndex(0); // Start at first image of shuffled array
+  }, []);
 
   // Auto-rotate carousel every 5 seconds
   useEffect(() => {
+    if (shuffledImages.length === 0) return;
+    
     const timer = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % schoolImages.length);
+      setCurrentImageIndex((prev) => (prev + 1) % shuffledImages.length);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [schoolImages.length]);
+  }, [shuffledImages.length]);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % schoolImages.length);
+    setCurrentImageIndex((prev) => (prev + 1) % shuffledImages.length);
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + schoolImages.length) % schoolImages.length);
+    setCurrentImageIndex((prev) => (prev - 1 + shuffledImages.length) % shuffledImages.length);
   };
 
   const handleExplorePathways = () => {
@@ -61,36 +95,37 @@ const ModernSchoolLayout = () => {
     router.push("/pages/apply-for-admissions");
   };
 
-const whyChooseUs = [
-  {
-    title: "3rd Best School in Matungulu",
-    gradient: "from-blue-600 to-indigo-600",
-    description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
-    metrics: "Top Performer 2019",
-    icon: <FiAward className="w-4 h-4" />
-  },
-  {
-    title: "KShs 7.2M Infrastructure Boost",
-    gradient: "from-blue-600 to-indigo-600",
-    description: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations.",
-    metrics: "KShs 7.2M Total",
-    icon: <FiCpu className="w-4 h-4" />
-  },
-{
-  title: "Athletic Excellence & Coaching",
-  gradient: "from-blue-700 via-indigo-600 to-orange-600",
-  description: "A powerhouse in Machakos County sports: Featuring our championship-winning Rugby 7s program led by Mr. Simiyu, and our elite Basketball squad under the tactical leadership of Mr. Kioko (Mr. Kim). Both programs are consistent KSSSA regional contenders recognized for discipline and technical skill.",
-  metrics: "Multi-Sport Champions",
-  icon: <FiStar className="w-5 h-5" />
-},
-  {
-    title: "Environmental Conservation",
-    gradient: "from-blue-600 to-indigo-600",
-    description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees.",
-    metrics: "Trees Conserved",
-    icon: <FiHeart className="w-4 h-4" />
-  }
-];
+  const whyChooseUs = [
+    {
+      title: "3rd Best School in Matungulu",
+      gradient: "from-blue-600 to-indigo-600",
+      description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
+      metrics: "Top Performer 2019",
+      icon: <FiAward className="w-4 h-4" />
+    },
+    {
+      title: "KShs 7.2M Infrastructure Boost",
+      gradient: "from-blue-600 to-indigo-600",
+      description: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations.",
+      metrics: "KShs 7.2M Total",
+      icon: <FiCpu className="w-4 h-4" />
+    },
+    {
+      title: "Athletic Excellence & Coaching",
+      gradient: "from-blue-700 via-indigo-600 to-orange-600",
+      description: "A powerhouse in Machakos County sports: Featuring our championship-winning Rugby 7s program led by Mr. Simiyu, and our elite Basketball squad under the tactical leadership of Mr. Kioko (Mr. Kim). Both programs are consistent KSSSA regional contenders recognized for discipline and technical skill.",
+      metrics: "Multi-Sport Champions",
+      icon: <FiStar className="w-5 h-5" />
+    },
+    {
+      title: "Environmental Conservation",
+      gradient: "from-blue-600 to-indigo-600",
+      description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees.",
+      metrics: "Trees Conserved",
+      icon: <FiHeart className="w-4 h-4" />
+    }
+  ];
+  
   const schoolFeatures = [
     {
       title: "Academic Excellence Recognition",
@@ -122,8 +157,8 @@ const whyChooseUs = [
     {
       title: "Spiritual & Moral Formation",
       gradient: "from-blue-600 to-indigo-600",
-     description: "Christian values education with weekly worship, annual retreats, and Thursday devotions. Building character through a faith-based approach with our school chaplain, Pastor Samuel Mutie.",    
-     highlight: "Values Education",
+      description: "Christian values education with weekly worship, annual retreats, and Thursday devotions. Building character through a faith-based approach with our school chaplain, Pastor Samuel Mutie.",    
+      highlight: "Values Education",
       details: ["Christian Teachings", "Character Building", "Thursday Devotion", "Retreats"],
       metrics: ["Weekly Worship", "Retreats", "Devotion"],
       icon: <FiHeart />
@@ -140,10 +175,19 @@ const whyChooseUs = [
     }
   ];
 
+  // Don't render until images are shuffled
+  if (shuffledImages.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto">
-          <section className="mb-16 sm:mb-20 md:mb-24">
+        <section className="mb-16 sm:mb-20 md:mb-24">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-200">
@@ -198,12 +242,12 @@ const whyChooseUs = [
               </div>
             </div>
 
-            {/* Image Carousel */}
+            {/* Image Carousel - Now with RANDOM order on every load */}
             <div className="relative h-[400px] rounded-[2rem] overflow-hidden shadow-2xl group">
-              {/* Images */}
-              {schoolImages.map((image, idx) => (
+              {/* Images displayed in random shuffled order */}
+              {shuffledImages.map((image, idx) => (
                 <div
-                  key={idx}
+                  key={`${image.src}-${idx}`}
                   className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
                     idx === currentImageIndex ? 'opacity-100' : 'opacity-0'
                   }`}
@@ -237,9 +281,9 @@ const whyChooseUs = [
                 <FiChevronRight size={24} />
               </button>
               
-              {/* Image Indicators */}
+              {/* Image Indicators - show random order indices */}
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                {schoolImages.map((_, idx) => (
+                {shuffledImages.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
@@ -271,7 +315,8 @@ const whyChooseUs = [
               Katz's Senior School Achievements
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Senior School, Matungulu            </p>
+              Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Senior School, Matungulu
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -305,7 +350,7 @@ Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Sen
 
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             {schoolFeatures.map((feature, index) => {
-              const spans = ["md:col-span-3", "md:col-span-3", "md:col-span-2", "md:col-span-2", "md:col-span-2", "md:col-span-6"];
+              const spans = ["md:col-span-3", "md:col-span-3", "md:col-span-2", "md:col-span-2", "md:col-span-2"];
               const isDark = feature.isPremium;
               
               return (
@@ -402,7 +447,7 @@ Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Sen
         {/* Achievements Summary */}
         <section className="mt-16">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
-            <h4 className="text-sm font-black text-blue-800 mb-3">Our School  Achievements (2019-Present):</h4>
+            <h4 className="text-sm font-black text-blue-800 mb-3">Our School Achievements (2019-Present):</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div className="bg-white p-3 rounded-xl border border-blue-100">
                 <p className="text-xs font-bold">3rd Best Public School in Matungulu Sub-county (2019) - A- candidate</p>

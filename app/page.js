@@ -126,14 +126,14 @@ const jsonLd = {
     'addressCountry': 'KE'
   },
   url: 'https://katwanyaasenior.school',
-  telephone: '+254700000000', // Update with the actual school office line
+  telephone: '+254710894145', // Update with the actual school office line
   sameAs: [
     'https://facebook.com/katwanyaahigh',
     'https://twitter.com/katwanyaahigh',
     'https://instagram.com/katwanyaahigh'
   ],
-  foundingDate: '1970', // Update with the actual founding year
-  numberOfStudents: '500', // Update with current enrollment
+  foundingDate: '1976', // Update with the actual founding year
+  numberOfStudents: '800', // Update with current enrollment
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Educational Programs',

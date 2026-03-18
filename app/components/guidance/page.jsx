@@ -1516,7 +1516,7 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500/80 mb-1">Assistant Teacher</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500/80 mb-1">School Chaplain </span>
                     <h4 className="text-base font-bold text-slate-900 truncate tracking-tight">{team.teacher.assistant.name}</h4>
                     <p className="text-[11px] font-medium text-slate-400 truncate mb-3">{team.teacher.assistant.title || "Assistant"}</p>
                     <div className="flex items-center gap-2">
@@ -2679,18 +2679,16 @@ const handleSubmit = async (e) => {
                         <FiUserPlus className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-bold text-slate-900 dark:text-white">Assistant Teacher</h4>
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white">School Chaplain </h4>
                         <p className="text-slate-500 dark:text-slate-400 text-sm">
-                          Supporting role for the guidance teacher
-                        </p>
+School Chaplain  of the school                        </p>
                       </div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-3">
                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                          Assistant Name
-                        </label>
+School Chaplain Name                        </label>
                         <input
                           type="text"
                           value={formData.teacher.assistant.name}
@@ -2703,14 +2701,13 @@ const handleSubmit = async (e) => {
                       
                       <div className="space-y-3">
                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                          Assistant Title
-                        </label>
+School Chaplain Title                        </label>
                         <input
                           type="text"
                           value={formData.teacher.assistant.title}
                           onChange={(e) => updateMemberField('teacher', 'title', e.target.value, true)}
                           className="w-full px-5 py-4 text-base border-2 border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all dark:text-white"
-                          placeholder="e.g., Assistant Teacher"
+                          placeholder="e.g., School Chaplain "
                           disabled={mode === 'view'}
                         />
                       </div>

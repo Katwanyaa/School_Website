@@ -41,50 +41,92 @@ export const metadata = {
   description:
     "The official website of A.I.C Katwanyaa Senior School.",
   
-  keywords: [
+"keywords": [
+    // Core Names & Official Identity
+    "AIC Katwanyaa sec School",
+    "AIC katz High School",
+    "AIC Katz High School",
+    "Katwanyaa High School",
+    "Katwanyaa day and boarding School",
+    "AIC Katwanyaa High School",
     "Katwanyaa Senior High School",
     "Katwanyaa Secondary School",
-    "AIC Katwanyaa",
-    "katwanyaa school",
-    "Katwanyaa Senior School",
-    "katz school",
-    "katz",
-    "A.I.C Katwanyaa",
+    "AIC Katwanyaa Secondary School",
     "AIC Katwanyaa Senior High",
-    "Katz senior high school",
+    "AIC Katz",
+    "AIC Katwanyaa",
+    "A.I.C Katwanyaa",
+    "Katz High School",
+    "Katz Senior High School",
+    "Katwanyaa School",
+    "Katwanyaa Senior School",
+    "Katz School",
+    "Katz",
+
+    // Institutional Specifics (New & Essential)
+    "Katwanyaa Mixed Day and Boarding School",
+    "AIC Sponsored Schools Machakos",
+    "Katwanyaa County Secondary School",
+    "Katwanyaa 6-stream enrollment school",
+    "God-fearing citizens Katwanyaa", // From school mission
+    "Empowered students Katwanyaa",
+
+    // Location-Specific & Regional
     "Katwanyaa Senior School Matungulu",
-    "Machakos County Schools",
+    "Secondary schools in Matungulu East",
+    "High schools in Machakos County",
     "Best secondary schools in Machakos",
     "Public schools in Kenya",
-    "Katwanyaa school results",
-    "Katwanyaa school admissions",
-    "Katwanyaa school events",
-    "Katwanyaa school news",
-    "Katwanyaa school contact",
+    "Schools near Matungulu",
+    "Best day schools in Matungulu",
     "Katwanyaa school location",
     "Katwanyaa school map",
+    "Kangundo sub-region schools",
+    "Tala-Matungulu area schools",
+
+    // Functional & API Specific (For your integration)
+    "Katwanyaa high school results",
+    "Katwanyaa high school admissions",
+    "Katwanyaa high school events",
+    "Katwanyaa high  school news",
+    "Katwanyaa school contact",
     "Katwanyaa school history",
     "Katwanyaa school achievements",
     "Katwanyaa school curriculum",
     "Katwanyaa school fees",
     "Katwanyaa school uniform",
-    "Katwanyaa school alumni", 
-    "Katwanyaa school results",
-    "Katwanyaa school contacts",
-    "Katwanyaa school location",
-    "Katwanyaa alumni",
-    "Katwanyaa school history",
+    "Katwanyaa school alumni",
     "Katwanyaa school principal",
-    
-    // Long tail
-    "Best day schools in Matungulu",
-    "Schools near Matungulu",
-    
-    // Misspellings (for SEO)
+    "Katwanyaa school staff",
+    "Katwanyaa student portal",
+    "Katwanyaa assignment uploads",
+    "Katwanyaa exam schedule",
+    "Katwanyaa video tour",
+    "Katwanyaa resources and downloads",
+
+    // Katwanyaa High School + Official Extensions
+    "Katwanyaa High School KCSE Results",
+    "Katwanyaa High School KNEC Code 12345507",
+    "Katwanyaa High School County Mixed Day and Boarding",
+    "Katwanyaa High School Matungulu Sub-county",
+    "Katwanyaa High School Machakos Area",
+    "Katwanyaa High School Angaza Technology Literacy Center",
+    "Katwanyaa High School God-fearing Citizens",
+    "Katwanyaa High School Fully Empowered Learners",
+    "Katwanyaa High School Since 1976",
+
+    // Technical & Partners (SEO & Verification)
+    "Angaza Technology Literacy Center Katwanyaa",
+    "Katwanyaa school computer lab",
+    "Katwanyaa digital learning portal",
+
+    // SEO Misspellings & Slang
     "Katwanya school",
     "Katanyaa school",
-    "Katz senior school",   
-    
+    "Katz senior school",
+    "Katwanya high",
+    "Katwanyaa sec",
+    "Katwanyaa boys and girls"
   ],
 
   authors: [{ name: "A.I.C Katwanyaa Senior School" }],
@@ -103,7 +145,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/katz.jpeg",
+        url: "/seo/katz.png",
         width: 1200,
         height: 630,
         alt: "A.I.C Katwanyaa Senior School",
@@ -116,7 +158,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "A.I.C Katwanyaa Senior School",
     description: "Empowering students through education and faith in Machakos County.",
-    images: ["/katz.jpeg"],
+    images: ["/seo/katz.png"],
   },
 
   /* Search Engine Bot Instructions */
@@ -132,8 +174,8 @@ export const metadata = {
   },
 
   icons: {
-    icon: "/katz.jpeg",
-    apple: "/katz.jpeg",
+    icon: "/seo/katz.png",
+    apple: "/seo/katz.png",
   },
 
   verification: {
@@ -153,8 +195,8 @@ export default function RootLayout({ children }) {
     "name": "A.I.C Katwanyaa Senior School",
     "alternateName": "Katwanyaa Senior School",
     "url": "https://katwanyaasenior.school",
-    "logo": "https://katwanyaasenior.school/katz.jpeg",
-    "image": "https://katwanyaasenior.school/katz.jpeg",
+    "logo": "https://katwanyaasenior.school/seo/katz.png",
+    "image": "https://katwanyaasenior.school/seo/katz.png",
     "description": "A public Senior school in Matungulu, Machakos County, Kenya.",
     "address": {
       "@type": "PostalAddress",
@@ -168,7 +210,7 @@ export default function RootLayout({ children }) {
       "longitude": "37.2618"
     },
     "hasMap": "https://www.google.com/maps?q=Katwanyaa+Secondary+School", 
-    "telephone": "+254-000-000000", // Update with official school phone
+    "telephone": "+254 710 894 145", // Update with official school phone
     "priceRange": "N/A"
   };
 

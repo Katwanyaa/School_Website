@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-// Updated rules for Katwanyaa High School (COVID-19 protocols removed)
+// Updated rules for Katwanyaa High School
 const allTerms = [
   { 
     id: 1,
     title: "1. Registration and Admission",
-    intro: "Katwanyaa High School maintains高标准 admission standards to ensure quality education and student success.",
+    intro: "Katwanyaa High School maintains high admission standards to ensure quality education and student success.",
     subSections: [
       { subTitle: "1.1. Entry Requirements:", content: "Admission to Form 1 requires a minimum KCPE score of 250 marks. Transfer students must present original leaving certificate and report from previous school." },
       { subTitle: "1.2. Registration Documents:", content: "Original birth certificate, KCPE result slip, transfer letter, baptism card (optional), and 4 passport photos must be submitted on reporting day." },
@@ -27,11 +27,24 @@ const allTerms = [
   { 
     id: 3,
     title: "3. Fee Structure and Payments",
-    intro: "School fees must be paid promptly to facilitate smooth school operations and resource availability.",
+    intro: "School fees must be paid promptly to facilitate smooth school operations and resource availability. Below is the official fee structure for 2026.",
     subSections: [
-      { subTitle: "3.1. Fee Payment:", content: "Fees payable in full by the second week of each term. Bank payments to Katwanyaa High School Account No: 0112876543210, Cooperative Bank." },
-      { subTitle: "3.2. Fee Breakdown:", content: "Term 1: KES 45,000, Term 2: KES 40,000, Term 3: KES 35,000. Includes tuition, boarding, meals, and examination fees." },
-      { subTitle: "3.3. Penalties:", content: "Late payment attracts a penalty of KES 500 per week. Students with fee balances will not receive end-term reports or be allowed to sit for exams." }
+      { 
+        subTitle: "3.1. Payment Methods:", 
+        content: "Bank payments to A.I.C KATWANYAA HIGH SCHOOL, Cooperative Bank, Account No: 0112876543210. MPESA Paybill: 894145 (Account: Student Name + Admission No). Crossed bankers cheque payable to KATWANYAA SECONDARY SCHOOL or Postal money order payable to KATWANYAA SECONDARY SCHOOL." 
+      },
+      { 
+        subTitle: "3.2. Payment Deadlines:", 
+        content: "Fees payable in full by the second week of each term. Term 1: By 31st January, Term 2: By 30th April, Term 3: By 31st August." 
+      },
+      { 
+        subTitle: "3.3. Penalties:", 
+        content: "Late payment attracts a penalty of KES 500 per week. Students with fee balances will not receive end-term reports or be allowed to sit for exams." 
+      },
+      { 
+        subTitle: "3.4. Official Contact:", 
+        content: "For fee queries, contact Accounts Clerk at P.O.Box 363-90131, TALA or call 0710 894 145. Email: katwanyaaschool@yahoo.com" 
+      }
     ]
   },
   { 
@@ -156,12 +169,44 @@ const allTerms = [
   }
 ];
 
+// Hardcoded fee data from your PDF (exact figures as provided)
+const PDF_FEE_DATA = {
+  boarding: {
+    term1: 22244,
+    term2: 20268,
+    term3: 12160,
+    annual: 40535,
+    breakdown: [
+      { voteHead: "TUITION", term1: 4144, term2: 7615, term3: 5077, total: 25385 },
+      { voteHead: "BOARDING", term1: 12693, term2: 7615, term3: 5077, total: 25385 },
+      { voteHead: "M&I", term1: 5000, term2: 1000, term3: 600, total: 2000 },
+      { voteHead: "LT&T, EWC, ADM, P,E", term1: 9400, term2: 6450, term3: 3870, total: 12900 },
+      { voteHead: "ACTIVITY", term1: 1500, term2: 125, term3: 75, total: 250 },
+      { voteHead: "MEDICAL & INSURANCE", term1: 2000, term2: 0, term3: 0, total: 2000 },
+      { voteHead: "SMASSE", term1: 200, term2: 0, term3: 0, total: 200 }
+    ]
+  },
+  day: {
+    term1: 6000,
+    term2: 6000,
+    term3: 6000,
+    annual: 18000,
+    breakdown: [
+      { voteHead: "TUITION", term1: 4144, term2: 6000, term3: 6000, total: 18000 },
+      { voteHead: "LUNCH/BREAKFAST", term1: 6000, term2: 6000, term3: 6000, total: 18000 }
+    ]
+  }
+};
+
 const TERMS_PER_PAGE = 5;
-const totalPages = Math.ceil(allTerms.length / TERMS_PER_PAGE);
 
 export default function TermsAndConditions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [feeData, setFeeData] = useState(PDF_FEE_DATA); // Start with hardcoded data
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('boarding');
+  
   const startIndex = (currentPage - 1) * TERMS_PER_PAGE;
   const endIndex = startIndex + TERMS_PER_PAGE;
   
@@ -178,31 +223,68 @@ export default function TermsAndConditions() {
   const currentTerms = filteredTerms.slice(startIndex, endIndex);
   const filteredPages = Math.ceil(filteredTerms.length / TERMS_PER_PAGE);
 
+  // Fetch fee data from API (but keep hardcoded as fallback)
+  useEffect(() => {
+    fetchFeeData();
+  }, []);
+
+  const fetchFeeData = async () => {
+    try {
+      const response = await fetch('/api/schooldocuments');
+      const result = await response.json();
+      
+      if (result.success && result.document) {
+        const apiData = result.document;
+        
+        // Check if API has valid fee data
+        const hasBoardingData = apiData.feesBoardingDistributionJson && 
+                               Object.keys(apiData.feesBoardingDistributionJson).length > 0;
+        const hasDayData = apiData.feesDayDistributionJson && 
+                          Object.keys(apiData.feesDayDistributionJson).length > 0;
+        
+        if (hasBoardingData || hasDayData) {
+          // Merge API data with hardcoded data (API overrides hardcoded)
+          setFeeData({
+            boarding: hasBoardingData ? apiData.feesBoardingDistributionJson : PDF_FEE_DATA.boarding,
+            day: hasDayData ? apiData.feesDayDistributionJson : PDF_FEE_DATA.day,
+            pdfUrl: apiData.feesBoardingDistributionPdf,
+            lastUpdated: apiData.updatedAt
+          });
+        } else {
+          // Keep using hardcoded data
+          console.log("Using hardcoded fee data (API returned empty data)");
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching fee data, using hardcoded values:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-slate-50 p-4 sm:p-6 md:p-8">
-      {/* Modern Header */}
       <div className="max-w-6xl mx-auto">
+        {/* Modern Header */}
         <div className="mb-8 sm:mb-12 md:mb-16">
-          {/* School Logo and Info */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <div className="text-center md:text-left">
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl border border-blue-200 mb-3">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">KH</span>
                 </div>
-                <span className="text-sm font-bold text-blue-900 uppercase tracking-wider">Katwanyaa High School</span>
+                <span className="text-sm font-bold text-blue-900 uppercase tracking-wider">A.I.C Katwanyaa High School</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-2 leading-tight">
-                School Rules & Regulations
+                School Rules & Fee Structure
               </h1>
               <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
-                Official policies and guidelines governing student conduct, academics, and school operations at Katwanyaa High School
+                Official policies, guidelines, and fee structure for {new Date().getFullYear()} academic year
               </p>
             </div>
             
@@ -213,9 +295,237 @@ export default function TermsAndConditions() {
                 <div className="text-xs font-medium text-slate-500">Total Sections</div>
               </div>
               <div className="bg-white rounded-xl p-3 border border-slate-200 shadow-sm text-center">
-                <div className="text-xl sm:text-2xl font-bold text-emerald-700">{new Date().getFullYear()}</div>
-                <div className="text-xs font-medium text-slate-500">Academic Year</div>
+                <div className="text-xl sm:text-2xl font-bold text-emerald-700">2026</div>
+                <div className="text-xs font-medium text-slate-500">Fee Structure</div>
               </div>
+            </div>
+          </div>
+
+          {/* Fee Structure Section - Prominently displayed */}
+          <div className="mb-8 bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold">School Fees Structure 2026</h2>
+                  <p className="text-blue-100">A.I.C Katwanyaa High School - Mixed Day & Boarding</p>
+                </div>
+              </div>
+              
+              {/* Tabs */}
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => setActiveTab('boarding')}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                    activeTab === 'boarding'
+                      ? 'bg-white text-blue-600 shadow-lg'
+                      : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  Boarding Students
+                </button>
+                <button
+                  onClick={() => setActiveTab('day')}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                    activeTab === 'day'
+                      ? 'bg-white text-blue-600 shadow-lg'
+                      : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  Day Scholars
+                </button>
+              </div>
+            </div>
+
+            {/* Fee Content */}
+            <div className="p-6">
+              {loading ? (
+                <div className="flex justify-center items-center p-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+              ) : (
+                <>
+                  {activeTab === 'boarding' && (
+                    <div className="space-y-6">
+                      {/* Summary Cards */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <SummaryCard 
+                          title="Term 1" 
+                          amount={feeData.boarding.term1}
+                          bgColor="from-blue-500 to-blue-600"
+                        />
+                        <SummaryCard 
+                          title="Term 2" 
+                          amount={feeData.boarding.term2}
+                          bgColor="from-indigo-500 to-indigo-600"
+                        />
+                        <SummaryCard 
+                          title="Term 3" 
+                          amount={feeData.boarding.term3}
+                          bgColor="from-purple-500 to-purple-600"
+                        />
+                        <SummaryCard 
+                          title="Annual Total" 
+                          amount={feeData.boarding.annual}
+                          bgColor="from-green-500 to-green-600"
+                        />
+                      </div>
+
+                      {/* Detailed Breakdown Table */}
+                      <div className="mt-8">
+                        <h3 className="text-lg font-bold text-slate-900 mb-4">Detailed Fee Breakdown - Boarding Students</h3>
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="bg-slate-100">
+                                <th className="p-3 text-left text-sm font-semibold text-slate-700 border">Vote Head</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Term 1 (KES)</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Term 2 (KES)</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Term 3 (KES)</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Total (KES)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {feeData.boarding.breakdown.map((item, index) => (
+                                <tr key={index} className="border-b hover:bg-slate-50">
+                                  <td className="p-3 text-sm font-medium text-slate-900">{item.voteHead}</td>
+                                  <td className="p-3 text-right text-sm text-slate-700">{item.term1.toLocaleString()}</td>
+                                  <td className="p-3 text-right text-sm text-slate-700">{item.term2.toLocaleString()}</td>
+                                  <td className="p-3 text-right text-sm text-slate-700">{item.term3.toLocaleString()}</td>
+                                  <td className="p-3 text-right text-sm font-semibold text-slate-900">{item.total.toLocaleString()}</td>
+                                </tr>
+                              ))}
+                              <tr className="bg-blue-50 font-bold">
+                                <td className="p-3 text-sm text-blue-900">TOTAL</td>
+                                <td className="p-3 text-right text-sm text-blue-900">{feeData.boarding.term1.toLocaleString()}</td>
+                                <td className="p-3 text-right text-sm text-blue-900">{feeData.boarding.term2.toLocaleString()}</td>
+                                <td className="p-3 text-right text-sm text-blue-900">{feeData.boarding.term3.toLocaleString()}</td>
+                                <td className="p-3 text-right text-sm text-blue-900">{feeData.boarding.annual.toLocaleString()}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'day' && (
+                    <div className="space-y-6">
+                      {/* Summary Cards for Day Scholars */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <SummaryCard 
+                          title="Term 1" 
+                          amount={feeData.day.term1}
+                          bgColor="from-blue-500 to-blue-600"
+                        />
+                        <SummaryCard 
+                          title="Term 2" 
+                          amount={feeData.day.term2}
+                          bgColor="from-indigo-500 to-indigo-600"
+                        />
+                        <SummaryCard 
+                          title="Term 3" 
+                          amount={feeData.day.term3}
+                          bgColor="from-purple-500 to-purple-600"
+                        />
+                        <SummaryCard 
+                          title="Annual Total" 
+                          amount={feeData.day.annual}
+                          bgColor="from-green-500 to-green-600"
+                        />
+                      </div>
+
+                      {/* Day Scholars Breakdown */}
+                      <div className="mt-8">
+                        <h3 className="text-lg font-bold text-slate-900 mb-4">Day Scholars Fee Breakdown</h3>
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="bg-slate-100">
+                                <th className="p-3 text-left text-sm font-semibold text-slate-700 border">Vote Head</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Term 1 (KES)</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Term 2 (KES)</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Term 3 (KES)</th>
+                                <th className="p-3 text-right text-sm font-semibold text-slate-700 border">Total (KES)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b hover:bg-slate-50">
+                                <td className="p-3 text-sm font-medium text-slate-900">TUITION</td>
+                                <td className="p-3 text-right text-sm text-slate-700">4,144</td>
+                                <td className="p-3 text-right text-sm text-slate-700">6,000</td>
+                                <td className="p-3 text-right text-sm text-slate-700">6,000</td>
+                                <td className="p-3 text-right text-sm font-semibold text-slate-900">18,000</td>
+                              </tr>
+                              <tr className="border-b hover:bg-slate-50">
+                                <td className="p-3 text-sm font-medium text-slate-900">LUNCH/BREAKFAST</td>
+                                <td className="p-3 text-right text-sm text-slate-700">6,000</td>
+                                <td className="p-3 text-right text-sm text-slate-700">6,000</td>
+                                <td className="p-3 text-right text-sm text-slate-700">6,000</td>
+                                <td className="p-3 text-right text-sm font-semibold text-slate-900">18,000</td>
+                              </tr>
+                              <tr className="bg-blue-50 font-bold">
+                                <td className="p-3 text-sm text-blue-900">TOTAL</td>
+                                <td className="p-3 text-right text-sm text-blue-900">6,000</td>
+                                <td className="p-3 text-right text-sm text-blue-900">6,000</td>
+                                <td className="p-3 text-right text-sm text-blue-900">6,000</td>
+                                <td className="p-3 text-right text-sm text-blue-900">18,000</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Day Scholars Notice */}
+                      <div className="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                        <p className="text-amber-800 text-sm">
+                          <strong>Note:</strong> Day scholars fee covers tuition, lunch, and breakfast. 
+                          Other vote heads (M&I, LT&T, EWC, Activity, Medical Insurance, SMASSE) are included in the tuition fee for day scholars.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Payment Instructions */}
+                  <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <h4 className="font-bold text-blue-900 mb-3">Payment Instructions</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="font-semibold text-sm text-blue-800 mb-2">Bank Transfer:</p>
+                        <ul className="space-y-1 text-sm text-slate-700">
+                          <li>• Account Name: A.I.C KATWANYAA HIGH SCHOOL</li>
+                          <li>• Bank: Cooperative Bank</li>
+                          <li>• Account No: 0112876543210</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm text-blue-800 mb-2">MPESA:</p>
+                        <ul className="space-y-1 text-sm text-slate-700">
+                          <li>• Paybill: 894145</li>
+                          <li>• Account: Student Name + Admission No.</li>
+                        </ul>
+                      </div>
+                      <div className="md:col-span-2">
+                        <p className="font-semibold text-sm text-blue-800 mb-2">Other Methods:</p>
+                        <ul className="space-y-1 text-sm text-slate-700">
+                          <li>• Crossed bankers cheque payable to KATWANYAA SECONDARY SCHOOL</li>
+                          <li>• Postal money order payable to KATWANYAA SECONDARY SCHOOL</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Info */}
+                  <div className="mt-4 text-center text-sm text-slate-600">
+                    <p>For queries, contact Accounts Clerk: P.O.Box 363-90131, TALA | Tel: 0710 894 145 | Email: katwanyaaschool@yahoo.com</p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -268,7 +578,7 @@ export default function TermsAndConditions() {
           </div>
         </div>
 
-        {/* Terms Grid - Responsive */}
+        {/* Terms Grid */}
         <div className="space-y-4 sm:space-y-6 mb-10">
           {currentTerms.length > 0 ? (
             currentTerms.map((term) => (
@@ -276,7 +586,7 @@ export default function TermsAndConditions() {
                 key={term.id} 
                 className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
-                {/* Term Header with Gradient */}
+                {/* Term Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 text-white">
                   <div className="flex items-start justify-between">
                     <div>
@@ -289,13 +599,6 @@ export default function TermsAndConditions() {
                         </span>
                       </div>
                       <h2 className="text-lg sm:text-xl md:text-2xl font-bold leading-tight">{term.title}</h2>
-                    </div>
-                    <div className="hidden sm:block">
-                      <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -350,18 +653,16 @@ export default function TermsAndConditions() {
           )}
         </div>
 
-        {/* Modern Pagination */}
+        {/* Pagination */}
         {filteredPages > 1 && (
           <div className="sticky bottom-4 z-10">
             <div className="bg-white/95 backdrop-blur-lg rounded-2xl border border-slate-200 shadow-xl p-4 max-w-2xl mx-auto">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                {/* Page Info */}
                 <div className="text-center sm:text-left">
                   <div className="text-sm font-medium text-slate-700">Showing page {currentPage} of {filteredPages}</div>
                   <div className="text-xs text-slate-500">{filteredTerms.length} total rules found</div>
                 </div>
 
-                {/* Page Numbers */}
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
@@ -413,7 +714,6 @@ export default function TermsAndConditions() {
                   </button>
                 </div>
 
-                {/* Quick Jump */}
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium text-slate-600">Go to:</span>
                   <select
@@ -439,8 +739,8 @@ export default function TermsAndConditions() {
               <p className="text-sm text-slate-700">These rules are binding for all students. Parents/guardians must ensure students understand and comply.</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-100">
-              <h4 className="font-bold text-emerald-900 mb-2">Last Updated</h4>
-              <p className="text-sm text-slate-700">January 6, {new Date().getFullYear()}. Rules reviewed annually and may be updated.</p>
+              <h4 className="font-bold text-emerald-900 mb-2">Fee Payment</h4>
+              <p className="text-sm text-slate-700">Fees must be paid in full by the second week of each term. Late payment attracts a penalty of KES 500 per week.</p>
             </div>
             <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl p-4 border border-purple-100">
               <h4 className="font-bold text-purple-900 mb-2">Enforcement</h4>
@@ -450,12 +750,22 @@ export default function TermsAndConditions() {
           
           <div className="text-center mt-8">
             <p className="text-xs text-slate-500">
-              © 2024 Katwanyaa High School. All rights reserved. 
-              <span className="block mt-1">For queries, contact: katzihigh@gmail.com | Tel: 0710 894 145</span>
+              © 2024 A.I.C Katwanyaa High School. All rights reserved. 
+              <span className="block mt-1">For queries, contact: katwanyaaschool@yahoo.com | Tel: 0710 894 145</span>
             </p>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Helper Component for Summary Cards
+function SummaryCard({ title, amount, bgColor }) {
+  return (
+    <div className={`bg-gradient-to-br ${bgColor} rounded-xl p-4 text-white shadow-lg`}>
+      <p className="text-sm opacity-90">{title}</p>
+      <p className="text-2xl font-bold">KES {amount.toLocaleString()}</p>
     </div>
   );
 }
