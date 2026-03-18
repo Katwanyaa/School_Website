@@ -17,12 +17,11 @@
     </image:image>
   </url>
 
-  <!-- About Us -->
   <url>
     <loc>https://katwanyaasenior.school/pages/AboutUs</loc>
     <lastmod>2026-03-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>1.0</priority>
     <image:image>
       <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
       <image:title>About Katwanyaa Senior School</image:title>
@@ -63,7 +62,7 @@
     <loc>https://katwanyaasenior.school/pages/OurSchoolPolicies</loc>
     <lastmod>2026-03-17</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
     <image:image>
       <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
       <image:title>School Rules and Policies</image:title>
