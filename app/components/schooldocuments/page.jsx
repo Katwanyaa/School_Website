@@ -1463,8 +1463,8 @@ function ModernPdfUpload({
   const [selectedFileForMetadata, setSelectedFileForMetadata] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // File size limit (0.5 MB individual file limit)
-  const MAX_INDIVIDUAL_SIZE = 0.5 * 1024 * 1024;
+  // File size limit (0.8 MB individual file limit)
+  const MAX_INDIVIDUAL_SIZE = 0.8 * 1024 * 1024;
   
   // Allowed file types
   const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx'];
