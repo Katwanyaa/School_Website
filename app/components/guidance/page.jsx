@@ -171,7 +171,7 @@ const ModernTeamDetailModal = ({ team, onClose, onEdit }) => {
                   </div>
                   <div className="min-w-0">
                     <p className="text-[11px] font-bold text-slate-800 truncate">{assistant.name}</p>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Assistant Teacher</p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Champlin Name</p>
                   </div>
                 </div>
               </div>
@@ -2142,7 +2142,7 @@ const ModernTeamCard = ({ member, onEdit, onDelete, onClick }) => {
         gradient: 'from-gray-600 to-slate-500',
         textColor: 'text-gray-600',
         bgColor: 'bg-gradient-to-br from-gray-600 to-slate-500',
-        label: 'Assistant'
+        label: 'School Champlin'
       }
     };
     return configs[role] || configs.teacher;
@@ -2740,7 +2740,7 @@ School Chaplain Title                        </label>
                             value={formData.teacher.assistant.email}
                             onChange={(e) => updateMemberField('teacher', 'email', e.target.value, true)}
                             className="w-full pl-14 pr-5 py-4 text-base border-2 border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all dark:text-white"
-                            placeholder="assistant@example.com"
+                            placeholder="champlin@example.com"
                             disabled={mode === 'view'}
                           />
                         </div>
