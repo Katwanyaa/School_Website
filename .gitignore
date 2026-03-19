@@ -1,3 +1,4 @@
+cat > .gitignore << 'EOF'
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -34,19 +35,29 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python/venv
 .venv
 env/
+.venv*
 
+# environment variables - ALL env files
+.env
 .env.local
 .env.test.local
 .env.production.local
 .env.development.local
 .env.test
-.env*
 .env.production
-.venv*
-env/
-.env
+.env*
 
+# generated files
 /app/generated/prisma
-.env
+
+# Large media files (optional - add if needed)
+# *.mp4
+# *.mov
+# *.avi
+# *.zip
+# *.tar.gz
+EOF
