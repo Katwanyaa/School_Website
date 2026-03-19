@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 // Updated rules for Katwanyaa High School
 const allTerms = [
@@ -203,9 +203,8 @@ const TERMS_PER_PAGE = 5;
 export default function TermsAndConditions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [feeData, setFeeData] = useState(PDF_FEE_DATA); // Start with hardcoded data
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('boarding');
+  const feeData = PDF_FEE_DATA;
   
   const startIndex = (currentPage - 1) * TERMS_PER_PAGE;
   const endIndex = startIndex + TERMS_PER_PAGE;
@@ -222,45 +221,6 @@ export default function TermsAndConditions() {
   
   const currentTerms = filteredTerms.slice(startIndex, endIndex);
   const filteredPages = Math.ceil(filteredTerms.length / TERMS_PER_PAGE);
-
-  // Fetch fee data from API (but keep hardcoded as fallback)
-  useEffect(() => {
-    fetchFeeData();
-  }, []);
-
-  const fetchFeeData = async () => {
-    try {
-      const response = await fetch('/api/schooldocuments');
-      const result = await response.json();
-      
-      if (result.success && result.document) {
-        const apiData = result.document;
-        
-        // Check if API has valid fee data
-        const hasBoardingData = apiData.feesBoardingDistributionJson && 
-                               Object.keys(apiData.feesBoardingDistributionJson).length > 0;
-        const hasDayData = apiData.feesDayDistributionJson && 
-                          Object.keys(apiData.feesDayDistributionJson).length > 0;
-        
-        if (hasBoardingData || hasDayData) {
-          // Merge API data with hardcoded data (API overrides hardcoded)
-          setFeeData({
-            boarding: hasBoardingData ? apiData.feesBoardingDistributionJson : PDF_FEE_DATA.boarding,
-            day: hasDayData ? apiData.feesDayDistributionJson : PDF_FEE_DATA.day,
-            pdfUrl: apiData.feesBoardingDistributionPdf,
-            lastUpdated: apiData.updatedAt
-          });
-        } else {
-          // Keep using hardcoded data
-          console.log("Using hardcoded fee data (API returned empty data)");
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching fee data, using hardcoded values:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -344,12 +304,7 @@ export default function TermsAndConditions() {
 
             {/* Fee Content */}
             <div className="p-6">
-              {loading ? (
-                <div className="flex justify-center items-center p-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                </div>
-              ) : (
-                <>
+              <>
                   {activeTab === 'boarding' && (
                     <div className="space-y-6">
                       {/* Summary Cards */}
@@ -524,8 +479,7 @@ export default function TermsAndConditions() {
                   <div className="mt-4 text-center text-sm text-slate-600">
                     <p>For queries, contact Accounts Clerk: P.O.Box 363-90131, TALA | Tel: 0710 894 145 | Email: katwanyaaschool@yahoo.com</p>
                   </div>
-                </>
-              )}
+              </>
             </div>
           </div>
 
