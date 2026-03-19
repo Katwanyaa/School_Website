@@ -641,6 +641,8 @@ const ModernHero = () => {
   );
 };
 
+
+
 const getHighlightColorClass = (color) => {
   switch(color) {
     case 'blue': return 'text-blue-400';
