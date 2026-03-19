@@ -629,7 +629,6 @@ const ModernHero = () => {
         </div>
       )}
 
-      {/* Navigation Blocker Overlay */}
       {navigationBlocked && (
         <div className="absolute inset-0 z-40 pointer-events-none">
           <div className="absolute bottom-20 sm:bottom-24 left-1/2 transform -translate-x-1/2 
