@@ -49,6 +49,10 @@ export const metadata = {
     "Katwanyaa High School",
     "Katwanyaa day and boarding School",
     "AIC Katwanyaa High School",
+    "A.I.C Katwanyaa High School",
+    "AIC Katwanyaa High School",
+    "AIC Katwanyaa High School",
+
     "Katwanyaa Senior High School",
     "Katwanyaa Secondary School",
     "AIC Katwanyaa Secondary School",
