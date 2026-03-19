@@ -141,7 +141,8 @@ const Modern404 = () => {
 
             </div>
 
-         {/* Right Side: Quick Links Section */}
+
+
 <div className="w-full lg:w-1/2">
   <div className="relative">
     <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-tr from-rose-100 via-white to-indigo-100 rounded-[2rem] sm:rounded-[3rem] blur-xl opacity-60 -z-10"></div>
