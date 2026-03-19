@@ -447,6 +447,7 @@ const ModernStaffLeadership = () => {
                   </div>
                 </div>
 
+
                 {/* Right Column: Responsibilities & Contact */}
                 <div className="lg:col-span-2 space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-8">
                   <div className="space-y-3 sm:space-y-4 md:space-y-6">
@@ -622,7 +623,7 @@ const ModernStaffLeadership = () => {
                 </div>
               </button>
             )}
-            
+
 
             {/* 2. ACADEMICS DEPUTY CARD - Mr. Paul Mwanzia */}
             {academicsDeputy && (
