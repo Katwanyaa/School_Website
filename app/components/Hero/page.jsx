@@ -43,7 +43,7 @@ const heroSlides = [
     gradient: "from-green-500 via-emerald-400 to-teal-600",
     description: "Students transition from Junior School to specialize in STEM, Social Sciences, or Arts & Sports. The school supports academic counseling and student development programs.",
     background: "bg-gradient-to-br from-green-900/90 via-emerald-900/80 to-teal-900/70",
-    image: "/hero/katz1.jpeg",
+    image: "/teachers.png",
     stats: { 
       stem: "Science/Tech", 
       social: "Humanities", 
