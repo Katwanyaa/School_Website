@@ -35,7 +35,7 @@ export async function generateMetadata({ params }) {
         description: "Professional educators dedicated to student success",
         images: [
           {
-            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaasenior.school'}/katz.jpeg`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://katwanyaasenior.school'}/seo/katz.png`,
             width: 1200,
             height: 630,
             alt: 'Katwanyaa Senior School Staff'
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }) {
       : staff.image.startsWith('/')
         ? `${baseUrl}${staff.image}`
         : `${baseUrl}/images/staff/${staff.image}`
-    : `${baseUrl}/katz.jpeg`;
+    : `${baseUrl}//seo/katz.png`;
 
   return {
     title,
