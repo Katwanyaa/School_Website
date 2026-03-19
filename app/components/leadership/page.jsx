@@ -116,25 +116,48 @@ const ModernStaffLeadership = () => {
           setAcademicsDeputy(foundAcademicsDeputy || null);
           setAdminDeputy(foundAdminDeputy || null);
 
-          // 3. Find a random teacher from teaching staff (excluding principals and deputies)
-          const teachingStaff = allStaff.filter(s => {
-            const role = s.role?.toLowerCase() || '';
-            const position = s.position?.toLowerCase() || '';
-            
-            // Include if they are a teacher or teaching staff
-            const isTeacher = role.includes('teacher') || 
-                             role.includes('teaching') || 
-                             position.includes('teacher') ||
-                             position.includes('teaching');
-            
-            // Exclude principals and deputies
-            const isLeadership = role.includes('principal') || 
-                                role.includes('deputy') || 
-                                position.includes('principal') ||
-                                position.includes('deputy');
-            
-            return isTeacher && !isLeadership;
-          });
+// Find ALL teaching staff (excluding principals and deputies)
+const teachingStaff = allStaff.filter(s => {
+  const role = s.role?.toLowerCase() || '';
+  const position = s.position?.toLowerCase() || '';
+  
+  // EXCLUDE leadership roles (principal, deputy principal)
+  const isLeadership = 
+    role.includes('principal') || 
+    role.includes('deputy') || 
+    position.includes('principal') ||
+    position.includes('deputy') ||
+    s.id === 1 || s.id === 2 || s.id === 3; // Backup exclusion for known leadership IDs
+  
+  // INCLUDE if they are teaching staff (not leadership)
+  return !isLeadership;
+});
+
+console.log(`🎯 Found ${teachingStaff.length} teachers eligible for random feature`);
+
+if (teachingStaff.length > 0) {
+  // Select a RANDOM teacher - changes on EVERY refresh
+  const randomIndex = Math.floor(Math.random() * teachingStaff.length);
+  const selectedTeacher = teachingStaff[randomIndex];
+  
+  console.log(`✨ Today's featured teacher: ${selectedTeacher.name} (${selectedTeacher.role || 'Teacher'})`);
+  setRandomTeacher(selectedTeacher);
+} else {
+  // Fallback: if no teaching staff found, pick any non-leadership staff
+  const nonLeadershipStaff = allStaff.filter(s => {
+    const role = s.role?.toLowerCase() || '';
+    const position = s.position?.toLowerCase() || '';
+    return !role.includes('principal') && !role.includes('deputy') && 
+           !position.includes('principal') && !position.includes('deputy');
+  });
+  
+  if (nonLeadershipStaff.length > 0) {
+    const randomIndex = Math.floor(Math.random() * nonLeadershipStaff.length);
+    setRandomTeacher(nonLeadershipStaff[randomIndex]);
+  } else {
+    setRandomTeacher(null);
+  }
+}
 
           // Also include any staff that might be teachers but not caught by the filter
           const otherPotentialTeachers = allStaff.filter(s => {
