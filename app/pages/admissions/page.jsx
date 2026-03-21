@@ -1794,106 +1794,71 @@ const ModernFAQItem = ({ faq, index, openFaq, setOpenFaq }) => {
   const isOpen = openFaq === index;
 
   return (
-    <div className="relative transition-opacity duration-700">
-      {/* Background Glow on Open */}
-      {isOpen && (
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-2xl blur-xl" />
-      )}
-      
-      <div className={`
-        relative bg-white rounded-2xl overflow-hidden border transition-all duration-700
-        ${isOpen 
-          ? 'border-emerald-200 shadow-2xl shadow-emerald-900/10' 
-          : 'border-slate-200 shadow-md'
-        }
-      `}>
-        {/* Top Accent Bar */}
-        <div className={`
-          absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500
-          transform origin-left transition-transform duration-700
-          ${isOpen ? 'scale-x-100' : 'scale-x-0'}
-        `} />
+    <div className="relative">
+      <div
+        className={`relative bg-white rounded-2xl overflow-hidden border ${
+          isOpen
+            ? 'border-emerald-200 shadow-lg shadow-emerald-900/5'
+            : 'border-slate-200 shadow-md'
+        }`}
+      >
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
 
         <button
           onClick={() => setOpenFaq(isOpen ? null : index)}
           className="w-full px-6 md:px-8 py-5 md:py-6 text-left relative"
         >
           <div className="flex items-start gap-4 md:gap-6">
-            {/* Number Badge */}
-            <div className="relative">
-              <div className={`
-                absolute inset-0 rounded-xl blur-md transition-opacity duration-700
-                ${isOpen ? 'opacity-100 bg-emerald-500/30' : 'opacity-0'}
-              `} />
-              <div className={`
-                relative w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center
-                transition-all duration-700 font-black text-sm md:text-base
-                ${isOpen 
-                  ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg' 
+            <div
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-black text-sm md:text-base shrink-0 ${
+                isOpen
+                  ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
                   : 'bg-emerald-50 text-emerald-600'
-                }
-              `}>
-                {String(index + 1).padStart(2, '0')}
-              </div>
+              }`}
+            >
+              {String(index + 1).padStart(2, '0')}
             </div>
 
-            {/* Question */}
             <div className="flex-1 pt-1">
-              <h3 className={`
-                font-black tracking-tight text-sm md:text-lg pr-8
-                transition-colors duration-700
-                ${isOpen ? 'text-emerald-600' : 'text-slate-900'}
-              `}>
+              <h3
+                className={`font-black tracking-tight text-sm md:text-lg pr-8 ${
+                  isOpen ? 'text-emerald-600' : 'text-slate-900'
+                }`}
+              >
                 {faq.question}
               </h3>
             </div>
 
-            {/* Chevron */}
-            <div className={`
-              absolute right-6 top-1/2 -translate-y-1/2
-              w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center
-              border-2 transition-all duration-700
-              ${isOpen 
-                ? 'rotate-180 border-emerald-200 bg-emerald-50' 
-                : 'border-slate-200 bg-white'
-              }
-            `}>
-              <FiChevronDown className={`
-                transition-all duration-700 text-sm md:text-base
-                ${isOpen ? 'text-emerald-600' : 'text-slate-400'}
-              `} />
+            <div
+              className={`absolute right-6 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 ${
+                isOpen
+                  ? 'border-emerald-200 bg-emerald-50'
+                  : 'border-slate-200 bg-white'
+              }`}
+            >
+              <FiChevronDown
+                className={`text-sm md:text-base ${
+                  isOpen ? 'text-emerald-600 rotate-180' : 'text-slate-400'
+                }`}
+              />
             </div>
           </div>
         </button>
 
-        {/* Answer Section */}
-        <div className={`
-          grid transition-all duration-700 ease-in-out
-          ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}
-        `}>
-          <div className="overflow-hidden">
+        {isOpen && (
+          <div>
             <div className="px-6 md:px-8 pb-6 md:pb-8">
               <div className="pl-[48px] md:pl-[64px]">
-                {/* Divider */}
-                <div className={`
-                  h-px bg-gradient-to-r from-emerald-200 via-teal-200 to-transparent
-                  transform origin-left transition-transform duration-700
-                  ${isOpen ? 'scale-x-100' : 'scale-x-0'}
-                `} />
-                
-                {/* Answer Text */}
+                <div className="h-px bg-gradient-to-r from-emerald-200 via-teal-200 to-transparent" />
+
                 <div className="mt-5">
                   <p className="text-slate-600 font-medium leading-relaxed text-sm md:text-base">
                     {faq.answer}
                   </p>
-                  
-                  {/* Footer Note */}
+
                   <div className="flex items-center gap-3 mt-5">
                     <div className="flex items-center gap-1.5">
-                      <div className="relative">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping absolute" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 relative" />
-                      </div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">
                         Official Policy
                       </span>
@@ -1907,7 +1872,7 @@ const ModernFAQItem = ({ faq, index, openFaq, setOpenFaq }) => {
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
