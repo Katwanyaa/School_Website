@@ -224,6 +224,9 @@ model Staff {
   updatedAt        DateTime @updatedAt
 }
 
+
+
+
 model EmailCampaign {
   id            String    @id @default(cuid())
   title         String
