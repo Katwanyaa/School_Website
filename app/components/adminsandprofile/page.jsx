@@ -569,74 +569,75 @@ const fetchAdmins = async (showRefresh = false) => {
     setAdminToDelete(admin);
     setShowDeleteConfirm(true);
   };
-
 const confirmDelete = async () => {
   if (!adminToDelete) return;
   
   try {
-    // Check authentication first
+    // Check current user role
+    const currentUser = JSON.parse(localStorage.getItem('admin_user') || '{}');
+    console.log('👤 Current user attempting delete:', {
+      id: currentUser.id,
+      name: currentUser.name,
+      role: currentUser.role,
+      targetUser: adminToDelete.name,
+      targetRole: adminToDelete.role
+    });
+    
+    // Check if trying to delete an ADMIN without SUPER_ADMIN role
+    if (adminToDelete.role === 'ADMIN' && currentUser.role !== 'SUPER_ADMIN') {
+      toast.error('Only SUPER_ADMIN can delete other ADMIN users');
+      setShowDeleteConfirm(false);
+      setAdminToDelete(null);
+      return;
+    }
+    
+    // Check if trying to delete SUPER_ADMIN
+    if (adminToDelete.role === 'SUPER_ADMIN') {
+      toast.error('Cannot delete SUPER_ADMIN users');
+      setShowDeleteConfirm(false);
+      setAdminToDelete(null);
+      return;
+    }
+    
     const headers = getAuthHeaders('application/json');
+    console.log('📤 Sending delete request with headers:', {
+      hasToken: !!headers['x-admin-token'],
+      hasDeviceToken: !!headers['x-device-token']
+    });
     
     const response = await fetch(`/api/register/${adminToDelete.id}`, {
       method: 'DELETE',
       headers: headers
     });
 
-    // Handle authentication errors
-    if (response.status === 401) {
-      localStorage.removeItem('admin_token');
-      localStorage.removeItem('admin_user');
-      localStorage.removeItem('device_token');
-      throw new Error('Session expired. Please login again.');
-    }
-
-    // Check if response is OK before trying to parse JSON
-    if (!response.ok) {
-      // Try to get error message from response if possible
-      try {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to delete admin (${response.status})`);
-      } catch (jsonError) {
-        // If can't parse JSON, just use status text
-        throw new Error(`Failed to delete admin: ${response.statusText || response.status}`);
-      }
-    }
-
-    // Check if response has content before parsing
-    const contentType = response.headers.get('content-type');
-    let data = { success: true }; // Default success response
+    console.log('📥 Delete response status:', response.status);
     
-    if (contentType && contentType.includes('application/json')) {
-      const text = await response.text(); // Get as text first
-      if (text) {
-        try {
-          data = JSON.parse(text);
-        } catch (e) {
-          console.log('Response text that failed to parse:', text);
-          // If parsing fails but response was OK, assume success
-          data = { success: true };
-        }
-      }
+    if (response.status === 403) {
+      const errorData = await response.json();
+      console.error('❌ 403 Forbidden details:', errorData);
+      toast.error(errorData.message || 'You do not have permission to delete this user');
+      return;
     }
 
-    if (data.success !== false) {
-      // Remove from local state
-      const updatedAdmins = admins.filter(admin => admin.id !== adminToDelete.id);
-      setAdmins(updatedAdmins);
-      setSelectedAdmins(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(adminToDelete.id);
-        return newSet;
-      });
-      
-      toast.success('Admin deleted successfully!');
-    } else {
-      throw new Error(data.error || 'Failed to delete admin');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Failed to delete admin (${response.status})`);
     }
+
+    // Remove from local state
+    const updatedAdmins = admins.filter(admin => admin.id !== adminToDelete.id);
+    setAdmins(updatedAdmins);
+    setSelectedAdmins(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(adminToDelete.id);
+      return newSet;
+    });
+    
+    toast.success('Admin deleted successfully!');
+    
   } catch (error) {
     console.error('Error deleting admin:', error);
     
-    // Handle authentication errors
     if (handleAuthError(error, toast.error)) {
       return;
     }
