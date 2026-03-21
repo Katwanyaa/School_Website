@@ -331,33 +331,25 @@ const PasswordStrengthIndicator = () => {
 const getAuthHeaders = (contentType = 'application/json') => {
   const adminToken = localStorage.getItem('admin_token');
   const deviceToken = localStorage.getItem('device_token');
-  const adminUser = localStorage.getItem('admin_user');
   
   console.log('🔑 Auth debug:', {
     hasAdminToken: !!adminToken,
     hasDeviceToken: !!deviceToken,
-    hasAdminUser: !!adminUser,
-    adminToken: adminToken ? adminToken.substring(0, 30) + '...' : 'none',
-    deviceToken: deviceToken ? deviceToken.substring(0, 30) + '...' : 'none'
   });
   
   if (!adminToken) {
     throw new Error('Admin authentication required. Please login again.');
   }
   
+  // Clean headers matching your PortalHeader pattern
   const headers = {
-    'Authorization': `Bearer ${adminToken}`,
+    'x-admin-token': adminToken,  // Primary header for your API
     'Content-Type': contentType
   };
   
-  // Only add device token if it exists
+  // Add device token if exists
   if (deviceToken) {
     headers['x-device-token'] = deviceToken;
-  }
-  
-  // Only add admin user if it exists
-  if (adminUser) {
-    headers['x-admin-user'] = adminUser;
   }
   
   return headers;
