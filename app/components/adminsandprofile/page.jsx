@@ -133,6 +133,8 @@ export default function AdminManager() {
   const [status, setStatus] = useState('loading');
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  // Add this after your existing states
+const [currentUserRole, setCurrentUserRole] = useState(null);
 
   const [admins, setAdmins] = useState([]);
   const [filteredAdmins, setFilteredAdmins] = useState([]);
@@ -190,6 +192,10 @@ const handleViewAdmin = (admin) => {
         if (token && user) {
           const userData = JSON.parse(user);
           console.log('User data:', userData);
+
+
+           setCurrentUserRole(userData.role || userData.userRole);
+ 
           
           // Verify token expiration
           try {
@@ -519,6 +525,9 @@ const fetchAdmins = async (showRefresh = false) => {
   };
 
   const stats = calculateStats();
+
+
+
 
   // Filter admins by search
   useEffect(() => {
@@ -1356,7 +1365,8 @@ const handleSaveAdmin = async (e) => {
     </span>
   </button>
   
-  {/* Create Action */}
+{/* Create Action - Only visible to SUPER_ADMIN */}
+{currentUserRole === 'SUPER_ADMIN' && (
   <button
     onClick={handleCreateAdmin}
     className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 shadow-xl shadow-slate-200 hover:shadow-blue-200/50 transition-all duration-300 active:scale-95"
@@ -1368,6 +1378,7 @@ const handleSaveAdmin = async (e) => {
       Add Admin
     </span>
   </button>
+)}
 
 </div>
 
@@ -1539,24 +1550,29 @@ const handleSaveAdmin = async (e) => {
                       })}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleEditAdmin(admin)}
-                        className="p-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-600 rounded-xl transition-all duration-200 border border-blue-200 hover:scale-100 active:scale-95"
-                      >
-                        <Edit className="text-sm" />
-                      </button>
-                      {session?.user && admin.id !== session.user.id && (
-                        <button
-                          onClick={() => handleDelete(admin)}
-                          className="p-2 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 text-red-600 rounded-xl transition-all duration-200 border border-red-200 hover:scale-100 active:scale-95"
-                        >
-                          <Trash2 className="text-sm" />
-                        </button>
-                      )}
-                    </div>
-                  </td>
+                 <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+    {/* Edit button - Only visible to SUPER_ADMIN */}
+    {currentUserRole === 'SUPER_ADMIN' && (
+      <button
+        onClick={() => handleEditAdmin(admin)}
+        className="p-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-600 rounded-xl transition-all duration-200 border border-blue-200 hover:scale-100 active:scale-95"
+      >
+        <Edit className="text-sm" />
+      </button>
+    )}
+    
+    {/* Delete button - Only visible to SUPER_ADMIN AND not current user */}
+    {currentUserRole === 'SUPER_ADMIN' && session?.user && admin.id !== session.user.id && (
+      <button
+        onClick={() => handleDelete(admin)}
+        className="p-2 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 text-red-600 rounded-xl transition-all duration-200 border border-red-200 hover:scale-100 active:scale-95"
+      >
+        <Trash2 className="text-sm" />
+      </button>
+    )}
+  </div>
+</td>
                 </tr>
               ))}
             </tbody>
