@@ -1142,7 +1142,7 @@ export default function StaffDirectory() {
     onClick={clearAllFilters}
     className="px-4 sm:px-8 py-2.5 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg sm:rounded-2xl font-bold text-sm sm:text-base shadow-md sm:shadow-lg w-auto sm:w-auto"
   >
-    Clear All Filters & Search
+    Clear 
   </button>
 </div>
             )}
