@@ -78,7 +78,7 @@ const PortalHeader = ({ stats = { today: 45 }, refreshing = false, fetchEvents =
                   <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl 
                     font-black text-white tracking-tight leading-tight xs:leading-none">
                     Katwanyaa <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-blue-100">
-                      High
+                    Senior
                     </span>
                   </h1>
                   
