@@ -350,7 +350,7 @@ export async function PUT(req, { params }) {
       changes: { name, email, phone, role, status, passwordChanged: !!password }
     });
 
-    // Validate input
+    // Validate input (excluding status since it's not in schema)
     const validationErrors = validateInput(name, email, password, role, phone, true);
     if (validationErrors.length > 0) {
       return NextResponse.json(
@@ -363,11 +363,11 @@ export async function PUT(req, { params }) {
       );
     }
 
+    // Build data object with only valid fields
     let dataToUpdate = {
       name: name || targetUser.name,
       email: email || targetUser.email,
       phone: phone || undefined,
-      status: status || undefined,
     };
 
     // Only update role if user has permission
@@ -378,6 +378,7 @@ export async function PUT(req, { params }) {
       }
     }
 
+    // Add password if provided
     if (password) {
       dataToUpdate.password = await hashPassword(password);
     }
@@ -385,10 +386,21 @@ export async function PUT(req, { params }) {
     // Remove undefined fields
     Object.keys(dataToUpdate).forEach(key => dataToUpdate[key] === undefined && delete dataToUpdate[key]);
 
+    // Remove status from dataToUpdate if it exists (since it's not in schema)
+    delete dataToUpdate.status;
+
     const updatedUser = await prisma.user.update({
       where: { id },
       data: dataToUpdate,
-      select: { id: true, name: true, email: true, phone: true, role: true, status: true, createdAt: true, updatedAt: true },
+      select: { 
+        id: true, 
+        name: true, 
+        email: true, 
+        phone: true, 
+        role: true, 
+        createdAt: true, 
+        updatedAt: true 
+      },
     });
 
     console.log('✅ User updated successfully:', {
