@@ -216,7 +216,7 @@ const StatsPill = ({ icon, value, label, color = 'blue' }) => {
   );
 };
 
-const HierarchySection = ({ title, icon, staff, viewMode, isFirst = false }) => {
+const HierarchySection = ({ title, icon, staff, viewMode, isFirst = false, onContactClick }) => {
   if (!staff?.length) return null;
 
   return (
@@ -246,8 +246,8 @@ const HierarchySection = ({ title, icon, staff, viewMode, isFirst = false }) => 
         {staff.map((member) => (
           <div key={member.id} className="transition-all duration-300">
             {viewMode === 'grid' 
-              ? <StaffCard staff={member} /> 
-              : <StaffListCard staff={member} />
+              ? <StaffCard staff={member} onContactClick={onContactClick} /> 
+              : <StaffListCard staff={member} onContactClick={onContactClick} />
             }
           </div>
         ))}
@@ -1232,18 +1232,21 @@ export default function StaffDirectory() {
                       staff={staffByHierarchy.leadership}
                       viewMode={viewMode}
                       isFirst={true}
+                      onContactClick={handleContactClick}
                     />
                     <HierarchySection
                       title="Teaching Staff"
                       icon="📚"
                       staff={staffByHierarchy.teaching}
                       viewMode={viewMode}
+                      onContactClick={handleContactClick}
                     />
                     <HierarchySection
                       title="Support Staff"
                       icon="🛠️"
                       staff={staffByHierarchy.support}
                       viewMode={viewMode}
+                      onContactClick={handleContactClick}
                     />
                   </div>
                 ) : viewMode === 'grid' ? (
