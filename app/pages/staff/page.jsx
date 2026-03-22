@@ -29,6 +29,7 @@ import {
   FiBookOpen,
   FiRefreshCw
 } from 'react-icons/fi';
+import { toast } from 'sonner';
 import { SiGmail } from 'react-icons/si';
 
 // ==========================================
@@ -216,6 +217,63 @@ const Checkbox = ({ label, count, checked, onChange, color, icon }) => (
   </label>
 );
 
+const handleConsultSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitting(true);
+
+  try {
+    const payload = {
+      name: consultForm.name,
+      email: consultForm.email,
+      phone: consultForm.phone,
+      message: consultForm.message,
+      subject: consultForm.subject || `Consultation with ${selectedStaff.name}`,
+      studentDetails: consultForm.studentGrade,
+      contactMethod: consultForm.contactMethod,
+      teacherId: selectedStaff.id,
+      teacherName: selectedStaff.name,
+      teacherEmail: selectedStaff.email,
+      teacherPosition: selectedStaff.position
+    };
+
+    // Use the new API endpoint
+    const response = await fetch('/api/teacher-consultation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      toast.success(`Consultation request sent! Reference: ${data.referenceNumber}`);
+      setShowConsultModal(false);
+      // Reset form
+      setConsultForm({
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+        subject: '',
+        inquiryType: 'general',
+        contactMethod: 'email',
+        studentGrade: '',
+        staffId: '',
+        staffName: '',
+        staffEmail: ''
+      });
+    } else {
+      throw new Error(data.error || 'Failed to send consultation request');
+    }
+  } catch (error) {
+    console.error('Error sending consultation:', error);
+    toast.error(error.message || 'Failed to send message. Please try again.');
+  } finally {
+    setSubmitting(false);
+  }
+};
+
+
 const StatsPill = ({ icon, value, label, color = 'blue' }) => {
   const colorMap = {
     blue: 'bg-blue-50 text-blue-600 ring-blue-100',
@@ -367,19 +425,24 @@ const StaffCard = ({ staff }) => {
           </div>
         )}
 
-        {/* Contact Row - compact */}
-        <div className="flex items-center gap-2 mb-2">
-          {staff.email && (
-            <a 
-              href={`mailto:${staff.email}`} 
-              className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium"
-            >
-              <FiMail size={12} />
-              <span>Email</span>
-            </a>
-          )}
-        </div>
-
+{staff.email && (
+  <button
+    onClick={() => {
+      setSelectedStaff(staff);
+      setConsultForm({
+        ...consultForm,
+        staffId: staff.id,
+        staffName: staff.name,
+        staffEmail: staff.email,
+        subject: `Inquiry for ${staff.name}`
+      });
+      setShowConsultModal(true);
+    }}
+    className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-xs font-semibold hover:from-blue-100 hover:to-blue-200 transition-colors"
+  >
+    <FiMail size={12} /> <span>Contact</span>
+  </button>
+)}
         {/* Profile Button - smaller */}
         <Link
           href={`/pages/staff/${staff.id}/${generateSlug(staff.name, staff.id)}`}
@@ -472,6 +535,25 @@ export default function StaffDirectory() {
   const [viewMode, setViewMode] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+
+  // Add these states
+const [showConsultModal, setShowConsultModal] = useState(false);
+const [selectedStaff, setSelectedStaff] = useState(null);
+const [consultForm, setConsultForm] = useState({
+  name: '',
+  email: '',
+  phone: '',
+  message: '',
+  subject: '',
+  inquiryType: 'general',
+  contactMethod: 'email',
+  studentGrade: '',
+  staffId: '',
+  staffName: '',
+  staffEmail: ''
+});
+const [submitting, setSubmitting] = useState(false);
 
   const fetchStaffData = async () => {
     try {
@@ -975,7 +1057,193 @@ export default function StaffDirectory() {
                 ))}
               </div>
             )}
+{/* Consultation Modal */}
+{showConsultModal && selectedStaff && (
+  <div 
+    className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 z-[200] animate-in fade-in duration-200"
+    onClick={() => setShowConsultModal(false)}
+  >
+    <div 
+      className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl border border-slate-200 animate-in slide-in-from-bottom-4 duration-300"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-5 text-white">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/10 backdrop-blur-sm rounded-xl">
+              <FiMail className="text-xl" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Contact {selectedStaff.name}</h2>
+              <p className="text-blue-100 text-xs">Send inquiry to {selectedStaff.position}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowConsultModal(false)}
+            className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+          >
+            <FiX size={20} />
+          </button>
+        </div>
+      </div>
 
+      {/* Form */}
+      <form onSubmit={handleConsultSubmit} className="p-6 overflow-y-auto max-h-[calc(90vh-120px)] space-y-5">
+        {/* Staff Info Card */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-2xl border border-blue-100">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              {selectedStaff.name.charAt(0)}
+            </div>
+            <div>
+              <p className="font-bold text-gray-900 text-sm">Consultation with:</p>
+              <p className="font-semibold text-gray-800 text-sm">{selectedStaff.name}</p>
+              <p className="text-xs text-gray-600">{selectedStaff.position} • {selectedStaff.department}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Personal Details Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-2">Your Name *</label>
+            <input
+              type="text"
+              required
+              value={consultForm.name}
+              onChange={(e) => setConsultForm({...consultForm, name: e.target.value})}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="Enter your full name"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-2">Email Address *</label>
+            <input
+              type="email"
+              required
+              value={consultForm.email}
+              onChange={(e) => setConsultForm({...consultForm, email: e.target.value})}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="your@email.com"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-2">Phone Number *</label>
+            <input
+              type="tel"
+              required
+              value={consultForm.phone}
+              onChange={(e) => setConsultForm({...consultForm, phone: e.target.value})}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="+254700000000"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-2">Inquiry Type</label>
+            <select
+              value={consultForm.inquiryType}
+              onChange={(e) => setConsultForm({...consultForm, inquiryType: e.target.value})}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            >
+              <option value="general">General Inquiry</option>
+              <option value="academic">Academic Consultation</option>
+              <option value="guidance">Guidance & Counseling</option>
+              <option value="complaint">Feedback / Complaint</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Student Details (Optional) */}
+        <div>
+          <label className="block text-xs font-bold text-gray-700 mb-2">Student Details (if applicable)</label>
+          <input
+            type="text"
+            value={consultForm.studentGrade}
+            onChange={(e) => setConsultForm({...consultForm, studentGrade: e.target.value})}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            placeholder="Student name, grade, class (optional)"
+          />
+        </div>
+
+        {/* Subject */}
+        <div>
+          <label className="block text-xs font-bold text-gray-700 mb-2">Subject *</label>
+          <input
+            type="text"
+            required
+            value={consultForm.subject}
+            onChange={(e) => setConsultForm({...consultForm, subject: e.target.value})}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            placeholder="Brief subject of your inquiry"
+          />
+        </div>
+
+        {/* Message */}
+        <div>
+          <label className="block text-xs font-bold text-gray-700 mb-2">Message *</label>
+          <textarea
+            required
+            rows={4}
+            value={consultForm.message}
+            onChange={(e) => setConsultForm({...consultForm, message: e.target.value})}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+            placeholder="Type your message here..."
+          />
+        </div>
+
+        {/* Contact Preference */}
+        <div>
+          <label className="block text-xs font-bold text-gray-700 mb-2">Preferred Contact Method</label>
+          <div className="flex gap-3">
+            {['email', 'phone', 'whatsapp'].map(method => (
+              <label key={method} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  value={method}
+                  checked={consultForm.contactMethod === method}
+                  onChange={(e) => setConsultForm({...consultForm, contactMethod: e.target.value})}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="text-sm capitalize">{method}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <button
+            type="button"
+            onClick={() => setShowConsultModal(false)}
+            className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold text-sm transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {submitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <FiMail size={16} />
+                Send Message
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
             {loading ? (
               <div
                 className={
