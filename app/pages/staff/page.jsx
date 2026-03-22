@@ -42,7 +42,7 @@ const STAFF_HIERARCHY = [
     label: 'School Leadership',
     color: 'blue',
     icon: '👑',
-    positions: ['Principal', 'Deputy Principal'] // only principal and deputies
+    positions: ['Principal', 'Deputy Principal']
   },
   {
     level: 'teaching',
@@ -114,12 +114,10 @@ const getImageSrc = (staff) => {
   return '/images/default-staff.jpg';
 };
 
-// Updated: only Principal and Deputy Principal are considered leadership
 const getStaffHierarchy = (position) => {
   if (!position) return 'teaching';
   
   const positionLower = position.toLowerCase();
-  // Leadership: only if position contains 'principal' and NOT 'senior' or 'head'
   if ((positionLower.includes('principal') || positionLower.includes('deputy principal')) &&
       !positionLower.includes('senior') && !positionLower.includes('head')) {
     return 'leadership';
@@ -131,7 +129,6 @@ const getStaffHierarchy = (position) => {
   }
 };
 
-// Sort: Principal first, then Deputies, then Teaching, then Support
 const sortStaffByHierarchy = (staff) => {
   const hierarchyOrder = { leadership: 1, teaching: 2, support: 3 };
   
@@ -143,7 +140,6 @@ const sortStaffByHierarchy = (staff) => {
       return hierarchyOrder[aHierarchy] - hierarchyOrder[bHierarchy];
     }
     
-    // Within leadership: Principal first, then Deputies
     if (aHierarchy === 'leadership' && bHierarchy === 'leadership') {
       const aIsPrincipal = a.position?.toLowerCase().includes('principal') && !a.position?.toLowerCase().includes('deputy');
       const bIsPrincipal = b.position?.toLowerCase().includes('principal') && !b.position?.toLowerCase().includes('deputy');
@@ -159,7 +155,7 @@ const sortStaffByHierarchy = (staff) => {
 };
 
 // ==========================================
-// 3. SUB-COMPONENTS (REDUCED SIZE)
+// 3. SUB-COMPONENTS
 // ==========================================
 
 const Badge = ({ children, color = 'slate', className = '', icon }) => (
@@ -192,87 +188,6 @@ const StaffSkeleton = ({ viewMode }) => {
     </div>
   );
 };
-
-const Checkbox = ({ label, count, checked, onChange, color, icon }) => (
-  <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg">
-    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-      checked 
-        ? 'bg-blue-600 border-blue-600' 
-        : 'bg-white border-gray-300'
-    }`}>
-      {checked && <FiUser className="text-white text-xs" />}
-    </div>
-    <input type="checkbox" className="hidden" checked={checked} onChange={onChange} />
-    <div className="flex-1 flex items-center gap-2">
-      {icon && <span className="text-base">{icon}</span>}
-      <span className={`text-xs font-medium ${checked ? 'text-gray-900' : 'text-gray-600'}`}>
-        {label}
-      </span>
-    </div>
-    {count !== undefined && (
-      <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full min-w-[2rem] text-center">
-        {count}
-      </span>
-    )}
-  </label>
-);
-
-const handleConsultSubmit = async (e) => {
-  e.preventDefault();
-  setSubmitting(true);
-
-  try {
-    const payload = {
-      name: consultForm.name,
-      email: consultForm.email,
-      phone: consultForm.phone,
-      message: consultForm.message,
-      subject: consultForm.subject || `Consultation with ${selectedStaff.name}`,
-      studentDetails: consultForm.studentGrade,
-      contactMethod: consultForm.contactMethod,
-      teacherId: selectedStaff.id,
-      teacherName: selectedStaff.name,
-      teacherEmail: selectedStaff.email,
-      teacherPosition: selectedStaff.position
-    };
-
-    // Use the new API endpoint
-    const response = await fetch('/api/teacher-consultation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-
-    if (response.ok && data.success) {
-      toast.success(`Consultation request sent! Reference: ${data.referenceNumber}`);
-      setShowConsultModal(false);
-      // Reset form
-      setConsultForm({
-        name: '',
-        email: '',
-        phone: '',
-        message: '',
-        subject: '',
-        inquiryType: 'general',
-        contactMethod: 'email',
-        studentGrade: '',
-        staffId: '',
-        staffName: '',
-        staffEmail: ''
-      });
-    } else {
-      throw new Error(data.error || 'Failed to send consultation request');
-    }
-  } catch (error) {
-    console.error('Error sending consultation:', error);
-    toast.error(error.message || 'Failed to send message. Please try again.');
-  } finally {
-    setSubmitting(false);
-  }
-};
-
 
 const StatsPill = ({ icon, value, label, color = 'blue' }) => {
   const colorMap = {
@@ -341,15 +256,15 @@ const HierarchySection = ({ title, icon, staff, viewMode, isFirst = false }) => 
   );
 };
 
-// MODIFIED: Smaller card, no stats grid
-const StaffCard = ({ staff }) => {
+// StaffCard Component with fixed button layout
+const StaffCard = ({ staff, onContactClick }) => {
   const deptConfig = DEPARTMENTS.find(d => d.id === staff.departmentId);
   const hierarchy = getStaffHierarchy(staff.position);
   
   return (
     <div className="bg-white rounded-xl border border-gray-200/60 overflow-hidden shadow-sm flex flex-col h-full">
       
-      {/* Image Section - Compact */}
+      {/* Image Section */}
       <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200">
         <Image
           src={getImageSrc(staff)}
@@ -361,10 +276,8 @@ const StaffCard = ({ staff }) => {
           onError={(e) => { e.target.src = '/images/default-staff.jpg'; }}
         />
         
-        {/* Gradient overlay for text contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         
-        {/* Status Badge */}
         <div className="absolute top-2 right-2 flex items-center gap-1">
           <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-md">
             <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
@@ -372,14 +285,12 @@ const StaffCard = ({ staff }) => {
           </div>
         </div>
 
-        {/* Department Badge */}
         <div className="absolute bottom-2 left-2">
           <Badge color={deptConfig?.color} icon={deptConfig?.icon} className="text-[10px] font-medium px-2 py-1 bg-white/90 backdrop-blur-sm shadow-md">
             {staff.department}
           </Badge>
         </div>
 
-        {/* Leadership Crown (smaller) */}
         {hierarchy === 'leadership' && (
           <div className="absolute top-2 left-2 bg-amber-400 text-white px-2 py-1 rounded-full text-[10px] font-bold shadow-md flex items-center gap-1">
             <span>👑</span>
@@ -388,10 +299,8 @@ const StaffCard = ({ staff }) => {
         )}
       </div>
 
-      {/* Content Section - Reduced padding */}
       <div className="p-3 flex-1 flex flex-col">
         
-        {/* Name and Position */}
         <div className="mb-2">
           <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-tight mb-0.5">
             {staff.name}
@@ -401,12 +310,10 @@ const StaffCard = ({ staff }) => {
           </p>
         </div>
 
-        {/* Quote/Bio - smaller text, fewer lines */}
         <p className="text-xs text-gray-600 line-clamp-2 mb-2 leading-relaxed">
           "{staff.quote || staff.bio}"
         </p>
 
-        {/* Expertise Tags - compact */}
         {staff.expertise && staff.expertise.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
             {staff.expertise.slice(0, 2).map((tag, idx) => (
@@ -425,40 +332,32 @@ const StaffCard = ({ staff }) => {
           </div>
         )}
 
-{staff.email && (
-  <button
-    onClick={() => {
-      setSelectedStaff(staff);
-      setConsultForm({
-        ...consultForm,
-        staffId: staff.id,
-        staffName: staff.name,
-        staffEmail: staff.email,
-        subject: `Inquiry for ${staff.name}`
-      });
-      setShowConsultModal(true);
-    }}
-    className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-xs font-semibold hover:from-blue-100 hover:to-blue-200 transition-colors"
-  >
-    <FiMail size={12} /> <span>Contact</span>
-  </button>
-)}
-        {/* Profile Button - smaller */}
-        <Link
-          href={`/pages/staff/${staff.id}/${generateSlug(staff.name, staff.id)}`}
-          className="flex items-center justify-center gap-1 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg"
-        >
-          <FiUser size={12} />
-          <span>View Profile</span>
-          <FiArrowRight size={12} />
-        </Link>
+        {/* Buttons in flex row */}
+        <div className="flex gap-2 mt-auto">
+          <button
+            onClick={() => onContactClick(staff)}
+            className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors"
+          >
+            <FiMail size={12} />
+            <span>Contact</span>
+          </button>
+          
+          <Link
+            href={`/pages/staff/${staff.id}/${generateSlug(staff.name, staff.id)}`}
+            className="flex-1 flex items-center justify-center gap-1 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg"
+          >
+            <FiUser size={12} />
+            <span>Profile</span>
+            <FiArrowRight size={12} />
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
 
-// MODIFIED: No counts
-const StaffListCard = ({ staff }) => {
+// StaffListCard Component
+const StaffListCard = ({ staff, onContactClick }) => {
   const deptConfig = DEPARTMENTS.find(d => d.id === staff.departmentId);
   const hierarchy = getStaffHierarchy(staff.position);
   
@@ -499,15 +398,13 @@ const StaffListCard = ({ staff }) => {
         <p className="text-gray-600 text-xs leading-relaxed line-clamp-1">{staff.bio}</p>
       </div>
 
-      <div className="flex flex-row sm:flex-col gap-2 shrink-0 w-full sm:w-auto">
-        {staff.email && (
-          <a 
-            href={`mailto:${staff.email}`}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-xs font-semibold"
-          >
-            <FiMail size={12} /> <span>Email</span>
-          </a>
-        )}
+      <div className="flex flex-row gap-2 shrink-0 w-full sm:w-auto">
+        <button
+          onClick={() => onContactClick(staff)}
+          className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-xs font-semibold hover:from-blue-100 hover:to-blue-200 transition-colors"
+        >
+          <FiMail size={12} /> <span>Contact</span>
+        </button>
         <Link
           href={`/pages/staff/${staff.id}/${generateSlug(staff.name, staff.id)}`}
           className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-xs font-semibold"
@@ -536,24 +433,91 @@ export default function StaffDirectory() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Consultation Modal States
+  const [showConsultModal, setShowConsultModal] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState(null);
+  const [consultForm, setConsultForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+    subject: '',
+    inquiryType: 'general',
+    contactMethod: 'email',
+    studentGrade: '',
+    staffId: '',
+    staffName: '',
+    staffEmail: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
 
-  // Add these states
-const [showConsultModal, setShowConsultModal] = useState(false);
-const [selectedStaff, setSelectedStaff] = useState(null);
-const [consultForm, setConsultForm] = useState({
-  name: '',
-  email: '',
-  phone: '',
-  message: '',
-  subject: '',
-  inquiryType: 'general',
-  contactMethod: 'email',
-  studentGrade: '',
-  staffId: '',
-  staffName: '',
-  staffEmail: ''
-});
-const [submitting, setSubmitting] = useState(false);
+  // Handle Contact Click
+  const handleContactClick = (staff) => {
+    setSelectedStaff(staff);
+    setConsultForm({
+      ...consultForm,
+      staffId: staff.id,
+      staffName: staff.name,
+      staffEmail: staff.email,
+      subject: `Inquiry for ${staff.name}`
+    });
+    setShowConsultModal(true);
+  };
+
+  // Handle Consultation Submit
+  const handleConsultSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const payload = {
+        name: consultForm.name,
+        email: consultForm.email,
+        phone: consultForm.phone,
+        message: consultForm.message,
+        subject: consultForm.subject || `Consultation with ${selectedStaff.name}`,
+        studentDetails: consultForm.studentGrade,
+        contactMethod: consultForm.contactMethod,
+        teacherId: selectedStaff.id,
+        teacherName: selectedStaff.name,
+        teacherEmail: selectedStaff.email,
+        teacherPosition: selectedStaff.position
+      };
+
+      const response = await fetch('/api/teacher-consultation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        toast.success(`Consultation request sent! Reference: ${data.referenceNumber}`);
+        setShowConsultModal(false);
+        setConsultForm({
+          name: '',
+          email: '',
+          phone: '',
+          message: '',
+          subject: '',
+          inquiryType: 'general',
+          contactMethod: 'email',
+          studentGrade: '',
+          staffId: '',
+          staffName: '',
+          staffEmail: ''
+        });
+      } else {
+        throw new Error(data.error || 'Failed to send consultation request');
+      }
+    } catch (error) {
+      console.error('Error sending consultation:', error);
+      toast.error(error.message || 'Failed to send message. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const fetchStaffData = async () => {
     try {
@@ -799,7 +763,7 @@ const [submitting, setSubmitting] = useState(false);
       <div className="container mx-auto px-4 py-4 sm:py-6">
         <div className="flex flex-col lg:flex-row gap-5">
           
-          {/* Sidebar - Fixed close button on mobile */}
+          {/* Sidebar */}
           <aside className={`
             fixed lg:static inset-y-0 left-0 w-72 bg-white transform transition-transform duration-300 ease-in-out shadow-xl z-50 lg:z-auto lg:shadow-none overflow-y-auto border-r lg:border-r-0 border-gray-200/50
             ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -1057,193 +1021,195 @@ const [submitting, setSubmitting] = useState(false);
                 ))}
               </div>
             )}
-{/* Consultation Modal */}
-{showConsultModal && selectedStaff && (
-  <div 
-    className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 z-[200] animate-in fade-in duration-200"
-    onClick={() => setShowConsultModal(false)}
-  >
-    <div 
-      className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl border border-slate-200 animate-in slide-in-from-bottom-4 duration-300"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-5 text-white">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/10 backdrop-blur-sm rounded-xl">
-              <FiMail className="text-xl" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold">Contact {selectedStaff.name}</h2>
-              <p className="text-blue-100 text-xs">Send inquiry to {selectedStaff.position}</p>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowConsultModal(false)}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors"
-          >
-            <FiX size={20} />
-          </button>
-        </div>
-      </div>
 
-      {/* Form */}
-      <form onSubmit={handleConsultSubmit} className="p-6 overflow-y-auto max-h-[calc(90vh-120px)] space-y-5">
-        {/* Staff Info Card */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-2xl border border-blue-100">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-              {selectedStaff.name.charAt(0)}
-            </div>
-            <div>
-              <p className="font-bold text-gray-900 text-sm">Consultation with:</p>
-              <p className="font-semibold text-gray-800 text-sm">{selectedStaff.name}</p>
-              <p className="text-xs text-gray-600">{selectedStaff.position} • {selectedStaff.department}</p>
-            </div>
-          </div>
-        </div>
+            {/* Consultation Modal */}
+            {showConsultModal && selectedStaff && (
+              <div 
+                className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 z-[200] animate-in fade-in duration-200"
+                onClick={() => setShowConsultModal(false)}
+              >
+                <div 
+                  className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl border border-slate-200 animate-in slide-in-from-bottom-4 duration-300"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-5 text-white">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white/10 backdrop-blur-sm rounded-xl">
+                          <FiMail className="text-xl" />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-bold">Contact {selectedStaff.name}</h2>
+                          <p className="text-blue-100 text-xs">Send inquiry to {selectedStaff.position}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowConsultModal(false)}
+                        className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                      >
+                        <FiX size={20} />
+                      </button>
+                    </div>
+                  </div>
 
-        {/* Personal Details Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-bold text-gray-700 mb-2">Your Name *</label>
-            <input
-              type="text"
-              required
-              value={consultForm.name}
-              onChange={(e) => setConsultForm({...consultForm, name: e.target.value})}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="Enter your full name"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-700 mb-2">Email Address *</label>
-            <input
-              type="email"
-              required
-              value={consultForm.email}
-              onChange={(e) => setConsultForm({...consultForm, email: e.target.value})}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="your@email.com"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-700 mb-2">Phone Number *</label>
-            <input
-              type="tel"
-              required
-              value={consultForm.phone}
-              onChange={(e) => setConsultForm({...consultForm, phone: e.target.value})}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="+254700000000"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-700 mb-2">Inquiry Type</label>
-            <select
-              value={consultForm.inquiryType}
-              onChange={(e) => setConsultForm({...consultForm, inquiryType: e.target.value})}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            >
-              <option value="general">General Inquiry</option>
-              <option value="academic">Academic Consultation</option>
-              <option value="guidance">Guidance & Counseling</option>
-              <option value="complaint">Feedback / Complaint</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-        </div>
+                  {/* Form */}
+                  <form onSubmit={handleConsultSubmit} className="p-6 overflow-y-auto max-h-[calc(90vh-120px)] space-y-5">
+                    {/* Staff Info Card */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-2xl border border-blue-100">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                          {selectedStaff.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900 text-sm">Consultation with:</p>
+                          <p className="font-semibold text-gray-800 text-sm">{selectedStaff.name}</p>
+                          <p className="text-xs text-gray-600">{selectedStaff.position} • {selectedStaff.department}</p>
+                        </div>
+                      </div>
+                    </div>
 
-        {/* Student Details (Optional) */}
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-2">Student Details (if applicable)</label>
-          <input
-            type="text"
-            value={consultForm.studentGrade}
-            onChange={(e) => setConsultForm({...consultForm, studentGrade: e.target.value})}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Student name, grade, class (optional)"
-          />
-        </div>
+                    {/* Personal Details Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-2">Your Name *</label>
+                        <input
+                          type="text"
+                          required
+                          value={consultForm.name}
+                          onChange={(e) => setConsultForm({...consultForm, name: e.target.value})}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="Enter your full name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-2">Email Address *</label>
+                        <input
+                          type="email"
+                          required
+                          value={consultForm.email}
+                          onChange={(e) => setConsultForm({...consultForm, email: e.target.value})}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="your@email.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-2">Phone Number *</label>
+                        <input
+                          type="tel"
+                          required
+                          value={consultForm.phone}
+                          onChange={(e) => setConsultForm({...consultForm, phone: e.target.value})}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="+254700000000"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-2">Inquiry Type</label>
+                        <select
+                          value={consultForm.inquiryType}
+                          onChange={(e) => setConsultForm({...consultForm, inquiryType: e.target.value})}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        >
+                          <option value="general">General Inquiry</option>
+                          <option value="academic">Academic Consultation</option>
+                          <option value="guidance">Guidance & Counseling</option>
+                          <option value="complaint">Feedback / Complaint</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                    </div>
 
-        {/* Subject */}
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-2">Subject *</label>
-          <input
-            type="text"
-            required
-            value={consultForm.subject}
-            onChange={(e) => setConsultForm({...consultForm, subject: e.target.value})}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Brief subject of your inquiry"
-          />
-        </div>
+                    {/* Student Details */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">Student Details (if applicable)</label>
+                      <input
+                        type="text"
+                        value={consultForm.studentGrade}
+                        onChange={(e) => setConsultForm({...consultForm, studentGrade: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Student name, grade, class (optional)"
+                      />
+                    </div>
 
-        {/* Message */}
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-2">Message *</label>
-          <textarea
-            required
-            rows={4}
-            value={consultForm.message}
-            onChange={(e) => setConsultForm({...consultForm, message: e.target.value})}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-            placeholder="Type your message here..."
-          />
-        </div>
+                    {/* Subject */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">Subject *</label>
+                      <input
+                        type="text"
+                        required
+                        value={consultForm.subject}
+                        onChange={(e) => setConsultForm({...consultForm, subject: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Brief subject of your inquiry"
+                      />
+                    </div>
 
-        {/* Contact Preference */}
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-2">Preferred Contact Method</label>
-          <div className="flex gap-3">
-            {['email', 'phone', 'whatsapp'].map(method => (
-              <label key={method} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="contactMethod"
-                  value={method}
-                  checked={consultForm.contactMethod === method}
-                  onChange={(e) => setConsultForm({...consultForm, contactMethod: e.target.value})}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="text-sm capitalize">{method}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+                    {/* Message */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">Message *</label>
+                      <textarea
+                        required
+                        rows={4}
+                        value={consultForm.message}
+                        onChange={(e) => setConsultForm({...consultForm, message: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                        placeholder="Type your message here..."
+                      />
+                    </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-4 border-t border-gray-200">
-          <button
-            type="button"
-            onClick={() => setShowConsultModal(false)}
-            className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold text-sm transition-all"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {submitting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Sending...
-              </>
-            ) : (
-              <>
-                <FiMail size={16} />
-                Send Message
-              </>
+                    {/* Contact Preference */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">Preferred Contact Method</label>
+                      <div className="flex gap-3">
+                        {['email', 'phone', 'whatsapp'].map(method => (
+                          <label key={method} className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="contactMethod"
+                              value={method}
+                              checked={consultForm.contactMethod === method}
+                              onChange={(e) => setConsultForm({...consultForm, contactMethod: e.target.value})}
+                              className="w-4 h-4 text-blue-600"
+                            />
+                            <span className="text-sm capitalize">{method}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3 pt-4 border-t border-gray-200">
+                      <button
+                        type="button"
+                        onClick={() => setShowConsultModal(false)}
+                        className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold text-sm transition-all"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {submitting ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <FiMail size={16} />
+                            Send Message
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             )}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
+
             {loading ? (
               <div
                 className={
@@ -1283,13 +1249,21 @@ const [submitting, setSubmitting] = useState(false);
                 ) : viewMode === 'grid' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     {paginatedStaff.map((staff) => (
-                      <StaffCard key={staff.id} staff={staff} />
+                      <StaffCard 
+                        key={staff.id} 
+                        staff={staff} 
+                        onContactClick={handleContactClick}
+                      />
                     ))}
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {paginatedStaff.map((staff) => (
-                      <StaffListCard key={staff.id} staff={staff} />
+                      <StaffListCard 
+                        key={staff.id} 
+                        staff={staff} 
+                        onContactClick={handleContactClick}
+                      />
                     ))}
                   </div>
                 )}
