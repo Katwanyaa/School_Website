@@ -4,12 +4,30 @@ import nodemailer from 'nodemailer';
 // ====================================================================
 // CONFIGURATION
 // ====================================================================
+
+// Validate environment variables
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  console.error('Missing email credentials in environment variables');
+}
+
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  // Add this to debug connection issues
+  debug: true,
+  logger: true
+});
+
+// Verify transporter configuration
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('Email transporter error:', error);
+  } else {
+    console.log('Email server is ready to send messages');
+  }
 });
 
 const SCHOOL_NAME = 'Katwanyaa Senior School';
@@ -28,10 +46,16 @@ function validatePhone(phone) {
   return regex.test(cleaned);
 }
 
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
 function generateReferenceNumber() {
   const year = new Date().getFullYear();
+  const month = String(new Date().getMonth() + 1).padStart(2, '0');
   const randomNum = Math.floor(1000 + Math.random() * 9000);
-  return `TC-${year}-${randomNum}`;
+  return `TC-${year}${month}-${randomNum}`;
 }
 
 // ====================================================================
@@ -41,7 +65,7 @@ function generateReferenceNumber() {
 async function sendParentConfirmation(parentEmail, parentName, teacherName, referenceNumber) {
   const mailOptions = {
     from: {
-      name: `${SCHOOL_NAME} - ${teacherName}`,
+      name: `${SCHOOL_NAME} - Teacher Consultation`,
       address: process.env.EMAIL_USER
     },
     to: parentEmail,
@@ -127,7 +151,13 @@ async function sendParentConfirmation(parentEmail, parentName, teacherName, refe
     `
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Parent confirmation email sent to ${parentEmail}`);
+  } catch (error) {
+    console.error('Error sending parent email:', error);
+    throw new Error('Failed to send parent confirmation');
+  }
 }
 
 async function sendTeacherNotification(teacherEmail, teacherName, parentData, referenceNumber) {
@@ -202,7 +232,7 @@ async function sendTeacherNotification(teacherEmail, teacherName, parentData, re
               ` : ''}
               <div style="display:flex; justify-content:space-between; padding:8px 0;">
                 <span style="font-weight:700; color:#4b5563;">Contact Preference:</span>
-                <span style="color:#111827; text-transform:capitalize;">${parentData.contactMethod}</span>
+                <span style="color:#111827; text-transform:capitalize;">${parentData.contactMethod || 'email'}</span>
               </div>
             </div>
             
@@ -246,7 +276,13 @@ async function sendTeacherNotification(teacherEmail, teacherName, parentData, re
     `
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Teacher notification sent to ${teacherEmail}`);
+  } catch (error) {
+    console.error('Error sending teacher email:', error);
+    throw new Error('Failed to send teacher notification');
+  }
 }
 
 // ====================================================================
@@ -256,6 +292,7 @@ async function sendTeacherNotification(teacherEmail, teacherName, parentData, re
 export async function POST(request) {
   try {
     const body = await request.json();
+    console.log('Received consultation request:', { ...body, message: '[REDACTED]' });
     
     const { 
       name,           // Parent name
@@ -272,13 +309,31 @@ export async function POST(request) {
     } = body;
     
     // Validation
-    if (!name || !email || !phone || !message || !subject || !teacherName || !teacherEmail) {
+    const missingFields = [];
+    if (!name) missingFields.push('name');
+    if (!email) missingFields.push('email');
+    if (!phone) missingFields.push('phone');
+    if (!message) missingFields.push('message');
+    if (!subject) missingFields.push('subject');
+    if (!teacherName) missingFields.push('teacherName');
+    if (!teacherEmail) missingFields.push('teacherEmail');
+    
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: `Missing required fields: ${missingFields.join(', ')}` },
         { status: 400 }
       );
     }
     
+    // Validate email format
+    if (!validateEmail(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email address format' },
+        { status: 400 }
+      );
+    }
+    
+    // Validate phone format
     if (!validatePhone(phone)) {
       return NextResponse.json(
         { error: 'Invalid phone number format. Use 07XXXXXXXX or 01XXXXXXXX' },
@@ -287,18 +342,22 @@ export async function POST(request) {
     }
     
     const referenceNumber = generateReferenceNumber();
+    console.log(`Generated reference number: ${referenceNumber}`);
     
     // Send confirmation to parent
     await sendParentConfirmation(email, name, teacherName, referenceNumber);
+    console.log('Parent confirmation email sent successfully');
     
     // Send notification to teacher
     await sendTeacherNotification(
       teacherEmail,
       teacherName,
-      { name, email, phone, message, subject, studentDetails, contactMethod },
+      { name, email, phone, message, subject, studentDetails, contactMethod: contactMethod || 'email' },
       referenceNumber
     );
+    console.log('Teacher notification email sent successfully');
     
+    // Return success response
     return NextResponse.json(
       { 
         success: true,
@@ -307,11 +366,33 @@ export async function POST(request) {
       },
       { status: 200 }
     );
+    
   } catch (error) {
     console.error('Teacher consultation error:', error);
+    
+    // Return more specific error message
     return NextResponse.json(
-      { error: 'Failed to send consultation request' },
+      { 
+        error: 'Failed to send consultation request',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     );
   }
+}
+
+// ====================================================================
+// OPTIONS HANDLER FOR CORS
+// ====================================================================
+
+export async function OPTIONS() {
+  return NextResponse.json(
+    {},
+    {
+      status: 200,
+      headers: {
+        'Allow': 'POST, OPTIONS',
+      },
+    }
+  );
 }
