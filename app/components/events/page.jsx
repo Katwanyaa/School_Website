@@ -899,7 +899,7 @@ const ModernEventsNewsSection = () => {
                       const currentItem = selectedTab === 'events' ? currentEvent : currentNews;
                       if (!currentItem) return;
                       
-                      const url = `${window.location.origin}/${selectedTab}`;
+                      const url = "https://katwanyaasenior.school/eventsandnews"; // Fixed: added quotes
                       const text = `Check out "${currentItem.title}"`;
                       
                       const shareUrls = {
