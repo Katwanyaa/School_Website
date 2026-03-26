@@ -368,19 +368,18 @@ const ModernEventsNewsSection = () => {
           </div>
         </div>
 
-        {/* Main Grid - Main card on LEFT, Sidebar on RIGHT */}
-        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 sm:gap-5 md:gap-6 items-start">
+        {/* Main Grid - Main card on LEFT, Sidebar on RIGHT - FIXED for equal height */}
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 sm:gap-5 md:gap-6 items-stretch">
           
           {/* Main Featured Card (LEFT SIDE) */}
-          <div className="lg:col-span-8 flex flex-col bg-white rounded-xl sm:rounded-2xl md:rounded-3xl shadow-lg sm:shadow-xl border border-slate-100 overflow-hidden">
+          <div className="lg:col-span-8 flex flex-col bg-white rounded-xl sm:rounded-2xl md:rounded-3xl shadow-lg sm:shadow-xl border border-slate-100 overflow-hidden h-full">
             
-            {/* Image Section - FIXED: Added support for all image formats */}
-            <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96 overflow-hidden">
+            {/* Image Section */}
+            <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96 overflow-hidden flex-shrink-0">
               {selectedTab === 'events' ? (
                 currentEvent ? (
                   <>
                     {currentEvent.image ? (
-                      // Using img tag instead of Next.js Image for better format support
                       <img
                         src={currentEvent.image} 
                         alt={currentEvent.title}
@@ -389,7 +388,6 @@ const ModernEventsNewsSection = () => {
                           e.target.onerror = null;
                           e.target.style.display = 'none';
                           e.target.parentElement.classList.add('bg-gradient-to-br', 'from-blue-500', 'to-purple-600');
-                          // Add fallback icon
                           const fallback = document.createElement('div');
                           fallback.className = 'absolute inset-0 flex items-center justify-center';
                           fallback.innerHTML = '<svg class="text-white w-16 h-16 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15M9 11l3 3m0 0l3-3m-3 3V8" /></svg>';
@@ -403,7 +401,6 @@ const ModernEventsNewsSection = () => {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     
-                    {/* Overlay Content */}
                     <div className="absolute bottom-0 left-0 right-0 z-20 p-3 sm:p-4 md:p-6 lg:p-8">
                       <span className={`px-2 sm:px-3 md:px-4 py-1 md:py-2 ${getCategoryColor(currentEvent.category).accent} text-white text-xs font-bold uppercase tracking-widest rounded-full inline-block mb-1.5 sm:mb-2 md:mb-3`}>
                         {currentEvent.category}
@@ -435,7 +432,6 @@ const ModernEventsNewsSection = () => {
                 currentNews ? (
                   <>
                     {currentNews.image ? (
-                      // Using img tag instead of Next.js Image for better format support
                       <img
                         src={currentNews.image} 
                         alt={currentNews.title}
@@ -444,7 +440,6 @@ const ModernEventsNewsSection = () => {
                           e.target.onerror = null;
                           e.target.style.display = 'none';
                           e.target.parentElement.classList.add('bg-gradient-to-br', 'from-purple-500', 'to-pink-600');
-                          // Add fallback icon
                           const fallback = document.createElement('div');
                           fallback.className = 'absolute inset-0 flex items-center justify-center';
                           fallback.innerHTML = '<svg class="text-white w-16 h-16 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15M9 11l3 3m0 0l3-3m-3 3V8" /></svg>';
@@ -458,7 +453,6 @@ const ModernEventsNewsSection = () => {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     
-                    {/* Overlay Content */}
                     <div className="absolute bottom-0 left-0 right-0 z-20 p-3 sm:p-4 md:p-6 lg:p-8">
                       <span className={`px-2 sm:px-3 md:px-4 py-1 md:py-2 ${getCategoryColor(currentNews.category).accent} text-white text-xs font-bold uppercase tracking-widest rounded-full inline-block mb-1.5 sm:mb-2 md:mb-3`}>
                         {currentNews.category}
@@ -526,7 +520,6 @@ const ModernEventsNewsSection = () => {
                   <div className="space-y-3 sm:space-y-4 md:space-y-6">
                     {selectedTab === 'events' && currentEvent ? (
                       <>
-                        {/* Event Info */}
                         <div>
                           <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.1em] sm:tracking-[0.2em] mb-2 sm:mb-3 md:mb-4 flex items-center gap-1.5 sm:gap-2">
                             <FiClock className="text-green-500 w-3 h-3 sm:w-4 sm:h-4" /> Event Information
@@ -548,7 +541,6 @@ const ModernEventsNewsSection = () => {
                             )}
                           </ul>
                         </div>
-                        {/* Action Buttons */}
                         <div className="pt-3 md:pt-4 border-t border-slate-200">
                           <div className="flex gap-2 sm:gap-3">
                             <button 
@@ -575,7 +567,6 @@ const ModernEventsNewsSection = () => {
                       </>
                     ) : selectedTab === 'news' && currentNews ? (
                       <>
-                        {/* News Info */}
                         <div>
                           <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.1em] sm:tracking-[0.2em] mb-2 sm:mb-3 md:mb-4 flex items-center gap-1.5 sm:gap-2">
                             <IoRibbonOutline className="text-amber-500 w-3 h-3 sm:w-4 sm:h-4" /> Article Details
@@ -596,7 +587,6 @@ const ModernEventsNewsSection = () => {
                           </ul>
                         </div>
 
-                        {/* News Actions */}
                         <div className="pt-3 md:pt-4 border-t border-slate-200">
                           <div className="flex items-center justify-between mb-3 sm:mb-4">
                             <button className="flex items-center gap-1.5 sm:gap-2 text-slate-500 hover:text-red-500 transition-colors">
@@ -625,13 +615,12 @@ const ModernEventsNewsSection = () => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
 
-          {/* Sidebar Cards (RIGHT SIDE) - FIXED: Equal width for both events and news */}
-          <div className="lg:col-span-4 space-y-3 sm:space-y-4 md:space-y-6 mt-4 sm:mt-5 md:mt-6 lg:mt-0">
-            {/* List Items - Events Sidebar with same width as news */}
+          {/* Sidebar Cards (RIGHT SIDE) */}
+          <div className="lg:col-span-4 space-y-3 sm:space-y-4 md:space-y-6 mt-4 sm:mt-5 md:mt-6 lg:mt-0 flex flex-col h-full">
+            {/* List Items - Events Sidebar */}
             {selectedTab === 'events' ? (
               events.length > 0 ? (
                 events.map((event, index) => {
@@ -660,7 +649,6 @@ const ModernEventsNewsSection = () => {
                                 e.target.onerror = null;
                                 e.target.style.display = 'none';
                                 e.target.parentElement.classList.add(colors.dark);
-                                // Add fallback icon
                                 const fallback = document.createElement('div');
                                 fallback.className = 'absolute inset-0 flex items-center justify-center text-white';
                                 fallback.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>';
@@ -700,7 +688,6 @@ const ModernEventsNewsSection = () => {
                   );
                 })
               ) : (
-                // No events placeholder
                 <div className="w-full space-y-3 sm:space-y-4">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="w-full bg-white rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-100">
@@ -719,7 +706,6 @@ const ModernEventsNewsSection = () => {
                     </div>
                   ))}
                   
-                  {/* Stats Card Skeleton */}
                   <div className="bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6">
                     <div className="flex items-center gap-2 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/30 rounded-lg sm:rounded-xl" />
@@ -765,7 +751,6 @@ const ModernEventsNewsSection = () => {
                                 e.target.onerror = null;
                                 e.target.style.display = 'none';
                                 e.target.parentElement.classList.add(colors.dark);
-                                // Add fallback icon
                                 const fallback = document.createElement('div');
                                 fallback.className = 'absolute inset-0 flex items-center justify-center text-white';
                                 fallback.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15" /></svg>';
@@ -805,7 +790,6 @@ const ModernEventsNewsSection = () => {
                   );
                 })
               ) : (
-                // No news placeholder
                 <div className="w-full space-y-3 sm:space-y-4">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="w-full bg-white rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-100">
@@ -824,7 +808,6 @@ const ModernEventsNewsSection = () => {
                     </div>
                   ))}
                   
-                  {/* Stats Card Skeleton */}
                   <div className="bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6">
                     <div className="flex items-center gap-2 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/30 rounded-lg sm:rounded-xl" />

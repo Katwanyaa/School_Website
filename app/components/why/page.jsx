@@ -480,14 +480,11 @@ Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Sen
         {/* School Info Footer */}
         <footer className="mt-16 pt-8 border-t border-slate-200">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-slate-500 text-[10px] font-medium">
-              © {new Date().getFullYear()} Katwanyaa Senior School. All rights reserved.
-            </p>
+
             <div className="flex items-center gap-4">
               <span className="text-[9px] font-black uppercase text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
                 Education is Light
               </span>
-              <span className="text-[9px] text-slate-400">Matungulu, Machakos</span>
             </div>
           </div>
         </footer>
