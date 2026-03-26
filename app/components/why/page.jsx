@@ -21,12 +21,14 @@ import {
   FiDollarSign,
   FiCpu,
   FiChevronLeft,
-  FiChevronRight
+  FiChevronRight,
+  FiChevronDown
 } from 'react-icons/fi';
 
 const ModernSchoolLayout = () => {
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [expandedCards, setExpandedCards] = useState({});
   
   const schoolImages = [
     { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Building" },
@@ -63,40 +65,53 @@ const ModernSchoolLayout = () => {
     router.push("/pages/apply-for-admissions");
   };
 
+  const toggleReadMore = (id) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
 const whyChooseUs = [
   {
+    id: 1,
     title: "3rd Best School in Matungulu",
     gradient: "from-blue-600 to-indigo-600",
-    description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
+    description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate. This achievement marked a significant milestone in our academic journey, demonstrating our commitment to excellence in education and student development.",
+    shortDescription: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
     metrics: "Top Performer 2019",
     icon: <FiAward className="w-4 h-4" />,
-    image: { src: "/hero/st.jpeg", alt: "Katwanyaa LPG Kitchen Installation" }
-
+    image: { src: "/hero/st.jpeg", alt: "Academic Excellence" }
   },
   {
+    id: 2,
     title: "KShs 7.2M Infrastructure Boost",
     gradient: "from-blue-600 to-indigo-600",
-    description: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations.",
+    description: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations. This investment has revolutionized our digital learning capabilities and improved our kitchen efficiency, reducing costs and environmental impact.",
+    shortDescription: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations.",
     metrics: "KShs 7.2M Total",
     icon: <FiCpu className="w-4 h-4" />,
-   image: { src: "/hero/student.jpeg", alt: "Katwanyaa LPG Kitchen Installation" }
-
+   image: { src: "/hero/student.jpeg", alt: "Infrastructure Development" }
   },
 {
+  id: 3,
   title: "Athletic Excellence & Coaching",
   gradient: "from-blue-700 via-indigo-600 to-orange-600",
-  description: "A powerhouse in Machakos County sports: Featuring our championship-winning Rugby 7s program led by Mr. Simiyu, and our elite Basketball squad under the tactical leadership of Mr. Kioko (Mr. Kim). Both programs are consistent KSSSA regional contenders recognized for discipline and technical skill.",
+  description: "A powerhouse in Machakos County sports: Featuring our championship-winning Rugby 7s program led by Mr. Simiyu, and our elite Basketball squad under the tactical leadership of Mr. Kioko (Mr. Kim). Both programs are consistent KSSSA regional contenders recognized for discipline and technical skill. Our athletes have won multiple county championships and produced several regional representatives.",
+  shortDescription: "A powerhouse in Machakos County sports: Featuring our championship-winning Rugby 7s program led by Mr. Simiyu, and our elite Basketball squad under Mr. Kioko (Mr. Kim).",
   metrics: "Multi-Sport Champions",
   icon: <FiStar className="w-5 h-5" />,
-  image: { src: "/hero/sports.jpeg", alt: "Katwanyaa Rugby and Basketball Teams" }
+  image: { src: "/hero/sports.jpeg", alt: "Athletic Excellence" }
 },
   {
+    id: 4,
     title: "Environmental Conservation",
     gradient: "from-blue-600 to-indigo-600",
-    description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees.",
+    description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees. This initiative has not only saved costs but also contributed significantly to environmental sustainability, reducing our carbon footprint and promoting eco-friendly practices.",
+    shortDescription: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees.",
     metrics: "Trees Conserved",
     icon: <FiHeart className="w-4 h-4" />,
-    image: { src: "/hero/env.jpeg", alt: "Katwanyaa LPG Kitchen Installation" }
+    image: { src: "/hero/env.jpeg", alt: "Environmental Conservation" }
   }
 ];
   const schoolFeatures = [
@@ -284,18 +299,33 @@ Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Sen
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {whyChooseUs.map((item, idx) => (
-              <div key={idx} className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white mb-4 shadow-lg`}>
+              <div key={idx} className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg flex flex-col h-full">
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white mb-4 shadow-lg flex-shrink-0`}>
                   {item.icon}
                 </div>
-                <h4 className="font-black text-slate-900 text-sm mb-2">{item.title}</h4>
-                <p className="text-slate-600 text-xs leading-relaxed mb-3">
-                  {item.description}
-                </p>
+                <h4 className="font-black text-slate-900 text-sm mb-2 flex-shrink-0">{item.title}</h4>
                 
-                {/* Add image for Athletic Excellence and Environmental Conservation */}
+                {/* Description with Read More functionality */}
+                <div className="flex-grow">
+                  <p className="text-slate-600 text-xs leading-relaxed mb-3">
+                    {expandedCards[item.id] ? item.description : item.shortDescription}
+                  </p>
+                  
+                  {/* Read More button - only show if description is longer than shortDescription */}
+                  {item.description !== item.shortDescription && (
+                    <button
+                      onClick={() => toggleReadMore(item.id)}
+                      className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-[10px] font-bold mb-3 transition-colors"
+                    >
+                      {expandedCards[item.id] ? 'Read Less' : 'Read More'}
+                      <FiChevronDown className={`w-3 h-3 transition-transform duration-300 ${expandedCards[item.id] ? 'rotate-180' : ''}`} />
+                    </button>
+                  )}
+                </div>
+                
+                {/* Image */}
                 {item.image && (
-                  <div className="relative w-full h-32 mb-3 rounded-lg overflow-hidden">
+                  <div className="relative w-full h-32 mb-3 rounded-lg overflow-hidden flex-shrink-0">
                     <Image
                       src={item.image.src}
                       alt={item.image.alt}
@@ -305,7 +335,7 @@ Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Sen
                   </div>
                 )}
                 
-                <span className="text-[9px] font-black uppercase text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                <span className="text-[9px] font-black uppercase text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block self-start flex-shrink-0">
                   {item.metrics}
                 </span>
               </div>
