@@ -67,7 +67,8 @@ const whyChooseUs = [
     description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
     metrics: "Top Performer 2019",
     icon: <FiAward className="w-4 h-4" />,
-    image: null
+    image: { src: "/hero/st.jpeg", alt: "Katwanyaa LPG Kitchen Installation" }
+
   },
   {
     title: "KShs 7.2M Infrastructure Boost",
@@ -75,7 +76,8 @@ const whyChooseUs = [
     description: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations.",
     metrics: "KShs 7.2M Total",
     icon: <FiCpu className="w-4 h-4" />,
-    image: null
+   image: { src: "/hero/student.jpeg", alt: "Katwanyaa LPG Kitchen Installation" }
+
   },
 {
   title: "Athletic Excellence & Coaching",
