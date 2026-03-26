@@ -31,7 +31,10 @@ const ModernSchoolLayout = () => {
   const schoolImages = [
     { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Building" },
     { src: "/bg/9.jpeg", alt: "Katwanyaa Senior School - Students" },
-    { src: "/hero/katz3.jpeg", alt: "Katwanyaa Senior School - Classroom" },
+    { src: "/hero/st.jpeg", alt: "Katwanyaa Senior School - Classroom" },
+   { src: "/hero/student.jpeg", alt: "Katwanyaa Senior School - Classroom" },
+    { src: "/hero/env.jpeg", alt: "Katwanyaa Senior School - Classroom" },
+    { src: "/hero/sports.jpeg", alt: "Katwanyaa Senior School - Classroom" },
     { src: "hero/katz8.jpeg", alt: "Katwanyaa Senior School - Sports" },
   ];
 
