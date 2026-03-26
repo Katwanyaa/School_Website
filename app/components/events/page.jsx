@@ -629,9 +629,9 @@ const ModernEventsNewsSection = () => {
             </div>
           </div>
 
-          {/* Sidebar Cards (RIGHT SIDE) - FIXED: Endless loading skeleton when no data */}
+          {/* Sidebar Cards (RIGHT SIDE) - FIXED: Equal width for both events and news */}
           <div className="lg:col-span-4 space-y-3 sm:space-y-4 md:space-y-6 mt-4 sm:mt-5 md:mt-6 lg:mt-0">
-            {/* List Items - Events Sidebar */}
+            {/* List Items - Events Sidebar with same width as news */}
             {selectedTab === 'events' ? (
               events.length > 0 ? (
                 events.map((event, index) => {
@@ -700,27 +700,27 @@ const ModernEventsNewsSection = () => {
                   );
                 })
               ) : (
-                // FIX: Endless Loading Skeleton - Shows continuously when no events
-                <div className="w-full space-y-3 sm:space-y-4 animate-pulse">
+                // No events placeholder
+                <div className="w-full space-y-3 sm:space-y-4">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="w-full bg-white rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-100">
                       <div className="flex items-start gap-2.5 sm:gap-3 md:gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-200 to-slate-300 animate-pulse" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-200 to-slate-300" />
                         <div className="flex-grow min-w-0 space-y-2">
                           <div className="flex items-center justify-between">
-                            <div className="w-16 h-4 sm:w-20 sm:h-5 bg-slate-200 rounded-full animate-pulse" />
-                            <div className="w-12 h-3 bg-slate-100 rounded animate-pulse" />
+                            <div className="w-16 h-4 sm:w-20 sm:h-5 bg-slate-200 rounded-full" />
+                            <div className="w-12 h-3 bg-slate-100 rounded" />
                           </div>
-                          <div className="w-3/4 h-5 sm:h-6 bg-slate-300 rounded animate-pulse" />
-                          <div className="w-1/2 h-3 sm:h-4 bg-slate-200 rounded animate-pulse" />
-                          <div className="w-20 h-3 sm:h-4 bg-blue-100 rounded animate-pulse mt-2" />
+                          <div className="w-3/4 h-5 sm:h-6 bg-slate-300 rounded" />
+                          <div className="w-1/2 h-3 sm:h-4 bg-slate-200 rounded" />
+                          <div className="w-20 h-3 sm:h-4 bg-blue-100 rounded mt-2" />
                         </div>
                       </div>
                     </div>
                   ))}
                   
                   {/* Stats Card Skeleton */}
-                  <div className="bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 animate-pulse">
+                  <div className="bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6">
                     <div className="flex items-center gap-2 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/30 rounded-lg sm:rounded-xl" />
                       <div className="space-y-1">
@@ -805,27 +805,27 @@ const ModernEventsNewsSection = () => {
                   );
                 })
               ) : (
-                // FIX: Endless Loading Skeleton - Shows continuously when no news
-                <div className="w-full space-y-3 sm:space-y-4 animate-pulse">
+                // No news placeholder
+                <div className="w-full space-y-3 sm:space-y-4">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="w-full bg-white rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-100">
                       <div className="flex items-start gap-2.5 sm:gap-3 md:gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-200 to-slate-300 animate-pulse" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-200 to-slate-300" />
                         <div className="flex-grow min-w-0 space-y-2">
                           <div className="flex items-center justify-between">
-                            <div className="w-16 h-4 sm:w-20 sm:h-5 bg-slate-200 rounded-full animate-pulse" />
-                            <div className="w-12 h-3 bg-slate-100 rounded animate-pulse" />
+                            <div className="w-16 h-4 sm:w-20 sm:h-5 bg-slate-200 rounded-full" />
+                            <div className="w-12 h-3 bg-slate-100 rounded" />
                           </div>
-                          <div className="w-3/4 h-5 sm:h-6 bg-slate-300 rounded animate-pulse" />
-                          <div className="w-1/2 h-3 sm:h-4 bg-slate-200 rounded animate-pulse" />
-                          <div className="w-20 h-3 sm:h-4 bg-purple-100 rounded animate-pulse mt-2" />
+                          <div className="w-3/4 h-5 sm:h-6 bg-slate-300 rounded" />
+                          <div className="w-1/2 h-3 sm:h-4 bg-slate-200 rounded" />
+                          <div className="w-20 h-3 sm:h-4 bg-purple-100 rounded mt-2" />
                         </div>
                       </div>
                     </div>
                   ))}
                   
                   {/* Stats Card Skeleton */}
-                  <div className="bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 animate-pulse">
+                  <div className="bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6">
                     <div className="flex items-center gap-2 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/30 rounded-lg sm:rounded-xl" />
                       <div className="space-y-1">
