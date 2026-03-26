@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -34,7 +33,6 @@ const ModernSchoolLayout = () => {
     { src: "/bg/9.jpeg", alt: "Katwanyaa Senior School - Students" },
     { src: "/hero/katz3.jpeg", alt: "Katwanyaa Senior School - Classroom" },
     { src: "hero/katz8.jpeg", alt: "Katwanyaa Senior School - Sports" },
-     
   ];
 
   // Auto-rotate carousel every 5 seconds
@@ -68,28 +66,32 @@ const whyChooseUs = [
     gradient: "from-blue-600 to-indigo-600",
     description: "Ranked third-best public school in Matungulu Sub-county (2019) after Matungulu Girls and Tala High, producing an A- candidate.",
     metrics: "Top Performer 2019",
-    icon: <FiAward className="w-4 h-4" />
+    icon: <FiAward className="w-4 h-4" />,
+    image: null
   },
   {
     title: "KShs 7.2M Infrastructure Boost",
     gradient: "from-blue-600 to-indigo-600",
     description: "KShs 6M ICT donation (50+ laptops from Angaza Centre, 2023) + KShs 1.2M KCB LPG funding (2022) transforming learning and kitchen operations.",
     metrics: "KShs 7.2M Total",
-    icon: <FiCpu className="w-4 h-4" />
+    icon: <FiCpu className="w-4 h-4" />,
+    image: null
   },
 {
   title: "Athletic Excellence & Coaching",
   gradient: "from-blue-700 via-indigo-600 to-orange-600",
   description: "A powerhouse in Machakos County sports: Featuring our championship-winning Rugby 7s program led by Mr. Simiyu, and our elite Basketball squad under the tactical leadership of Mr. Kioko (Mr. Kim). Both programs are consistent KSSSA regional contenders recognized for discipline and technical skill.",
   metrics: "Multi-Sport Champions",
-  icon: <FiStar className="w-5 h-5" />
+  icon: <FiStar className="w-5 h-5" />,
+  image: { src: "/hero/sports.jpeg", alt: "Katwanyaa Rugby and Basketball Teams" }
 },
   {
     title: "Environmental Conservation",
     gradient: "from-blue-600 to-indigo-600",
     description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees.",
     metrics: "Trees Conserved",
-    icon: <FiHeart className="w-4 h-4" />
+    icon: <FiHeart className="w-4 h-4" />,
+    image: { src: "/hero/env.jpeg", alt: "Katwanyaa LPG Kitchen Installation" }
   }
 ];
   const schoolFeatures = [
@@ -285,6 +287,19 @@ Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Sen
                 <p className="text-slate-600 text-xs leading-relaxed mb-3">
                   {item.description}
                 </p>
+                
+                {/* Add image for Athletic Excellence and Environmental Conservation */}
+                {item.image && (
+                  <div className="relative w-full h-32 mb-3 rounded-lg overflow-hidden">
+                    <Image
+                      src={item.image.src}
+                      alt={item.image.alt}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                
                 <span className="text-[9px] font-black uppercase text-blue-600 bg-blue-50 px-2 py-1 rounded">
                   {item.metrics}
                 </span>
@@ -403,7 +418,7 @@ Our school accomplishments from 2019-{new Date().getFullYear()} at Katwanyaa Sen
         {/* Achievements Summary */}
         <section className="mt-16">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
-            <h4 className="text-sm font-black text-blue-800 mb-3">Our School  Achievements (2019-Present):</h4>
+            <h4 className="text-sm font-black text-blue-800 mb-3">Our School Achievements (2019-Present):</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div className="bg-white p-3 rounded-xl border border-blue-100">
                 <p className="text-xs font-bold">3rd Best Public School in Matungulu Sub-county (2019) - A- candidate</p>
