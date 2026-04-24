@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
   FiAward, FiBook, FiHeart, FiMapPin, FiUsers, FiCalendar,
-  FiShield, FiLeaf, FiStar, FiGlobe, FiMail, FiPhone,
+  FiShield, FiStar, FiGlobe, FiMail, FiPhone,
   FiArrowRight, FiBookOpen, FiMonitor, FiDollarSign, FiCpu,
   FiChevronLeft, FiChevronRight, FiChevronDown, FiTarget,
   FiTrendingUp, FiBox, FiThumbsUp, FiCheckCircle, FiBriefcase,
@@ -196,7 +196,7 @@ const KatwanyaaSeniorSchoolPage = () => {
   title: "Environmental Conservation",
   description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees and promoting eco-friendly practices.",
   details: ["LPG Adoption", "40% Cost Reduction", "Tree Conservation", "Eco-friendly"],
-  icon: <FiLeaf className="w-5 h-5" />, // ✅ Fixed: FiLeaf instead of FiTree
+  icon: <FiBox className="w-5 h-5" />, // ✅ Fixed: FiBox instead of FiTree
   gradient: "from-emerald-500 to-teal-500"
 }
 
@@ -603,7 +603,7 @@ const KatwanyaaSeniorSchoolPage = () => {
           </div>
 
    <div className="flex items-start gap-3">
-  <FiLeaf className="w-5 h-5 text-teal-600 mt-0.5" /> {/* Changed from FiTree */}
+  <FiBox className="w-5 h-5 text-teal-600 mt-0.5" /> {/* Changed from FiTree */}
   <div>
     <h4 className="font-bold text-teal-800 text-sm mb-1">Environmental Conservation Impact</h4>
     <p className="text-teal-700 text-sm">
