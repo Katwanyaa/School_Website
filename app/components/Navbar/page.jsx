@@ -180,14 +180,12 @@ export default function ModernNavbar() {
       href: '/pages/staff',
       icon: FiUsers,
       description: 'Meet our dedicated team',
-      badge: '37 members'
     },
     {
       name: 'Careers',
       href: '/pages/careers',
       icon: FiBriefcase,
       description: 'Join our family',
-      badge: "We're hiring"
     },
     {
       name: 'Admin Login',
