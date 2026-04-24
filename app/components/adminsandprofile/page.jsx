@@ -1132,7 +1132,7 @@ if (loading) {
            Loading For Administrators
           </p>
           <p className="text-slate-400 text-[10px] sm:text-xs uppercase tracking-widest mt-1 font-bold">
-            Katwanyaa senior school
+            kinyui boys Senior School
           </p>
         </div>
       </Stack>
@@ -1190,7 +1190,7 @@ if (loading) {
           <div className="h-8 w-1 bg-gradient-to-b from-emerald-500 via-teal-500 to-green-500 rounded-full shadow-[0_0_15px_rgba(20,184,166,0.5)]" />
           <div>
             <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-300">
-              Katwanyaa senior school
+              kinyui boys Senior School
             </h2>
             <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
               Central Authority Hub
