@@ -50,7 +50,7 @@ import { FaFacebookF, FaTwitter, FaWhatsapp, FaTelegram, FaEnvelope } from 'reac
 
 // ========== KATWANYAA THEME CONSTANTS ==========
 const KATWANYAA_THEME = {
-  primary: '#C6893B',
+  primary: '#3B82F6',
   primaryDark: '#9B6B2E',
   primaryLight: '#E6C997',
   secondary: '#2D6A4F',
@@ -60,7 +60,7 @@ const KATWANYAA_THEME = {
   text: '#3E2C1F',
   textLight: '#8B7355',
   border: '#E8DCC8',
-  gradient: 'from-[#C6893B] to-[#D4A373]',
+  gradient: 'from-[#3B82F6] to-[#60A5FA]',
   gradientGreen: 'from-[#2D6A4F] to-[#52B788]',
 };
 
@@ -117,12 +117,12 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
         iconColor: 'text-[#E85D04]'
       },
       Arts: {
-        gradient: 'from-[#C6893B] to-[#D4A373]',
-        bg: 'bg-[#FFF3E0]',
-        text: 'text-[#C6893B]',
-        border: 'border-[#FFE0B2]',
-        iconBg: 'bg-[#C6893B]/10',
-        iconColor: 'text-[#C6893B]'
+        gradient: 'from-[#3B82F6] to-[#60A5FA]',
+        bg: 'bg-[#EFF6FF]',
+        text: 'text-[#3B82F6]',
+        border: 'border-[#DBEAFE]',
+        iconBg: 'bg-[#3B82F6]/10',
+        iconColor: 'text-[#3B82F6]'
       },
       Leadership: {
         gradient: 'from-[#0F4C5C] to-[#1B6B7A]',
@@ -134,11 +134,11 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
       },
       Other: {
         gradient: KATWANYAA_THEME.gradient,
-        bg: 'bg-[#FAF6F0]',
-        text: 'text-[#C6893B]',
-        border: 'border-[#E8DCC8]',
-        iconBg: 'bg-[#C6893B]/10',
-        iconColor: 'text-[#C6893B]'
+        bg: 'bg-[#EFF6FF]',
+        text: 'text-[#3B82F6]',
+        border: 'border-[#DBEAFE]',
+        iconBg: 'bg-[#3B82F6]/10',
+        iconColor: 'text-[#3B82F6]'
       }
     };
     return styles[category] || styles.Other;
@@ -177,7 +177,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
               {achievement.category || 'Achievement'}
             </span>
             {achievement.featured && (
-              <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-[#C6893B] text-white rounded-full text-[7px] sm:text-[8px] font-black uppercase tracking-widest flex items-center gap-1 shadow-sm">
+              <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-[#3B82F6] text-white rounded-full text-[7px] sm:text-[8px] font-black uppercase tracking-widest flex items-center gap-1 shadow-sm">
                 <IoSparkles className="text-[#F4D03F] text-[10px]" /> Featured
               </span>
             )}
@@ -199,7 +199,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
               }}
               className={`p-1.5 sm:p-2 rounded-lg backdrop-blur-md border shadow-sm transition-all ${
                 isBookmarked
-                  ? 'bg-[#C6893B] border-[#C6893B] text-white'
+                  ? 'bg-[#3B82F6] border-[#3B82F6] text-white'
                   : 'bg-[#FDF8F0]/90 border-[#E8DCC8] text-[#8B7355]'
               }`}
             >
@@ -243,7 +243,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
             </div>
           </div>
 
-          <button className="w-full py-2.5 sm:py-3 bg-[#C6893B] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
+          <button className="w-full py-2.5 sm:py-3 bg-[#3B82F6] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
             View Details
             <FiArrowRight className="w-3 h-3" />
           </button>
@@ -265,7 +265,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
             alt={achievement.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute bottom-0 right-0 bg-[#C6893B] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-tl-lg">
+          <div className="absolute bottom-0 right-0 bg-[#3B82F6] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-tl-lg">
             {year}
           </div>
         </div>
@@ -277,7 +277,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
               </span>
             </div>
             <button onClick={(e) => { e.stopPropagation(); onBookmark(achievement); }} className="p-1">
-              <FiBookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'text-[#C6893B] fill-current' : 'text-[#D4C4A8]'}`} />
+              <FiBookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'text-[#3B82F6] fill-current' : 'text-[#BFDBFE]'}`} />
             </button>
           </div>
           <h3 className="text-sm font-bold text-[#3E2C1F] line-clamp-1 mb-1">{achievement.title}</h3>
@@ -302,7 +302,7 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
     const styles = {
       Academic: { gradient: KATWANYAA_THEME.gradientGreen, icon: FiBookOpen },
       Sports: { gradient: 'from-[#E85D04] to-[#F48C06]', icon: FiAward },
-      Arts: { gradient: 'from-[#C6893B] to-[#D4A373]', icon: FiStar },
+      Arts: { gradient: 'from-[#3B82F6] to-[#60A5FA]', icon: FiStar },
       Leadership: { gradient: 'from-[#0F4C5C] to-[#1B6B7A]', icon: FiUsers },
       Other: { gradient: KATWANYAA_THEME.gradient, icon: IoTrophyOutline }
     };
@@ -322,12 +322,12 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
           <img src={achievement.images?.[0]?.url || '/achievement-placeholder.jpg'} alt={achievement.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#FDF8F0] via-transparent to-black/20" />
           <div className="absolute bottom-4 left-4 flex gap-2">
-            <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${categoryStyle.gradient === KATWANYAA_THEME.gradientGreen ? 'bg-[#2D6A4F]' : 'bg-[#C6893B]'} text-white`}>
+            <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${categoryStyle.gradient === KATWANYAA_THEME.gradientGreen ? 'bg-[#2D6A4F]' : 'bg-[#3B82F6]'} text-white`}>
               {achievement.category}
             </span>
             {achievement.featured && (
-              <span className="px-3 py-1 bg-[#C6893B] text-white rounded-full text-[10px] font-bold flex items-center gap-1">
-                <IoSparkles className="text-[#F4D03F]" /> Featured
+              <span className="px-3 py-1 bg-[#3B82F6] text-white rounded-full text-[10px] font-bold flex items-center gap-1">
+                <IoSparkles className="text-[#FCD34D]" /> Featured
               </span>
             )}
           </div>
@@ -348,13 +348,13 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
             </div>
 
             <div>
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C6893B] mb-2">About this achievement</h3>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#3B82F6] mb-2">About this achievement</h3>
               <p className="text-[#3E2C1F] leading-relaxed">{achievement.description || 'No description provided.'}</p>
             </div>
 
             {achievement.recipients && achievement.recipients.length > 0 && (
               <div>
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C6893B] mb-2">Recipients</h3>
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#3B82F6] mb-2">Recipients</h3>
                 <div className="flex flex-wrap gap-2">
                   {achievement.recipients.map((rec, idx) => (
                     <span key={idx} className="px-3 py-1.5 bg-[#FAF6F0] border border-[#E8DCC8] rounded-full text-xs font-medium text-[#3E2C1F]">
@@ -367,7 +367,7 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
 
             {achievement.images && achievement.images.length > 1 && (
               <div>
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C6893B] mb-2">Gallery</h3>
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#3B82F6] mb-2">Gallery</h3>
                 <div className="grid grid-cols-3 gap-2">
                   {achievement.images.slice(1).map((img, idx) => (
                     <img key={idx} src={img.url} alt="" className="w-full h-20 object-cover rounded-lg border border-[#E8DCC8]" />
@@ -428,7 +428,7 @@ const ShareModal = ({ achievement, onClose }) => {
             const Icon = platform.icon;
             return (
               <button key={idx} onClick={platform.action} className="flex flex-col items-center gap-1.5 group">
-                <div className="w-10 h-10 rounded-xl bg-[#FAF6F0] flex items-center justify-center text-[#C6893B] border border-[#E8DCC8] group-active:scale-95 transition-all">
+                <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] flex items-center justify-center text-[#3B82F6] border border-[#DBEAFE] group-active:scale-95 transition-all">
                   <Icon className="text-base" />
                 </div>
                 <span className="text-[8px] font-black uppercase text-[#8B7355]">{platform.name}</span>
@@ -479,7 +479,7 @@ const ModernPagination = ({ currentPage, totalPages, onPageChange }) => {
       </button>
       <div className="flex items-center gap-1">
         {getPageNumbers().map((page, idx) => (
-          <button key={idx} onClick={() => typeof page === 'number' && onPageChange(page)} className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${page === '...' ? 'text-[#8B7355]' : currentPage === page ? 'bg-[#C6893B] text-white shadow-md' : 'text-[#3E2C1F] hover:bg-[#FAF6F0]'}`} disabled={page === '...'}>
+          <button key={idx} onClick={() => typeof page === 'number' && onPageChange(page)} className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${page === '...' ? 'text-[#8B7355]' : currentPage === page ? 'bg-[#3B82F6] text-white shadow-md' : 'text-[#3E2C1F] hover:bg-[#FAF6F0]'}`} disabled={page === '...'}>
             {page}
           </button>
         ))}
@@ -514,7 +514,7 @@ export default function KatwanyaaAchievementsPage() {
 
   // Stats for the grid
   const stats = [
-    { label: 'Total Achievements', value: achievementsData.length, icon: IoTrophyOutline, color: '#C6893B' },
+    { label: 'Total Achievements', value: achievementsData.length, icon: IoTrophyOutline, color: '#3B82F6' },
     { label: 'Featured Honors', value: achievementsData.filter(a => a.featured).length, icon: IoSparkles, color: '#D4A373' },
     { label: 'Categories', value: categories.length - 1, icon: FiGrid, color: '#2D6A4F' },
     { label: 'Students Honored', value: achievementsData.reduce((sum, a) => sum + (a.recipients?.length || 1), 0), icon: FiUsers, color: '#E85D04' }
@@ -570,8 +570,8 @@ export default function KatwanyaaAchievementsPage() {
         <Stack spacing={2} alignItems="center">
           <div className="relative">
             <CircularProgress variant="determinate" value={100} size={48} thickness={4} sx={{ color: '#E8DCC8' }} />
-            <CircularProgress variant="indeterminate" disableShrink size={48} thickness={4} sx={{ color: '#C6893B', animationDuration: '800ms', position: 'absolute', left: 0 }} />
-            <div className="absolute inset-0 flex items-center justify-center"><GiLion className="text-[#C6893B] text-lg animate-pulse" /></div>
+            <CircularProgress variant="indeterminate" disableShrink size={48} thickness={4} sx={{ color: '#3B82F6', animationDuration: '800ms', position: 'absolute', left: 0 }} />
+            <div className="absolute inset-0 flex items-center justify-center"><GiLion className="text-[#3B82F6] text-lg animate-pulse" /></div>
           </div>
           <p className="text-[#3E2C1F] font-bold text-sm">Loading achievements...</p>
         </Stack>
@@ -587,8 +587,8 @@ export default function KatwanyaaAchievementsPage() {
 
         {/* ===== DARK HERO BANNER - Matching Events Page Style ===== */}
         <div className="relative bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-2xl sm:rounded-[32px] overflow-hidden shadow-xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#C6893B]/20 rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#D4A373]/10 rounded-full blur-[100px]" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#3B82F6]/20 rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#60A5FA]/10 rounded-full blur-[100px]" />
 
           <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 25% 50%, rgba(255,255,255,0.1) 2%, transparent 2.5%)', backgroundSize: '30px 30px' }} />
 
@@ -609,7 +609,7 @@ export default function KatwanyaaAchievementsPage() {
 
                 <div className="flex items-center gap-3 pt-2">
                   <div className="flex items-center gap-1.5">
-                    <div className="w-8 h-8 rounded-full bg-[#C6893B] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-[#3B82F6] flex items-center justify-center">
                       <GiBaobab className="text-white text-sm" />
                     </div>
                     <div>
@@ -651,7 +651,7 @@ export default function KatwanyaaAchievementsPage() {
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-[#C6893B] via-[#D4A373] to-[#2D6A4F]" />
+          <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-[#3B82F6] via-[#60A5FA] to-[#2D6A4F]" />
         </div>
 
         {/* ===== STATS GRID ===== */}
@@ -662,85 +662,84 @@ export default function KatwanyaaAchievementsPage() {
     return (
       <div 
         key={idx} 
-        className="group relative bg-gradient-to-br from-[#FDF8F0] to-[#FFF9F2] border border-[#E8DCC8] rounded-xl p-3 md:p-4 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+        className="group relative bg-gradient-to-br from-white to-[#F0F9FF] border-2 border-[#DBEAFE] rounded-2xl p-4 md:p-5 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
       >
-        {/* Animated gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+        {/* Modern gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#3B82F6]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
         
-        {/* Decorative background element */}
-        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-[#FF6B35]/5 to-[#FF8C5A]/5 rounded-full blur-xl -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        {/* Modern rose accent element */}
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-rose-200/20 to-pink-200/20 rounded-full blur-2xl -mr-10 -mt-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <div 
-              className="p-1.5 rounded-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" 
+              className="p-2 md:p-2.5 rounded-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3" 
               style={{ backgroundColor: `${stat.color}15` }}
             >
               <Icon 
-                className="text-base md:text-lg transition-all duration-300 group-hover:scale-110" 
+                className="text-lg md:text-xl transition-all duration-300 group-hover:scale-110" 
                 style={{ color: stat.color }} 
               />
             </div>
             
-            {/* Optional trend indicator - you can add trend data to stats */}
             {stat.trend && (
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-1">
                 {stat.trend === 'up' && (
-                  <svg className="w-2 h-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
                   </svg>
                 )}
                 {stat.trend === 'down' && (
-                  <svg className="w-2 h-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clipRule="evenodd" />
                   </svg>
                 )}
-                <span className="text-[8px] font-bold text-green-600">{stat.trendValue || '+12%'}</span>
+                <span className="text-[9px] font-bold text-green-600">{stat.trendValue || '+12%'}</span>
               </div>
             )}
           </div>
           
-          <p className="text-xl md:text-2xl font-black text-[#3E2C1F] transition-all duration-300 group-hover:text-[#FF6B35]">
+          <p className="text-2xl md:text-3xl font-black text-[#3E2C1F] transition-all duration-300 group-hover:text-[#3B82F6]">
             {stat.value}
           </p>
-          <p className="text-[8px] md:text-[10px] font-bold text-[#8B7355] uppercase tracking-wider group-hover:text-[#FF6B35] transition-colors duration-300">
+          <p className="text-[9px] md:text-[11px] font-bold text-[#8B7355] uppercase tracking-wider group-hover:text-[#3B82F6] transition-colors duration-300">
             {stat.label}
           </p>
         </div>
 
-        {/* Bottom accent bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+        {/* Modern bottom accent bar with rose color */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-400 via-pink-400 to-rose-300 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
       </div>
     );
   })}
 </div>
 
         {/* ===== SEARCH & FILTERS ===== */}
-        <div className="bg-[#FDF8F0] border border-[#E8DCC8] rounded-xl p-3 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-3">
+        <div className="bg-gradient-to-r from-[#EFF6FF] to-white border-2 border-[#3B82F6]/30 rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl transition-all">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#C6893B] text-sm" />
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B82F6] text-lg font-bold" />
               <input
                 type="text"
                 placeholder="Search achievements..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-9 pr-3 py-2.5 bg-[#FAF6F0] border border-[#E8DCC8] rounded-lg text-sm focus:outline-none focus:border-[#C6893B] transition-colors"
+                className="w-full pl-12 pr-4 py-3 md:py-4 bg-white border-2 border-[#3B82F6]/40 rounded-xl text-sm md:text-base font-bold text-[#3E2C1F] placeholder-[#8B7355] focus:outline-none focus:border-[#3B82F6] focus:shadow-lg transition-all focus:ring-2 focus:ring-[#3B82F6]/20"
               />
             </div>
             <div className="flex gap-2">
               <select
                 value={activeCategory}
                 onChange={(e) => { setActiveCategory(e.target.value); setCurrentPage(1); }}
-                className="px-4 py-2.5 bg-[#FAF6F0] border border-[#E8DCC8] rounded-lg text-sm font-medium text-[#3E2C1F] cursor-pointer"
+                className="px-4 md:px-6 py-3 md:py-4 bg-white border-2 border-[#3B82F6]/40 rounded-xl text-sm md:text-base font-bold text-[#3E2C1F] cursor-pointer hover:border-[#3B82F6] transition-all"
               >
                 {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
               </select>
               <button
                 onClick={() => { setSearchTerm(''); setActiveCategory('all'); setCurrentPage(1); }}
-                className="px-4 py-2.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 hover:shadow-md transition-all active:scale-95"
+                className="px-4 md:px-6 py-3 md:py-4 bg-gradient-to-r from-rose-400 via-rose-500 to-pink-500 text-white rounded-xl font-bold text-xs md:text-sm flex items-center gap-2 hover:shadow-lg transition-all active:scale-95"
               >
-                <FiFilter size={12} /> Reset
+                <FiFilter size={14} /> Reset
               </button>
             </div>
           </div>
@@ -749,18 +748,18 @@ export default function KatwanyaaAchievementsPage() {
         {/* ===== ACHIEVEMENTS GRID ===== */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-1 h-6 bg-[#C6893B] rounded-full" />
+            <div className="w-1 h-6 bg-[#3B82F6] rounded-full" />
             <h2 className="text-lg font-black text-[#3E2C1F]">Honor Roll</h2>
             <span className="text-[10px] font-bold text-[#8B7355] bg-[#FAF6F0] px-2 py-0.5 rounded-full">{filteredAchievements.length} achievements</span>
           </div>
 
           {paginatedAchievements.length === 0 ? (
             <div className="bg-[#FDF8F0] border border-[#E8DCC8] rounded-2xl py-12 text-center">
-              <div className="w-12 h-12 bg-[#FAF6F0] rounded-full flex items-center justify-center mx-auto mb-3">
-                <IoTrophyOutline className="text-[#C6893B] text-xl" />
+              <div className="w-12 h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center mx-auto mb-3">
+                <IoTrophyOutline className="text-[#3B82F6] text-xl" />
               </div>
               <h3 className="font-bold text-[#3E2C1F]">No achievements found</h3>
-              <button onClick={() => { setSearchTerm(''); setActiveCategory('all'); }} className="mt-3 text-[#C6893B] text-xs font-bold">Reset filters</button>
+              <button onClick={() => { setSearchTerm(''); setActiveCategory('all'); }} className="mt-3 text-[#3B82F6] text-xs font-bold">Reset filters</button>
             </div>
           ) : (
             <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-3'}>
@@ -780,7 +779,7 @@ export default function KatwanyaaAchievementsPage() {
         </div>
 
         {/* ===== MOTTO FOOTER BANNER ===== */}
-        <div className="relative bg-gradient-to-r from-[#C6893B] to-[#D4A373] rounded-2xl p-5 overflow-hidden">
+        <div className="relative bg-gradient-to-r from-[#3B82F6] to-[#60A5FA] rounded-2xl p-5 overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/10 rounded-full blur-2xl" />
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
@@ -789,7 +788,7 @@ export default function KatwanyaaAchievementsPage() {
             </div>
             <div className="flex-1">
               <p className="text-white/80 text-xs font-bold uppercase tracking-wider mb-1">School Motto</p>
-              <p className="text-white text-xl md:text-2xl font-black italic">"Strive to Excel"</p>
+              <p className="text-white text-xl md:text-2xl font-black italic">Education is light</p>
             </div>
             <div className="flex items-center gap-2 text-white/70 text-xs">
               <FiHeart className="text-rose-300" />
