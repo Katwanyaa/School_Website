@@ -1521,7 +1521,7 @@ const VisionMissionSection = ({ vision, mission, motto, videoTour, videoType, vi
             <div className="flex items-center justify-end gap-2 mt-2">
               <div className="w-2 h-2 rounded-full bg-emerald-600" />
               <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
-                Matungulu Girls High School
+                Katwanyaa senior  High School
               </span>
             </div>
           </div>

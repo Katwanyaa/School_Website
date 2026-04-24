@@ -23,10 +23,22 @@ import {
   RefreshCw,
   AlertCircle,
   ShieldAlert,
-  Clock
+  Clock,
+  Fingerprint,
+  LogIn,
+  Sparkles,
+  GraduationCap,
+  BookOpen,
+  Trophy,
+  Users2,
+  Calendar,
+  Activity,
+  ChevronRight
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'sonner';
+import Link from 'next/link';
+import Image from "next/image";
 
 export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,6 +61,7 @@ export default function AdminLoginPage() {
   const [verificationReason, setVerificationReason] = useState('');
   const [requiresPasswordAfterVerification, setRequiresPasswordAfterVerification] = useState(false);
   const [passwordAfterVerification, setPasswordAfterVerification] = useState('');
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Password Reset Modal
   const [showPasswordResetModal, setShowPasswordResetModal] = useState(false);
@@ -107,7 +120,7 @@ export default function AdminLoginPage() {
     }
   }
 
-class LocalStorageManager {
+  class LocalStorageManager {
     static KEYS = {
         DEVICE_FINGERPRINT: 'device_fingerprint',
         DEVICE_TOKEN: 'device_token',
@@ -118,40 +131,32 @@ class LocalStorageManager {
         DASHBOARD_ACCESS: 'last_dashboard_access'
     };
 
-
-
-static checkAdminTokenValidity() {
-    try {
-        const token = localStorage.getItem(this.KEYS.ADMIN_TOKEN);
-        
-        if (!token) {
-            return { isValid: false, reason: 'no_token' };
+    static checkAdminTokenValidity() {
+        try {
+            const token = localStorage.getItem(this.KEYS.ADMIN_TOKEN);
+            
+            if (!token) {
+                return { isValid: false, reason: 'no_token' };
+            }
+            
+            const tokenData = this.parseJwt(token);
+            const currentTime = Math.floor(Date.now() / 1000);
+            
+            if (tokenData.exp && tokenData.exp <= currentTime) {
+                console.log('🔑 Admin token expired');
+                return { isValid: false, reason: 'expired' };
+            }
+            
+            return { isValid: true, expiresAt: new Date(tokenData.exp * 10000) };
+        } catch (error) {
+            console.error('Error checking admin token:', error);
+            return { isValid: false, reason: 'parse_error' };
         }
-        
-        // Parse token to check expiration
-        const tokenData = this.parseJwt(token);
-        const currentTime = Math.floor(Date.now() / 1000);
-        
-        if (tokenData.exp && tokenData.exp <= currentTime) {
-            console.log('🔑 Admin token expired');
-            return { isValid: false, reason: 'expired' };
-        }
-        
-        return { isValid: true, expiresAt: new Date(tokenData.exp * 1000) };
-    } catch (error) {
-        console.error('❌ Error checking admin token:', error);
-        return { isValid: false, reason: 'parse_error' };
     }
-}
 
-
-
-    // Helper function for base64 URL decoding
     static base64UrlDecode(str) {
-        // Replace URL-safe characters
         str = str.replace(/-/g, '+').replace(/_/g, '/');
         
-        // Add padding if needed
         const pad = str.length % 4;
         if (pad) {
             if (pad === 1) {
@@ -163,7 +168,6 @@ static checkAdminTokenValidity() {
         return atob(str);
     }
 
-    // Helper function to parse JWT
     static parseJwt(token) {
         try {
             const parts = token.split('.');
@@ -179,158 +183,146 @@ static checkAdminTokenValidity() {
             throw error;
         }
     }
-static checkVerificationRequirement(forceCheck = false) {
-    try {
-        console.log('🔍 Checking verification requirement:', { forceCheck });
-        
-        // If we're not forcing a check and have a valid device token, skip deep check
-        if (!forceCheck) {
+
+    static checkVerificationRequirement(forceCheck = false) {
+        try {
+            console.log('🔍 Checking verification requirement:', { forceCheck });
+            
+            if (!forceCheck) {
+                const deviceToken = localStorage.getItem(this.KEYS.DEVICE_TOKEN);
+                const storedFingerprint = localStorage.getItem(this.KEYS.DEVICE_FINGERPRINT);
+                const currentFingerprint = DeviceFingerprint.generate();
+                
+                if (deviceToken && storedFingerprint === currentFingerprint.hash) {
+                    console.log('✅ Quick check passed - likely valid device');
+                    return { 
+                        requiresVerification: false,
+                        deviceToken: deviceToken,
+                        deviceHash: currentFingerprint.hash
+                    };
+                }
+            }
+            
             const deviceToken = localStorage.getItem(this.KEYS.DEVICE_TOKEN);
             const storedFingerprint = localStorage.getItem(this.KEYS.DEVICE_FINGERPRINT);
             const currentFingerprint = DeviceFingerprint.generate();
             
-            // Quick check: if we have a token and fingerprint matches, likely valid
-            if (deviceToken && storedFingerprint === currentFingerprint.hash) {
-                console.log('✅ Quick check passed - likely valid device');
-                return { 
-                    requiresVerification: false,
-                    deviceToken: deviceToken,
-                    deviceHash: currentFingerprint.hash
-                };
-            }
-        }
-        
-        // Full check (only when forced or quick check fails)
-        const deviceToken = localStorage.getItem(this.KEYS.DEVICE_TOKEN);
-        const storedFingerprint = localStorage.getItem(this.KEYS.DEVICE_FINGERPRINT);
-        const currentFingerprint = DeviceFingerprint.generate();
-        
-        console.log('📱 Full device data check:', {
-            hasDeviceToken: !!deviceToken,
-            hasStoredFingerprint: !!storedFingerprint,
-            currentFingerprint: currentFingerprint.hash.substring(0, 10) + '...',
-            storedFingerprint: storedFingerprint ? storedFingerprint.substring(0, 10) + '...' : 'none'
-        });
-
-        // CASE 1: No device token at all - new device
-        if (!deviceToken) {
-            console.log('📱 No device token found - NEW DEVICE');
-            return { 
-                requiresVerification: true, 
-                reason: 'new_device',
-                deviceToken: null,
-                deviceHash: currentFingerprint.hash
-            };
-        }
-
-        // CASE 2: Validate device token structure
-        try {
-            let tokenData;
-            
-            // Check if it's a JWT (has dots) or custom base64 token
-            if (deviceToken.includes('.')) {
-                // It's a JWT
-                tokenData = this.parseJwt(deviceToken);
-            } else {
-                // Try to decode as custom base64 token
-                const decodedStr = this.base64UrlDecode(deviceToken);
-                tokenData = JSON.parse(decodedStr);
-            }
-            
-            console.log('🔑 Token data parsed:', {
-                deviceHash: tokenData.deviceHash ? `${tokenData.deviceHash.substring(0, 10)}...` : 'missing',
-                loginCount: tokenData.loginCount || 0,
-                exp: tokenData.exp ? new Date(tokenData.exp * 1000).toLocaleString() : 'missing'
+            console.log('📱 Full device data check:', {
+                hasDeviceToken: !!deviceToken,
+                hasStoredFingerprint: !!storedFingerprint,
+                currentFingerprint: currentFingerprint.hash.substring(0, 10) + '...',
+                storedFingerprint: storedFingerprint ? storedFingerprint.substring(0, 10) + '...' : 'none'
             });
 
-            // Check expiration (token.exp is in seconds)
-            const currentTime = Math.floor(Date.now() / 1000);
-            const tokenExpiry = tokenData.exp;
-            
-            if (!tokenExpiry) {
-                console.log('❌ Token missing expiry');
+            if (!deviceToken) {
+                console.log('📱 No device token found - NEW DEVICE');
                 return { 
                     requiresVerification: true, 
-                    reason: 'token_invalid',
-                    deviceToken: deviceToken,
+                    reason: 'new_device',
+                    deviceToken: null,
                     deviceHash: currentFingerprint.hash
                 };
             }
 
-            // Check if token is expired
-            if (tokenExpiry <= currentTime) {
-                console.log('⏰ Token expired');
-                return { 
-                    requiresVerification: true, 
-                    reason: 'token_expired',
-                    deviceToken: deviceToken,
-                    deviceHash: currentFingerprint.hash
-                };
-            }
+            try {
+                let tokenData;
+                
+                if (deviceToken.includes('.')) {
+                    tokenData = this.parseJwt(deviceToken);
+                } else {
+                    const decodedStr = this.base64UrlDecode(deviceToken);
+                    tokenData = JSON.parse(decodedStr);
+                }
+                
+                console.log('🔑 Token data parsed:', {
+                    deviceHash: tokenData.deviceHash ? `${tokenData.deviceHash.substring(0, 10)}...` : 'missing',
+                    loginCount: tokenData.loginCount || 0,
+                    exp: tokenData.exp ? new Date(tokenData.exp * 1000).toLocaleString() : 'missing'
+                });
 
-            // Check max login attempts (15)
-            const loginCount = tokenData.loginCount || 0;
-            if (loginCount >= 15) {
-                console.log('🚫 Max login attempts reached:', loginCount);
+                const currentTime = Math.floor(Date.now() / 1000);
+                const tokenExpiry = tokenData.exp;
+                
+                if (!tokenExpiry) {
+                    console.log('❌ Token missing expiry');
+                    return { 
+                        requiresVerification: true, 
+                        reason: 'token_invalid',
+                        deviceToken: deviceToken,
+                        deviceHash: currentFingerprint.hash
+                    };
+                }
+
+                if (tokenExpiry <= currentTime) {
+                    console.log('⏰ Token expired');
+                    return { 
+                        requiresVerification: true, 
+                        reason: 'token_expired',
+                        deviceToken: deviceToken,
+                        deviceHash: currentFingerprint.hash
+                    };
+                }
+
+                const loginCount = tokenData.loginCount || 0;
+                if (loginCount >= 15) {
+                    console.log('🚫 Max login attempts reached:', loginCount);
+                    return { 
+                        requiresVerification: true, 
+                        reason: 'max_logins_reached',
+                        deviceToken: deviceToken,
+                        loginCount: loginCount,
+                        deviceHash: currentFingerprint.hash
+                    };
+                }
+
+                if (storedFingerprint !== currentFingerprint.hash) {
+                    console.log('⚠️ Device fingerprint mismatch');
+                    return { 
+                        requiresVerification: true, 
+                        reason: 'device_mismatch',
+                        deviceToken: deviceToken,
+                        deviceHash: currentFingerprint.hash
+                    };
+                }
+
+                if (tokenData.deviceHash && tokenData.deviceHash !== currentFingerprint.hash) {
+                    console.log('🔐 Token device hash mismatch');
+                    return { 
+                        requiresVerification: true, 
+                        reason: 'token_device_mismatch',
+                        deviceToken: deviceToken,
+                        deviceHash: currentFingerprint.hash
+                    };
+                }
+
+                console.log('✅ Device token is VALID');
                 return { 
-                    requiresVerification: true, 
-                    reason: 'max_logins_reached',
-                    deviceToken: deviceToken,
+                    requiresVerification: false, 
+                    deviceToken: deviceToken, 
                     loginCount: loginCount,
-                    deviceHash: currentFingerprint.hash
+                    deviceHash: currentFingerprint.hash 
                 };
-            }
 
-            // Check fingerprint matches
-            if (storedFingerprint !== currentFingerprint.hash) {
-                console.log('⚠️ Device fingerprint mismatch');
+            } catch (tokenError) {
+                console.error('❌ Token parsing error:', tokenError);
                 return { 
                     requiresVerification: true, 
-                    reason: 'device_mismatch',
+                    reason: 'invalid_token_format',
                     deviceToken: deviceToken,
                     deviceHash: currentFingerprint.hash
                 };
             }
 
-            // Check if device hash in token matches current fingerprint
-            if (tokenData.deviceHash && tokenData.deviceHash !== currentFingerprint.hash) {
-                console.log('🔐 Token device hash mismatch');
-                return { 
-                    requiresVerification: true, 
-                    reason: 'token_device_mismatch',
-                    deviceToken: deviceToken,
-                    deviceHash: currentFingerprint.hash
-                };
-            }
-
-            console.log('✅ Device token is VALID');
-            return { 
-                requiresVerification: false, 
-                deviceToken: deviceToken, 
-                loginCount: loginCount,
-                deviceHash: currentFingerprint.hash 
-            };
-
-        } catch (tokenError) {
-            console.error('❌ Token parsing error:', tokenError);
+        } catch (error) {
+            console.error('❌ LocalStorage check error:', error);
             return { 
                 requiresVerification: true, 
-                reason: 'invalid_token_format',
-                deviceToken: deviceToken,
-                deviceHash: currentFingerprint.hash
+                reason: 'storage_error',
+                deviceToken: null,
+                deviceHash: null
             };
         }
-
-    } catch (error) {
-        console.error('❌ LocalStorage check error:', error);
-        return { 
-            requiresVerification: true, 
-            reason: 'storage_error',
-            deviceToken: null,
-            deviceHash: null
-        };
     }
-}
 
     static storeDeviceData(deviceToken, deviceHash, loginCount) {
         try {
@@ -345,12 +337,10 @@ static checkVerificationRequirement(forceCheck = false) {
             localStorage.setItem(this.KEYS.LAST_LOGIN, new Date().toISOString());
             localStorage.setItem(this.KEYS.LOGIN_COUNT, loginCount.toString());
             
-            // Remove any old requires_verification flag
             localStorage.removeItem('requires_verification');
             
             console.log('✅ Device data stored successfully');
             
-            // Verify storage
             const storedToken = localStorage.getItem(this.KEYS.DEVICE_TOKEN);
             const storedHash = localStorage.getItem(this.KEYS.DEVICE_FINGERPRINT);
             console.log('🔍 Storage verification:', {
@@ -454,7 +444,6 @@ static checkVerificationRequirement(forceCheck = false) {
                 return false;
             }
             
-            // Optional: Check if token is expired (if it's a JWT)
             if (token.includes('.')) {
                 try {
                     const tokenData = this.parseJwt(token);
@@ -530,7 +519,6 @@ static checkVerificationRequirement(forceCheck = false) {
             const newCount = currentCount + 1;
             localStorage.setItem(this.KEYS.LOGIN_COUNT, newCount.toString());
             
-            // Also update the device token if it exists
             const deviceToken = localStorage.getItem(this.KEYS.DEVICE_TOKEN);
             if (deviceToken) {
                 try {
@@ -542,10 +530,8 @@ static checkVerificationRequirement(forceCheck = false) {
                         tokenData = JSON.parse(decodedStr);
                     }
                     
-                    // Update login count in token
                     tokenData.loginCount = newCount;
                     
-                    // Re-encode the token (simple base64 for now)
                     const updatedToken = btoa(JSON.stringify(tokenData));
                     localStorage.setItem(this.KEYS.DEVICE_TOKEN, updatedToken);
                     
@@ -601,11 +587,9 @@ static checkVerificationRequirement(forceCheck = false) {
         try {
             console.log('📋 === LOCALSTORAGE DEBUG INFO ===');
             
-            // Device data
             const deviceData = this.getDeviceData();
             console.log('📱 Device Data:', deviceData);
             
-            // Auth data
             const authData = this.getAuthData();
             console.log('🔐 Auth Data:', {
                 hasToken: !!authData.token,
@@ -618,7 +602,6 @@ static checkVerificationRequirement(forceCheck = false) {
                 } : null
             });
             
-            // All localStorage items
             console.log('🗂️ All localStorage items:');
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -631,7 +614,17 @@ static checkVerificationRequirement(forceCheck = false) {
             console.error('❌ Error debugging storage:', error);
         }
     }
-}
+  }
+
+  // Terms Modal Functions
+  const openTermsModal = (e) => {
+    e.preventDefault();
+    setShowTermsModal(true);
+  };
+
+  const closeTermsModal = () => {
+    setShowTermsModal(false);
+  };
 
   // Handle verification code input
   const handleVerificationCodeChange = (index, value) => {
@@ -656,140 +649,127 @@ static checkVerificationRequirement(forceCheck = false) {
     }
   };
 
-// Handle OTP verification
-const handleVerifyCode = async (e) => {
-  if (e) e.preventDefault();
-  
-  const code = verificationCode.join('');
-  if (code.length !== 6) {
-    toast.error('Please enter the complete 6-digit code');
-    return;
-  }
-
-  setVerificationLoading(true);
-
-  try {
-    const deviceFingerprint = DeviceFingerprint.generate();
+  // Handle OTP verification
+  const handleVerifyCode = async (e) => {
+    if (e) e.preventDefault();
     
-    // Get pending verification info
-    const pendingVerification = JSON.parse(localStorage.getItem('pending_verification_device') || '{}');
-    
-    // Always use the stored verificationEmail
-    const emailToUse = verificationEmail || formData.email;
-    
-    if (!emailToUse) {
-      toast.error('Email not found. Please try logging in again.');
-      setVerificationLoading(false);
+    const code = verificationCode.join('');
+    if (code.length !== 6) {
+      toast.error('Please enter the complete 6-digit code');
       return;
     }
-    
-    console.log('🔐 Verifying OTP with reset info:', {
-      email: emailToUse,
-      deviceHash: deviceFingerprint.hash,
-      pendingReason: pendingVerification.reason,
-      shouldReset: pendingVerification.reason === 'max_logins_reached' || 
-                  pendingVerification.reason === 'expired'
-    });
-    
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+
+    setVerificationLoading(true);
+
+    try {
+      const deviceFingerprint = DeviceFingerprint.generate();
+      
+      const pendingVerification = JSON.parse(localStorage.getItem('pending_verification_device') || '{}');
+      
+      const emailToUse = verificationEmail || formData.email;
+      
+      if (!emailToUse) {
+        toast.error('Email not found. Please try logging in again.');
+        setVerificationLoading(false);
+        return;
+      }
+      
+      console.log('🔐 Verifying OTP with reset info:', {
         email: emailToUse,
-        verificationCode: code,
-        action: 'verify',
-        clientDeviceHash: deviceFingerprint.hash,
-        // Tell backend to reset counts if max was reached
-        shouldResetCounts: pendingVerification.reason === 'max_logins_reached' || 
-                         pendingVerification.reason === 'expired'
-      }),
-    });
-
-    const data = await response.json();
-    console.log('📩 OTP verification response:', {
-      success: data.success,
-      countsWereReset: data.countsWereReset,
-      loginCount: data.loginCount
-    });
-
-    if (response.ok && data.success) {
-      // Clear the pending verification flag
-      localStorage.removeItem('pending_verification_device');
+        deviceHash: deviceFingerprint.hash,
+        pendingReason: pendingVerification.reason,
+        shouldReset: pendingVerification.reason === 'max_logins_reached' || 
+                    pendingVerification.reason === 'expired'
+      });
       
-      // Clear OLD device data if counts were reset
-      if (data.countsWereReset) {
-        console.log('🔄 Backend reset device counts. New count:', data.loginCount);
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: emailToUse,
+          verificationCode: code,
+          action: 'verify',
+          clientDeviceHash: deviceFingerprint.hash,
+          shouldResetCounts: pendingVerification.reason === 'max_logins_reached' || 
+                           pendingVerification.reason === 'expired'
+        }),
+      });
+
+      const data = await response.json();
+      console.log('📩 OTP verification response:', {
+        success: data.success,
+        countsWereReset: data.countsWereReset,
+        loginCount: data.loginCount
+      });
+
+      if (response.ok && data.success) {
+        localStorage.removeItem('pending_verification_device');
         
-        // Clear ALL old device data
-        LocalStorageManager.clearLoginData();
-        
-        // Store fresh device data with reset count (should be 1)
-        if (data.deviceToken) {
-          LocalStorageManager.storeDeviceData(
-            data.deviceToken, 
-            deviceFingerprint.hash, 
-            data.loginCount || 1
-          );
+        if (data.countsWereReset) {
+          console.log('🔄 Backend reset device counts. New count:', data.loginCount);
+          
+          LocalStorageManager.clearLoginData();
+          
+          if (data.deviceToken) {
+            LocalStorageManager.storeDeviceData(
+              data.deviceToken, 
+              deviceFingerprint.hash, 
+              data.loginCount || 1
+            );
+          }
+          
+          toast.success(`Login successful! Device verification counts have been reset.`);
+        } else {
+          if (data.deviceToken) {
+            LocalStorageManager.storeDeviceData(
+              data.deviceToken, 
+              deviceFingerprint.hash, 
+              data.loginCount || 1
+            );
+          }
+          
+          toast.success(`Login successful! Welcome back ${data.user?.name || ''}.`);
         }
         
-        toast.success(`Login successful! Device verification counts have been reset.`);
-      } else {
-        // Regular verification without reset
-        if (data.deviceToken) {
-          LocalStorageManager.storeDeviceData(
-            data.deviceToken, 
-            deviceFingerprint.hash, 
-            data.loginCount || 1
-          );
+        if (data.token) {
+          LocalStorageManager.storeAuthData(data.token, data.user);
         }
         
-        toast.success(`Login successful! Welcome back ${data.user?.name || ''}.`);
-      }
-      
-      // Store auth token
-      if (data.token) {
-        LocalStorageManager.storeAuthData(data.token, data.user);
-      }
-      
-      // Clear all verification states
-      setShowVerificationModal(false);
-      setVerificationCode(['', '', '', '', '', '']);
-      setVerificationEmail('');
-      setPasswordAfterVerification('');
-      setRequiresPasswordAfterVerification(false);
-      
-      // Show special message if counts were reset
-      if (data.countsWereReset) {
-        toast.info('Device verification counts have been reset. You now have 15 fresh logins available.');
-      }
-      
-      // Redirect to dashboard
-      setTimeout(() => {
-        router.push('/MainDashboard');
-      }, 1000);
-    } else {
-      // Check if password is required after verification
-      if (data.requiresPassword === true) {
-        setRequiresPasswordAfterVerification(true);
-        setVerificationEmail(emailToUse);
-        toast.info('Please enter your password to complete login.');
-      } else {
-        toast.error(data.error || 'Invalid verification code');
+        setShowVerificationModal(false);
         setVerificationCode(['', '', '', '', '', '']);
-        if (document.getElementById('verification-input-0')) {
-          document.getElementById('verification-input-0').focus();
+        setVerificationEmail('');
+        setPasswordAfterVerification('');
+        setRequiresPasswordAfterVerification(false);
+        
+        if (data.countsWereReset) {
+          toast.info('Device verification counts have been reset. You now have 15 fresh logins available.');
+        }
+        
+        setTimeout(() => {
+          router.push('/MainDashboard');
+        }, 1000);
+      } else {
+        if (data.requiresPassword === true) {
+          setRequiresPasswordAfterVerification(true);
+          setVerificationEmail(emailToUse);
+          toast.info('Please enter your password to complete login.');
+        } else {
+          toast.error(data.error || 'Invalid verification code');
+          setVerificationCode(['', '', '', '', '', '']);
+          if (document.getElementById('verification-input-0')) {
+            document.getElementById('verification-input-0').focus();
+          }
         }
       }
+    } catch (error) {
+      toast.error('Network error. Please try again.');
+      console.error('❌ Verification error:', error);
+    } finally {
+      setVerificationLoading(false);
     }
-  } catch (error) {
-    toast.error('Network error. Please try again.');
-    console.error('❌ Verification error:', error);
-  } finally {
-    setVerificationLoading(false);
-  }
-};
+  };
 
   // Resend verification code
   const handleResendCode = async () => {
@@ -833,57 +813,109 @@ const handleVerifyCode = async (e) => {
   };
 
   // Handle main login form submission
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  
-  console.log('🚀 Login form submitted');
-  console.log('📧 Email:', formData.email);
-  
-  if (!isForgotMode) {
-    if (!agreedToTerms) {
-      toast.error("Verification Required: Please accept the Terms of Access before proceeding.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('🚀 Login form submitted');
+    console.log('📧 Email:', formData.email);
+    
+    if (!isForgotMode) {
+      if (!agreedToTerms) {
+        toast.error("Verification Required: Please accept the Terms of Access before proceeding.");
+        return;
+      }
+
+      if (!formData.email || !formData.password) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+    } else {
+      if (!formData.email) {
+        toast.error("Please enter your email address");
+        return;
+      }
+      
+      const loadingToast = toast.loading("Sending recovery instructions...");
+      setTimeout(() => {
+        toast.dismiss(loadingToast);
+        toast.success("Recovery email sent! Check your inbox.");
+        setIsForgotMode(false);
+      }, 2000);
       return;
     }
 
-    if (!formData.email || !formData.password) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-  } else {
-    if (!formData.email) {
-      toast.error("Please enter your email address");
-      return;
-    }
+    setIsLoading(true);
     
-    const loadingToast = toast.loading("Sending recovery instructions...");
-    setTimeout(() => {
-      toast.dismiss(loadingToast);
-      toast.success("Recovery email sent! Check your inbox.");
-      setIsForgotMode(false);
-    }, 2000);
-    return;
-  }
+    const loadingToast = toast.loading('Checking please wait...');
 
-  setIsLoading(true);
-  
-  const loadingToast = toast.loading('Authenticating...');
+    try {
+      const localStorageCheck = LocalStorageManager.checkVerificationRequirement(true);
+      const deviceFingerprint = DeviceFingerprint.generate();
+      
+      console.log('📊 Device verification check result:', {
+        requiresVerification: localStorageCheck.requiresVerification,
+        reason: localStorageCheck.reason,
+        loginCount: localStorageCheck.loginCount,
+        hasDeviceToken: !!localStorageCheck.deviceToken
+      });
+      
+      if (!localStorageCheck.requiresVerification && localStorageCheck.deviceToken) {
+        console.log('✅ Device is trusted - attempting direct login');
+        
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            clientDeviceToken: localStorageCheck.deviceToken,
+            clientLoginCount: localStorageCheck.loginCount || 0,
+            clientDeviceHash: deviceFingerprint.hash,
+            action: 'login',
+            skipDeviceCheck: true
+          }),
+        });
 
-  try {
-    // FIRST: Check if device verification is required
-    const localStorageCheck = LocalStorageManager.checkVerificationRequirement(true); // Force full check on login
-    const deviceFingerprint = DeviceFingerprint.generate();
-    
-    console.log('📊 Device verification check result:', {
-      requiresVerification: localStorageCheck.requiresVerification,
-      reason: localStorageCheck.reason,
-      loginCount: localStorageCheck.loginCount,
-      hasDeviceToken: !!localStorageCheck.deviceToken
-    });
-    
-    // SCENARIO 1: Device is trusted - attempt direct login
-    if (!localStorageCheck.requiresVerification && localStorageCheck.deviceToken) {
-      console.log('✅ Device is trusted - attempting direct login');
+        const data = await response.json();
+        
+        console.log('📩 Direct login response:', {
+          success: data.success,
+          hasToken: !!data.token,
+          deviceTrusted: data.deviceTrusted
+        });
+
+        toast.dismiss(loadingToast);
+
+        if (response.ok && data.success) {
+          const newLoginCount = LocalStorageManager.incrementLoginCount();
+          
+          if (data.token) {
+            LocalStorageManager.storeAuthData(data.token, data.user);
+          }
+          
+          if (data.deviceToken) {
+            LocalStorageManager.storeDeviceData(data.deviceToken, deviceFingerprint.hash, newLoginCount);
+          }
+          
+          toast.success(`Welcome back, ${data.user?.name || 'Admin'}! 🎉`);
+          
+          console.log('✅ Direct login successful. Login count:', newLoginCount);
+
+          setTimeout(() => {
+            router.push('/MainDashboard');
+          }, 1500);
+          
+          return;
+        } else {
+          console.log('⚠️ Direct login failed, falling back to normal flow');
+          toast.dismiss(loadingToast);
+        }
+      }
+      
+      console.log('🔐 Device verification required, reason:', localStorageCheck.reason);
       
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -896,136 +928,72 @@ const handleSubmit = async (e) => {
           clientDeviceToken: localStorageCheck.deviceToken,
           clientLoginCount: localStorageCheck.loginCount || 0,
           clientDeviceHash: deviceFingerprint.hash,
-          action: 'login',
-          skipDeviceCheck: true // Tell backend device is already verified
+          action: 'login'
         }),
       });
 
       const data = await response.json();
       
-      console.log('📩 Direct login response:', {
+      console.log('📩 Login response:', {
         success: data.success,
-        hasToken: !!data.token,
-        deviceTrusted: data.deviceTrusted
+        requiresVerification: data.requiresVerification,
+        reason: data.reason,
+        shouldResetAfterVerification: data.shouldResetAfterVerification
       });
 
       toast.dismiss(loadingToast);
 
-      if (response.ok && data.success) {
-        // Direct login successful - increment login count
-        const newLoginCount = LocalStorageManager.incrementLoginCount();
+      if (response.ok && data.requiresVerification === true) {
+        console.log('🔐 Verification required, reason:', data.reason);
+        
+        setVerificationReason(data.reason || 'security_check');
+        setVerificationEmail(data.email || formData.email);
+        setShowVerificationModal(true);
+        setCountdown(60);
+       
+        const resetHint = data.shouldResetAfterVerification 
+          ? "After verification, your device login counts will be reset to give you 15 fresh logins."
+          : "";
+        
+        if (data.shouldResetAfterVerification) {
+          toast.info(`Device verification required. ${resetHint}`);
+        } else {
+          toast.info('Device verification required. Check your email.');
+        }
+        
+        setRequiresPasswordAfterVerification(false);
+        setPasswordAfterVerification('');
+        
+      } else if (data.success) {
+        console.log('✅ Login successful - No OTP needed');
         
         if (data.token) {
           LocalStorageManager.storeAuthData(data.token, data.user);
         }
-        
-        // Update device token if new one provided
+
         if (data.deviceToken) {
-          LocalStorageManager.storeDeviceData(data.deviceToken, deviceFingerprint.hash, newLoginCount);
+          LocalStorageManager.storeDeviceData(data.deviceToken, deviceFingerprint.hash, data.loginCount || 1);
         }
-        
-        toast.success(`Welcome back, ${data.user?.name || 'Admin'}! 🎉`);
-        
-        console.log('✅ Direct login successful. Login count:', newLoginCount);
+
+        toast.success(`Welcome back, ${data.user.name || 'Admin'}! 🎉`);
 
         setTimeout(() => {
           router.push('/MainDashboard');
         }, 1500);
         
-        return; // Stop here - login successful
       } else {
-        // Direct login failed - fall back to normal flow
-        console.log('⚠️ Direct login failed, falling back to normal flow');
-        toast.dismiss(loadingToast);
+        console.log('❌ Login failed:', data.error);
+        toast.error(data.error || 'Login failed. Please try again.');
       }
+      
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error('Network error. Please check your connection.');
+      console.error('❌ Login error:', error);
+    } finally {
+      setIsLoading(false);
     }
-    
-    // SCENARIO 2: Device verification IS required OR direct login failed
-    console.log('🔐 Device verification required, reason:', localStorageCheck.reason);
-    
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-        clientDeviceToken: localStorageCheck.deviceToken,
-        clientLoginCount: localStorageCheck.loginCount || 0,
-        clientDeviceHash: deviceFingerprint.hash,
-        action: 'login'
-      }),
-    });
-
-    const data = await response.json();
-    
-    console.log('📩 Login response:', {
-      success: data.success,
-      requiresVerification: data.requiresVerification,
-      reason: data.reason,
-      shouldResetAfterVerification: data.shouldResetAfterVerification
-    });
-
-    toast.dismiss(loadingToast);
-
-
-
-    if (response.ok && data.requiresVerification === true) {
-      console.log('🔐 Verification required, reason:', data.reason);
-      
-      setVerificationReason(data.reason || 'security_check');
-      setVerificationEmail(data.email || formData.email);
-      setShowVerificationModal(true);
-      setCountdown(60);
-     
-      // Check if verification will reset counts
-      const resetHint = data.shouldResetAfterVerification 
-        ? "After verification, your device login counts will be reset to give you 15 fresh logins."
-        : "";
-      
-      if (data.shouldResetAfterVerification) {
-        toast.info(`Device verification required. ${resetHint}`);
-      } else {
-        toast.info('Device verification required. Check your email.');
-      }
-      
-      // Clear the verification reason
-      setRequiresPasswordAfterVerification(false);
-      setPasswordAfterVerification('');
-      
-    } else if (data.success) {
-      // Login successful without verification (new device or other scenario)
-      console.log('✅ Login successful - No OTP needed');
-      
-      if (data.token) {
-        LocalStorageManager.storeAuthData(data.token, data.user);
-      }
-
-      if (data.deviceToken) {
-        LocalStorageManager.storeDeviceData(data.deviceToken, deviceFingerprint.hash, data.loginCount || 1);
-      }
-
-      toast.success(`Welcome back, ${data.user.name || 'Admin'}! 🎉`);
-
-      setTimeout(() => {
-        router.push('/MainDashboard');
-      }, 1500);
-      
-    } else {
-      // Login failed - password was wrong
-      console.log('❌ Login failed:', data.error);
-      toast.error(data.error || 'Login failed. Please try again.');
-    }
-    
-  } catch (error) {
-    toast.dismiss(loadingToast);
-    toast.error('Network error. Please check your connection.');
-    console.error('❌ Login error:', error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   // Close verification modal
   const closeVerificationModal = () => {
@@ -1037,111 +1005,87 @@ const handleSubmit = async (e) => {
   };
 
   // Handle password submit after verification
-// Handle password submit after verification
-const handlePasswordAfterVerification = async () => {
-  if (!passwordAfterVerification) {
-    toast.error('Please enter your password');
-    return;
-  }
-  
-  setVerificationLoading(true);
-  
-  try {
-    const deviceFingerprint = DeviceFingerprint.generate();
-    const localStorageCheck = LocalStorageManager.checkVerificationRequirement();
-    
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: verificationEmail,
-        password: passwordAfterVerification,
-        verificationCode: verificationCode.join(''),
-        action: 'verify_password',
-        clientDeviceToken: localStorageCheck.deviceToken,
-        clientLoginCount: localStorageCheck.loginCount,
-        clientDeviceHash: deviceFingerprint.hash
-      }),
-    });
-
-    const data = await response.json();
-    
-    if (response.ok && data.success) {
-      // Check if counts were reset
-      if (data.countsWereReset) {
-        console.log('🔄 Backend reset device counts. New count:', data.loginCount);
-        
-        // Clear old device data to start fresh
-        LocalStorageManager.clearLoginData();
-        
-        // Store fresh device data with reset count (should be 1)
-        if (data.deviceToken) {
-          LocalStorageManager.storeDeviceData(
-            data.deviceToken, 
-            deviceFingerprint.hash, 
-            data.loginCount || 1
-          );
-        }
-        
-        toast.success('Login successful! Device verification counts have been reset.');
-      } else {
-        // Regular login without reset
-        if (data.deviceToken) {
-          LocalStorageManager.storeDeviceData(data.deviceToken, deviceFingerprint.hash, data.loginCount || 1);
-        }
-        
-        toast.success('Login successful!');
-      }
-      
-      // Store auth token
-      if (data.token) {
-        LocalStorageManager.storeAuthData(data.token, data.user);
-      }
-      
-      // Clear all verification states
-      setShowVerificationModal(false);
-      setVerificationCode(['', '', '', '', '', '']);
-      setVerificationEmail('');
-      setPasswordAfterVerification('');
-      setRequiresPasswordAfterVerification(false);
-      
-      // Show special message if counts were reset
-      if (data.countsWereReset) {
-        toast.info('Device verification counts have been reset. You now have 15 fresh logins available.');
-      }
-      
-      // Redirect to dashboard
-      setTimeout(() => {
-        router.push('/MainDashboard');
-      }, 1000);
-    } else {
-      toast.error(data.error || 'Invalid credentials');
-      setPasswordAfterVerification('');
+  const handlePasswordAfterVerification = async () => {
+    if (!passwordAfterVerification) {
+      toast.error('Please enter your password');
+      return;
     }
-  } catch (error) {
-    toast.error('Network error. Please try again.');
-    console.error('❌ Password verification error:', error);
-  } finally {
-    setVerificationLoading(false);
-  }
-};
+    
+    setVerificationLoading(true);
+    
+    try {
+      const deviceFingerprint = DeviceFingerprint.generate();
+      const localStorageCheck = LocalStorageManager.checkVerificationRequirement();
+      
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: verificationEmail,
+          password: passwordAfterVerification,
+          verificationCode: verificationCode.join(''),
+          action: 'verify_password',
+          clientDeviceToken: localStorageCheck.deviceToken,
+          clientLoginCount: localStorageCheck.loginCount,
+          clientDeviceHash: deviceFingerprint.hash
+        }),
+      });
 
-
-  // Security features and system metrics
-  const securityFeatures = [
-    { icon: <Shield className="w-4 h-4" />, label: "Secure Student Data", color: "emerald" },
-    { icon: <Cpu className="w-4 h-4" />, label: "Automated Fee Tracking", color: "blue" },
-    { icon: <Database className="w-4 h-4" />, label: "Daily Cloud Backups", color: "purple" },
-    { icon: <Network className="w-4 h-4" />, label: "Portal Access Control", color: "orange" },
-  ];
-
-  const systemMetrics = [
-    { label: "Manage Students", value: "700+", icon: <Users className="w-4 h-4" /> },
-    { label: "School Status", value: "Online", icon: <Server className="w-4 h-4" /> },
-    { label: "Manage Events", value: "12", icon: <Shield className="w-4 h-4" /> },
-  ];
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        if (data.countsWereReset) {
+          console.log('🔄 Backend reset device counts. New count:', data.loginCount);
+          
+          LocalStorageManager.clearLoginData();
+          
+          if (data.deviceToken) {
+            LocalStorageManager.storeDeviceData(
+              data.deviceToken, 
+              deviceFingerprint.hash, 
+              data.loginCount || 1
+            );
+          }
+          
+          toast.success('Login successful! Device verification counts have been reset.');
+        } else {
+          if (data.deviceToken) {
+            LocalStorageManager.storeDeviceData(data.deviceToken, deviceFingerprint.hash, data.loginCount || 1);
+          }
+          
+          toast.success('Login successful!');
+        }
+        
+        if (data.token) {
+          LocalStorageManager.storeAuthData(data.token, data.user);
+        }
+        
+        setShowVerificationModal(false);
+        setVerificationCode(['', '', '', '', '', '']);
+        setVerificationEmail('');
+        setPasswordAfterVerification('');
+        setRequiresPasswordAfterVerification(false);
+        
+        if (data.countsWereReset) {
+          toast.info('Device verification counts have been reset. You now have 15 fresh logins available.');
+        }
+        
+        setTimeout(() => {
+          router.push('/MainDashboard');
+        }, 1000);
+      } else {
+        toast.error(data.error || 'Invalid credentials');
+        setPasswordAfterVerification('');
+      }
+    } catch (error) {
+      toast.error('Network error. Please try again.');
+      console.error('❌ Password verification error:', error);
+    } finally {
+      setVerificationLoading(false);
+    }
+  };
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -1159,7 +1103,6 @@ const handlePasswordAfterVerification = async () => {
 
   return (
     <>
-      {/* Sonner Toaster */}
       <Toaster
         position={isMobile ? "top-center" : "top-right"}
         expand={false}
@@ -1167,468 +1110,474 @@ const handlePasswordAfterVerification = async () => {
         closeButton
       />
 
-      {/* Password Reset Modal */}
-      {showPasswordResetModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-[9999]">
-          <div className="relative w-full max-w-sm bg-white rounded-xl shadow-xl p-6">
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ShieldAlert className="w-6 h-6 text-red-600" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Password Reset Required
-              </h3>
-              <p className="text-slate-600">
-                Multiple incorrect password attempts detected. For security reasons, you must reset your password.
-              </p>
-            </div>
-            
-            <div className="space-y-3">
+      {/* Verification Modal - Redesigned */}
+      {showVerificationModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-4 z-[9999] animate-in fade-in duration-300 overflow-y-auto">
+          <div className="relative w-full max-w-md my-auto bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all animate-in zoom-in duration-300">
+            {/* Modal Header - Katwaanyaa Branding */}
+            <div className="relative bg-gradient-to-r from-emerald-700 to-teal-700 p-5 text-white">
               <button
-                onClick={() => {
-                  router.push(resetLink);
-                  setShowPasswordResetModal(false);
-                }}
-                className="w-full py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700"
+                onClick={closeVerificationModal}
+                className="absolute top-4 right-4 p-1.5 hover:bg-white/20 rounded-lg transition-colors active:scale-90"
               >
-                Reset Password Now
+                <X className="w-5 h-5" />
               </button>
               
-              <button
-                onClick={() => {
-                  setShowPasswordResetModal(false);
-                  setFormData({ email: '', password: '' });
-                }}
-                className="w-full py-3 border border-slate-300 text-slate-700 rounded-lg font-bold hover:bg-slate-50"
-              >
-                Cancel
-              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20">
+                  <ShieldCheck className="w-6 h-6 text-emerald-300" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold tracking-tight">Verify Access</h3>
+                  <p className="text-emerald-200 text-xs font-medium">Secure Authentication Required</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              {!requiresPasswordAfterVerification ? (
+                <>
+                  <div className="text-center mb-5">
+                    <p className="text-gray-600 text-sm mb-2">Verification code sent to</p>
+                    <p className="font-mono font-bold text-emerald-700 bg-emerald-50 p-2 rounded-lg text-sm break-all">{verificationEmail}</p>
+                  </div>
+                  
+                  <div className="mb-5">
+                    <div className="grid grid-cols-6 gap-2 mb-3">
+                      {verificationCode.map((digit, index) => (
+                        <input
+                          key={index}
+                          id={`verification-input-${index}`}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={1}
+                          value={digit}
+                          onChange={(e) => handleVerificationCodeChange(index, e.target.value)}
+                          onKeyDown={(e) => handleVerificationKeyDown(index, e)}
+                          className="w-full aspect-square text-center text-2xl font-bold bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800"
+                          autoFocus={index === 0}
+                        />
+                      ))}
+                    </div>
+                    
+                    <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+                      <Clock className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Code expires in <span className="font-mono font-bold text-emerald-700">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span></span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="mb-5">
+                  <p className="text-gray-700 text-sm font-medium mb-3">Enter your password to continue</p>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="password"
+                      value={passwordAfterVerification}
+                      onChange={(e) => setPasswordAfterVerification(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full pl-10 pr-3 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+              )}
+              
+              <div className="space-y-3">
+                <button
+                  onClick={requiresPasswordAfterVerification ? handlePasswordAfterVerification : handleVerifyCode}
+                  disabled={verificationLoading || (!requiresPasswordAfterVerification && verificationCode.join('').length !== 6)}
+                  className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {verificationLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Verifying...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      <span>{requiresPasswordAfterVerification ? 'Complete Login' : 'Verify Code'}</span>
+                    </>
+                  )}
+                </button>
+
+                {!requiresPasswordAfterVerification && (
+                  <button
+                    onClick={handleResendCode}
+                    disabled={resendLoading || countdown > 0}
+                    className="w-full py-2 text-sm text-emerald-600 font-medium hover:text-emerald-700 transition-colors disabled:opacity-50"
+                  >
+                    {countdown > 0 ? `Resend code in ${countdown}s` : 'Resend verification code'}
+                  </button>
+                )}
+              </div>
+
+              <div className="mt-5 pt-4 border-t border-gray-100">
+                <div className="flex items-center gap-2 text-[10px] text-gray-400 justify-center">
+                  <Shield className="w-3 h-3" />
+                  <span>Secured by Katwaanyaa ICT | Encrypted Session</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Verification Modal */}
-{showVerificationModal && (
-  <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-start sm:items-center justify-center p-2 sm:p-4 z-[9999] animate-fade-in overflow-y-auto">
-    {/* Main Modal Container - Added max-h-screen and flex-col to handle internal scrolling */}
-    <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md my-auto bg-gradient-to-br from-white to-slate-50 rounded-2xl md:rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
-      
-      {/* Modal Header - Shrink-0 prevents header from disappearing when zoomed */}
-      <div className="relative p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white shrink-0">
-        <button
-          onClick={closeVerificationModal}
-          className="absolute top-2 right-2 p-2 hover:bg-white/10 rounded-xl transition-colors active:scale-90"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shrink-0">
-            <ShieldAlert className="w-5 h-5 md:w-6 md:h-6" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-base sm:text-lg font-black truncate">
-              {requiresPasswordAfterVerification ? 'Enter Password' : 'Security Verification'}
-            </h3>
-            <p className="text-blue-100 text-xs mt-0.5 opacity-90 truncate">
-              {requiresPasswordAfterVerification ? 'Complete your login' : 'Verify identity'}
-            </p>
-          </div>
-        </div>
-        
-        <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full">
-          <AlertCircle className="w-3 h-3" />
-          <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap uppercase tracking-wider">
-            {verificationReason?.replace(/_/g, ' ') || 'Action Required'}
-          </span>
-        </div>
-      </div>
-      
-      {/* Scrollable Modal Content */}
-      <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar">
-        {!requiresPasswordAfterVerification ? (
-          <>
-            <div className="mb-4 text-center">
-              <p className="text-slate-600 text-xs sm:text-sm mb-3">
-                6-digit code sent to:
-              </p>
-              <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3">
-                <p className="text-blue-800 font-black text-sm break-all">{verificationEmail}</p>
+      {/* Terms & Conditions Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-4 z-[9999] animate-in fade-in duration-300 overflow-y-auto">
+          <div className="relative w-full max-w-2xl my-auto bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all animate-in zoom-in duration-300">
+            
+            <div className="relative bg-gradient-to-r from-emerald-700 to-teal-700 p-5 text-white">
+              <button
+                onClick={closeTermsModal}
+                className="absolute top-4 right-4 p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center">
+                  <ShieldAlert className="w-6 h-6 text-emerald-300" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold tracking-tight">Terms & Conditions</h3>
+                  <p className="text-emerald-200 text-xs font-medium">Authorized Access Only</p>
+                </div>
               </div>
             </div>
             
-            <div className="mb-6">
-              {/* Input Grid - Grid layout handles zoom better than flex-center with gaps */}
-              <div className="grid grid-cols-6 gap-1 sm:gap-2 mb-4">
-                {verificationCode.map((digit, index) => (
-                  <input
-                    key={index}
-                    id={`verification-input-${index}`}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleVerificationCodeChange(index, e.target.value)}
-                    onKeyDown={(e) => handleVerificationKeyDown(index, e)}
-                    className="w-full aspect-square text-center text-lg sm:text-xl font-black bg-white border-2 border-slate-200 rounded-lg sm:rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-                    autoFocus={index === 0}
-                  />
-                ))}
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              <div className="mb-5 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                <div className="flex gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-800 font-medium">
+                    Unauthorized access is prohibited under the Computer Misuse and Cybercrimes Act. All access attempts are logged.
+                  </p>
+                </div>
               </div>
               
-              <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-400">
-                <Clock className="w-3 h-3" />
-                <span>Expires: <span className="text-blue-600 font-mono">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span></span>
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
+                    <Database className="w-4 h-4 text-emerald-600" />
+                    1. Authorized Use
+                  </h4>
+                  <p className="text-xs text-gray-600">This portal is exclusively for Katwaanyaa Senior School authorized personnel. Credentials are non-transferable.</p>
+                </div>
+                
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-emerald-600" />
+                    2. Data Protection
+                  </h4>
+                  <p className="text-xs text-gray-600">All data accessed is protected under the Data Protection Act. Maintain confidentiality at all times.</p>
+                </div>
+                
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-emerald-600" />
+                    3. Monitoring
+                  </h4>
+                  <p className="text-xs text-gray-600">All activities are logged and monitored. Unauthorized access attempts trigger immediate alerts.</p>
+                </div>
               </div>
             </div>
-          </>
-        ) : (
-          <div className="mb-6">
-            <p className="text-slate-600 text-sm mb-4 font-medium">
-              Code verified! Enter password to finish.
-            </p>
-            <div className="relative group">
-              <input
-                type="password"
-                value={passwordAfterVerification}
-                onChange={(e) => setPasswordAfterVerification(e.target.value)}
-                placeholder="••••••••"
-                className="w-full p-4 pl-4 pr-12 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-                autoFocus
-              />
-              <Lock className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors w-5 h-5" />
-            </div>
-          </div>
-        )}
-        
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={requiresPasswordAfterVerification ? handlePasswordAfterVerification : handleVerifyCode}
-            disabled={verificationLoading || (!requiresPasswordAfterVerification && verificationCode.join('').length !== 6)}
-            className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl font-black text-sm shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50"
-          >
-            {verificationLoading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <CheckCircle className="w-4 h-4" />
-                <span>{requiresPasswordAfterVerification ? 'COMPLETE LOGIN' : 'VERIFY CODE'}</span>
-              </>
-            )}
-          </button>
-
-          {!requiresPasswordAfterVerification && (
-            <button
-              type="button"
-              onClick={handleResendCode}
-              disabled={resendLoading || countdown > 0}
-              className="w-full py-3 text-slate-500 font-bold text-xs hover:text-blue-600 transition-colors disabled:opacity-50"
-            >
-              Didn't get a code? <span className="underline">Resend</span>
-            </button>
-          )}
-        </div>
-
-        {/* Security Footer */}
-        <div className="mt-6 pt-4 border-t border-slate-100">
-          <div className="flex gap-3">
-            <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0" />
-            <p className="text-[10px] leading-relaxed text-slate-500 font-medium">
-              This is a secure, encrypted verification. Your session is protected by 256-bit encryption.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-
-      {/* MAIN LOGIN PAGE */}
-      <div className="min-h-screen  bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center p-3 sm:p-4 md:p-6 font-sans">
-        <div className="max-w-6xl w-full scale-[0.95]  bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl md:rounded-[2.5rem] shadow-xl sm:shadow-2xl shadow-slate-900/10 border border-white/40 overflow-hidden flex flex-col md:flex-row min-h-[500px] sm:min-h-[600px] md:min-h-[720px]">
-          
-          {/* Left Panel */}
-          <div className="hidden md:flex md:w-[45%] bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 relative overflow-hidden p-8 md:p-10 flex-col justify-between">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400 animate-pulse"></div>
-            <div className="absolute -top-20 -left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
             
-            <div className="absolute inset-0 opacity-5" style={{
-              backgroundImage: `linear-gradient(90deg, #fff 1px, transparent 1px),
-                                linear-gradient(180deg, #fff 1px, transparent 1px)`,
-              backgroundSize: '40px 40px'
-            }}></div>
-
-            <div className="relative z-10">
-              <h1 className="text-2xl sm:text-2xl lg:text-2xl font-black text-white mb-6 sm:mb-8 tracking-tighter leading-[0.95]">
-                Katz  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-white">Admin Portal</span>
-              </h1>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
-                {securityFeatures.map((feature, index) => (
-                  <div 
-                    key={index}
-                    className="group p-3 sm:p-4 bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-[1.02]"
-                  >
-                    <div className={`inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-${feature.color}-500/20 mb-2 sm:mb-3`}>
-                      <div className={`text-${feature.color}-400 scale-75 sm:scale-100`}>
-                        {feature.icon}
-                      </div>
-                    </div>
-                    <p className="text-[10px] sm:text-xs font-bold text-white tracking-tight leading-tight">{feature.label}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mt-[14%]">
-                  <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-cyan-400 rounded-full "></div>
-                  <h3 className="text-lg font-bold text-white">Live System Metrics</h3>
-                </div>
-                <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 sm:gap-4">
-                  {systemMetrics.map((metric, index) => (
-                    <div key={index} className="text-center p-2 sm:p-3 bg-white/5 rounded-lg sm:rounded-xl">
-                      <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-                        <div className="text-blue-300 scale-75 sm:scale-100">{metric.icon}</div>
-                        <div className="text-lg sm:text-2xl font-black text-white">{metric.value}</div>
-                      </div>
-                      <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-400 font-bold leading-tight">{metric.label}</p>
-                    </div>
-                  ))}
-                </div>
+            <div className="p-5 border-t border-gray-100 bg-gray-50">
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setAgreedToTerms(true);
+                    closeTermsModal();
+                    toast.success('Terms accepted');
+                  }}
+                  className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-emerald-700 transition-all"
+                >
+                  I Accept
+                </button>
+                <button
+                  onClick={closeTermsModal}
+                  className="flex-1 bg-gray-200 text-gray-700 py-2.5 rounded-lg font-bold text-sm hover:bg-gray-300 transition-all"
+                >
+                  Close
+                </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
 
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                  <span className="text-xs font-bold text-slate-300">System Status</span>
+      {/* Main Login Page Layout - Redesigned */}
+      <main className="min-h-screen bg-gradient-to-br from-white via-emerald-50/30 to-white">
+        <div className="w-full min-h-screen grid lg:grid-cols-2">
+          
+          {/* Left Panel - Branding with Katwaanyaa Theme */}
+          <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white p-8 xl:p-12 overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-400 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-400 rounded-full blur-3xl"></div>
+            </div>
+            
+            <div className="relative z-10 flex-1 flex flex-col">
+              {/* Logo Section */}
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl"></div>
+                  <Image
+                    src="/hero/katz.png"
+                    alt="Katwaanyaa Logo"
+                    width={70}
+                    height={70}
+                    className="rounded-2xl relative z-10 shadow-2xl"
+                  />
                 </div>
-                <span className="text-xs font-bold text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full">
-                  All Systems Operational
-                </span>
+                <div>
+                  <h1 className="text-2xl font-black tracking-tight uppercase leading-tight">
+                    Katwaanyaa <span className="text-emerald-300">'</span>
+                  </h1>
+                  <p className="text-[10px] font-bold tracking-[0.3em] text-emerald-300/80 uppercase">
+                    Senior School
+                  </p>
+                </div>
+              </div>
+
+              {/* Hero Content */}
+              <div className="flex-1 flex flex-col justify-center max-w-md mx-auto text-center py-12">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-wider mx-auto mb-6">
+                  <ShieldCheck size={14} />
+                  Authorized Personnel Only
+                </div>
+                
+                <h2 className="text-4xl font-black tracking-tight mb-4">
+                  Welcome to{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300">
+                    Katwaanyaa
+                  </span>
+                </h2>
+                
+                <p className="text-emerald-100/80 text-sm leading-relaxed">
+                  Your gateway to the administrative management system. Access institutional data, oversee operations, and drive excellence at Katwaanyaa Senior School.
+                </p>
+
+                {/* Stats Decor */}
+                <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-emerald-700/30">
+                  <div>
+                    <div className="text-2xl font-black text-emerald-300">500+</div>
+                    <div className="text-[10px] uppercase tracking-wider text-emerald-300/60">Students</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-black text-emerald-300">45+</div>
+                    <div className="text-[10px] uppercase tracking-wider text-emerald-300/60">Staff</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-black text-emerald-300">15+</div>
+                    <div className="text-[10px] uppercase tracking-wider text-emerald-300/60">Years</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer Motto */}
+              <div className="border-t border-emerald-700/30 pt-6">
+                <p className="text-xs text-emerald-300/60 tracking-wide">
+                  <span className="font-bold">Motto:</span> "Striving for Academic and Moral Excellence"
+                </p>
+                <p className="text-[10px] text-emerald-400/40 mt-2">
+                  © {new Date().getFullYear()} Katwaanyaa Senior School | Secure Portal v2.0
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Right Panel: Login Interface */}
-          <div className="flex-1 p-4 sm:p-6 md:p-8 lg:p-12 xl:p-16 flex flex-col justify-center bg-white relative">
-            <div className="md:hidden flex flex-col items-center mb-6 sm:mb-8">
-              <div className="relative mb-4 sm:mb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg sm:shadow-xl shadow-blue-500/30">
-                  <ShieldCheck className="text-white w-6 h-6 sm:w-8 sm:h-8" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-emerald-500 rounded-full flex items-center justify-center border-3 sm:border-4 border-white">
-                  <Key className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
-                </div>
+          {/* Right Panel - Login Form */}
+          <div className="min-h-screen flex items-center justify-center p-6 sm:p-8 lg:p-12">
+            <div className="w-full max-w-md">
+              {/* Mobile Logo */}
+              <div className="lg:hidden text-center mb-8">
+                <Image
+                  src="/hero/katz.png"
+                  alt="Katwaanyaa Logo"
+                  width={60}
+                  height={60}
+                  className="rounded-xl mx-auto mb-3 shadow-lg"
+                />
+                <h2 className="text-2xl font-black text-gray-800">Katwaanyaa Senior</h2>
+                <p className="text-xs text-gray-500 mt-1">Administrative Portal</p>
               </div>
-              <h2 className="text-lg sm:text-xl font-black text-slate-900 text-center">Katz Admin Portal</h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-2 text-center">Secure Admin Access</p>
-            </div>
 
-            <div className="max-w-md mx-auto w-full px-2 sm:px-0">
-              <div className="mb-8 sm:mb-10 md:mb-12 text-center md:text-left">
-                <div className="flex items-center gap-3 mb-3 sm:mb-4 justify-center md:justify-start">
-                  <div className="w-2 h-4 sm:h-6 bg-gradient-to-b from-blue-500 to-cyan-400 rounded-full"></div>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
-                    {isForgotMode ? "Access Recovery" : "Secure Authentication"}
-                  </h2>
-                </div>
-                <p className="text-slate-600 font-medium text-sm sm:text-base leading-relaxed text-center md:text-left">
+              {/* Form Header */}
+              <div className="mb-8 text-center lg:text-left">
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">
+                  {isForgotMode ? "Recover Access" : "Secure Login"}
+                </h3>
+                <p className="text-sm text-gray-500 mt-2">
                   {isForgotMode 
-                    ? "Provide your registered email to receive recovery instructions." 
-                    : "Authenticate with your administrative credentials to access the control dashboard."}
+                    ? "Enter your registered email to receive recovery instructions" 
+                    : "Enter your credentials to access the dashboard"}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-                <div className="group">
-                  <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                      Workstation Email
-                    </label>
-                  </div>
-                  <div className="relative">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Email Field */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-emerald-600 transition-colors" />
                     <input 
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      placeholder="adminKatz@gmail.com"
-                      className="w-full pl-10 sm:pl-12 pr-4 sm:pr-6 py-3 sm:py-4 bg-slate-50 border-2 border-slate-200 rounded-xl sm:rounded-2xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 font-medium text-slate-900 placeholder-slate-400 text-sm sm:text-base"
+                      placeholder="admin@katwaanyaa.ac.ke"
+                      className="w-full pl-11 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800 placeholder:text-gray-400"
                     />
-                    <Mail className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                 </div>
 
+                {/* Password Field */}
                 {!isForgotMode && (
-                  <div className="group">
-                    <div className="flex justify-between items-center mb-2 sm:mb-3">
-                      <div className="flex items-center gap-2">
-                        <Lock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
-                        <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                          Password
-                        </label>
-                      </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-gray-600">
+                        Password
+                      </label>
                       <button 
                         type="button"
-                        onClick={() => (router.push("/pages/forgotpassword"))}
-                        className="text-xs hover:underline font-bold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
+                        onClick={() => router.push("/pages/forgotpassword")}
+                        className="text-xs font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
                       >
-                        <Key className="w-2 h-2 sm:w-3 sm:h-3" />
-                        <span className="hidden xs:inline">Forgot password</span>
-                        <span className="xs:hidden">Forgot password</span>
+                        Forgot password?
                       </button>
                     </div>
-                    <div className="relative">
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-emerald-600 transition-colors" />
                       <input 
                         type={showPassword ? "text" : "password"}
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
                         required
-                        placeholder="Enter your password"
-                        className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-4 bg-slate-50 border-2 border-slate-200 rounded-xl sm:rounded-2xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 font-medium text-slate-900 placeholder-slate-400 text-sm sm:text-base"
+                        placeholder="••••••••"
+                        className="w-full pl-11 pr-12 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800"
                       />
-                      <Lock className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
                       <button 
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                       >
-                        {showPassword ? 
-                          <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : 
-                          <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-                        }
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
                 )}
 
+                {/* Checkboxes */}
                 {!isForgotMode && (
-                  <div className="space-y-4 sm:space-y-6">
-                    <div className="p-3 sm:p-4 md:p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl sm:rounded-2xl border border-blue-100">
-                      <label className="flex items-start gap-3 sm:gap-4 cursor-pointer group">
-                        <div className="relative flex-shrink-0 mt-0.5">
-                          <input 
-                            type="checkbox" 
-                            checked={agreedToTerms}
-                            onChange={(e) => setAgreedToTerms(e.target.checked)}
-                            className="h-4 w-4 sm:h-5 sm:w-5 cursor-pointer rounded border-2 border-blue-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus:outline-none transition-all"
-                          />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-800 mb-1">
-                            Terms and Agreement
-                          </p>
-                          <p className="text-xs text-slate-600 leading-relaxed">
-                            I understand this session is monitored, encrypted, and recorded for security auditing in compliance with institutional policies.
-                          </p>
-                        </div>
-                      </label>
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl">
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-                        <div>
-                          <p className="text-xs sm:text-sm font-bold text-slate-800">Remember me on this device</p>
-                          <p className="text-xs text-slate-500 hidden sm:block">Stay signed in without entering a code</p>
-                          <p className="text-xs text-slate-500 sm:hidden">Stay signed in</p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setRememberDevice(!rememberDevice)}
-                        className={`relative inline-flex h-5 w-10 sm:h-6 sm:w-11 items-center rounded-full transition-colors ${
-                          rememberDevice ? 'bg-blue-600' : 'bg-slate-300'
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-3 w-3 sm:h-4 sm:w-4 transform rounded-full bg-white transition-transform ${
-                            rememberDevice ? 'translate-x-5 sm:translate-x-6' : 'translate-x-1'
-                          }`}
-                        />
-                      </button>
-                    </div>
+                  <div className="space-y-3 pt-2">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={agreedToTerms}
+                        onChange={(e) => setAgreedToTerms(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                      />
+                      <span className="text-xs text-gray-600">
+                        I agree to the{' '}
+                        <button 
+                          type="button"
+                          onClick={openTermsModal}
+                          className="font-bold text-emerald-600 hover:underline"
+                        >
+                          Terms & Conditions
+                        </button>
+                      </span>
+                    </label>
+                    
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={rememberDevice}
+                        onChange={(e) => setRememberDevice(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                      />
+                      <span className="text-xs text-gray-600">
+                        Keep me logged in on this device
+                      </span>
+                    </label>
                   </div>
                 )}
 
+                {/* Submit Button */}
                 <button 
                   type="submit"
-                  disabled={isLoading}
-                  className="group relative w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-lg sm:shadow-xl shadow-blue-500/30 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading || (!isForgotMode && !agreedToTerms)}
+                  className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold text-base hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 mt-6"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative flex items-center justify-center gap-2 sm:gap-3">
-                    {agreedToTerms ? (
-                      isLoading ? (
-                        <>
-                          <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          <span className="text-sm sm:text-base">Authenticating...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-sm sm:text-base">{isForgotMode ? "Request Access" : "Access Dashboard"}</span>
-                          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                        </>
-                      )
-                    ) : (
-                      <span className="text-sm sm:text-base text-slate-300">Please agree to Terms</span>
-                    )}
-                  </div>
+                  {isLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Authenticating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="w-4 h-4" />
+                      <span>{isForgotMode ? "Send Recovery Link" : "Sign In to Portal"}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
 
+                {/* Forgot Mode Toggle */}
                 {isForgotMode && (
                   <button 
                     type="button"
                     onClick={() => setIsForgotMode(false)}
-                    className="w-full text-center text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors py-2 sm:py-3"
+                    className="w-full text-center text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors pt-3"
                   >
-                    ← Return to authentication
+                    ← Back to Login
                   </button>
                 )}
               </form>
 
-              <div className="mt-8 sm:mt-12 md:mt-16 pt-4 sm:pt-6 md:pt-8 border-t border-slate-200">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <Globe className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
-                    <p className="text-xs text-slate-500 font-medium text-center sm:text-left">
-                    Matungulu, Machakos
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6">
-                    <a href="/pages/OurSchoolPolicies" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
-                      Privacy Policy
-                    </a>
-                    <a href="#" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
-                      Security Protocol
-                    </a>
-                    <a href="#" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
-                      Compliance
-                    </a>
-                  </div>
+              {/* Security Notice */}
+              <div className="mt-8 p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
+                <div className="flex items-center gap-2 justify-center">
+                  <Fingerprint className="w-3 h-3 text-emerald-600" />
+                  <p className="text-[9px] text-emerald-700 font-medium uppercase tracking-wider">
+                    Secure Session • 256-bit Encryption • Activity Logged
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </main>
 
-        <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400 animate-pulse z-50"></div>
-        <div className={`fixed ${isMobile ? 'bottom-2 right-2' : 'bottom-4 right-4'} z-50`}>
-          <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-slate-900/90 backdrop-blur-md rounded-full border border-white/10">
-            <ShieldCheck className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400" />
-            <span className="text-base font-bold text-white  inline">Prayer, Discipline and Hardwork</span>
-          </div>
-        </div>
-      </div>
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes zoom-in {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .animate-in {
+          animation-duration: 0.2s;
+          animation-fill-mode: both;
+        }
+        .fade-in {
+          animation-name: fade-in;
+        }
+        .zoom-in {
+          animation-name: zoom-in;
+        }
+      `}</style>
     </>
   );
 }

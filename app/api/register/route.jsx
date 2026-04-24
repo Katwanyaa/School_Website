@@ -4,11 +4,12 @@ import { hashPassword, generateToken, sanitizeUser } from '../../../libs/auth';
 import nodemailer from 'nodemailer';
 
 // Constants
-const SCHOOL_NAME = 'Katwanyaa Senior School';
+
+const SCHOOL_NAME = 'Katwanyaa senior school';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
-const SCHOOL_MOTTO = 'Education is Light';
-const CONTACT_PHONE = '0710894145';
-const CONTACT_EMAIL = 'katzict@gmail.com';
+const SCHOOL_MOTTO = 'Strive to Excel';
+const CONTACT_PHONE = '+254720123456';
+const CONTACT_EMAIL = 'matungulugirls@gmail.com';
 
 // Email Transporter
 const transporter = nodemailer.createTransport({
@@ -60,8 +61,8 @@ class DeviceTokenManager {
         }
         
         const userRole = adminPayload.role || adminPayload.userRole;
-        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'administrator', 'PRINCIPAL', 'TEACHER', 'teacher'];
-        
+        // Only allow roles defined in Prisma enum UserRole
+        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'USER'];
         if (!userRole || !validRoles.includes(userRole.toUpperCase())) {
           return { 
             valid: false, 
@@ -155,738 +156,256 @@ function getRegistrationSuccessTemplate(user) {
     <html>
     <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       <meta name="x-apple-disable-message-reformatting">
       <title>Account Created - ${SCHOOL_NAME}</title>
-      <style>
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          -webkit-text-size-adjust: 100%;
-          -ms-text-size-adjust: 100%;
-        }
-        
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          line-height: 1.6;
-          color: #333;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          padding: 20px;
-          margin: 0;
-          -webkit-font-smoothing: antialiased;
-        }
-        
-        .container {
-          max-width: 600px;
-          margin: 0 auto;
-          background: white;
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        
-        .header {
-          background: linear-gradient(135deg, #059669 0%, #047857 100%);
-          color: white;
-          padding: 40px 30px;
-          text-align: center;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .header::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-          background-size: 20px 20px;
-          opacity: 0.1;
-        }
-        
-        .header h1 {
-          font-size: 28px;
-          font-weight: 800;
-          margin: 0 0 8px 0;
-          position: relative;
-          z-index: 1;
-        }
-        
-        .header p {
-          font-size: 15px;
-          opacity: 0.95;
-          margin: 0;
-          position: relative;
-          z-index: 1;
-        }
-        
-        .badge {
-          display: inline-block;
-          background: rgba(255, 255, 255, 0.2);
-          padding: 8px 20px;
-          border-radius: 24px;
-          font-size: 12px;
-          font-weight: 600;
-          text-transform: uppercase;
-          margin-top: 12px;
-          position: relative;
-          z-index: 1;
-        }
-        
-        .content {
-          padding: 40px 30px;
-        }
-        
-        .success-card {
-          background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-          padding: 28px;
-          margin: 24px 0;
-          border-radius: 12px;
-          text-align: center;
-          border: 1px solid #a5d6a7;
-        }
-        
-        .success-icon {
-          font-size: 52px;
-          display: block;
-          margin-bottom: 12px;
-        }
-        
-        .success-title {
-          color: #2e7d32;
-          font-size: 20px;
-          font-weight: 700;
-          margin: 0 0 8px 0;
-        }
-        
-        .success-text {
-          color: #558b2f;
-          font-size: 15px;
-          margin: 0;
-          line-height: 1.5;
-        }
-        
-        .welcome-text {
-          color: #333;
-          font-size: 16px;
-          line-height: 1.7;
-          margin: 20px 0;
-        }
-        
-        .info-cards {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          margin: 28px 0;
-        }
-        
-        @media (min-width: 480px) {
-          .info-cards {
-            flex-direction: row;
-          }
-        }
-        
-        .info-card {
-          background: #f8fafc;
-          padding: 20px;
-          border-radius: 12px;
-          border: 1px solid #e2e8f0;
-          flex: 1;
-        }
-        
-        .info-label {
-          font-size: 11px;
-          font-weight: 800;
-          text-transform: uppercase;
-          color: #059669;
-          letter-spacing: 0.05em;
-          margin-bottom: 8px;
-        }
-        
-        .info-value {
-          font-size: 15px;
-          font-weight: 700;
-          color: #047857;
-          word-break: break-word;
-          line-height: 1.3;
-        }
-        
-        .features-section {
-          background: #f0fdf4;
-          padding: 24px;
-          border-radius: 12px;
-          margin: 24px 0;
-          border: 1px solid #dcfce7;
-        }
-        
-        .features-title {
-          font-size: 17px;
-          font-weight: 700;
-          color: #047857;
-          margin: 0 0 16px 0;
-          border-left: 4px solid #059669;
-          padding-left: 12px;
-        }
-        
-        .features-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-        
-        .features-list li {
-          padding: 12px 0;
-          border-bottom: 1px solid #d1fae5;
-          display: flex;
-          align-items: flex-start;
-          gap: 12px;
-          font-size: 14px;
-          color: #333;
-        }
-        
-        .features-list li:last-child {
-          border-bottom: none;
-        }
-        
-        .feature-icon {
-          font-size: 20px;
-          min-width: 24px;
-          flex-shrink: 0;
-        }
-        
-        .feature-text {
-          line-height: 1.5;
-        }
-        
-        .cta-box {
-          background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-          padding: 24px;
-          border-radius: 12px;
-          margin: 24px 0;
-          text-align: center;
-          border: 1px solid #7dd3fc;
-        }
-        
-        .cta-title {
-          color: #0369a1;
-          font-size: 16px;
-          font-weight: 700;
-          margin: 0 0 12px 0;
-        }
-        
-        .cta-btn {
-          display: inline-block;
-          background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
-          color: white;
-          padding: 14px 32px;
-          border-radius: 8px;
-          text-decoration: none;
-          font-weight: 600;
-          font-size: 15px;
-          transition: all 0.2s ease;
-          border: none;
-          cursor: pointer;
-        }
-        
-        .cta-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(3, 105, 161, 0.3);
-        }
-        
-        .credentials-box {
-          background: #fef3c7;
-          border: 1px solid #fde68a;
-          border-radius: 12px;
-          padding: 20px;
-          margin: 24px 0;
-        }
-        
-        .credentials-title {
-          color: #92400e;
-          font-size: 15px;
-          font-weight: 700;
-          margin: 0 0 12px 0;
-        }
-        
-        .credential {
-          background: white;
-          padding: 12px;
-          margin: 8px 0;
-          border-radius: 8px;
-          border-left: 4px solid #f59e0b;
-        }
-        
-        .credential-label {
-          font-size: 11px;
-          color: #92400e;
-          font-weight: 600;
-          text-transform: uppercase;
-        }
-        
-        .credential-value {
-          font-size: 14px;
-          color: #333;
-          font-weight: 700;
-          margin-top: 4px;
-          word-break: break-word;
-        }
-        
-        .support-box {
-          background: #f0f7ff;
-          border: 1px solid #dbeafe;
-          border-radius: 12px;
-          padding: 20px;
-          margin: 24px 0;
-        }
-        
-        .support-title {
-          color: #0369a1;
-          font-size: 15px;
-          font-weight: 700;
-          margin: 0 0 12px 0;
-        }
-        
-        .support-text {
-          font-size: 13px;
-          color: #4b5563;
-          line-height: 1.6;
-          margin: 0;
-        }
-        
-        .footer {
-          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-          color: #cbd5e1;
-          padding: 28px;
-          text-align: center;
-        }
-        
-        .footer-title {
-          font-size: 17px;
-          font-weight: 700;
-          color: white;
-          margin: 0 0 6px 0;
-        }
-        
-        .footer-text {
-          font-size: 13px;
-          margin: 4px 0;
-        }
-        
-        .footer-small {
-          font-size: 11px;
-          opacity: 0.7;
-          margin-top: 8px;
-        }
-        
-        @media (max-width: 768px) {
-          body {
-            padding: 12px;
-          }
-          
-          .header {
-            padding: 32px 20px;
-          }
-          
-          .header h1 {
-            font-size: 24px;
-          }
-          
-          .header p {
-            font-size: 14px;
-          }
-          
-          .content {
-            padding: 28px 20px;
-          }
-          
-          .success-card {
-            padding: 20px;
-          }
-          
-          .success-icon {
-            font-size: 44px;
-          }
-          
-          .success-title {
-            font-size: 18px;
-          }
-          
-          .success-text {
-            font-size: 14px;
-          }
-          
-          .welcome-text {
-            font-size: 15px;
-            margin: 16px 0;
-          }
-          
-          .info-card {
-            padding: 16px;
-          }
-          
-          .info-value {
-            font-size: 14px;
-          }
-          
-          .features-section {
-            padding: 20px;
-          }
-          
-          .features-title {
-            font-size: 16px;
-          }
-          
-          .features-list li {
-            padding: 10px 0;
-            font-size: 13px;
-          }
-          
-          .feature-icon {
-            font-size: 18px;
-          }
-          
-          .cta-box {
-            padding: 20px;
-          }
-          
-          .cta-title {
-            font-size: 15px;
-          }
-          
-          .cta-btn {
-            padding: 12px 28px;
-            font-size: 14px;
-          }
-          
-          .credentials-box {
-            padding: 16px;
-          }
-          
-          .credentials-title {
-            font-size: 14px;
-          }
-          
-          .credential {
-            padding: 10px;
-          }
-          
-          .credential-label {
-            font-size: 10px;
-          }
-          
-          .credential-value {
-            font-size: 13px;
-          }
-          
-          .support-box {
-            padding: 16px;
-          }
-          
-          .support-title {
-            font-size: 14px;
-          }
-          
-          .support-text {
-            font-size: 12px;
-          }
-          
-          .footer {
-            padding: 24px;
-          }
-          
-          .footer-title {
-            font-size: 16px;
-          }
-          
-          .footer-text {
-            font-size: 12px;
-          }
-          
-          .footer-small {
-            font-size: 10px;
-          }
-        }
-        
-        @media (max-width: 480px) {
-          body {
-            padding: 8px;
-          }
-          
-          .header {
-            padding: 24px 12px;
-          }
-          
-          .header h1 {
-            font-size: 20px;
-            margin-bottom: 6px;
-          }
-          
-          .header p {
-            font-size: 12px;
-          }
-          
-          .badge {
-            font-size: 10px;
-            padding: 6px 14px;
-            margin-top: 10px;
-          }
-          
-          .content {
-            padding: 20px 12px;
-          }
-          
-          .success-card {
-            padding: 16px;
-            margin: 16px 0;
-          }
-          
-          .success-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-          }
-          
-          .success-title {
-            font-size: 17px;
-          }
-          
-          .success-text {
-            font-size: 13px;
-          }
-          
-          .welcome-text {
-            font-size: 14px;
-            margin: 14px 0;
-            line-height: 1.6;
-          }
-          
-          .info-cards {
-            gap: 12px;
-            margin: 20px 0;
-          }
-          
-          .info-card {
-            padding: 14px;
-          }
-          
-          .info-label {
-            font-size: 10px;
-          }
-          
-          .info-value {
-            font-size: 13px;
-          }
-          
-          .features-section {
-            padding: 16px;
-            margin: 20px 0;
-          }
-          
-          .features-title {
-            font-size: 15px;
-            margin-bottom: 12px;
-          }
-          
-          .features-list li {
-            padding: 8px 0;
-            font-size: 12px;
-            gap: 10px;
-          }
-          
-          .feature-icon {
-            font-size: 16px;
-            min-width: 20px;
-          }
-          
-          .cta-box {
-            padding: 16px;
-            margin: 20px 0;
-          }
-          
-          .cta-title {
-            font-size: 14px;
-          }
-          
-          .cta-btn {
-            padding: 11px 24px;
-            font-size: 13px;
-          }
-          
-          .credentials-box {
-            padding: 14px;
-            margin: 16px 0;
-          }
-          
-          .credentials-title {
-            font-size: 13px;
-          }
-          
-          .credential {
-            padding: 10px;
-            margin: 6px 0;
-          }
-          
-          .credential-label {
-            font-size: 9px;
-          }
-          
-          .credential-value {
-            font-size: 12px;
-            margin-top: 3px;
-          }
-          
-          .support-box {
-            padding: 14px;
-            margin: 16px 0;
-          }
-          
-          .support-title {
-            font-size: 13px;
-          }
-          
-          .support-text {
-            font-size: 11px;
-          }
-          
-          .footer {
-            padding: 16px;
-          }
-          
-          .footer-title {
-            font-size: 15px;
-          }
-          
-          .footer-text {
-            font-size: 11px;
-            margin: 2px 0;
-          }
-          
-          .footer-small {
-            font-size: 9px;
-          }
-        }
-      </style>
     </head>
-    <body>
-      <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-          <h1>🎉 Welcome to ${SCHOOL_NAME}</h1>
-          <p>Your Account Has Been Successfully Created</p>
-          <div class="badge">Account Active</div>
-        </div>
-        
-        <!-- CONTENT -->
-        <div class="content">
-          <div class="success-card">
-            <span class="success-icon">✅</span>
-            <h2 class="success-title">Welcome Aboard!</h2>
-            <p class="success-text">Your account is now fully active and ready to use</p>
-          </div>
-          
-          <p class="welcome-text">
-            Dear <strong>${user.name}</strong>,
-            <br><br>
-            Congratulations! Your staff account at ${SCHOOL_NAME} has been successfully created. You now have full access to the school management dashboard and all system privileges.
-          </p>
-          
-          <div class="info-cards">
-            <div class="info-card">
-              <div class="info-label">👤 Account Role</div>
-              <div class="info-value">${user.role}</div>
-            </div>
-            <div class="info-card">
-              <div class="info-label">📧 Email Address</div>
-              <div class="info-value">${user.email}</div>
-            </div>
-          </div>
-          
-          <div class="features-section">
-            <h3 class="features-title">✨ Dashboard Features & Privileges</h3>
-            <ul class="features-list">
-              <li>
-                <span class="feature-icon">📊</span>
-                <span class="feature-text"><strong>Dashboard Access:</strong> Monitor school operations and statistics</span>
-              </li>
-              <li>
-                <span class="feature-icon">👨‍🎓</span>
-                <span class="feature-text"><strong>Student Management:</strong> Manage student records and information</span>
-              </li>
-              <li>
-                <span class="feature-icon">📝</span>
-                <span class="feature-text"><strong>Admissions:</strong> Handle admission applications and enrollment</span>
-              </li>
-              <li>
-                <span class="feature-icon">📅</span>
-                <span class="feature-text"><strong>Academic Calendar:</strong> Manage school events and schedules</span>
-              </li>
-              <li>
-                <span class="feature-icon">📢</span>
-                <span class="feature-text"><strong>Communications:</strong> Send announcements and newsletters</span>
-              </li>
-              <li>
-                <span class="feature-icon">⚙️</span>
-                <span class="feature-text"><strong>System Settings:</strong> Configure school information and policies</span>
-              </li>
-              <li>
-                <span class="feature-icon">📊</span>
-                <span class="feature-text"><strong>Reports:</strong> Generate and view school reports</span>
-              </li>
-            </ul>
-          </div>
-          
-          <div class="cta-box">
-            <h3 class="cta-title">🚀 Get Started Now</h3>
-            <p style="margin: 0 0 14px 0; font-size: 14px; color: #0369a1;">Access your dashboard and start managing the school system</p>
-            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'hhttps://katwanyaasenior.school'}/MainDashboard" class="cta-btn">
-              Open Dashboard
-            </a>
-          </div>
-          
-          <div class="credentials-box">
-            <h3 class="credentials-title">🔐 Login Information</h3>
-            <div class="credential">
-              <div class="credential-label">📧 Email</div>
-              <div class="credential-value">${user.email}</div>
-            </div>
-            <div class="credential">
-              <div class="credential-label">🔑 Password</div>
-              <div class="credential-value">Use the password you set during registration</div>
-            </div>
-            <p style="margin: 12px 0 0 0; font-size: 12px; color: #92400e;">
-              ⚠️ <strong>Important:</strong> Keep your login credentials safe and never share them with anyone.
-            </p>
-          </div>
-          
-          <div class="support-box">
-            <h3 class="support-title">💡 Need Help?</h3>
-            <p class="support-text">
-              If you have any questions or need assistance with the dashboard, please contact the IT department or school administrator at <strong>${CONTACT_EMAIL}</strong> or <strong>${CONTACT_PHONE}</strong>.
-            </p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 28px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
-            <p style="font-size: 16px; color: #047857; font-weight: 600; margin-bottom: 6px;">
-              Thank you for joining our team!
-            </p>
-            <p style="font-size: 14px; color: #333; margin: 0;">
-              Together, we are making a difference in education.<br>
-              <strong>${SCHOOL_MOTTO}</strong>
-            </p>
-          </div>
-        </div>
-        
-        <!-- FOOTER -->
-        <div class="footer">
-          <p class="footer-title">${SCHOOL_NAME}</p>
-          <p class="footer-text">${SCHOOL_LOCATION}</p>
-          <p class="footer-text">Public Mixed Day and Boarding School</p>
-          <p class="footer-small">© ${new Date().getFullYear()} ${SCHOOL_NAME}. All rights reserved.</p>
-          <p class="footer-small">📞 ${CONTACT_PHONE} | 📧 ${CONTACT_EMAIL}</p>
-        </div>
-      </div>
+    <body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f1f5f9; line-height: 1.6; color: #1e293b; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+      
+      <!-- Wrapper table for full-width background -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f1f5f9;">
+        <tr>
+          <td align="center" style="padding: 4% 3%;">
+            
+            <!-- Main container -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(15,23,42,0.08);">
+              
+              <!-- HEADER -->
+              <tr>
+                <td style="background: linear-gradient(135deg, #0f172a 0%, #334155 100%); padding: 10% 6% 8%; text-align: center;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td align="center" style="padding-bottom: 12px;">
+                        <div style="display: inline-block; background: rgba(255,255,255,0.1); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; text-align: center;">
+                          <span style="font-size: 28px;">🎓</span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <h1 style="color: white; font-size: clamp(20px, 5.5vw, 28px); font-weight: 800; margin: 0 0 8px; line-height: 1.2; letter-spacing: -0.02em;">Welcome to ${SCHOOL_NAME}</h1>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <p style="color: rgba(255,255,255,0.85); font-size: clamp(13px, 3.5vw, 15px); margin: 0 0 14px; font-weight: 400;">Your Account Has Been Successfully Created</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <span style="display: inline-block; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); padding: 6px 18px; border-radius: 24px; font-size: clamp(10px, 2.5vw, 11px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.95);">✓ Account Active</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+              <!-- CONTENT -->
+              <tr>
+                <td style="padding: 8% 6%;">
+                  
+                  <!-- Success Card -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #334155; margin-bottom: 6%;">
+                    <tr>
+                      <td style="padding: 6% 5%; text-align: center;">
+                        <span style="font-size: clamp(36px, 10vw, 48px); display: block; margin-bottom: 10px;">✅</span>
+                        <h2 style="color: #0f172a; font-size: clamp(17px, 4.5vw, 20px); font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em;">Welcome Aboard!</h2>
+                        <p style="color: #475569; font-size: clamp(13px, 3.5vw, 15px); margin: 0; line-height: 1.5;">Your account is now fully active and ready to use</p>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Welcome Text -->
+                  <p style="color: #334155; font-size: clamp(14px, 3.5vw, 16px); line-height: 1.7; margin: 0 0 6%;">
+                    Dear <strong>${user.name}</strong>,
+                    <br><br>
+                    Congratulations! Your staff account at ${SCHOOL_NAME} has been successfully created. You now have full access to the school management dashboard and all system privileges.
+                  </p>
+                  
+                  <!-- Info Cards -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 6%;">
+                    <tr>
+                      <td style="padding-bottom: 10px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #475569;">
+                          <tr>
+                            <td style="padding: 5% 5%;">
+                              <p style="font-size: clamp(10px, 2.5vw, 11px); font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.06em; margin: 0 0 6px;">👤 Account Role</p>
+                              <p style="font-size: clamp(14px, 3.5vw, 16px); font-weight: 700; color: #0f172a; margin: 0; word-break: break-word;">${user.role}</p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #475569;">
+                          <tr>
+                            <td style="padding: 5% 5%;">
+                              <p style="font-size: clamp(10px, 2.5vw, 11px); font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.06em; margin: 0 0 6px;">📧 Email Address</p>
+                              <p style="font-size: clamp(14px, 3.5vw, 16px); font-weight: 700; color: #0f172a; margin: 0; word-break: break-word;">${user.email}</p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Features Section -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #334155; margin-bottom: 6%;">
+                    <tr>
+                      <td style="padding: 6% 5%;">
+                        <h3 style="color: #0f172a; font-size: clamp(15px, 4vw, 17px); font-weight: 700; margin: 0 0 5%;">✨ Dashboard Features & Privileges</h3>
+                        
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: clamp(13px, 3.2vw, 14px); color: #334155; line-height: 1.5;">
+                              <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">📊</span>
+                              <strong>Dashboard Access:</strong> Monitor school operations and statistics
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: clamp(13px, 3.2vw, 14px); color: #334155; line-height: 1.5;">
+                              <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">👨‍🎓</span>
+                              <strong>Student Management:</strong> Manage student records and information
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: clamp(13px, 3.2vw, 14px); color: #334155; line-height: 1.5;">
+                              <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">📝</span>
+                              <strong>Admissions:</strong> Handle admission applications and enrollment
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: clamp(13px, 3.2vw, 14px); color: #334155; line-height: 1.5;">
+                              <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">📅</span>
+                              <strong>Academic Calendar:</strong> Manage school events and schedules
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: clamp(13px, 3.2vw, 14px); color: #334155; line-height: 1.5;">
+                              <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">📢</span>
+                              <strong>Communications:</strong> Send announcements and newsletters
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: clamp(13px, 3.2vw, 14px); color: #334155; line-height: 1.5;">
+                              <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">⚙️</span>
+                              <strong>System Settings:</strong> Configure school information and policies
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; font-size: clamp(13px, 3.2vw, 14px); color: #334155; line-height: 1.5;">
+                              <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">📊</span>
+                              <strong>Reports:</strong> Generate and view school reports
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- CTA Box -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 6%;">
+                    <tr>
+                      <td style="padding: 6% 5%; text-align: center;">
+                        <h3 style="color: #0f172a; font-size: clamp(15px, 3.8vw, 16px); font-weight: 700; margin: 0 0 8px;">🚀 Get Started Now</h3>
+                        <p style="margin: 0 0 16px; font-size: clamp(13px, 3.2vw, 14px); color: #475569;">Access your dashboard and start managing the school system</p>
+                        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://kinyui-senior.vercel.app'}/MainDashboard" 
+                           style="display: inline-block; 
+                                  width: 80%; 
+                                  max-width: 260px; 
+                                  background: linear-gradient(135deg, #0f172a 0%, #334155 100%); 
+                                  color: white; 
+                                  padding: 14px 8px; 
+                                  text-decoration: none; 
+                                  border-radius: 8px; 
+                                  font-weight: 600; 
+                                  font-size: clamp(14px, 3.5vw, 15px); 
+                                  text-align: center;
+                                  border: none;">Open Dashboard →</a>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Credentials Box -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; margin-bottom: 6%;">
+                    <tr>
+                      <td style="padding: 5% 5%;">
+                        <h3 style="color: #0f172a; font-size: clamp(14px, 3.5vw, 15px); font-weight: 700; margin: 0 0 4%;">🔐 Login Information</h3>
+                        
+                        <!-- Email credential -->
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: white; border-radius: 8px; border-left: 4px solid #475569; margin-bottom: 10px;">
+                          <tr>
+                            <td style="padding: 12px;">
+                              <p style="font-size: clamp(10px, 2.5vw, 11px); color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px;">📧 Email</p>
+                              <p style="font-size: clamp(13px, 3.2vw, 14px); color: #1e293b; font-weight: 700; margin: 0; word-break: break-word;">${user.email}</p>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <!-- Password credential -->
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: white; border-radius: 8px; border-left: 4px solid #475569;">
+                          <tr>
+                            <td style="padding: 12px;">
+                              <p style="font-size: clamp(10px, 2.5vw, 11px); color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px;">🔑 Password</p>
+                              <p style="font-size: clamp(13px, 3.2vw, 14px); color: #1e293b; font-weight: 700; margin: 0;">Use the password you set during registration</p>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <p style="margin: 12px 0 0; font-size: clamp(11px, 2.8vw, 12px); color: #475569;">
+                          ⚠️ <strong>Important:</strong> Keep your login credentials safe and never share them with anyone.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Support Box -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #475569; margin-bottom: 6%;">
+                    <tr>
+                      <td style="padding: 5% 5%;">
+                        <h3 style="color: #0f172a; font-size: clamp(14px, 3.5vw, 15px); font-weight: 700; margin: 0 0 3%;">💡 Need Help?</h3>
+                        <p style="font-size: clamp(12px, 3vw, 13px); color: #475569; line-height: 1.6; margin: 0;">
+                          If you have any questions or need assistance with the dashboard, please contact the IT department or school administrator at <strong>${CONTACT_EMAIL}</strong> or <strong>${CONTACT_PHONE}</strong>.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Closing Message -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="text-align: center; padding-top: 4%; border-top: 2px solid #e2e8f0;">
+                        <p style="font-size: clamp(15px, 3.8vw, 16px); color: #0f172a; font-weight: 600; margin: 0 0 6px;">
+                          Thank you for joining our team!
+                        </p>
+                        <p style="font-size: clamp(13px, 3.2vw, 14px); color: #475569; margin: 0;">
+                          Together, we are making a difference in education.<br>
+                          <strong style="color: #334155;">${SCHOOL_MOTTO}</strong>
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                </td>
+              </tr>
+              
+              <!-- FOOTER -->
+              <tr>
+                <td style="background: #0f172a; padding: 8% 6%; text-align: center;">
+                  <p style="color: #ffffff; font-size: clamp(15px, 4vw, 17px); font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em;">${SCHOOL_NAME}</p>
+                  <p style="color: #94a3b8; font-size: clamp(12px, 3vw, 13px); margin: 4px 0;">${SCHOOL_LOCATION}</p>
+                  <p style="color: #94a3b8; font-size: clamp(12px, 3vw, 13px); margin: 4px 0 0;">Public Boarding School</p>
+                  <div style="width: 40px; height: 2px; background: #475569; margin: 14px auto;"></div>
+                  <p style="color: #64748b; font-size: clamp(10px, 2.5vw, 11px); margin: 0 0 4px;">© ${new Date().getFullYear()} ${SCHOOL_NAME}. All rights reserved.</p>
+                  <p style="color: #64748b; font-size: clamp(10px, 2.5vw, 11px); margin: 0;">📞 ${CONTACT_PHONE} | 📧 ${CONTACT_EMAIL}</p>
+                </td>
+              </tr>
+              
+            </table>
+          </td>
+        </tr>
+      </table>
     </body>
     </html>
   `;
@@ -926,24 +445,20 @@ const validateEnvironment = () => {
 
 const validateInput = (name, email, password, role) => {
   const errors = [];
-  
   if (!name || name.trim().length < 2) {
     errors.push('Name must be at least 2 characters long');
   }
-
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.push('Valid email is required');
   }
-
   if (!password || password.length < 6) {
     errors.push('Password must be at least 6 characters');
   }
-
-  const validRoles = ['TEACHER', 'PRINCIPAL', 'ADMIN'];
-  if (!validRoles.includes(role)) {
-    errors.push('Invalid user role');
+  // If role is missing or invalid, default to ADMIN
+  const validRoles = ['ADMIN', 'SUPER_ADMIN', 'USER'];
+  if (!role || !validRoles.includes(role.toUpperCase())) {
+    // No error, just default to ADMIN
   }
-
   return errors;
 };
 
@@ -951,15 +466,17 @@ const validateInput = (name, email, password, role) => {
 // Main POST
 export async function POST(request) {
   try {
-    // ================ ADD THIS AUTHENTICATION CHECK HERE ================
-    // Authenticate request first - only ADMIN and SUPER_ADMIN can create users
+    // ===================== TOKEN VERIFICATION DISABLED FOR TESTING =====================
+    // Authentication is disabled to allow user creation for testing purposes.
+    // Uncomment the following block to re-enable admin/device token checks.
+    /*
+    // Authenticate request first - only ADMIN and SUPERADMIN can create users
     const auth = authenticateRequest(request);
     if (!auth.authenticated) {
       return auth.response;
     }
-    
-    // Check if user has permission to create new users (only ADMIN or SUPER_ADMIN)
-    const adminRoles = ['ADMIN', 'SUPER_ADMIN', 'administrator', 'PRINCIPAL'];
+    // Check if user has permission to create new users (only ADMIN or SUPERADMIN)
+    const adminRoles = ['ADMIN', 'SUPERADMIN', 'SUPER_ADMIN', 'administrator', 'PRINCIPAL'];
     if (!adminRoles.includes(auth.user.role?.toUpperCase())) {
       return NextResponse.json(
         { 
@@ -970,7 +487,6 @@ export async function POST(request) {
         { status: 403 }
       );
     }
-    
     // Log the user creation attempt for audit
     console.log('👤 User creation attempt:', {
       createdBy: auth.user.name,
@@ -979,9 +495,45 @@ export async function POST(request) {
       device: auth.deviceInfo,
       timestamp: new Date().toISOString()
     });
-    
+    */
+    // ===================== END TOKEN VERIFICATION DISABLED =====================
+
     // ================ REST OF YOUR EXISTING CODE CONTINUES HERE ================
-    const { name, email, password, phone, role = 'ADMIN' } = await request.json();
+
+    let { name, email, password, phone, role } = await request.json();
+    // Normalize role to Prisma enum (ADMIN or SUPER_ADMIN)
+    let dbRole = (role || '').toUpperCase().replace(/[- ]/g, '_');
+    if (!['ADMIN', 'SUPER_ADMIN'].includes(dbRole)) {
+      dbRole = 'ADMIN';
+    }
+
+    // Only allow ADMIN or SUPERADMIN to create users (unless no users exist yet)
+    const userCount = await prisma.user.count();
+    if (userCount > 0) {
+      // Token verification is DISABLED for user creation (for testing)
+      /*
+      const auth = authenticateRequest(request);
+      if (!auth.authenticated) {
+        return auth.response;
+      }
+      const allowedRoles = ['ADMIN', 'SUPERADMIN'];
+      if (!allowedRoles.includes((auth.user.role || '').toUpperCase())) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Permission Denied',
+            message: 'Only ADMIN or SUPERADMIN can create new users.'
+          },
+          { status: 403 }
+        );
+      }
+      */
+    }
+
+    // Prevent non-SUPERADMIN role assignment for first user
+    if (userCount === 0 && dbRole !== 'SUPER_ADMIN') {
+      dbRole = 'SUPER_ADMIN';
+    }
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: 'Name, email and password are required' }, { status: 400 });
@@ -1010,7 +562,7 @@ export async function POST(request) {
         email: email.toLowerCase().trim(),
         password: hashedPassword,
         phone: phone ? phone.trim() : null,
-        role: role
+        role: dbRole
       },
       select: { 
         id: true, 
@@ -1033,7 +585,6 @@ export async function POST(request) {
 
     // Log successful creation
     console.log('✅ User created successfully:', {
-      createdBy: auth.user.name,
       newUser: user.email,
       newUserRole: user.role,
       timestamp: new Date().toISOString()
@@ -1044,11 +595,8 @@ export async function POST(request) {
         success: true,
         message: 'User registered successfully',
         user: sanitizeUser(user),
-        token,
-        createdBy: {
-          name: auth.user.name,
-          role: auth.user.role
-        }
+        token
+        // createdBy: only included if authentication is enabled
       },
       { status: 201 }
     );

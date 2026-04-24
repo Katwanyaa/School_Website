@@ -30,49 +30,93 @@ function getVerificationEmailTemplate(user, verificationCode) {
     <html>
     <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Verification Code - Katwanyaa Senior School</title>
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f7fafc; padding: 20px; }
-        .container { max-width: 550px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .header { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 30px; text-align: center; }
-        .header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-        .content { padding: 35px; }
-        .code-box { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 25px; border-radius: 12px; text-align: center; margin: 25px 0; border: 1px solid #a5d6a7; }
-        .code { font-size: 25px; font-weight: 800; letter-spacing: 10px; color: #047857; font-family: monospace; margin: 15px 0; }
-        .warning { background: #fef3c7; border: 1px solid #fbbf24; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 14px; }
-        .footer { background: #1a202c; color: #cbd5e0; padding: 25px; text-align: center; font-size: 12px; }
-        .expiry-note { color: #718096; font-size: 13px; text-align: center; margin-top: 15px; }
-      </style>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <meta name="x-apple-disable-message-reformatting">
+      <title>Verification Code - Katwanyaa senior school</title>
     </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>🔐 Login Verification</h1>
-          <p>Katwanyaa Senior School Admin System</p>
-        </div>
-        <div class="content">
-          <h2 style="color: #2d3748; margin-bottom: 10px;">Hello ${user.name},</h2>
-          <p class="instructions">
-            Use the verification code below to complete your login:
-          </p>
-          <div class="code-box">
-            <p style="color: #047857; font-weight: 600; margin-bottom: 10px;">Your 6-digit verification code:</p>
-            <div class="code">${verificationCode}</div>
-          </div>
-          <div class="warning">
-            <strong>⚠️ Security Notice:</strong>
-            <p style="margin-top: 8px;">If you didn't attempt to login, change your password immediately.</p>
-          </div>
-          <p class="expiry-note">
-            ⏰ This code expires in <strong>${VERIFICATION_CODE_EXPIRY_MINUTES} minutes</strong>.
-          </p>
-        </div>
-        <div class="footer">
-          <p>© ${new Date().getFullYear()} Katwanyaa Senior School. All rights reserved.</p>
-        </div>
-      </div>
+    <body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f1f5f9; line-height: 1.6; color: #1e293b; -webkit-text-size-adjust: 100%;">
+      
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f1f5f9;">
+        <tr>
+          <td align="center" style="padding: 4% 3%;">
+            
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 550px; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(15,23,42,0.08);">
+              
+              <!-- HEADER -->
+              <tr>
+                <td style="background: linear-gradient(135deg, #0f172a 0%, #334155 100%); padding: 10% 6% 8%; text-align: center;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td align="center" style="padding-bottom: 12px;">
+                        <div style="display: inline-block; background: rgba(255,255,255,0.1); border-radius: 50%; width: 52px; height: 52px; line-height: 52px; text-align: center;">
+                          <span style="font-size: 26px;">🔐</span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <h1 style="color: white; font-size: clamp(20px, 5.5vw, 26px); font-weight: 800; margin: 0 0 6px; line-height: 1.2; letter-spacing: -0.02em;">Login Verification</h1>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <p style="color: rgba(255,255,255,0.7); font-size: clamp(12px, 3vw, 14px); margin: 0; font-weight: 400; letter-spacing: 0.03em;">Katwanyaa senior school Admin System</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+              <!-- CONTENT -->
+              <tr>
+                <td style="padding: 8% 6%;">
+                  
+                  <h2 style="color: #0f172a; font-size: clamp(17px, 4.5vw, 20px); font-weight: 700; margin: 0 0 3%; letter-spacing: -0.01em;">Hello ${user.name},</h2>
+                  <p style="color: #475569; font-size: clamp(14px, 3.5vw, 15px); line-height: 1.6; margin: 0 0 6%;">
+                    Use the verification code below to complete your login:
+                  </p>
+                  
+                  <!-- Code Box -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #334155; margin-bottom: 6%;">
+                    <tr>
+                      <td style="padding: 6% 5%; text-align: center;">
+                        <p style="color: #475569; font-size: clamp(13px, 3.2vw, 14px); font-weight: 600; margin: 0 0 12px;">Your 6-digit verification code:</p>
+                        <div style="font-size: clamp(28px, 8vw, 36px); font-weight: 800; letter-spacing: 10px; color: #0f172a; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 12px 0; background: #ffffff; border-radius: 8px; border: 2px solid #e2e8f0;">${verificationCode}</div>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Security Warning -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; margin-bottom: 5%;">
+                    <tr>
+                      <td style="padding: 5%;">
+                        <p style="color: #1e293b; font-size: clamp(13px, 3.2vw, 14px); font-weight: 700; margin: 0 0 6px;">⚠️ Security Notice</p>
+                        <p style="color: #475569; font-size: clamp(13px, 3.2vw, 14px); line-height: 1.5; margin: 0;">If you didn't attempt to login, change your password immediately.</p>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!-- Expiry Note -->
+                  <p style="color: #64748b; font-size: clamp(12px, 3vw, 13px); text-align: center; margin: 0;">
+                    ⏰ This code expires in <strong style="color: #334155;">${VERIFICATION_CODE_EXPIRY_MINUTES} minutes</strong>.
+                  </p>
+                  
+                </td>
+              </tr>
+              
+              <!-- FOOTER -->
+              <tr>
+                <td style="background: #0f172a; padding: 8% 6%; text-align: center;">
+                  <p style="color: #ffffff; font-size: clamp(14px, 3.5vw, 16px); font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em;">Katwanyaa senior school</p>
+                  <div style="width: 40px; height: 2px; background: #475569; margin: 12px auto;"></div>
+                  <p style="color: #64748b; font-size: clamp(10px, 2.5vw, 11px); margin: 0;">© ${new Date().getFullYear()} Katwanyaa senior school. All rights reserved.</p>
+                </td>
+              </tr>
+              
+            </table>
+          </td>
+        </tr>
+      </table>
     </body>
     </html>
   `;
@@ -137,7 +181,7 @@ async function sendVerificationEmail(user, verificationCode) {
   try {
     const mailOptions = {
       from: {
-        name: 'Katwanyaa Senior School Security',
+        name: 'Katwanyaa senior school Security',
         address: process.env.EMAIL_USER
       },
       to: user.email,
@@ -599,13 +643,26 @@ export async function POST(request) {
         }, { status: 404 });
       }
 
-      const newCode = generateVerificationCode();
-      await storeVerificationCode(email, newCode, deviceHash);
-      await sendVerificationEmail(user, newCode);
+      // Check for existing unexpired code
+      const existingToken = await prisma.verificationToken.findFirst({
+        where: {
+          identifier: user.email,
+          expires: { gt: new Date() }
+        }
+      });
+      let codeToSend;
+      if (existingToken) {
+        codeToSend = existingToken.token;
+        console.log('♻️ Reusing existing verification code for RESEND:', email);
+      } else {
+        codeToSend = generateVerificationCode();
+        await storeVerificationCode(user.email, codeToSend, deviceHash);
+      }
+      await sendVerificationEmail(user, codeToSend);
 
       return NextResponse.json({
         success: true,
-        message: 'New verification code sent to your email'
+        message: 'Verification code sent to your email'
       }, { status: 200 });
     }
 
@@ -701,11 +758,22 @@ export async function POST(request) {
     
     if (deviceVerificationCheck.requiresVerification) {
       console.log('🔐 Verification required for:', email);
-      
-      const verificationCode = generateVerificationCode();
-      await storeVerificationCode(user.email, verificationCode, deviceHash);
+      // Check for existing unexpired code
+      const existingToken = await prisma.verificationToken.findFirst({
+        where: {
+          identifier: user.email,
+          expires: { gt: new Date() }
+        }
+      });
+      let verificationCode;
+      if (existingToken) {
+        verificationCode = existingToken.token;
+        console.log('♻️ Reusing existing verification code for:', email);
+      } else {
+        verificationCode = generateVerificationCode();
+        await storeVerificationCode(user.email, verificationCode, deviceHash);
+      }
       await sendVerificationEmail(user, verificationCode);
-      
       return NextResponse.json({
         success: false,
         requiresVerification: true,

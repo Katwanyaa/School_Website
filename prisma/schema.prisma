@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,7 +15,7 @@ model User {
   emailVerified  DateTime?
   password       String?
   phone          String?
-  role           UserRole        @default(TEACHER)
+  role           UserRole        @default(ADMIN)
   image          String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
@@ -66,25 +67,24 @@ model LoginAttempt {
 }
 
 model DeviceToken {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   userId        String
   deviceHash    String
   deviceName    String?
-  lastUsed      DateTime @default(now())
+  lastUsed      DateTime  @default(now())
   expiresAt     DateTime
-  isTrusted     Boolean  @default(false)
-  isBlocked     Boolean  @default(false)
-  loginCount    Int      @default(1)
-  countsResetAt DateTime?  // NEW: When counts were last reset
-  isCountsReset Boolean  @default(false)  // NEW: Flag indicating counts were reset
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  isTrusted     Boolean   @default(false)
+  isBlocked     Boolean   @default(false)
+  loginCount    Int       @default(1)
+  countsResetAt DateTime? // NEW: When counts were last reset
+  isCountsReset Boolean   @default(false) // NEW: Flag indicating counts were reset
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, deviceHash])
   @@index([userId])
   @@index([deviceHash])
   @@index([expiresAt])
 }
-
 
 model Subscriber {
   id        String   @id @default(cuid())
@@ -159,46 +159,44 @@ model CounselingEvent {
 }
 
 model Event {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String?  @db.Text
-  date         DateTime
-  time         String
-  location     String
-  category     String
-  type         String
-  featured     Boolean  @default(false)
-  registration Boolean  @default(false)
-  attendees    String
-  speaker      String
-  image        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-   createdBy   String?
-  updatedBy   String?
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String?  @db.Text
+  date          DateTime
+  time          String
+  location      String
+  category      String
+  type          String
+  featured      Boolean  @default(false)
+  registration  Boolean  @default(false)
+  attendees     String
+  speaker       String
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     String?
+  updatedBy     String?
   updatedByName String?
   updatedByRole String?
 }
 
 model News {
-  id          Int      @id @default(autoincrement())
-  title       String
-  excerpt     String?  @db.Text
-  fullContent String?  @db.Text
-  date        DateTime
-  category    String
-  isFeatured  Boolean  @default(false)
-  author      String
-  likes       Int      @default(0)
-  image       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   String?
-  updatedBy   String?
+  id            Int      @id @default(autoincrement())
+  title         String
+  excerpt       String?  @db.Text
+  fullContent   String?  @db.Text
+  date          DateTime
+  category      String
+  isFeatured    Boolean  @default(false)
+  author        String
+  likes         Int      @default(0)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     String?
+  updatedBy     String?
   updatedByName String?
   updatedByRole String?
-  
-
 }
 
 model Staff {
@@ -224,9 +222,6 @@ model Staff {
   updatedAt        DateTime @updatedAt
 }
 
-
-
-
 model EmailCampaign {
   id            String    @id @default(cuid())
   title         String
@@ -245,45 +240,41 @@ model EmailCampaign {
   @@map("email_campaigns")
 }
 
-
-
-
 model SmsCampaign {
-  id              String    @id @default(cuid())
-  title           String
-  message         String
-  recipients      String    // Comma-separated phone numbers
-  recipientType   String?   @default("all")
-  status          String    @default("draft") // "draft" or "sent"
-  sentAt          DateTime?
-  sentCount       Int?      @default(0)
-  failedCount     Int?      @default(0)
-  lowCreditSaved  Boolean   @default(false) // Add this line
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
+  id             String    @id @default(cuid())
+  title          String
+  message        String
+  recipients     String // Comma-separated phone numbers
+  recipientType  String?   @default("all")
+  status         String    @default("draft") // "draft" or "sent"
+  sentAt         DateTime?
+  sentCount      Int?      @default(0)
+  failedCount    Int?      @default(0)
+  lowCreditSaved Boolean   @default(false) // Add this line
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
   // Relations
-  logs            SmsLog[]
-  
+  logs SmsLog[]
+
   @@map("sms_campaigns")
 }
 
 model SmsLog {
-  id              String   @id @default(cuid())
-  campaignId      String
-  userId          String?  // optional, if you track users
-  phoneNumber     String   // <-- Make sure this is String, not Int
-  message         String   @db.Text
+  id                String   @id @default(cuid())
+  campaignId        String
+  userId            String? // optional, if you track users
+  phoneNumber       String // <-- Make sure this is String, not Int
+  message           String   @db.Text
   providerMessageId String? // Africa's Talking messageId
-  status          String   // success, failed
-  errorMessage    String?
-  timestamp       DateTime @default(now())
+  status            String // success, failed
+  errorMessage      String?
+  timestamp         DateTime @default(now())
 
-  campaign        SmsCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  campaign SmsCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 
   @@map("sms_logs")
 }
-
 
 model GalleryImage {
   id          Int      @id @default(autoincrement())
@@ -295,8 +286,24 @@ model GalleryImage {
   updatedAt   DateTime @updatedAt
 }
 
+model Magazine {
+  id          Int      @id @default(autoincrement())
+  title       String
+  year        Int
+  description String?  @db.Text
+  pdfUrl      String
+  thumbnail   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relation defined here (One-to-One)
+  schoolInfo   SchoolInfo? @relation(fields: [schoolInfoId], references: [id])
+  schoolInfoId Int?        @unique
+}
+
 model SchoolInfo {
   id           Int      @id @default(autoincrement())
+  // REMOVE magazineId and magazine from here - they're not needed
   name         String   @db.VarChar(255)
   description  String?  @db.Text
   motto        String?  @db.Text
@@ -328,20 +335,77 @@ model SchoolInfo {
   admissionLocation          String?   @db.Text
   admissionOfficeHours       String?   @db.Text
   admissionDocumentsRequired Json      @default("[]")
-  form1ResultsTerm           String?   @db.VarChar(50) // Add this
-  form2ResultsTerm           String?   @db.VarChar(50) // Add this
-  form3ResultsTerm           String?   @db.VarChar(50) // Add this
-  form4ResultsTerm           String?   @db.VarChar(50) // Add this
-  mockExamsTerm              String?   @db.VarChar(50) // Add this
-  kcseTerm                   String?   @db.VarChar(50) // Add this
+  form1ResultsTerm           String?   @db.VarChar(50)
+  form2ResultsTerm           String?   @db.VarChar(50)
+  form3ResultsTerm           String?   @db.VarChar(50)
+  form4ResultsTerm           String?   @db.VarChar(50)
+  mockExamsTerm              String?   @db.VarChar(50)
+  kcseTerm                   String?   @db.VarChar(50)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Magazine  Magazine?
 
   @@index([name])
   @@index([admissionOpenDate, admissionCloseDate])
   @@map("SchoolInfo")
 }
+
+// Individual Achievement Model
+model Achievement {
+  id                Int       @id @default(autoincrement())
+  title             String    @db.VarChar(255)
+  description       String?   @db.Text
+  category          String    @db.VarChar(100) // e.g., "Academic", "Sports", "Arts", "Leadership"
+  year              Int       // Year the achievement was earned
+  
+  // Images stored as JSON array
+  images            Json      @default("[]") // Array of { url, public_id, caption }
+  
+  // Display options
+  featured          Boolean   @default(false)
+  displayOrder      Int       @default(0)
+  isActive          Boolean   @default(true)
+  
+  // Additional metadata
+  awardingBody      String?   @db.VarChar(255)
+  recipients        Json      @default("[]") // Array of recipient names
+  
+  // Timestamps
+  achievedDate      DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([category])
+  @@index([year])
+  @@index([featured])
+  @@index([isActive])
+  @@map("Achievement")
+}
+
+// School Stats Model (for constant mean and target values)
+model SchoolStats {
+  id                Int       @id @default(autoincrement())
+  
+  meanScore         Float?    // Overall mean score
+  lastYearMean      Float?    // Last year's mean score
+  targetMean        Float?    // Target mean for current year
+  
+  // School slogan
+  slogan            String?   @db.Text
+  sloganDescription String?   @db.Text
+  sloganAuthor      String?   @db.VarChar(255)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@map("SchoolStats")
+}
+
+
+
+
 
 model SchoolDocument {
   id Int @id @default(autoincrement())
@@ -463,43 +527,43 @@ model SchoolDocument {
 }
 
 model AdmissionApplication {
-  id                     String    @id @default(cuid())
-  applicationNumber      String    @unique
-  firstName              String
-  middleName             String?
-  lastName               String
-  gender                 String
-  dateOfBirth            DateTime
-  nationality            String
-  county                 String
-  constituency           String
-  ward                   String
-  village                String?
-  email                  String?
-  phone                  String? // Changed to optional
-  alternativePhone       String?
-  postalAddress          String
-  postalCode             String?
-  fatherName             String?
-  fatherPhone            String?
-  fatherEmail            String?
-  fatherOccupation       String?
-  motherName             String?
-  motherPhone            String?
-  motherEmail            String?
-  motherOccupation       String?
-  guardianName           String?
-  guardianPhone          String?
-  guardianEmail          String?
-  guardianOccupation     String?
-  previousSchool         String
-  previousClass          String
-  
-  kpseaYear               Int?      // was kcpeYear
-  kpseaIndex              String?   // was kcpeIndex
-  kpseaMarks              Int?      // was kcpeMarks
-  kjseaGrade              String?   // was meanGrade
-  
+  id                 String   @id @default(cuid())
+  applicationNumber  String   @unique
+  firstName          String
+  middleName         String?
+  lastName           String
+  gender             String
+  dateOfBirth        DateTime
+  nationality        String
+  county             String
+  constituency       String
+  ward               String
+  village            String?
+  email              String?
+  phone              String? // Changed to optional
+  alternativePhone   String?
+  postalAddress      String
+  postalCode         String?
+  fatherName         String?
+  fatherPhone        String?
+  fatherEmail        String?
+  fatherOccupation   String?
+  motherName         String?
+  motherPhone        String?
+  motherEmail        String?
+  motherOccupation   String?
+  guardianName       String?
+  guardianPhone      String?
+  guardianEmail      String?
+  guardianOccupation String?
+  previousSchool     String
+  previousClass      String
+
+  kpseaYear  Int? // was kcpeYear
+  kpseaIndex String? // was kcpeIndex
+  kpseaMarks Int? // was kcpeMarks
+  kjseaGrade String? // was meanGrade
+
   // Removed preferredStream field
   medicalCondition       String?   @db.Text
   allergies              String?   @db.Text
@@ -541,7 +605,7 @@ model AdmissionApplication {
   @@index([createdAt])
   @@index([decisionDate])
   @@index([county])
-  @@index([kpseaMarks])  // ✅ Update index name too
+  @@index([kpseaMarks]) // ✅ Update index name too
 }
 
 model CareerJob {
@@ -630,9 +694,9 @@ model StudentStats {
 }
 
 enum UserRole {
-  TEACHER
-  PRINCIPAL
+  USER
   ADMIN
+  SUPER_ADMIN
 }
 
 enum Category {

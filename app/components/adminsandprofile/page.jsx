@@ -127,6 +127,8 @@ import {
   Briefcase,
   PlayCircle
 } from 'lucide-react';
+import {IoSparkles} from 'react-icons/io5';
+import { CircularProgress, Box, Typography, Stack } from '@mui/material';
 
 export default function AdminManager() {
   const [session, setSession] = useState(null);
@@ -158,7 +160,7 @@ const [viewingAdmin, setViewingAdmin] = useState(null);
     email: '',
     password: '',
     phone: '+254',
-    role: 'ADMIN',
+    role: 'SUPER_ADMIN', // Default to SUPER_ADMIN
     permissions: {
       manageUsers: false,
       manageContent: true,
@@ -669,17 +671,17 @@ const handleCreateAdmin = () => {
     name: '',
     email: '',
     password: '',
-    phone: '+254',
+    phone: '',
     role: 'ADMIN',
     permissions: {
       manageUsers: false,
-      manageContent: true,
+      manageContent: false,
       manageSettings: false,
-      viewReports: true
+      viewReports: false
     },
     status: 'active'
   });
-  setConfirmPassword(''); // ADD THIS
+  setConfirmPassword('');
   setPasswordStrength({
     score: 0,
     hasMinLength: false,
@@ -699,17 +701,17 @@ const handleEditAdmin = (admin) => {
     name: admin.name || '',
     email: admin.email || '',
     password: '',
-    phone: admin.phone || '+254',
+    phone: admin.phone || '',
     role: admin.role || 'ADMIN',
     permissions: admin.permissions || {
       manageUsers: false,
-      manageContent: true,
+      manageContent: false,
       manageSettings: false,
-      viewReports: true
+      viewReports: false
     },
     status: admin.status || 'active'
   });
-  setConfirmPassword(''); // ADD THIS
+  setConfirmPassword('');
   setPasswordStrength({
     score: 0,
     hasMinLength: false,
@@ -1071,9 +1073,9 @@ const handleSaveAdmin = async (e) => {
   // Show loading while checking authentication
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/20 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="text-gray-600 text-lg mt-4 font-medium">Checking authentication...</p>
         </div>
       </div>
@@ -1084,30 +1086,86 @@ const handleSaveAdmin = async (e) => {
     return null;
   }
 
-  if (loading) {
+
+
+if (loading) {
+  return (
+    <Box 
+      className="min-h-[70vh] flex items-center justify-center p-4 bg-transparent"
+    >
+      <Stack 
+        spacing={2} 
+        alignItems="center"
+        className="w-full transition-all duration-500"
+      >
+        {/* Modern Layered Loader - Responsive sizing */}
+        <Box className="relative flex items-center justify-center scale-90 sm:scale-110">
+          <CircularProgress
+            variant="determinate"
+            value={100}
+            size={48} 
+            thickness={4.5}
+            sx={{ color: '#f1f5f9' }} 
+          />
+          <CircularProgress
+            variant="indeterminate"
+            disableShrink
+            size={48}
+            thickness={4.5}
+            sx={{
+              color: '#0f172a', // Matches your dark slate theme
+              animationDuration: '1000ms',
+              position: 'absolute',
+              [`& .MuiCircularProgress-circle`]: {
+                strokeLinecap: 'round',
+              },
+            }}
+          />
+          <Box className="absolute">
+            <IoSparkles className="text-teal-600 text-sm animate-pulse" />
+          </Box>
+        </Box>
+
+        {/* Minimalist Typography */}
+        <div className="text-center px-4">
+          <p className="text-slate-900 font-medium text-sm sm:text-base tracking-tight italic">
+           Loading For Administrators
+          </p>
+          <p className="text-slate-400 text-[10px] sm:text-xs uppercase tracking-widest mt-1 font-bold">
+            Katwanyaa senior school
+          </p>
+        </div>
+      </Stack>
+    </Box>
+  );
+}
+
+
+  // Only ADMIN or SUPER_ADMIN can access privileged actions
+  if (currentUserRole && !['ADMIN', 'SUPER_ADMIN'].includes(currentUserRole.toUpperCase())) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-gray-600 text-lg mt-4 font-medium">Loading admins...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+          <p className="text-gray-700">Only ADMIN or SUPER ADMIN can access this page.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 p-4 lg:p-8 space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50 to-teal-50 p-4 lg:p-8 space-y-8">
       <Toaster position="top-right" richColors />
 
 {/* Modern Admin Management Dashboard Header */}
 <div className="group relative bg-[#0F172A] rounded-xl md:rounded-[2.5rem] p-5 md:p-8 text-white overflow-hidden shadow-2xl border border-white/5 transition-all duration-500 mb-6">
   
   {/* Abstract Gradient Orbs - Blue/Purple Theme */}
-  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-blue-600/30 via-indigo-600/20 to-purple-600/20 rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
-  <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-gradient-to-tr from-purple-600/20 via-pink-600/10 to-transparent rounded-full blur-[80px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-teal-600/30 via-emerald-600/20 to-green-600/20 rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-gradient-to-tr from-emerald-600/20 via-teal-600/10 to-transparent rounded-full blur-[80px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
   
   {/* Central Floating Orb */}
-  <div className="absolute top-[40%] right-[20%] w-[180px] h-[180px] bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-[70px] pointer-events-none animate-pulse" />
+  <div className="absolute top-[40%] right-[20%] w-[180px] h-[180px] bg-gradient-to-r from-teal-600/20 to-emerald-600/20 rounded-full blur-[70px] pointer-events-none animate-pulse" />
   
   {/* Subtle Grid Pattern */}
   <div className="absolute inset-0 opacity-[0.02]" style={{ 
@@ -1129,10 +1187,10 @@ const handleSaveAdmin = async (e) => {
       <div className="flex-1">
         {/* Premium Badge */}
         <div className="flex items-center gap-2.5 mb-5">
-          <div className="h-8 w-1 bg-gradient-to-b from-blue-500 via-indigo-500 to-purple-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+          <div className="h-8 w-1 bg-gradient-to-b from-emerald-500 via-teal-500 to-green-500 rounded-full shadow-[0_0_15px_rgba(20,184,166,0.5)]" />
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400">
-              Katwanyaa Senior School
+            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-300">
+              Katwanyaa senior school
             </h2>
             <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
               Central Authority Hub
@@ -1144,11 +1202,11 @@ const handleSaveAdmin = async (e) => {
         <div className="flex items-start gap-4 mb-4">
           <div className="relative shrink-0">
             {/* Icon with Multi-layer Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 rounded-xl md:rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500 via-emerald-500 to-green-500 rounded-xl md:rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl md:rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
             
             {/* Main Icon */}
-            <div className="relative p-3 md:p-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-xl md:rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
+            <div className="relative p-3 md:p-4 bg-gradient-to-br from-teal-700 via-emerald-700 to-green-700 rounded-xl md:rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
               <Shield className="text-white w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>
@@ -1156,7 +1214,7 @@ const handleSaveAdmin = async (e) => {
   <h1 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight leading-snug">
     <span className="text-white">Admin</span>
     <br className="sm:hidden" />
-    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 ml-0 sm:ml-2">
+    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-teal-200 to-green-200 ml-0 sm:ml-2">
       Management Dashboard
     </span>
   </h1>
@@ -1164,7 +1222,7 @@ const handleSaveAdmin = async (e) => {
         </div>{/* Main Icon */}
         
         {/* Enhanced Description */}
-        <p className="text-blue-100/70 text-sm md:text-[13px] font-medium leading-relaxed max-w-3xl">
+        <p className="text-emerald-100/70 text-sm md:text-[13px] font-medium leading-relaxed max-w-3xl">
           Access the central authority hub to oversee system custodians. Regulate 
           administrative privileges, monitor security protocols, and orchestrate 
           high-level permissions to ensure total platform integrity and seamless 
@@ -1178,11 +1236,11 @@ const handleSaveAdmin = async (e) => {
             <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">System: Secure</span>
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-            <Shield className="w-3 h-3 text-blue-400" />
+            <Shield className="w-3 h-3 text-teal-300" />
             <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">Role: {session?.user?.role || 'Administrator'}</span>
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-            <Users className="w-3 h-3 text-purple-400" />
+            <Users className="w-3 h-3 text-emerald-300" />
             <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">Privileges: Full</span>
           </div>
         </div>
@@ -1193,18 +1251,18 @@ const handleSaveAdmin = async (e) => {
         <div className="group/card relative bg-slate-900/90 backdrop-blur-xl rounded-[2rem] p-5 sm:p-7 border border-white/10 w-full max-w-[450px] shadow-2xl overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
           
           {/* Card Background Glow */}
-          <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700" />
-          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-indigo-600/20 to-pink-600/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700" />
+          <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-teal-600/20 to-emerald-600/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700" />
+          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-emerald-600/20 to-green-600/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700" />
           
           {/* Header Section */}
           <div className="flex items-start justify-between mb-6 relative z-10">
             <div className="flex items-center gap-4">
               <div className="relative">
                 {/* Avatar with Multi-layer Glow */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-emerald-400 rounded-2xl blur-md opacity-50 group-hover/card:opacity-80 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-teal-600 to-emerald-400 rounded-2xl blur-md opacity-50 group-hover/card:opacity-80 transition-opacity" />
                 <div className="absolute inset-0 bg-white/20 rounded-2xl blur-sm opacity-0 group-hover/card:opacity-100 transition-opacity" />
                 
-                <div className="relative w-14 h-14 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 group-hover/card:rotate-0 group-hover/card:scale-105 transition-all duration-500">
+                <div className="relative w-14 h-14 bg-gradient-to-tr from-teal-700 via-emerald-700 to-green-700 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 group-hover/card:rotate-0 group-hover/card:scale-105 transition-all duration-500">
                   <User className="text-white" size={22} />
                 </div>
                 
@@ -1221,7 +1279,7 @@ const handleSaveAdmin = async (e) => {
                 <h2 className="font-black text-white text-sm uppercase tracking-widest leading-none mb-1">
                   {session.user.name.split(' ')[0]}'s Profile
                 </h2>
-                <p className="text-[10px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 uppercase tracking-tighter">
+                <p className="text-[10px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300 uppercase tracking-tighter">
                   {session.user.role || 'System Administrator'}
                 </p>
                 
@@ -1253,19 +1311,19 @@ const handleSaveAdmin = async (e) => {
                 label: 'Ident', 
                 val: session.user.name, 
                 icon: <User size={10} />,
-                color: 'from-blue-500/20 to-blue-600/10'
+                color: 'from-teal-500/20 to-teal-600/10'
               },
               { 
                 label: 'Mail', 
                 val: session.user.email, 
                 icon: <Mail size={10} />,
-                color: 'from-indigo-500/20 to-indigo-600/10'
+                color: 'from-emerald-500/20 to-emerald-600/10'
               },
               { 
                 label: 'Contact', 
                 val: session.user.phone || '+254 XXX XXX', 
                 icon: <Phone size={10} />,
-                color: 'from-purple-500/20 to-purple-600/10'
+                color: 'from-green-500/20 to-green-600/10'
               }
             ].map((item, i) => (
               <div 
@@ -1275,7 +1333,7 @@ const handleSaveAdmin = async (e) => {
                 {/* Item Shine Effect */}
                 <div className="absolute inset-0 -translate-x-full group-hover/item:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 
-                <div className="flex items-center gap-1.5 mb-1.5 text-blue-300/60 uppercase font-black text-[8px] tracking-[0.15em] relative z-10">
+                <div className="flex items-center gap-1.5 mb-1.5 text-emerald-200/60 uppercase font-black text-[8px] tracking-[0.15em] relative z-10">
                   <span className="opacity-70">{item.icon}</span>
                   <span>{item.label}</span>
                 </div>
@@ -1300,7 +1358,7 @@ const handleSaveAdmin = async (e) => {
             </div>
             
             <div className="flex items-center gap-2">
-              <Shield className="w-2.5 h-2.5 text-purple-400/50" />
+              <Shield className="w-2.5 h-2.5 text-emerald-300/50" />
               <span className="text-[9px] font-black text-slate-500 italic tracking-wider">v2.0.26</span>
             </div>
           </div>
@@ -1325,16 +1383,16 @@ const handleSaveAdmin = async (e) => {
       
       {/* Encryption */}
       <div className="flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full border-2 border-cyan-400 border-t-transparent" />
+        <div className="w-3 h-3 rounded-full border-2 border-teal-400 border-t-transparent" />
         <span className="text-white/40">Encryption:</span>
-        <span className="text-cyan-400">Token based</span>
+        <span className="text-teal-300">Token based</span>
       </div>
       
       {/* MFA Status */}
       <div className="flex items-center gap-2">
-        <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
         <span className="text-white/40">Token storage:</span>
-        <span className="text-purple-400">Enabled</span>
+        <span className="text-emerald-300">Enabled</span>
       </div>
       
       {/* Last Login */}
@@ -1355,10 +1413,10 @@ const handleSaveAdmin = async (e) => {
   <button
     onClick={() => fetchAdmins(true)}
     disabled={refreshing}
-    className="group flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-600 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50/30 transition-all duration-300 shadow-sm active:scale-95 disabled:opacity-50"
+    className="group flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-600 hover:text-teal-700 hover:border-teal-200 hover:bg-teal-50/30 transition-all duration-300 shadow-sm active:scale-95 disabled:opacity-50"
   >
     <div className={`${refreshing ? 'animate-spin' : 'group-hover:rotate-180'} transition-transform duration-500`}>
-      <RefreshCw size={18} className={refreshing ? 'text-blue-500' : 'text-slate-400 group-hover:text-blue-500'} />
+      <RefreshCw size={18} className={refreshing ? 'text-teal-600' : 'text-slate-400 group-hover:text-teal-600'} />
     </div>
     <span className="text-xs font-black uppercase tracking-widest whitespace-nowrap">
       {refreshing ? 'Syncing...' : 'Refresh'}
@@ -1369,7 +1427,7 @@ const handleSaveAdmin = async (e) => {
 {currentUserRole === 'SUPER_ADMIN' && (
   <button
     onClick={handleCreateAdmin}
-    className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 shadow-xl shadow-slate-200 hover:shadow-blue-200/50 transition-all duration-300 active:scale-95"
+    className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-teal-700 shadow-xl shadow-slate-200 hover:shadow-teal-200/50 transition-all duration-300 active:scale-95"
   >
     <div className="bg-white/20 p-1 rounded-lg">
       <Plus size={18} strokeWidth={3} />
@@ -1387,17 +1445,17 @@ const handleSaveAdmin = async (e) => {
         <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200 relative overflow-hidden group hover:shadow-xl transition-all duration-200">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-50 rounded-2xl transition-colors duration-200 group-hover:bg-blue-100">
-                <Users className="text-blue-600 text-2xl" />
+              <div className="p-3 bg-teal-50 rounded-2xl transition-colors duration-200 group-hover:bg-teal-100">
+                <Users className="text-teal-700 text-2xl" />
               </div>
               <div className="text-right">
                 <div className="text-3xl font-bold text-gray-900">{stats.totalAdmins}</div>
-                <div className="text-blue-600 text-sm font-bold">Total Admins</div>
+                <div className="text-teal-700 text-sm font-bold">Total Admins</div>
               </div>
             </div>
             <div className="text-gray-600 text-sm">All system administrators</div>
           </div>
-          <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-blue-100 rounded-full opacity-50 group-hover:opacity-70 transition-opacity duration-200"></div>
+          <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-teal-100 rounded-full opacity-50 group-hover:opacity-70 transition-opacity duration-200"></div>
         </div>
 
         <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200 relative overflow-hidden group hover:shadow-xl transition-all duration-200">
@@ -1446,7 +1504,7 @@ const handleSaveAdmin = async (e) => {
               placeholder="Search admins by name, email, or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              className="w-full pl-12 pr-4 py-4 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all duration-200 text-sm"
             />
           </div>
           
@@ -1471,7 +1529,7 @@ const handleSaveAdmin = async (e) => {
                       type="checkbox"
                       checked={selectedAdmins.size === currentAdmins.length && currentAdmins.length > 0}
                       onChange={selectAllAdmins}
-                      className="w-4 h-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500"
+                      className="w-4 h-4 rounded border-gray-300 bg-white text-teal-700 focus:ring-teal-600"
                     />
                     <span className="text-gray-700 text-sm font-bold uppercase tracking-wider">Admin Information</span>
                   </div>
@@ -1494,24 +1552,24 @@ const handleSaveAdmin = async (e) => {
                         type="checkbox"
                         checked={selectedAdmins.has(admin.id)}
                         onChange={() => toggleAdminSelection(admin.id)}
-                        className="w-4 h-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500"
+                        className="w-4 h-4 rounded border-gray-300 bg-white text-teal-700 focus:ring-teal-600"
                       />
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200">
-                          <User className="text-blue-600" />
+                        <div className="p-2 bg-gradient-to-r from-teal-50 to-teal-100 rounded-xl border border-teal-200">
+                          <User className="text-teal-700" />
                         </div>
                         <div>
                        {/* In the table row, update the admin name to be clickable */}
-<p className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors text-sm">
+<p className="font-bold text-gray-900 group-hover:text-teal-700 transition-colors text-sm">
   {admin.name}
   <button
     onClick={() => handleViewAdmin(admin)}
-    className="ml-2 text-blue-600 hover:text-blue-800 font-medium hover:underline cursor-pointer text-sm"
+    className="ml-2 text-teal-700 hover:text-teal-900 font-medium hover:underline cursor-pointer text-sm"
   >
     View profile
   </button>
   {session?.user && admin.id === session.user.id && (
-    <span className="ml-2 text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white px-2 py-1 rounded-full font-bold">You</span>
+    <span className="ml-2 text-xs bg-gradient-to-r from-teal-600 to-teal-700 text-white px-2 py-1 rounded-full font-bold">You</span>
   )}
 </p>
                           <p className="text-xs text-gray-500 mt-1">{admin.email}</p>
@@ -1523,9 +1581,9 @@ const handleSaveAdmin = async (e) => {
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${
                       admin.role === 'SUPER_ADMIN' 
-                        ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white'
+                        ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white'
                         : admin.role === 'ADMIN'
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+                        ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white'
                         : 'bg-gray-100 text-gray-800'
                     }`}>
                       {admin.role}
@@ -1556,7 +1614,7 @@ const handleSaveAdmin = async (e) => {
     {currentUserRole === 'SUPER_ADMIN' && (
       <button
         onClick={() => handleEditAdmin(admin)}
-        className="p-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-600 rounded-xl transition-all duration-200 border border-blue-200 hover:scale-100 active:scale-95"
+        className="p-2 bg-gradient-to-r from-teal-50 to-teal-100 hover:from-teal-100 hover:to-teal-200 text-teal-700 rounded-xl transition-all duration-200 border border-teal-200 hover:scale-100 active:scale-95"
       >
         <Edit className="text-sm" />
       </button>
@@ -1612,7 +1670,7 @@ const handleSaveAdmin = async (e) => {
                     onClick={() => setCurrentPage(pageNum)}
                     className={`px-4 py-3 rounded-2xl font-bold transition-all duration-200 hover:scale-100 active:scale-95 ${
                       currentPage === pageNum
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-purple-500/25'
+                        ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-500/25'
                         : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
                     }`}
                   >
@@ -1640,229 +1698,251 @@ const handleSaveAdmin = async (e) => {
           onClick={() => setShowAdminModal(false)}
         >
           <div 
-            className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl border border-gray-200"
+            className="bg-white rounded-3xl w-full max-w-4xl max-h-[95vh] overflow-hidden shadow-2xl border border-gray-200 flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white">
+            <div className="bg-gradient-to-r from-teal-700 to-emerald-700 p-8 text-white flex-shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
                     <User className="text-2xl" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold">
+                    <h2 className="text-3xl font-bold">
                       {editingAdmin ? 'Edit Admin' : 'Add New Admin'}
                     </h2>
-                    <p className="text-blue-100 opacity-90 mt-1">Manage admin details and permissions</p>
+                    <p className="text-emerald-100 opacity-90 mt-1">Manage admin details and permissions</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowAdminModal(false)}
-                  className="p-3 hover:bg-white/10 rounded-2xl transition-all duration-200 hover:scale-100"
+                  className="p-3 hover:bg-white/10 rounded-2xl transition-all duration-200 hover:scale-110"
                 >
-                  <FaX className="text-xl" />
+                  <FaX className="text-2xl" />
                 </button>
               </div>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSaveAdmin} className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-900 font-bold mb-3 text-sm">Full Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={adminData.name}
-                    onChange={(e) => setAdminData({ ...adminData, name: e.target.value })}
-                    className="w-full px-4 py-4 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                    placeholder="Enter full name"
-                  />
-                </div>
+            {/* Form - Scrollable */}
+            <form onSubmit={handleSaveAdmin} className="flex-1 overflow-y-auto p-8 space-y-8">
+              {/* Basic Information Section */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-teal-700 rounded-full"></div>
+                  Basic Information
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-5 border border-teal-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <User className="text-teal-700 text-lg" /> Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={adminData.name}
+                      onChange={(e) => setAdminData({ ...adminData, name: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 bg-white text-base font-bold"
+                      placeholder="Enter full name"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-gray-900 font-bold mb-3 text-sm">Email *</label>
-                  <input
-                    type="email"
-                    required
-                    value={adminData.email}
-                    onChange={(e) => setAdminData({ ...adminData, email: e.target.value })}
-                    className="w-full px-4 py-4 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                    placeholder="Enter email address"
-                  />
-                </div>
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5 border border-green-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <Mail className="text-green-600 text-lg" /> Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={adminData.email}
+                      onChange={(e) => setAdminData({ ...adminData, email: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-base font-bold"
+                      placeholder="admin@school.edu"
+                    />
+                  </div>
 
-         <div>
-<div className="space-y-4">
-  {/* Password Field */}
-  <div>
-    <label className="block text-gray-900 font-bold mb-3 text-sm">
-      {editingAdmin ? 'New Password (optional)' : 'Password *'}
-      <span className="text-gray-500 text-xs font-normal ml-2">Must contain 8+ chars, uppercase, lowercase, number & special char</span>
-    </label>
-    <div className="relative">
-      <input
-        type={showPassword ? "text" : "password"}
-        required={!editingAdmin}
-        value={adminData.password}
-        onChange={(e) => handlePasswordChange(e.target.value)}
-        className="w-full px-4 py-4 pr-12 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-        placeholder="Enter secure password"
-      />
-      <button
-        type="button"
-        onClick={() => setShowPassword(!showPassword)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-      >
-        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-      </button>
-    </div>
-  </div>
+                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-5 border border-emerald-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <Phone className="text-emerald-700 text-lg" /> Phone Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={adminData.phone}
+                      onChange={(e) => setAdminData({ ...adminData, phone: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 bg-white text-base font-bold"
+                      placeholder="+254700000000"
+                    />
+                  </div>
 
-  {/* Confirm Password Field (Only for new admin or password change) */}
-  {(adminData.password || !editingAdmin) && (
-    <div>
-      <label className="block text-gray-900 font-bold mb-3 text-sm">
-        Confirm Password *
-      </label>
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          required={!editingAdmin || adminData.password}
-          value={confirmPassword}
-          onChange={(e) => handleConfirmPasswordChange(e.target.value)}
-          className="w-full px-4 py-4 pr-12 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-          placeholder="Re-enter password"
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-        >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
-    </div>
-  )}
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5 border border-orange-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <Shield className="text-orange-600 text-lg" /> Role <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      required
+                      value={adminData.role}
+                      onChange={(e) => setAdminData({ ...adminData, role: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-base font-bold"
+                    >
+                      <option value="ADMIN">Admin</option>
+                      <option value="SUPER_ADMIN">Super Admin</option>
+                      <option value="MODERATOR">Moderator</option>
+                    </select>
+                  </div>
 
-  {adminData.password && <PasswordStrengthIndicator />}
-</div>
-</div>
-
-
-                <div>
-                  <label className="block text-gray-900 font-bold mb-3 text-sm">Phone *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={adminData.phone}
-                    onChange={(e) => setAdminData({ ...adminData, phone: e.target.value })}
-                    className="w-full px-4 py-4 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                    placeholder="+254700000000"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-900 font-bold mb-3 text-sm">Role *</label>
-                  <select
-                    required
-                    value={adminData.role}
-                    onChange={(e) => setAdminData({ ...adminData, role: e.target.value })}
-                    className="w-full px-4 py-4  font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                  >
-                    <option value="ADMIN">Admin</option>
-                    <option value="SUPER_ADMIN">Super Admin</option>
-                    <option value="MODERATOR">Moderator</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-gray-900 font-bold mb-3 text-sm">Status *</label>
-                  <select
-                    required
-                    value={adminData.status}
-                    onChange={(e) => setAdminData({ ...adminData, status: e.target.value })}
-                    className="w-full px-4 py-4 font-bold bg-gray-50 border border-gray-300 rounded-2xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+                  <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-5 border border-red-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <CheckCircle className="text-red-600 text-lg" /> Status <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      required
+                      value={adminData.status}
+                      onChange={(e) => setAdminData({ ...adminData, status: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-red-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white text-base font-bold"
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
-              {/* Permissions Grid */}
+              {/* Password Section */}
               <div>
-                <label className="block text-gray-900 font-bold mb-4 text-sm">Permissions</label>
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-emerald-700 rounded-full"></div>
+                  Security
+                </h3>
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl p-5 border border-teal-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      🔐 {editingAdmin ? 'New Password (optional)' : 'Password <span className="text-red-500">*</span>'}
+                      <span className="text-gray-500 text-xs font-normal ml-2">8+ chars, uppercase, lowercase, number & special char</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required={!editingAdmin}
+                        value={adminData.password}
+                        onChange={(e) => handlePasswordChange(e.target.value)}
+                        className="w-full px-4 py-3 pr-12 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 bg-white text-base font-bold"
+                        placeholder="Enter secure password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {(adminData.password || !editingAdmin) && (
+                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-5 border border-teal-200">
+                      <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        ✓ Confirm Password <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          required={!editingAdmin || adminData.password}
+                          value={confirmPassword}
+                          onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                          className="w-full px-4 py-3 pr-12 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 bg-white text-base font-bold"
+                          placeholder="Re-enter password"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        >
+                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {adminData.password && <PasswordStrengthIndicator />}
+                </div>
+              </div>
+
+              {/* Permissions Section */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-emerald-600 rounded-full"></div>
+                  Permissions
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                  <div className="flex items-start gap-4 p-5 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl border border-teal-200 hover:border-teal-400 transition-colors">
                     <input
                       type="checkbox"
                       checked={adminData.permissions.manageUsers}
                       onChange={(e) => updatePermission('manageUsers', e.target.checked)}
-                      className="w-4 h-4 rounded  font-bold cursor-pointer border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="w-5 h-5 rounded font-bold cursor-pointer border-gray-300 text-teal-700 focus:ring-teal-600 mt-1"
                     />
                     <div>
-                      <p className="font-bold text-gray-900 text-sm">Manage Users</p>
-                      <p className="text-xs text-gray-600">Create, edit, and delete users</p>
+                      <p className="font-bold text-gray-900 text-base">Manage Users</p>
+                      <p className="text-sm text-gray-600">Create, edit, and delete users</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                  <div className="flex items-start gap-4 p-5 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200 hover:border-green-400 transition-colors">
                     <input
                       type="checkbox"
                       checked={adminData.permissions.manageContent}
                       onChange={(e) => updatePermission('manageContent', e.target.checked)}
-                      className="w-4 h-4 rounded  cursor-pointer border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="w-5 h-5 rounded cursor-pointer border-gray-300 text-green-600 focus:ring-green-500 mt-1"
                     />
                     <div>
-                      <p className="font-bold text-gray-900 text-sm">Manage Content</p>
-                      <p className="text-xs text-gray-600">Create and edit website content</p>
+                      <p className="font-bold text-gray-900 text-base">Manage Content</p>
+                      <p className="text-sm text-gray-600">Create and edit website content</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                  <div className="flex items-start gap-4 p-5 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border border-emerald-200 hover:border-emerald-400 transition-colors">
                     <input
                       type="checkbox"
                       checked={adminData.permissions.manageSettings}
                       onChange={(e) => updatePermission('manageSettings', e.target.checked)}
-                      className="w-4 h-4 rounded cursor-pointer border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="w-5 h-5 rounded cursor-pointer border-gray-300 text-emerald-700 focus:ring-emerald-600 mt-1"
                     />
                     <div>
-                      <p className="font-bold text-gray-900 text-sm">Manage Settings</p>
-                      <p className="text-xs text-gray-600">Modify system settings</p>
+                      <p className="font-bold text-gray-900 text-base">Manage Settings</p>
+                      <p className="text-sm text-gray-600">Modify system settings</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                  <div className="flex items-start gap-4 p-5 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border border-orange-200 hover:border-orange-400 transition-colors">
                     <input
                       type="checkbox"
                       checked={adminData.permissions.viewReports}
                       onChange={(e) => updatePermission('viewReports', e.target.checked)}
-                      className="w-4 h-4 rounded cursor-pointer border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="w-5 h-5 rounded cursor-pointer border-gray-300 text-orange-600 focus:ring-orange-500 mt-1"
                     />
                     <div>
-                      <p className="font-bold text-gray-900 text-sm">View Reports</p>
-                      <p className="text-xs text-gray-600">Access analytics and reports</p>
+                      <p className="font-bold text-gray-900 text-base">View Reports</p>
+                      <p className="text-sm text-gray-600">Access analytics and reports</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Form Actions */}
-              <div className="flex gap-4 pt-6 border-t border-gray-200">
+              {/* Form Actions - Sticky Footer */}
+              <div className="flex gap-4 pt-6 border-t border-gray-200 mt-8">
                 <button
                   type="button"
                   onClick={() => setShowAdminModal(false)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 px-6 py-4 rounded-2xl font-bold transition-all duration-200 flex items-center justify-center gap-3 hover:scale-100 active:scale-95 text-sm"
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 px-6 py-4 rounded-2xl font-bold transition-all duration-200 flex items-center justify-center gap-3 text-base"
                 >
-                  <X className="text-sm" />
+                  <X className="text-lg" />
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingAdmin}
-                  className="flex-1 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-4 rounded-2xl font-bold transition-all duration-200 shadow-lg shadow-purple-500/25 disabled:opacity-50 flex items-center justify-center gap-3 hover:scale-100 active:scale-99 text-sm"
+                  className="flex-1 cursor-pointer bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-6 py-4 rounded-2xl font-bold transition-all duration-200 shadow-lg shadow-teal-500/25 disabled:opacity-50 flex items-center justify-center gap-3 text-base"
                 >
                   {savingAdmin ? (
                     <>
@@ -1871,7 +1951,7 @@ const handleSaveAdmin = async (e) => {
                     </>
                   ) : (
                     <>
-                      <Check className="text-sm" />
+                      <Check className="text-lg" />
                       {editingAdmin ? 'Update Admin' : 'Create Admin'}
                     </>
                   )}
@@ -1881,105 +1961,165 @@ const handleSaveAdmin = async (e) => {
           </div>
         </div>
       )}
-{/* MODERN VIEW ADMIN MODAL - Compact & Refined */}
+{/* MODERN VIEW ADMIN MODAL - Detailed & Enhanced */}
 {showViewModal && viewingAdmin && (
   <div 
     className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 z-[100]"
     onClick={() => setShowViewModal(false)}
   >
     <div 
-      className="bg-white rounded-[2rem] w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl border border-slate-200 animate-slide-up"
+      className="bg-white rounded-[2rem] w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl border border-slate-200"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Header - Reduced Padding & Font */}
-      <div className="bg-slate-900 p-5 sm:p-6 text-white relative overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-white/5 bg-grid-16 opacity-50"></div>
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-4 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <User size={18} className="text-blue-400" />
+          <div className="flex items-center justify-between mb-6 gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <User size={24} className="text-teal-300" />
               </div>
               <div>
-                <h2 className="text-base sm:text-lg font-black uppercase tracking-tight">Admin Profile</h2>
-                <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Account Intelligence</p>
+                <h2 className="text-2xl font-bold text-white">{viewingAdmin.name}</h2>
+                <p className="text-slate-400 text-sm">Admin Account Details</p>
               </div>
             </div>
             <button
               onClick={() => setShowViewModal(false)}
               className="p-2 hover:bg-white/10 rounded-xl transition-colors text-slate-400 hover:text-white"
             >
-              <FaX size={14} />
+              <FaX size={18} />
             </button>
           </div>
           
-          {/* Quick Stats Bar - Compact Labels */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="px-3 py-1 bg-white/5 rounded-lg border border-white/10 text-[10px] font-bold">
-              <span className="text-slate-500 mr-1">ID:</span>
-              <span className="text-slate-200">{viewingAdmin.id.substring(0, 8)}</span>
-            </div>
-            <div className={`px-3 py-1 rounded-lg border text-[10px] font-black uppercase tracking-tighter ${
+          {/* Quick Status Bar */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className={`px-4 py-2 rounded-lg border text-sm font-bold uppercase tracking-tight ${
               viewingAdmin.status === 'active' 
                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
                 : 'bg-red-500/10 text-red-400 border-red-500/20'
             }`}>
               {viewingAdmin.status}
             </div>
-            <div className="px-3 py-1 bg-blue-500/10 rounded-lg border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-tighter">
+            <div className="px-4 py-2 bg-teal-500/10 rounded-lg border border-teal-500/20 text-teal-600 text-sm font-bold uppercase tracking-tight">
               {viewingAdmin.role}
+            </div>
+            <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 text-slate-300 text-sm font-bold">
+              ID: {viewingAdmin.id?.substring(0, 12)}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content - Scaled Down Padding & Typography */}
-      <div className="p-5 sm:p-7 space-y-5 overflow-y-auto max-h-[calc(90vh-160px)]">
+      {/* Content */}
+      <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-200px)]">
         
-        {/* Personal Info Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            { label: 'Full Name', val: viewingAdmin.name, icon: <User size={12}/> },
-            { label: 'Email Address', val: viewingAdmin.email, icon: <Mail size={12}/> },
-            { label: 'Phone Number', val: viewingAdmin.phone || 'N/A', icon: <Phone size={12}/> },
-            { label: 'Member Since', val: new Date(viewingAdmin.createdAt).toLocaleDateString(), icon: <Calendar size={12}/> }
-          ].map((field, i) => (
-            <div key={i} className="space-y-1.5">
-              <div className="flex items-center gap-2 px-1">
-                <span className="text-blue-500">{field.icon}</span>
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{field.label}</span>
-              </div>
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 hover:border-slate-200 transition-colors">
-                <p className="text-xs font-bold text-slate-900 truncate">{field.val}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Permissions - Compact Grid */}
-        <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
-          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-            <Shield size={14} className="text-purple-500" /> System Permissions
+        {/* Personal Information Section */}
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="w-1 h-6 bg-teal-700 rounded-full"></div>
+            Personal Information
           </h3>
-          <div className="grid grid-cols-2 gap-2">
-            {viewingAdmin.permissions && Object.entries(viewingAdmin.permissions).map(([key, value]) => (
-              <div key={key} className={`flex items-center justify-between p-2.5 rounded-lg border text-[10px] font-bold ${
-                value ? 'bg-white border-emerald-100 text-slate-700' : 'bg-slate-50/50 border-slate-100 text-slate-400 grayscale'
-              }`}>
-                <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                <div className={`w-1.5 h-1.5 rounded-full ${value ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { label: 'Full Name', val: viewingAdmin.name, icon: <User size={16}/> },
+              { label: 'Email Address', val: viewingAdmin.email, icon: <Mail size={16}/> },
+              { label: 'Phone Number', val: viewingAdmin.phone || 'N/A', icon: <Phone size={16}/> },
+              { label: 'Member Since', val: viewingAdmin.createdAt ? new Date(viewingAdmin.createdAt).toLocaleDateString() : 'N/A', icon: <Calendar size={16}/> }
+            ].map((field, i) => (
+              <div key={i} className="bg-slate-50 p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-teal-700">{field.icon}</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{field.label}</span>
+                </div>
+                <p className="text-base font-bold text-slate-900">{field.val}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Activity Footer */}
-        <div className="flex items-center justify-between px-2 pt-2 border-t border-slate-100">
-          <div className="flex items-center gap-2">
-             <Clock size={12} className="text-slate-400" />
-             <span className="text-[9px] font-bold text-slate-400 uppercase">Last Sync: {viewingAdmin.updatedAt ? 'Just now' : 'Original'}</span>
+        {/* Account Settings Section */}
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="w-1 h-6 bg-emerald-700 rounded-full"></div>
+            Account Settings
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-xl border border-teal-200">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield size={16} className="text-teal-700" />
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Role</span>
+              </div>
+              <p className="text-base font-bold text-slate-900">{viewingAdmin.role}</p>
+            </div>
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-xl border border-emerald-200">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle size={16} className="text-emerald-600" />
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Status</span>
+              </div>
+              <p className="text-base font-bold text-slate-900 capitalize">{viewingAdmin.status}</p>
+            </div>
           </div>
-          <span className="text-[9px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded">VERIFIED ADMIN</span>
+        </div>
+
+        {/* Permissions Section */}
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="w-1 h-6 bg-emerald-600 rounded-full"></div>
+            System Permissions
+          </h3>
+          {viewingAdmin.permissions ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Object.entries(viewingAdmin.permissions).map(([key, value]) => {
+                const displayName = key
+                  .replace(/([A-Z])/g, ' $1')
+                  .trim()
+                  .split(' ')
+                  .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(' ');
+                
+                const colorMap = {
+                  'manageUsers': 'teal',
+                  'manageContent': 'green',
+                  'manageSettings': 'emerald',
+                  'viewReports': 'orange'
+                };
+                
+                const color = colorMap[key] || 'gray';
+                const colorClasses = {
+                  teal: 'bg-teal-50 border-teal-200 text-teal-700',
+                  green: 'bg-green-50 border-green-200 text-green-700',
+                  emerald: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                  orange: 'bg-orange-50 border-orange-200 text-orange-700',
+                  gray: 'bg-gray-50 border-gray-200 text-gray-700'
+                };
+
+                return (
+                  <div key={key} className={`flex items-center gap-3 p-4 rounded-xl border ${colorClasses[color]} transition-all ${value ? 'opacity-100' : 'opacity-60'}`}>
+                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${value ? `bg-${color}-600 shadow-lg shadow-${color}-500/50` : 'bg-gray-400'}`} />
+                    <span className="text-sm font-bold">{displayName}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-slate-100 p-4 rounded-xl text-slate-600 text-center">No permissions data available</div>
+          )}
+        </div>
+
+        {/* Activity Info */}
+        <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-4 rounded-xl border border-slate-200">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <FiClock size={18} className="text-slate-500" />
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Last Updated</p>
+                <p className="text-sm font-bold text-slate-900">{viewingAdmin.updatedAt ? new Date(viewingAdmin.updatedAt).toLocaleString() : 'N/A'}</p>
+              </div>
+            </div>
+            <span className="text-xs font-black text-teal-700 bg-teal-100 px-3 py-1 rounded-lg">VERIFIED ADMIN</span>
+          </div>
         </div>
       </div>
     </div>

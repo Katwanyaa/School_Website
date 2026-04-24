@@ -350,6 +350,7 @@ const handleVideoUpload = async (youtubeLink, videoTourFile, thumbnailFile, exis
 };
 
 // Clean school response for frontend
+// In your API route (/api/school)
 const cleanSchoolResponse = (school) => {
   try {
     // Parse JSON fields safely
@@ -381,6 +382,21 @@ const cleanSchoolResponse = (school) => {
       console.warn("Error parsing admission documents:", e);
     }
 
+    // ✅ FIX: Include Magazine data in the response
+    let magazineData = null;
+    if (school.Magazine) {
+      magazineData = {
+        id: school.Magazine.id,
+        title: school.Magazine.title,
+        year: school.Magazine.year,
+        description: school.Magazine.description,
+        pdfUrl: school.Magazine.pdfUrl,
+        thumbnail: school.Magazine.thumbnail,
+        createdAt: school.Magazine.createdAt,
+        updatedAt: school.Magazine.updatedAt
+      };
+    }
+
     return {
       id: school.id,
       name: school.name,
@@ -393,20 +409,18 @@ const cleanSchoolResponse = (school) => {
       videoThumbnail: school.videoThumbnail,
       studentCount: school.studentCount,
       staffCount: school.staffCount,
-      
       // Fees
       feesDay: school.feesDay,
       feesBoarding: school.feesBoarding,
       admissionFee: school.admissionFee,
-      
+      // Magazine
+      magazine: magazineData,
       // Academic Calendar
       openDate: school.openDate,
       closeDate: school.closeDate,
-      
       // Academic Information
       subjects,
       departments,
-      
       // Admission Information
       admissionOpenDate: school.admissionOpenDate,
       admissionCloseDate: school.admissionCloseDate,
@@ -418,18 +432,52 @@ const cleanSchoolResponse = (school) => {
       admissionLocation: school.admissionLocation,
       admissionOfficeHours: school.admissionOfficeHours,
       admissionDocumentsRequired,
-      
       // Timestamps
       createdAt: school.createdAt,
       updatedAt: school.updatedAt
-
-
-
     };
   } catch (error) {
     console.error("Error cleaning school response:", error);
     return school;
   }
+};
+
+// Add this function
+const uploadMagazineFiles = async (pdfFile, thumbFile, existingMagazine = null) => {
+  let pdfUrl = existingMagazine?.pdfUrl || null;
+  let thumbUrl = existingMagazine?.thumbnail || null;
+
+  // Handle PDF
+  if (pdfFile && pdfFile.size > 0) {
+    // Delete old PDF from Cloudinary if exists
+    if (existingMagazine?.pdfUrl) await deleteFromCloudinary(existingMagazine.pdfUrl);
+    
+    if (pdfFile.type !== 'application/pdf') throw new Error('Only PDF files are allowed for magazine');
+    if (pdfFile.size > 4.2 * 1024 * 1024) throw new Error('PDF size must be ≤ 4.2 MB');
+    
+    const result = await uploadToCloudinary(pdfFile, 'magazines', 'raw');
+    pdfUrl = result.url;
+  } else if (pdfFile === null && existingMagazine?.pdfUrl) {
+    await deleteFromCloudinary(existingMagazine.pdfUrl);
+    pdfUrl = null;
+  }
+
+  // Handle thumbnail
+  if (thumbFile && thumbFile.size > 0) {
+    if (existingMagazine?.thumbnail) await deleteFromCloudinary(existingMagazine.thumbnail);
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(thumbFile.type)) throw new Error('Thumbnail must be JPEG or PNG');
+    if (thumbFile.size > 2 * 1024 * 1024) throw new Error('Thumbnail size ≤ 2 MB');
+    
+    const result = await uploadToCloudinary(thumbFile, 'magazines/thumbnails', 'image');
+    thumbUrl = result.url;
+  } else if (thumbFile === null && existingMagazine?.thumbnail) {
+    await deleteFromCloudinary(existingMagazine.thumbnail);
+    thumbUrl = null;
+  }
+
+  return { pdfUrl, thumbUrl };
 };
 
 // Validate required fields for CREATE operation
@@ -468,11 +516,17 @@ const validateRequiredFieldsUpdate = (formData) => {
 // ============ API ROUTES ============
 
 // 🟡 GET school info (PUBLIC - no authentication required)
+// In GET handler
 export async function GET() {
   try {
     console.log("🔍 GET /api/school - Fetching school info");
     
-    const school = await prisma.schoolInfo.findFirst();
+    // ✅ FIX: Include Magazine relation
+    const school = await prisma.schoolInfo.findFirst({
+      include: { 
+        Magazine: true  // This was already there, keep it
+      }
+    });
     
     if (!school) {
       console.log("📭 No school found in database");
@@ -487,11 +541,12 @@ export async function GET() {
     }
 
     console.log("✅ School found:", school.name);
+    console.log("📚 Magazine data:", school.Magazine ? "Present" : "Not present");
     
     return NextResponse.json({ 
       success: true, 
       message: "School information retrieved successfully",
-      school: cleanSchoolResponse(school)
+      school: cleanSchoolResponse(school)  // This now includes magazine
     });
 
   } catch (error) {
@@ -603,38 +658,70 @@ export async function POST(req) {
       );
     }
 
-    // Create new school
-    const schoolData = {
-      name: formData.get("name"),
-      description: formData.get("description") || null,
-      motto: formData.get("motto") || null,
-      vision: formData.get("vision") || null,
-      mission: formData.get("mission") || null,
-      videoTour: videoUrl,
-      videoType,
-      videoThumbnail: thumbnailUrl,
-      studentCount: parseIntField(formData.get("studentCount")) || 0,
-      staffCount: parseIntField(formData.get("staffCount")) || 0,
-      feesDay: parseNumber(formData.get("feesDay")),
-      feesBoarding: parseNumber(formData.get("feesBoarding")),
-      admissionFee: parseNumber(formData.get("admissionFee")),
-      openDate: parseDate(formData.get("openDate")) || new Date(),
-      closeDate: parseDate(formData.get("closeDate")) || new Date(),
-      subjects,
-      departments,
-      admissionOpenDate: parseDate(formData.get("admissionOpenDate")),
-      admissionCloseDate: parseDate(formData.get("admissionCloseDate")),
-      admissionRequirements: formData.get("admissionRequirements") || null,
-      admissionCapacity: parseIntField(formData.get("admissionCapacity")),
-      admissionContactEmail: formData.get("admissionContactEmail") || null,
-      admissionContactPhone: formData.get("admissionContactPhone") || null,
-      admissionWebsite: formData.get("admissionWebsite") || null,
-      admissionLocation: formData.get("admissionLocation") || null,
-      admissionOfficeHours: formData.get("admissionOfficeHours") || null,
-      admissionDocumentsRequired,
-      // Audit trail
 
-    };
+    // Handle Magazine Upload
+let magazineId = null;
+const magazineTitle = formData.get("magazineTitle");
+const magazineYear = formData.get("magazineYear") ? parseInt(formData.get("magazineYear")) : null;
+const magazineDescription = formData.get("magazineDescription") || null;
+const magazinePdf = formData.get("magazinePdf");
+const magazineThumb = formData.get("magazineThumbnail");
+// In POST handler, after creating magazine
+if (magazinePdf && magazinePdf.size > 0) {
+  try {
+    const { pdfUrl, thumbUrl } = await uploadMagazineFiles(magazinePdf, magazineThumb);
+    const magazine = await prisma.magazine.create({
+      data: {
+        title: magazineTitle || "School Magazine",
+        year: magazineYear || new Date().getFullYear(),
+        description: magazineDescription,
+        pdfUrl,
+        thumbnail: thumbUrl,
+      }
+    });
+    magazineId = magazine.id;
+  } catch (magazineError) {
+    return NextResponse.json(
+      { success: false, error: magazineError.message },
+      { status: 400 }
+    );
+  }
+}
+
+
+  // Create new school
+  const schoolData = {
+    name: formData.get("name"),
+    description: formData.get("description") || null,
+    motto: formData.get("motto") || null,
+    vision: formData.get("vision") || null,
+    mission: formData.get("mission") || null,
+    videoTour: videoUrl,
+    videoType,
+    videoThumbnail: thumbnailUrl,
+      Magazine: magazineId ? { connect: { id: magazineId } } : undefined,
+    studentCount: parseIntField(formData.get("studentCount")) || 0,
+    staffCount: parseIntField(formData.get("staffCount")) || 0,
+    feesDay: parseNumber(formData.get("feesDay")),
+    feesBoarding: parseNumber(formData.get("feesBoarding")),
+    admissionFee: parseNumber(formData.get("admissionFee")),
+    openDate: parseDate(formData.get("openDate")) || new Date(),
+    closeDate: parseDate(formData.get("closeDate")) || new Date(),
+    subjects,
+    departments,
+    admissionOpenDate: parseDate(formData.get("admissionOpenDate")),
+    admissionCloseDate: parseDate(formData.get("admissionCloseDate")),
+    admissionRequirements: formData.get("admissionRequirements") || null,
+    admissionCapacity: parseIntField(formData.get("admissionCapacity")),
+    admissionContactEmail: formData.get("admissionContactEmail") || null,
+    admissionContactPhone: formData.get("admissionContactPhone") || null,
+    admissionWebsite: formData.get("admissionWebsite") || null,
+    admissionLocation: formData.get("admissionLocation") || null,
+    admissionOfficeHours: formData.get("admissionOfficeHours") || null,
+    admissionDocumentsRequired,
+    // Audit trail
+
+  };
 
     const school = await prisma.schoolInfo.create({
       data: schoolData,
@@ -662,7 +749,6 @@ export async function POST(req) {
     );
   }
 }
-
 // 🔵 UPDATE School Info (PUT - UPDATE ONLY) (PROTECTED - authentication required)
 export async function PUT(req) {
   try {
@@ -675,7 +761,11 @@ export async function PUT(req) {
     console.log("✏️ PUT /api/school - Updating school info");
     console.log(`Request from: ${auth.user.name} (${auth.user.role})`);
     
-    const existing = await prisma.schoolInfo.findFirst();
+    // FIRST: Get existing school with Magazine relation
+    const existing = await prisma.schoolInfo.findFirst({
+      include: { Magazine: true }
+    });
+    
     if (!existing) {
       return NextResponse.json(
         { 
@@ -688,6 +778,7 @@ export async function PUT(req) {
       );
     }
 
+    // SECOND: Parse form data BEFORE using it
     const formData = await req.formData();
     
     // Validate required fields for UPDATE
@@ -704,7 +795,69 @@ export async function PUT(req) {
       );
     }
 
-    // Handle video upload
+    // THIRD: Handle Magazine Update
+    let magazineId = existing.magazineId;
+    const magazineTitle = formData.get("magazineTitle");
+    const magazineYear = formData.get("magazineYear") ? parseInt(formData.get("magazineYear")) : null;
+    const magazineDescription = formData.get("magazineDescription") || null;
+    const magazinePdf = formData.get("magazinePdf");
+    const magazineThumb = formData.get("magazineThumbnail");
+    
+    const existingMag = existing.Magazine; // FIXED: Use capital M
+    
+    // Check if magazine needs to be updated
+    const hasMagazineChanges = (magazinePdf && magazinePdf.size > 0) || 
+                              (magazineThumb && magazineThumb.size > 0) || 
+                              (magazineTitle !== undefined && magazineTitle !== existingMag?.title) ||
+                              (magazineYear !== null && magazineYear !== existingMag?.year) ||
+                              (magazineDescription !== undefined && magazineDescription !== existingMag?.description);
+    
+    if (hasMagazineChanges) {
+      try {
+        const { pdfUrl, thumbUrl } = await uploadMagazineFiles(
+          magazinePdf, 
+          magazineThumb, 
+          existingMag
+        );
+        
+        if (existingMag) {
+          // Update existing magazine
+          const updatedMag = await prisma.magazine.update({
+            where: { id: existingMag.id },
+            data: {
+              title: magazineTitle ?? existingMag.title,
+              year: magazineYear ?? existingMag.year,
+              description: magazineDescription ?? existingMag.description,
+              pdfUrl: pdfUrl ?? existingMag.pdfUrl,
+              thumbnail: thumbUrl ?? existingMag.thumbnail,
+            }
+          });
+          magazineId = updatedMag.id;
+          console.log("✅ Magazine updated:", updatedMag.title);
+        } else if (pdfUrl) {
+          // Create new magazine
+          const newMag = await prisma.magazine.create({
+            data: {
+              title: magazineTitle || "School Magazine",
+              year: magazineYear || new Date().getFullYear(),
+              description: magazineDescription,
+              pdfUrl,
+              thumbnail: thumbUrl,
+            }
+          });
+          magazineId = newMag.id;
+          console.log("✅ Magazine created:", newMag.title);
+        }
+      } catch (magazineError) {
+        console.error("❌ Magazine error:", magazineError);
+        return NextResponse.json(
+          { success: false, error: magazineError.message },
+          { status: 400 }
+        );
+      }
+    }
+
+    // FOURTH: Handle video upload
     let videoUrl = existing.videoTour;
     let videoType = existing.videoType;
     let thumbnailUrl = existing.videoThumbnail;
@@ -748,33 +901,36 @@ export async function PUT(req) {
       );
     }
 
-    // Parse JSON fields
+    // FIFTH: Parse JSON fields
     let subjects = existing.subjects;
     let departments = existing.departments;
     let admissionDocumentsRequired = existing.admissionDocumentsRequired;
 
     // Parse subjects
-    if (formData.get("subjects")) {
+    const subjectsField = formData.get("subjects");
+    if (subjectsField && subjectsField !== "undefined" && subjectsField !== "null") {
       try {
-        subjects = parseJsonField(formData.get("subjects"), "subjects");
+        subjects = parseJsonField(subjectsField, "subjects");
       } catch (parseError) {
         console.warn("Error parsing subjects:", parseError);
       }
     }
 
     // Parse departments
-    if (formData.get("departments")) {
+    const departmentsField = formData.get("departments");
+    if (departmentsField && departmentsField !== "undefined" && departmentsField !== "null") {
       try {
-        departments = parseJsonField(formData.get("departments"), "departments");
+        departments = parseJsonField(departmentsField, "departments");
       } catch (parseError) {
         console.warn("Error parsing departments:", parseError);
       }
     }
 
     // Parse admission documents
-    if (formData.get("admissionDocumentsRequired")) {
+    const documentsField = formData.get("admissionDocumentsRequired");
+    if (documentsField && documentsField !== "undefined" && documentsField !== "null") {
       try {
-        admissionDocumentsRequired = parseJsonField(formData.get("admissionDocumentsRequired"), "admissionDocumentsRequired");
+        admissionDocumentsRequired = parseJsonField(documentsField, "admissionDocumentsRequired");
       } catch (parseError) {
         console.warn("Error parsing admission documents:", parseError);
       }
@@ -782,53 +938,62 @@ export async function PUT(req) {
 
     console.log("💾 Updating school in database...");
     
-    // Update school with all fields
+    // SIXTH: Prepare update data
+    const updateData = {
+      name: formData.get("name") || existing.name,
+      description: formData.get("description") !== null ? formData.get("description") : existing.description,
+      motto: formData.get("motto") !== null ? formData.get("motto") : existing.motto,
+      vision: formData.get("vision") !== null ? formData.get("vision") : existing.vision,
+      mission: formData.get("mission") !== null ? formData.get("mission") : existing.mission,
+      videoTour: videoUrl,
+      videoType: videoType,
+      videoThumbnail: thumbnailUrl,
+      studentCount: formData.get("studentCount") ? parseIntField(formData.get("studentCount")) : existing.studentCount,
+      staffCount: formData.get("staffCount") ? parseIntField(formData.get("staffCount")) : existing.staffCount,
+      
+      // Fees
+      feesDay: formData.get("feesDay") ? parseNumber(formData.get("feesDay")) : existing.feesDay,
+      feesBoarding: formData.get("feesBoarding") ? parseNumber(formData.get("feesBoarding")) : existing.feesBoarding,
+      admissionFee: formData.get("admissionFee") ? parseNumber(formData.get("admissionFee")) : existing.admissionFee,
+      
+      // Academic Calendar
+      openDate: formData.get("openDate") ? parseDate(formData.get("openDate")) : existing.openDate,
+      closeDate: formData.get("closeDate") ? parseDate(formData.get("closeDate")) : existing.closeDate,
+      
+      // Academic Information
+      subjects: subjects,
+      departments: departments,
+      
+      // Admission Information
+      admissionOpenDate: formData.get("admissionOpenDate") ? parseDate(formData.get("admissionOpenDate")) : existing.admissionOpenDate,
+      admissionCloseDate: formData.get("admissionCloseDate") ? parseDate(formData.get("admissionCloseDate")) : existing.admissionCloseDate,
+      admissionRequirements: formData.get("admissionRequirements") !== null ? formData.get("admissionRequirements") : existing.admissionRequirements,
+      admissionCapacity: formData.get("admissionCapacity") ? parseIntField(formData.get("admissionCapacity")) : existing.admissionCapacity,
+      admissionContactEmail: formData.get("admissionContactEmail") !== null ? formData.get("admissionContactEmail") : existing.admissionContactEmail,
+      admissionContactPhone: formData.get("admissionContactPhone") !== null ? formData.get("admissionContactPhone") : existing.admissionContactPhone,
+      admissionWebsite: formData.get("admissionWebsite") !== null ? formData.get("admissionWebsite") : existing.admissionWebsite,
+      admissionLocation: formData.get("admissionLocation") !== null ? formData.get("admissionLocation") : existing.admissionLocation,
+      admissionOfficeHours: formData.get("admissionOfficeHours") !== null ? formData.get("admissionOfficeHours") : existing.admissionOfficeHours,
+      admissionDocumentsRequired: admissionDocumentsRequired,
+      
+      // Update timestamp
+      updatedAt: new Date(),
+    };
+    
+    // SEVENTH: Connect magazine if we have an ID
+    if (magazineId) {
+      updateData.Magazine = { connect: { id: magazineId } };
+    }
+    
+    // EIGHTH: Update school with all fields and include Magazine in response
     const updated = await prisma.schoolInfo.update({
       where: { id: existing.id },
-      data: {
-        name: formData.get("name") || existing.name,
-        description: formData.get("description") !== null ? formData.get("description") : existing.description,
-        motto: formData.get("motto") !== null ? formData.get("motto") : existing.motto,
-        vision: formData.get("vision") !== null ? formData.get("vision") : existing.vision,
-        mission: formData.get("mission") !== null ? formData.get("mission") : existing.mission,
-        videoTour: videoUrl,
-        videoType,
-        videoThumbnail: thumbnailUrl,
-        studentCount: formData.get("studentCount") ? parseIntField(formData.get("studentCount")) : existing.studentCount,
-        staffCount: formData.get("staffCount") ? parseIntField(formData.get("staffCount")) : existing.staffCount,
-        
-        // Fees
-        feesDay: formData.get("feesDay") ? parseNumber(formData.get("feesDay")) : existing.feesDay,
-        feesBoarding: formData.get("feesBoarding") ? parseNumber(formData.get("feesBoarding")) : existing.feesBoarding,
-        admissionFee: formData.get("admissionFee") ? parseNumber(formData.get("admissionFee")) : existing.admissionFee,
-        
-        // Academic Calendar
-        openDate: formData.get("openDate") ? parseDate(formData.get("openDate")) : existing.openDate,
-        closeDate: formData.get("closeDate") ? parseDate(formData.get("closeDate")) : existing.closeDate,
-        
-        // Academic Information
-        subjects,
-        departments,
-        
-        // Admission Information
-        admissionOpenDate: formData.get("admissionOpenDate") ? parseDate(formData.get("admissionOpenDate")) : existing.admissionOpenDate,
-        admissionCloseDate: formData.get("admissionCloseDate") ? parseDate(formData.get("admissionCloseDate")) : existing.admissionCloseDate,
-        admissionRequirements: formData.get("admissionRequirements") !== null ? formData.get("admissionRequirements") : existing.admissionRequirements,
-        admissionCapacity: formData.get("admissionCapacity") ? parseIntField(formData.get("admissionCapacity")) : existing.admissionCapacity,
-        admissionContactEmail: formData.get("admissionContactEmail") !== null ? formData.get("admissionContactEmail") : existing.admissionContactEmail,
-        admissionContactPhone: formData.get("admissionContactPhone") !== null ? formData.get("admissionContactPhone") : existing.admissionContactPhone,
-        admissionWebsite: formData.get("admissionWebsite") !== null ? formData.get("admissionWebsite") : existing.admissionWebsite,
-        admissionLocation: formData.get("admissionLocation") !== null ? formData.get("admissionLocation") : existing.admissionLocation,
-        admissionOfficeHours: formData.get("admissionOfficeHours") !== null ? formData.get("admissionOfficeHours") : existing.admissionOfficeHours,
-        admissionDocumentsRequired,
-        
-        // Update timestamp
-        updatedAt: new Date(),
-        // Audit trail
-      },
+      data: updateData,
+      include: { Magazine: true } // Include Magazine in response
     });
 
     console.log(`✅ School updated successfully by ${auth.user.name}: ${updated.name}`);
+    console.log("📚 Magazine in response:", updated.Magazine ? "Present" : "Not present");
     
     return NextResponse.json({ 
       success: true, 
@@ -851,9 +1016,7 @@ export async function PUT(req) {
   }
 }
 
-
-
-// 🔴 DELETE all school info (PROTECTED - authentication required) - UPDATED SIGNATURE
+// 🔴 DELETE all school info (PROTECTED - authentication required)
 export async function DELETE(req) {
   try {
     // Authenticate the request
@@ -865,7 +1028,11 @@ export async function DELETE(req) {
     console.log("🗑️ DELETE /api/school - Deleting school info");
     console.log(`Request from: ${auth.user.name} (${auth.user.role})`);
     
-    const existing = await prisma.schoolInfo.findFirst();
+    // Get school with Magazine to delete magazine files too
+    const existing = await prisma.schoolInfo.findFirst({
+      include: { Magazine: true }
+    });
+    
     if (!existing) {
       return NextResponse.json(
         { 
@@ -878,7 +1045,7 @@ export async function DELETE(req) {
       );
     }
 
-    // Delete files from Cloudinary
+    // Delete video files from Cloudinary
     if (existing.videoType === 'file' && existing.videoTour) {
       console.log("Deleting video from Cloudinary:", existing.videoTour);
       await deleteFromCloudinary(existing.videoTour);
@@ -887,7 +1054,20 @@ export async function DELETE(req) {
       console.log("Deleting thumbnail from Cloudinary:", existing.videoThumbnail);
       await deleteFromCloudinary(existing.videoThumbnail);
     }
+    
+    // Delete magazine files from Cloudinary if they exist
+    if (existing.Magazine) {
+      if (existing.Magazine.pdfUrl) {
+        console.log("Deleting magazine PDF from Cloudinary:", existing.Magazine.pdfUrl);
+        await deleteFromCloudinary(existing.Magazine.pdfUrl);
+      }
+      if (existing.Magazine.thumbnail) {
+        console.log("Deleting magazine thumbnail from Cloudinary:", existing.Magazine.thumbnail);
+        await deleteFromCloudinary(existing.Magazine.thumbnail);
+      }
+    }
 
+    // Delete school info (Magazine will be deleted automatically due to cascade or relation)
     await prisma.schoolInfo.deleteMany();
     
     console.log(`✅ School deleted successfully by ${auth.user.name}: ${existing.name}`);
