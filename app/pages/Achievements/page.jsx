@@ -210,6 +210,10 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
 
         {/* Content Area */}
         <div className="p-4 sm:p-5 md:p-6">
+
+
+
+          
           <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#3E2C1F] mb-2 line-clamp-2 leading-tight">
             {achievement.title}
           </h3>
@@ -651,22 +655,65 @@ export default function KatwanyaaAchievementsPage() {
         </div>
 
         {/* ===== STATS GRID ===== */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {stats.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <div key={idx} className="bg-[#FDF8F0] border border-[#E8DCC8] rounded-xl p-3 md:p-4 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <div className={`p-1.5 rounded-lg`} style={{ backgroundColor: `${stat.color}15` }}>
-                    <Icon className={`text-[${stat.color}] text-base md:text-lg`} style={{ color: stat.color }} />
-                  </div>
-                </div>
-                <p className="text-xl md:text-2xl font-black text-[#3E2C1F]">{stat.value}</p>
-                <p className="text-[8px] md:text-[10px] font-bold text-[#8B7355] uppercase tracking-wider">{stat.label}</p>
+       {/* ===== STATS GRID - MODERNIZED ===== */}
+<div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+  {stats.map((stat, idx) => {
+    const Icon = stat.icon;
+    return (
+      <div 
+        key={idx} 
+        className="group relative bg-gradient-to-br from-[#FDF8F0] to-[#FFF9F2] border border-[#E8DCC8] rounded-xl p-3 md:p-4 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+      >
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+        
+        {/* Decorative background element */}
+        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-[#FF6B35]/5 to-[#FF8C5A]/5 rounded-full blur-xl -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-2">
+            <div 
+              className="p-1.5 rounded-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" 
+              style={{ backgroundColor: `${stat.color}15` }}
+            >
+              <Icon 
+                className="text-base md:text-lg transition-all duration-300 group-hover:scale-110" 
+                style={{ color: stat.color }} 
+              />
+            </div>
+            
+            {/* Optional trend indicator - you can add trend data to stats */}
+            {stat.trend && (
+              <div className="flex items-center gap-0.5">
+                {stat.trend === 'up' && (
+                  <svg className="w-2 h-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                  </svg>
+                )}
+                {stat.trend === 'down' && (
+                  <svg className="w-2 h-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clipRule="evenodd" />
+                  </svg>
+                )}
+                <span className="text-[8px] font-bold text-green-600">{stat.trendValue || '+12%'}</span>
               </div>
-            );
-          })}
+            )}
+          </div>
+          
+          <p className="text-xl md:text-2xl font-black text-[#3E2C1F] transition-all duration-300 group-hover:text-[#FF6B35]">
+            {stat.value}
+          </p>
+          <p className="text-[8px] md:text-[10px] font-bold text-[#8B7355] uppercase tracking-wider group-hover:text-[#FF6B35] transition-colors duration-300">
+            {stat.label}
+          </p>
         </div>
+
+        {/* Bottom accent bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+      </div>
+    );
+  })}
+</div>
 
         {/* ===== SEARCH & FILTERS ===== */}
         <div className="bg-[#FDF8F0] border border-[#E8DCC8] rounded-xl p-3 shadow-sm">
