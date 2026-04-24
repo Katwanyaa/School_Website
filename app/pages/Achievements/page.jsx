@@ -82,9 +82,10 @@ const ModernModal = ({ children, open, onClose, maxWidth = '800px', blur = true 
         <div className="absolute top-4 right-4 z-10">
           <button
             onClick={onClose}
-            className="p-2 bg-[#FDF8F0]/90 backdrop-blur-sm rounded-full hover:bg-[#E8DCC8] cursor-pointer border border-[#D4C4A8] shadow-sm transition-colors"
+            type="button"
+            className="p-2 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full hover:shadow-lg cursor-pointer border-0 shadow-md transition-all active:scale-95"
           >
-            <FiX className="text-[#8B7355] w-5 h-5" />
+            <FiX className="text-white w-5 h-5" />
           </button>
         </div>
         {children}
@@ -375,7 +376,7 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
 
         <div className="shrink-0 p-4 sm:p-6 bg-[#FDF8F0] border-t border-[#E8DCC8]">
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 py-3 bg-[#C6893B] text-white rounded-xl font-bold text-sm">Close</button>
+            <button onClick={onClose} className="flex-1 py-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white rounded-xl font-bold text-sm hover:shadow-lg transition-all active:scale-95">Close</button>
             <button onClick={onShare} className="flex-1 py-3 bg-[#FAF6F0] border border-[#E8DCC8] text-[#3E2C1F] rounded-xl font-bold text-sm flex items-center justify-center gap-2">
               <FiShare2 size={14} /> Share
             </button>
@@ -407,7 +408,7 @@ const ShareModal = ({ achievement, onClose }) => {
 
   return (
     <ModernModal open={true} onClose={onClose} maxWidth="480px">
-      <div className="bg-[#C6893B] p-6 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full" />
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mb-3">
@@ -435,7 +436,7 @@ const ShareModal = ({ achievement, onClose }) => {
           <div className="w-full p-3 bg-[#FAF6F0] rounded-xl border border-[#E8DCC8] pr-20">
             <p className="text-[10px] font-mono text-[#8B7355] truncate">{window.location.href}</p>
           </div>
-          <button onClick={copyToClipboard} className={`absolute right-1.5 top-1.5 bottom-1.5 px-4 rounded-lg font-bold text-[10px] transition-all ${copied ? 'bg-[#2D6A4F] text-white' : 'bg-[#C6893B] text-white'}`}>
+                <button onClick={copyToClipboard} className={`absolute right-1.5 top-1.5 bottom-1.5 px-4 rounded-lg font-bold text-[10px] transition-all ${copied ? 'bg-green-600 text-white' : 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white'}`}>
             {copied ? 'Copied!' : 'Copy'}
           </button>
         </div>
@@ -629,16 +630,16 @@ export default function KatwanyaaAchievementsPage() {
                 <button
                   onClick={() => fetchAchievements(true)}
                   disabled={refreshing}
-                  className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur rounded-xl border border-white/20 text-white font-bold text-[10px] uppercase tracking-wider hover:bg-white/20 transition-all"
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-xl border-0 text-white font-bold text-[10px] uppercase tracking-wider hover:shadow-lg transition-all disabled:opacity-50"
                 >
                   {refreshing ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <FiRotateCw size={12} />}
                   REFRESH
                 </button>
                 <div className="flex bg-white/10 backdrop-blur rounded-xl p-1">
-                  <button onClick={() => setViewMode('grid')} className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-[#C6893B] text-white' : 'text-white/60'}`}>
+                  <button onClick={() => setViewMode('grid')} className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white' : 'text-white/60'}`}>
                     <FiGrid size={14} />
                   </button>
-                  <button onClick={() => setViewMode('list')} className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-[#C6893B] text-white' : 'text-white/60'}`}>
+                  <button onClick={() => setViewMode('list')} className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white' : 'text-white/60'}`}>
                     <FiList size={14} />
                   </button>
                 </div>
@@ -690,7 +691,7 @@ export default function KatwanyaaAchievementsPage() {
               </select>
               <button
                 onClick={() => { setSearchTerm(''); setActiveCategory('all'); setCurrentPage(1); }}
-                className="px-4 py-2.5 bg-[#C6893B] text-white rounded-lg font-bold text-xs flex items-center gap-1.5"
+                className="px-4 py-2.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 hover:shadow-md transition-all active:scale-95"
               >
                 <FiFilter size={12} /> Reset
               </button>
