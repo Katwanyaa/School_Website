@@ -611,7 +611,7 @@ export default function KatwanyaaAchievementsPage() {
                     </div>
                     <div>
                       <p className="text-white text-[10px] font-bold uppercase tracking-wider">Est. 1985</p>
-                      <p className="text-white/50 text-[8px]">Strive to Excel</p>
+                      <p className="text-white/50 text-[8px]">Education is light</p>
                     </div>
                   </div>
                   <div className="h-10 w-px bg-white/20" />
