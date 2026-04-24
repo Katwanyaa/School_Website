@@ -1441,7 +1441,7 @@ export default function AdminLoginPage() {
                     <span>&copy; {new Date().getFullYear()} katwanyaa ' Senior</span>
                     <span className="flex items-center gap-2">
                       <Server size={10} />
-                      Secure Node: 041
+                      katzanyaa ICT Department
                     </span>
                   </div>
                 </div>
