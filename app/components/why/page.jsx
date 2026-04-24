@@ -1341,15 +1341,6 @@ const pathways = [
           </div>
         </div>
       )}
-
-      {/* ===== FOOTER ===== */}
-      <footer className="py-8 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Katwanyaa Senior School</p>
-          <p className="text-xs text-slate-400">Matungulu, Machakos County | Tel: 0710894145 | Email: katzict@gmail.com</p>
-          <p className="text-[9px] text-slate-500 mt-3">© {new Date().getFullYear()} Katwanyaa Senior School. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };
