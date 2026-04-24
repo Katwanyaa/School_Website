@@ -282,111 +282,139 @@ const KatwanyaaSeniorSchoolPage = () => {
   return (
     <div className="bg-white text-slate-800 min-h-screen">
       {/* ===== HERO SECTION WITH CAROUSEL ===== */}
-      <div className="relative min-h-[85vh] flex items-center overflow-hidden">
-        {/* Background Carousel */}
-        <div className="absolute inset-0 z-0">
-          {schoolImages.map((image, idx) => (
-            <div
-              key={idx}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                idx === currentImageIndex ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                className="object-cover"
-                priority={idx === 0}
-              />
-            </div>
-          ))}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/60" />
-        </div>
-
+<div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+  <div className="max-w-7xl mx-auto">
+    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      {/* Left Column - Image Carousel */}
+      <div className="relative h-[400px] sm:h-[500px] rounded-2xl overflow-hidden shadow-2xl group">
+        {schoolImages.map((image, idx) => (
+          <div
+            key={idx}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              idx === currentImageIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              className="object-cover"
+              priority={idx === 0}
+            />
+          </div>
+        ))}
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        
         {/* Carousel Controls */}
         <button
           onClick={prevImage}
-          className="absolute left-4 z-20 p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40 transition-all"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-black/70 z-10"
           aria-label="Previous image"
         >
           <FiChevronLeft size={24} />
         </button>
         <button
           onClick={nextImage}
-          className="absolute right-4 z-20 p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40 transition-all"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-black/70 z-10"
           aria-label="Next image"
         >
           <FiChevronRight size={24} />
         </button>
-
+        
         {/* Dots Indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
           {schoolImages.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentImageIndex(idx)}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentImageIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/50'
+                idx === currentImageIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
               }`}
             />
           ))}
         </div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              <span className="text-[10px] font-bold tracking-wider text-white uppercase">Katwanyaa Senior School</span>
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight">
-              Excellence in <br />
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                Education, Character
-              </span>
-              <br />in Action.
-            </h1>
-            <p className="text-base sm:text-lg text-white/80 max-w-xl mt-6 leading-relaxed">
-              Located in the heart of Matungulu, Machakos County, we are dedicated to nurturing 
-              students into confident, compassionate, and accomplished leaders.
-            </p>
-
-            {/* Quick Facts Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-8 pt-4 border-t border-white/20">
-              {quickFacts.map((fact, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-white/80">
-                  <div className="p-1.5 bg-white/10 rounded-lg">{fact.icon}</div>
-                  <div>
-                    <p className="text-[9px] font-bold uppercase tracking-wider opacity-60">{fact.label}</p>
-                    <p className="text-[10px] sm:text-xs font-semibold leading-tight">{fact.value}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 mt-8">
-              <button
-                onClick={handleExplorePathways}
-                className="px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm tracking-wide shadow-lg hover:bg-slate-100 transition-all active:scale-95 flex items-center gap-2"
-              >
-                Admissions <FiArrowRight size={16} />
-              </button>
-              <button
-                onClick={handleApplyNow}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-bold text-sm tracking-wide shadow-lg hover:shadow-xl transition-all active:scale-95"
-              >
-                Apply Now
-              </button>
-            </div>
-          </div>
+        
+        {/* Image Counter Badge */}
+        <div className="absolute bottom-4 right-4 z-10 bg-black/50 backdrop-blur-md rounded-full px-2 py-1">
+          <span className="text-[10px] font-bold text-white">
+            {currentImageIndex + 1} / {schoolImages.length}
+          </span>
         </div>
       </div>
 
+      {/* Right Column - Information Content */}
+      <div className="space-y-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-200 w-fit">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+          <span className="text-[10px] font-black tracking-[0.2em] text-blue-700 uppercase">
+            Katwanyaa Senior School
+          </span>
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-tight tracking-tight">
+          Excellence in <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            Education, Character
+          </span>
+          <br />in Action.
+        </h1>
+
+        <p className="text-slate-600 text-base sm:text-lg max-w-xl leading-relaxed">
+          Located in the heart of Matungulu, Machakos County, we are dedicated to nurturing 
+          students into confident, compassionate, and accomplished leaders.
+        </p>
+
+        {/* Quick Facts Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+          {quickFacts.map((fact, idx) => (
+            <div key={idx} className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
+              <div className="text-blue-600">{fact.icon}</div>
+              <div>
+                <p className="text-[8px] font-black uppercase tracking-wider text-slate-400">{fact.label}</p>
+                <p className="text-[10px] sm:text-xs font-semibold text-slate-700 leading-tight">{fact.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-wrap gap-4 pt-4">
+          <button
+            onClick={handleExplorePathways}
+            className="px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-blue-100 hover:shadow-xl hover:bg-slate-50 transition-all active:scale-95 flex items-center gap-2 border border-slate-200"
+          >
+            Admissions <FiArrowRight size={16} />
+          </button>
+          <button
+            onClick={handleApplyNow}
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-blue-200 hover:shadow-xl transition-all active:scale-95"
+          >
+            Apply Now
+          </button>
+        </div>
+
+        {/* Trust Badge */}
+        <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
+          <div className="flex -space-x-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="w-6 h-6 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center">
+                <FiUsers className="w-3 h-3 text-blue-600" />
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] font-medium text-slate-500">
+            Trusted by <span className="font-black text-slate-700">800+</span> students and families
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
       {/* ===== VISION & MISSION SECTION ===== */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
