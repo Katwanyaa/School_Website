@@ -1454,8 +1454,8 @@ export default function AdminLoginPage() {
             <div className="w-full max-w-md ml-0 md:ml-[15%]">
               <div className="md:hidden text-center mb-8">
                 <Image
-                  src="/katwanyaa.png"
-                  alt="katwanyaa Logo"
+                  src="/katz.jpeg"
+                  alt="Katz Logo"
                   width={60}
                   height={60}
                   className="rounded-full mx-auto mb-4 shadow-sm"
