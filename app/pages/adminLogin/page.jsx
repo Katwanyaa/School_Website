@@ -23,17 +23,7 @@ import {
   RefreshCw,
   AlertCircle,
   ShieldAlert,
-  Clock,
-  Fingerprint,
-  LogIn,
-  Sparkles,
-  GraduationCap,
-  BookOpen,
-  Trophy,
-  Users2,
-  Calendar,
-  Activity,
-  ChevronRight
+  Clock
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'sonner';
@@ -1110,40 +1100,62 @@ export default function AdminLoginPage() {
         closeButton
       />
 
-      {/* Verification Modal - Redesigned */}
+      {/* Password Reset Modal */}
+      {showPasswordResetModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-[9999]">
+          {/* Modal content - keeping as is */}
+        </div>
+      )}
+
+      {/* Verification Modal */}
       {showVerificationModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-4 z-[9999] animate-in fade-in duration-300 overflow-y-auto">
-          <div className="relative w-full max-w-md my-auto bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all animate-in zoom-in duration-300">
-            {/* Modal Header - Katwaanyaa Branding */}
-            <div className="relative bg-gradient-to-r from-emerald-700 to-teal-700 p-5 text-white">
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-[9999] animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md my-auto bg-white rounded-xl md:rounded-2xl shadow-2xl border-2 border-blue-900/10 overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
+            
+            <div className="relative p-5 sm:p-6 bg-[#002366] text-white shrink-0 border-b-4 border-amber-500">
               <button
                 onClick={closeVerificationModal}
-                className="absolute top-4 right-4 p-1.5 hover:bg-white/20 rounded-lg transition-colors active:scale-90"
+                className="absolute top-3 right-3 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-90"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-amber-400" />
               </button>
               
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20">
-                  <ShieldCheck className="w-6 h-6 text-emerald-300" />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center shrink-0 border border-white/20">
+                  <ShieldCheck className="w-6 h-6 md:w-7 md:h-7 text-amber-400" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold tracking-tight">Verify Access</h3>
-                  <p className="text-emerald-200 text-xs font-medium">Secure Authentication Required</p>
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight uppercase">
+                    {requiresPasswordAfterVerification ? 'Final Access' : 'Identity Check'}
+                  </h3>
+                  <p className="text-blue-200 text-[10px] sm:text-xs font-semibold uppercase tracking-widest opacity-80">
+                    {requiresPasswordAfterVerification ? 'Portal Authorization' : 'Secure Campus Network'}
+                  </p>
                 </div>
+              </div>
+              
+              <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-amber-500 text-blue-950 rounded-md shadow-sm">
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-black whitespace-nowrap uppercase tracking-tighter">
+                  {verificationReason?.replace(/_/g, ' ') || 'SECURITY PROTOCOL'}
+                </span>
               </div>
             </div>
             
-            <div className="p-6">
+            <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar bg-slate-50/50">
               {!requiresPasswordAfterVerification ? (
                 <>
-                  <div className="text-center mb-5">
-                    <p className="text-gray-600 text-sm mb-2">Verification code sent to</p>
-                    <p className="font-mono font-bold text-emerald-700 bg-emerald-50 p-2 rounded-lg text-sm break-all">{verificationEmail}</p>
+                  <div className="mb-6 text-center">
+                    <p className="text-slate-500 text-xs font-bold uppercase tracking-wide mb-3">
+                      Authorization Code Sent To:
+                    </p>
+                    <div className="bg-white border-2 border-slate-200 rounded-lg p-3 shadow-inner">
+                      <p className="text-blue-900 font-bold text-sm break-all">{verificationEmail}</p>
+                    </div>
                   </div>
                   
-                  <div className="mb-5">
-                    <div className="grid grid-cols-6 gap-2 mb-3">
+                  <div className="mb-6">
+                    <div className="grid grid-cols-6 gap-2 mb-5">
                       {verificationCode.map((digit, index) => (
                         <input
                           key={index}
@@ -1154,69 +1166,79 @@ export default function AdminLoginPage() {
                           value={digit}
                           onChange={(e) => handleVerificationCodeChange(index, e.target.value)}
                           onKeyDown={(e) => handleVerificationKeyDown(index, e)}
-                          className="w-full aspect-square text-center text-2xl font-bold bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800"
+                          className="w-full aspect-square text-center text-xl font-bold bg-white border-2 border-slate-300 rounded-lg focus:border-blue-800 focus:ring-4 focus:ring-blue-800/5 outline-none transition-all text-blue-900"
                           autoFocus={index === 0}
                         />
                       ))}
                     </div>
                     
-                    <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
-                      <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Code expires in <span className="font-mono font-bold text-emerald-700">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span></span>
+                    <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 py-2 rounded-full">
+                      <Clock className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Expires in: <span className="text-blue-900 font-mono">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span></span>
                     </div>
                   </div>
                 </>
               ) : (
-                <div className="mb-5">
-                  <p className="text-gray-700 text-sm font-medium mb-3">Enter your password to continue</p>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <div className="mb-6">
+                  <p className="text-slate-700 text-sm mb-4 font-bold">
+                    Identity Confirmed. Enter Portal Password:
+                  </p>
+                  <div className="relative group">
                     <input
                       type="password"
                       value={passwordAfterVerification}
                       onChange={(e) => setPasswordAfterVerification(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full pl-10 pr-3 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800"
+                      className="w-full p-4 pl-5 pr-12 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-800 focus:ring-4 focus:ring-blue-800/5 outline-none transition-all text-blue-900 font-bold"
                       autoFocus
                     />
+                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-800 transition-colors w-5 h-5" />
                   </div>
                 </div>
               )}
               
-              <div className="space-y-3">
+              <div className="flex flex-col gap-3">
                 <button
+                  type="button"
                   onClick={requiresPasswordAfterVerification ? handlePasswordAfterVerification : handleVerifyCode}
                   disabled={verificationLoading || (!requiresPasswordAfterVerification && verificationCode.join('').length !== 6)}
-                  className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full flex items-center justify-center gap-3 py-4 bg-blue-900 text-white rounded-xl font-bold text-sm tracking-widest shadow-xl hover:bg-blue-950 active:scale-[0.98] transition-all disabled:bg-slate-300"
                 >
                   {verificationLoading ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Verifying...</span>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span className="capitalize text-sm font-medium">Verifying...</span>
                     </div>
                   ) : (
                     <>
-                      <CheckCircle className="w-4 h-4" />
-                      <span>{requiresPasswordAfterVerification ? 'Complete Login' : 'Verify Code'}</span>
+                      <CheckCircle className="w-4 h-4 text-amber-400" />
+                      <span className="uppercase tracking-widest">
+                        {requiresPasswordAfterVerification ? 'Grant Access' : 'Authorize Device'}
+                      </span>
                     </>
                   )}
                 </button>
 
                 {!requiresPasswordAfterVerification && (
                   <button
+                    type="button"
                     onClick={handleResendCode}
                     disabled={resendLoading || countdown > 0}
-                    className="w-full py-2 text-sm text-emerald-600 font-medium hover:text-emerald-700 transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-slate-500 font-black text-[10px] uppercase tracking-widest hover:text-blue-900 transition-colors disabled:opacity-30"
                   >
-                    {countdown > 0 ? `Resend code in ${countdown}s` : 'Resend verification code'}
+                    Didn't receive code? <span className="text-blue-700 underline underline-offset-4">Request New</span>
                   </button>
                 )}
               </div>
 
-              <div className="mt-5 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 text-[10px] text-gray-400 justify-center">
-                  <Shield className="w-3 h-3" />
-                  <span>Secured by Katwaanyaa ICT | Encrypted Session</span>
+              <div className="mt-8 pt-5 border-t-2 border-dashed border-slate-200">
+                <div className="flex gap-4 items-start">
+                  <div className="p-2 bg-blue-50 rounded-lg">
+                    <ShieldAlert className="w-4 h-4 text-blue-800" />
+                  </div>
+                  <p className="text-[10px] leading-relaxed text-slate-500 font-bold uppercase tracking-tight">
+                    School Security Protocol: This session is encrypted. Unauthorized access attempts are logged and reported to katwanyaa ICT Staff.
+                  </p>
                 </div>
               </div>
             </div>
@@ -1226,80 +1248,124 @@ export default function AdminLoginPage() {
 
       {/* Terms & Conditions Modal */}
       {showTermsModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-4 z-[9999] animate-in fade-in duration-300 overflow-y-auto">
-          <div className="relative w-full max-w-2xl my-auto bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all animate-in zoom-in duration-300">
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-[9999] animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-2xl my-auto bg-white rounded-xl md:rounded-2xl shadow-2xl border-2 border-blue-900/10 overflow-hidden flex flex-col max-h-[90vh]">
             
-            <div className="relative bg-gradient-to-r from-emerald-700 to-teal-700 p-5 text-white">
+            <div className="relative p-5 sm:p-6 bg-gradient-to-r from-slate-900 to-blue-900 text-white shrink-0 border-b-4 border-amber-500">
               <button
                 onClick={closeTermsModal}
-                className="absolute top-4 right-4 p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                className="absolute top-3 right-3 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-90"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-amber-400" />
               </button>
               
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center">
-                  <ShieldAlert className="w-6 h-6 text-emerald-300" />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center shrink-0 border border-white/20">
+                  <ShieldAlert className="w-6 h-6 md:w-7 md:h-7 text-amber-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold tracking-tight">Terms & Conditions</h3>
-                  <p className="text-emerald-200 text-xs font-medium">Authorized Access Only</p>
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight uppercase">
+                    Terms & Conditions
+                  </h3>
+                  <p className="text-blue-200 text-[10px] sm:text-xs font-semibold uppercase tracking-widest opacity-80">
+                    Authorized Access Only
+                  </p>
                 </div>
               </div>
             </div>
             
-            <div className="p-6 max-h-[60vh] overflow-y-auto">
-              <div className="mb-5 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
-                <div className="flex gap-3">
+            <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar bg-slate-50/50">
+              
+              <div className="mb-6 bg-red-50 border-l-4 border-red-600 p-4 rounded-r-lg">
+                <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <p className="text-xs text-red-800 font-medium">
-                    Unauthorized access is prohibited under the Computer Misuse and Cybercrimes Act. All access attempts are logged.
+                  <div>
+                    <h4 className="font-black text-red-900 text-sm uppercase tracking-wide mb-1">
+                      ⚠️ Legal Warning
+                    </h4>
+                    <p className="text-xs sm:text-sm text-red-800 font-bold leading-relaxed">
+                      Unauthorized access to this system is strictly prohibited and will be treated as a cyber crime under the Computer Misuse and Cybercrimes Act. All access attempts are logged and monitored. Violators will face legal prosecution to the fullest extent of the law.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4 text-slate-700">
+                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
+                    <Database className="w-4 h-4 text-blue-600" />
+                    1. Authorized Use
+                  </h5>
+                  <p className="text-xs sm:text-sm leading-relaxed">
+                    This administrative portal is exclusively for authorized katwanyaa senior' Senior School personnel. Access credentials are personal and non-transferable. Any sharing of credentials constitutes a security breach and will result in immediate revocation of access privileges and potential legal action.
+                  </p>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-blue-600" />
+                    2. Data Protection & Privacy
+                  </h5>
+                  <p className="text-xs sm:text-sm leading-relaxed">
+                    All student, staff, and institutional data accessed through this portal is protected under the Data Protection Act. Users are legally obligated to maintain confidentiality and must not disclose, copy, or misuse any information obtained through this system. Data breaches must be reported immediately to the ICT department.
+                  </p>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-blue-600" />
+                    3. Monitoring & Logging
+                  </h5>
+                  <p className="text-xs sm:text-sm leading-relaxed">
+                    All activities within this portal are subject to continuous monitoring and logging. This includes, but is not limited to: login attempts, data access patterns, modifications to records, and system interactions. These logs are regularly reviewed and may be used as evidence in disciplinary or legal proceedings.
+                  </p>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-blue-600" />
+                    4. Security Obligations
+                  </h5>
+                  <p className="text-xs sm:text-sm leading-relaxed">
+                    Users must ensure their devices meet minimum security standards, including up-to-date antivirus software and secure network connections. Access from public or unsecured networks is prohibited. Users are responsible for immediately reporting any suspected security incidents or unusual system behavior.
+                  </p>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
+                    <Building className="w-4 h-4 text-blue-600" />
+                    5. Institutional Compliance
+                  </h5>
+                  <p className="text-xs sm:text-sm leading-relaxed">
+                    By accessing this portal, you acknowledge your understanding of and compliance with all katwanyaa  Senior School ICT policies, the Computer Misuse and Cybercrimes Act, and all applicable Kenyan laws regarding data protection and electronic transactions. Violations will be reported to relevant authorities.
                   </p>
                 </div>
               </div>
               
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
-                    <Database className="w-4 h-4 text-emerald-600" />
-                    1. Authorized Use
-                  </h4>
-                  <p className="text-xs text-gray-600">This portal is exclusively for Katwaanyaa Senior School authorized personnel. Credentials are non-transferable.</p>
-                </div>
-                
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-emerald-600" />
-                    2. Data Protection
-                  </h4>
-                  <p className="text-xs text-gray-600">All data accessed is protected under the Data Protection Act. Maintain confidentiality at all times.</p>
-                </div>
-                
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-emerald-600" />
-                    3. Monitoring
-                  </h4>
-                  <p className="text-xs text-gray-600">All activities are logged and monitored. Unauthorized access attempts trigger immediate alerts.</p>
-                </div>
+              <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-amber-900 text-center">
+                  ⚡ This system is protected by advanced security protocols. 
+                  Unauthorized access attempts trigger immediate alerts to the ICT Security Team.
+                </p>
               </div>
             </div>
             
-            <div className="p-5 border-t border-gray-100 bg-gray-50">
-              <div className="flex gap-3">
+            <div className="p-4 sm:p-5 border-t border-slate-200 bg-white shrink-0">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => {
                     setAgreedToTerms(true);
                     closeTermsModal();
-                    toast.success('Terms accepted');
+                    toast.success('You have accepted the Terms & Conditions');
                   }}
-                  className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-emerald-700 transition-all"
+                  className="flex-1 bg-blue-900 text-white py-3 px-4 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-blue-950 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
-                  I Accept
+                  <CheckCircle className="w-4 h-4" />
+                  I Understand & Accept
                 </button>
                 <button
                   onClick={closeTermsModal}
-                  className="flex-1 bg-gray-200 text-gray-700 py-2.5 rounded-lg font-bold text-sm hover:bg-gray-300 transition-all"
+                  className="flex-1 bg-slate-100 text-slate-700 py-3 px-4 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-slate-200 transition-all active:scale-[0.98]"
                 >
                   Close
                 </button>
@@ -1309,275 +1375,227 @@ export default function AdminLoginPage() {
         </div>
       )}
 
-      {/* Main Login Page Layout - Redesigned */}
-      <main className="min-h-screen bg-gradient-to-br from-white via-emerald-50/30 to-white">
-        <div className="w-full min-h-screen grid lg:grid-cols-2">
+      {/* Main Login Page Layout */}
+      <main className="min-h-screen bg-slate-100 font-sans flex items-center justify-center">
+        <div className="w-full h-screen grid md:grid-cols-2">
           
-          {/* Left Panel - Branding with Katwaanyaa Theme */}
-          <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white p-8 xl:p-12 overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-400 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-400 rounded-full blur-3xl"></div>
-            </div>
+          {/* Left Panel - Branding */}
+          <div className="relative hidden md:flex flex-col justify-between bg-slate-950 text-white px-16 py-20 lg:px-24 overflow-hidden border-r border-white/5">
+            <div 
+              className="absolute inset-0 bg-cover bg-center opacity-60 transition-transform duration-100"
+              style={{ backgroundImage: "url('/hero/kbss.png')" }}
+            ></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-slate-950 to-black"></div>
             
-            <div className="relative z-10 flex-1 flex flex-col">
-              {/* Logo Section */}
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl"></div>
-                  <Image
-                    src="/hero/katz.png"
-                    alt="Katwaanyaa Logo"
-                    width={70}
-                    height={70}
-                    className="rounded-2xl relative z-10 shadow-2xl"
-                  />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-black tracking-tight uppercase leading-tight">
-                    Katwaanyaa <span className="text-emerald-300">'</span>
-                  </h1>
-                  <p className="text-[10px] font-bold tracking-[0.3em] text-emerald-300/80 uppercase">
-                    Senior School
-                  </p>
-                </div>
+            <div className="relative z-10 flex flex-col h-full w-full">
+              <div className="mb-auto">
+                <Link href="/" className="flex items-center gap-5 group transition-transform hover:translate-x-1">
+                  <div className="relative p-1 bg-white/10 rounded-full backdrop-blur-xl border border-white/20 shadow-2xl">
+                    <Image
+                      src="/katwanyaa.png"
+                      alt="katwanyaa Logo"
+                      width={64}
+                      height={64}
+                      className="rounded-full"
+                    />
+                    <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-pulse"></div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-black tracking-tighter leading-none uppercase">
+                      katwanyaa <span className="text-blue-400">'</span>
+                    </span>
+                    <span className="text-[10px] font-bold tracking-[0.4em] text-blue-300/60 uppercase mt-1">
+                      Senior School
+                    </span>
+                  </div>
+                </Link>
               </div>
 
-              {/* Hero Content */}
-              <div className="flex-1 flex flex-col justify-center max-w-md mx-auto text-center py-12">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-wider mx-auto mb-6">
+              <div className="my-auto py-10 sm:py-12 px-4 max-w-md mx-auto text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-5 sm:mb-6">
                   <ShieldCheck size={14} />
                   Authorized Personnel Only
                 </div>
-                
-                <h2 className="text-4xl font-black tracking-tight mb-4">
-                  Welcome to{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300">
-                    Katwaanyaa
-                  </span>
-                </h2>
-                
-                <p className="text-emerald-100/80 text-sm leading-relaxed">
-                  Your gateway to the administrative management system. Access institutional data, oversee operations, and drive excellence at Katwaanyaa Senior School.
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight mb-5 sm:mb-6">
+                  Secure{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
+                    Admin
+                  </span>{" "}
+                  Portal
+                </h1>
+                <p className="text-sm sm:text-md text-slate-50 font-medium leading-relaxed max-w-xs sm:max-w-sm mx-auto">
+                  Enter your credentials to securely access the school's administrative system, manage operations, and oversee essential academic and institutional activities.
                 </p>
-
-                {/* Stats Decor */}
-                <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-emerald-700/30">
-                  <div>
-                    <div className="text-2xl font-black text-emerald-300">500+</div>
-                    <div className="text-[10px] uppercase tracking-wider text-emerald-300/60">Students</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black text-emerald-300">45+</div>
-                    <div className="text-[10px] uppercase tracking-wider text-emerald-300/60">Staff</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black text-emerald-300">15+</div>
-                    <div className="text-[10px] uppercase tracking-wider text-emerald-300/60">Years</div>
-                  </div>
-                </div>
               </div>
 
-              {/* Footer Motto */}
-              <div className="border-t border-emerald-700/30 pt-6">
-                <p className="text-xs text-emerald-300/60 tracking-wide">
-                  <span className="font-bold">Motto:</span> "Striving for Academic and Moral Excellence"
-                </p>
-                <p className="text-[10px] text-emerald-400/40 mt-2">
-                  © {new Date().getFullYear()} Katwaanyaa Senior School | Secure Portal v2.0
-                </p>
+              <div className="mt-auto pt-8 mb-[5%] border-t border-white/5">
+                <div className="flex flex-col gap-6">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-100">School Motto</p>
+                    <p className="text-2xl font-black italic tracking-tight text-white drop-shadow-md">
+                      "Soaring To Excellence"
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-200 tracking-widest uppercase mt-4">
+                    <span>&copy; {new Date().getFullYear()} katwanyaa ' Senior</span>
+                    <span className="flex items-center gap-2">
+                      <Server size={10} />
+                      Secure Node: 041
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Panel - Login Form */}
-          <div className="min-h-screen flex items-center justify-center p-6 sm:p-8 lg:p-12">
-            <div className="w-full max-w-md">
-              {/* Mobile Logo */}
-              <div className="lg:hidden text-center mb-8">
+          {/* Right Panel - Form */}
+          <div className="min-h-screen bg-white p-6 sm:p-12 flex flex-col justify-start">
+            <div className="w-full max-w-md ml-0 md:ml-[15%]">
+              <div className="md:hidden text-center mb-8">
                 <Image
-                  src="/hero/katz.png"
-                  alt="Katwaanyaa Logo"
+                  src="/katwanyaa.png"
+                  alt="katwanyaa Logo"
                   width={60}
                   height={60}
-                  className="rounded-xl mx-auto mb-3 shadow-lg"
+                  className="rounded-full mx-auto mb-4 shadow-sm"
                 />
-                <h2 className="text-2xl font-black text-gray-800">Katwaanyaa Senior</h2>
-                <p className="text-xs text-gray-500 mt-1">Administrative Portal</p>
               </div>
 
-              {/* Form Header */}
-              <div className="mb-8 text-center lg:text-left">
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">
-                  {isForgotMode ? "Recover Access" : "Secure Login"}
-                </h3>
-                <p className="text-sm text-gray-500 mt-2">
+              <div className="mb-8 sm:mb-10 text-left">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-3">
+                  {isForgotMode ? "Recover Access" : "Welcome Back"}
+                </h2>
+                <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed">
                   {isForgotMode 
-                    ? "Enter your registered email to receive recovery instructions" 
-                    : "Enter your credentials to access the dashboard"}
+                    ? "Enter your email address below and we'll send you a secure recovery link." 
+                    : "Please enter your official credentials to access your dashboard."}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Email Field */}
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">
+                  <label className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-slate-700 mb-2 block">
                     Email Address
                   </label>
-                  <div className="relative group">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-emerald-600 transition-colors" />
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                     <input 
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      placeholder="admin@katwaanyaa.ac.ke"
-                      className="w-full pl-11 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800 placeholder:text-gray-400"
+                      placeholder="admin@katwanyaa.ac.ke"
+                      className="w-full pl-12 pr-4 py-3.5 sm:py-4 bg-slate-50 border text-slate-900 font-semibold border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all shadow-sm text-sm sm:text-base"
                     />
                   </div>
                 </div>
 
-                {/* Password Field */}
                 {!isForgotMode && (
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <label className="text-xs font-bold uppercase tracking-wider text-gray-600">
-                        Password
-                      </label>
-                      <button 
-                        type="button"
-                        onClick={() => router.push("/pages/forgotpassword")}
-                        className="text-xs font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
-                      >
-                        Forgot password?
-                      </button>
-                    </div>
-                    <div className="relative group">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-emerald-600 transition-colors" />
-                      <input 
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="••••••••"
-                        className="w-full pl-11 pr-12 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-gray-800"
-                      />
-                      <button 
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Checkboxes */}
-                {!isForgotMode && (
-                  <div className="space-y-3 pt-2">
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={agreedToTerms}
-                        onChange={(e) => setAgreedToTerms(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                      />
-                      <span className="text-xs text-gray-600">
-                        I agree to the{' '}
+                  <>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-slate-700">
+                          Password
+                        </label>
                         <button 
                           type="button"
-                          onClick={openTermsModal}
-                          className="font-bold text-emerald-600 hover:underline"
+                          onClick={() => router.push("/pages/forgotpassword")}
+                          className="text-[10px] sm:text-xs md:text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
                         >
-                          Terms & Conditions
+                          Forgot password?
                         </button>
-                      </span>
-                    </label>
-                    
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={rememberDevice}
-                        onChange={(e) => setRememberDevice(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                      />
-                      <span className="text-xs text-gray-600">
-                        Keep me logged in on this device
-                      </span>
-                    </label>
-                  </div>
+                      </div>
+                      <div className="relative">
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                        <input 
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          required
+                          placeholder="••••••••"
+                          className="w-full pl-12 pr-12 py-3.5 sm:py-4 text-slate-900 font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all shadow-sm text-sm sm:text-base"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
+                        >
+                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 pt-2">
+                      <div className="flex items-start justify-between">
+                        <label className="flex items-start gap-3 cursor-pointer group flex-1">
+                          <input 
+                            type="checkbox" 
+                            checked={agreedToTerms}
+                            onChange={(e) => setAgreedToTerms(e.target.checked)}
+                            className="mt-0.5 h-5 w-5 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition"
+                          />
+                          <span className="text-xs sm:text-sm text-slate-600 group-hover:text-slate-900 transition-colors leading-tight">
+                            I agree to the{' '}
+                            <button 
+                              type="button"
+                              onClick={openTermsModal}
+                              className="font-bold text-blue-600 hover:underline"
+                            >
+                              Terms & Conditions
+                            </button>
+                          </span>
+                        </label>
+                      </div>
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input 
+                          type="checkbox" 
+                          checked={rememberDevice}
+                          onChange={(e) => setRememberDevice(e.target.checked)}
+                          className="mt-0.5 h-5 w-5 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition"
+                        />
+                        <span className="text-xs sm:text-sm text-slate-600 group-hover:text-slate-900 transition-colors leading-tight">
+                          Keep me logged in on this device
+                        </span>
+                      </label>
+                    </div>
+                  </>
                 )}
 
-                {/* Submit Button */}
                 <button 
                   type="submit"
                   disabled={isLoading || (!isForgotMode && !agreedToTerms)}
-                  className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold text-base hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 mt-6"
+                  className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-blue-700 active:scale-[0.98] transition-all disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed shadow-lg shadow-blue-100 flex items-center justify-center gap-3 mt-4"
                 >
                   {isLoading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Authenticating...</span>
+                      <span>Verifying...</span>
                     </>
                   ) : (
                     <>
-                      <LogIn className="w-4 h-4" />
-                      <span>{isForgotMode ? "Send Recovery Link" : "Sign In to Portal"}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>{isForgotMode ? "Send Reset Link" : "Sign In to Portal"}</span>
+                      <ArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
 
-                {/* Forgot Mode Toggle */}
                 {isForgotMode && (
                   <button 
                     type="button"
                     onClick={() => setIsForgotMode(false)}
-                    className="w-full text-center text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors pt-3"
+                    className="w-full text-center text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors pt-4"
                   >
-                    ← Back to Login
+                    &larr; Return to login
                   </button>
                 )}
               </form>
-
-              {/* Security Notice */}
-              <div className="mt-8 p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
-                <div className="flex items-center gap-2 justify-center">
-                  <Fingerprint className="w-3 h-3 text-emerald-600" />
-                  <p className="text-[9px] text-emerald-700 font-medium uppercase tracking-wider">
-                    Secure Session • 256-bit Encryption • Activity Logged
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </main>
-
-      <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes zoom-in {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        .animate-in {
-          animation-duration: 0.2s;
-          animation-fill-mode: both;
-        }
-        .fade-in {
-          animation-name: fade-in;
-        }
-        .zoom-in {
-          animation-name: zoom-in;
-        }
-      `}</style>
     </>
   );
 }
