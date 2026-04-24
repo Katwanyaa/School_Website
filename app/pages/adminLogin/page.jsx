@@ -1383,7 +1383,7 @@ export default function AdminLoginPage() {
           <div className="relative hidden md:flex flex-col justify-between bg-slate-950 text-white px-16 py-20 lg:px-24 overflow-hidden border-r border-white/5">
             <div 
               className="absolute inset-0 bg-cover bg-center opacity-60 transition-transform duration-100"
-              style={{ backgroundImage: "url('/hero/kbss.png')" }}
+              style={{ backgroundImage: "url('/katz.jpeg')" }}
             ></div>
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-slate-950 to-black"></div>
             
@@ -1392,7 +1392,7 @@ export default function AdminLoginPage() {
                 <Link href="/" className="flex items-center gap-5 group transition-transform hover:translate-x-1">
                   <div className="relative p-1 bg-white/10 rounded-full backdrop-blur-xl border border-white/20 shadow-2xl">
                     <Image
-                      src="/katwanyaa.png"
+                      src="/katz.jpeg"
                       alt="katwanyaa Logo"
                       width={64}
                       height={64}
@@ -1433,7 +1433,7 @@ export default function AdminLoginPage() {
                   <div className="space-y-1">
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-100">School Motto</p>
                     <p className="text-2xl font-black italic tracking-tight text-white drop-shadow-md">
-                      "Soaring To Excellence"
+                      "Education is light"
                     </p>
                   </div>
                   
