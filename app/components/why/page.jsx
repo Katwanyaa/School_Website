@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
   FiAward, FiBook, FiHeart, FiMapPin, FiUsers, FiCalendar,
-  FiShield, FiTree, FiStar, FiGlobe, FiMail, FiPhone,
+  FiShield, FiLeaf, FiStar, FiGlobe, FiMail, FiPhone,
   FiArrowRight, FiBookOpen, FiMonitor, FiDollarSign, FiCpu,
   FiChevronLeft, FiChevronRight, FiChevronDown, FiTarget,
   FiTrendingUp, FiBox, FiThumbsUp, FiCheckCircle, FiBriefcase,
@@ -192,13 +192,14 @@ const KatwanyaaSeniorSchoolPage = () => {
       icon: <FiBriefcase className="w-5 h-5" />,
       gradient: "from-amber-500 to-orange-500"
     },
-    {
-      title: "Environmental Conservation",
-      description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees and promoting eco-friendly practices.",
-      details: ["LPG Adoption", "40% Cost Reduction", "Tree Conservation", "Eco-friendly"],
-      icon: <FiTree className="w-5 h-5" />,
-      gradient: "from-emerald-500 to-teal-500"
-    }
+ {
+  title: "Environmental Conservation",
+  description: "LPG adoption reduced kitchen expenses by 40% (KShs 700K to KShs 420K per term) and firewood consumption, conserving local trees and promoting eco-friendly practices.",
+  details: ["LPG Adoption", "40% Cost Reduction", "Tree Conservation", "Eco-friendly"],
+  icon: <FiLeaf className="w-5 h-5" />, // ✅ Fixed: FiLeaf instead of FiTree
+  gradient: "from-emerald-500 to-teal-500"
+}
+
   ];
 
   // CBC Pathways Data
@@ -601,19 +602,16 @@ const KatwanyaaSeniorSchoolPage = () => {
             </div>
           </div>
 
-          {/* Environmental Impact Note */}
-          <div className="mt-6 bg-teal-50 border border-teal-200 rounded-2xl p-5">
-            <div className="flex items-start gap-3">
-              <FiTree className="w-5 h-5 text-teal-600 mt-0.5" />
-              <div>
-                <h4 className="font-bold text-teal-800 text-sm mb-1">Environmental Conservation Impact</h4>
-                <p className="text-teal-700 text-sm">
-                  LPG adoption has significantly reduced our carbon footprint, conserved local trees previously used for firewood, 
-                  and improved kitchen efficiency with reduced cooking staff from 6 to 4.
-                </p>
-              </div>
-            </div>
-          </div>
+   <div className="flex items-start gap-3">
+  <FiLeaf className="w-5 h-5 text-teal-600 mt-0.5" /> {/* Changed from FiTree */}
+  <div>
+    <h4 className="font-bold text-teal-800 text-sm mb-1">Environmental Conservation Impact</h4>
+    <p className="text-teal-700 text-sm">
+      LPG adoption has significantly reduced our carbon footprint, conserved local trees previously used for firewood, 
+      and improved kitchen efficiency with reduced cooking staff from 6 to 4.
+    </p>
+  </div>
+</div>
         </div>
       </section>
 
