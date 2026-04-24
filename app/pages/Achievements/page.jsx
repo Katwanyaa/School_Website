@@ -160,7 +160,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
     return (
       <div
         onClick={() => onView(achievement)}
-        className="relative bg-[#FDF8F0] rounded-2xl sm:rounded-[28px] border border-[#E8DCC8] shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all hover:-translate-y-1 duration-300"
+        className="relative bg-[#FDF8F0] rounded-2xl sm:rounded-[28px] border border-[#E8DCC8] shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all duration-300"
       >
         {/* Image Header */}
         <div className="relative h-40 sm:h-48 w-full shrink-0">
@@ -223,7 +223,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
           </p>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 gap-2 sm:gap-3 mb-4 sm:mb-6">
             <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-[#FAF6F0] border border-[#E8DCC8]">
               <div className={`p-1 rounded-lg ${theme.iconBg}`}>
                 <IoMedalOutline className={`${theme.iconColor} w-3 h-3`} />
@@ -232,20 +232,11 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
                 {achievement.awardingBody || 'School Award'}
               </span>
             </div>
-
-            <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-[#FAF6F0] border border-[#E8DCC8]">
-              <div className={`p-1 rounded-lg ${theme.iconBg}`}>
-                <FiUsers className={`${theme.iconColor} w-3 h-3`} />
-              </div>
-              <span className="text-[9px] sm:text-[10px] font-bold text-[#3E2C1F] uppercase tracking-tight">
-                {achievement.recipients?.length || 1} Recipient(s)
-              </span>
-            </div>
           </div>
 
-          <button className="w-full py-2.5 sm:py-3 bg-[#3B82F6] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
+          <button className="w-full py-2.5 sm:py-3 md:py-3 px-3 sm:px-4 bg-[#3B82F6] text-white rounded-xl font-bold text-xs sm:text-sm md:text-base flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md hover:shadow-lg">
             View Details
-            <FiArrowRight className="w-3 h-3" />
+            <FiArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
@@ -535,12 +526,12 @@ export default function KatwanyaaAchievementsPage() {
       const data = await response.json();
       if (data.success && data.achievements) {
         const allAchievements = Object.values(data.achievements).flat();
-        setAchievementsData(allAchievements.length ? allAchievements : getSampleAchievements());
+        setAchievementsData(allAchievements.length > 0 ? allAchievements : []);
       } else {
-        setAchievementsData(getSampleAchievements());
+        setAchievementsData([]);
       }
     } catch {
-      setAchievementsData(getSampleAchievements());
+      setAchievementsData([]);
     } finally {
       if (showRefresh) setRefreshing(false);
     }
@@ -555,11 +546,17 @@ export default function KatwanyaaAchievementsPage() {
     loadData();
   }, []);
 
-  const filteredAchievements = achievementsData.filter(ach => {
-    const matchesSearch = searchTerm === '' || ach.title?.toLowerCase().includes(searchTerm.toLowerCase()) || ach.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = activeCategory === 'all' || ach.category === activeCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredAchievements = achievementsData.length > 0 
+    ? achievementsData.filter(ach => {
+        const matchesSearch = searchTerm === '' || ach.title?.toLowerCase().includes(searchTerm.toLowerCase()) || ach.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = activeCategory === 'all' || ach.category === activeCategory;
+        return matchesSearch && matchesCategory;
+      })
+    : getSampleAchievements().filter(ach => {
+        const matchesSearch = searchTerm === '' || ach.title?.toLowerCase().includes(searchTerm.toLowerCase()) || ach.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = activeCategory === 'all' || ach.category === activeCategory;
+        return matchesSearch && matchesCategory;
+      });
 
   const paginatedAchievements = filteredAchievements.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const totalPages = Math.ceil(filteredAchievements.length / itemsPerPage);
@@ -662,7 +659,7 @@ export default function KatwanyaaAchievementsPage() {
     return (
       <div 
         key={idx} 
-        className="group relative bg-gradient-to-br from-white to-[#F0F9FF] border-2 border-[#DBEAFE] rounded-2xl p-4 md:p-5 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
+        className="group relative bg-gradient-to-br from-white to-[#F0F9FF] border-2 border-[#DBEAFE] rounded-2xl p-4 md:p-5 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden"
       >
         {/* Modern gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#3B82F6]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
