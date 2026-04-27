@@ -1454,7 +1454,7 @@ Katz ict
             <div className="w-full max-w-md ml-0 md:ml-[15%]">
               <div className="md:hidden text-center mb-8">
                 <Image
-                  src="/kinyui.png"
+                  src="/katz.png"
                   alt="katwanyaa Logo"
                   width={60}
                   height={60}
