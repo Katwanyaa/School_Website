@@ -1245,46 +1245,46 @@ const pathways = [
 
       {/* ===== ACHIEVEMENT MODAL ===== */}
       {achievementModalOpen && selectedAchievement && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeAchievementModal}>
-          <div className="relative bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className={`bg-gradient-to-r ${selectedAchievement.color} p-5 text-white`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm" onClick={closeAchievementModal}>
+          <div className="relative bg-white rounded-xl sm:rounded-2xl max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className={`bg-gradient-to-r ${selectedAchievement.color} p-3 sm:p-5 text-white`}>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
                     {selectedAchievement.icon}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded">{selectedAchievement.year}</span>
-                      <h3 className="font-bold text-lg">{selectedAchievement.title}</h3>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[9px] sm:text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded whitespace-nowrap">{selectedAchievement.year}</span>
+                      <h3 className="font-bold text-sm sm:text-lg line-clamp-2">{selectedAchievement.title}</h3>
                     </div>
                   </div>
                 </div>
-                <button onClick={closeAchievementModal} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <FiX className="w-4 h-4" />
+                <button onClick={closeAchievementModal} className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <FiX className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
-            <div className="overflow-y-auto max-h-[70vh] p-6">
+            <div className="overflow-y-auto max-h-[calc(85vh-100px)] sm:max-h-[calc(90vh-100px)] p-3 sm:p-6">
               {selectedAchievement.image && (
-                <div className="relative h-48 w-full rounded-xl overflow-hidden mb-4">
+                <div className="relative h-32 sm:h-40 md:h-48 w-full rounded-lg sm:rounded-xl overflow-hidden mb-3 sm:mb-4">
                   <Image src={selectedAchievement.image} alt={selectedAchievement.title} fill className="object-cover" />
                 </div>
               )}
-              <div className="flex flex-wrap gap-2 mb-4">
-                <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{selectedAchievement.stats}</span>
-                <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{selectedAchievement.impact}</span>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                <span className="text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{selectedAchievement.stats}</span>
+                <span className="text-[9px] sm:text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{selectedAchievement.impact}</span>
               </div>
-              <p className="text-slate-700 text-sm leading-relaxed mb-4">{selectedAchievement.description}</p>
+              <p className="text-slate-700 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">{selectedAchievement.description}</p>
               {selectedAchievement.highlights && (
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <h4 className="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
-                    <FiCheckCircle className="text-green-600" /> Key Highlights
+                <div className="bg-slate-50 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                  <h4 className="font-bold text-slate-800 text-xs sm:text-sm mb-2 flex items-center gap-2">
+                    <FiCheckCircle className="text-green-600 flex-shrink-0" /> Key Highlights
                   </h4>
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-1 sm:space-y-1.5">
                     {selectedAchievement.highlights.map((highlight, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-slate-600">
-                        <span className="text-green-500">✓</span> {highlight}
+                      <li key={i} className="flex items-start gap-2 text-[11px] sm:text-xs text-slate-600">
+                        <span className="text-green-500 flex-shrink-0">✓</span> <span>{highlight}</span>
                       </li>
                     ))}
                   </ul>
