@@ -1109,138 +1109,78 @@ export default function AdminLoginPage() {
 
       {/* Verification Modal */}
       {showVerificationModal && (
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-[9999] animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md my-auto bg-white rounded-xl md:rounded-2xl shadow-2xl border-2 border-blue-900/10 overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
-            
-            <div className="relative p-5 sm:p-6 bg-[#002366] text-white shrink-0 border-b-4 border-amber-500">
-              <button
-                onClick={closeVerificationModal}
-                className="absolute top-3 right-3 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-90"
-              >
-                <X className="w-5 h-5 text-amber-400" />
-              </button>
-              
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center shrink-0 border border-white/20">
-                  <ShieldCheck className="w-6 h-6 md:w-7 md:h-7 text-amber-400" />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-lg flex items-center justify-center z-50">
+          <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden">
+            {/* Progress Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                    <ShieldCheck className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white">Verification</h3>
+                    <p className="text-xs text-blue-100">Step 1 of 2</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight uppercase">
-                    {requiresPasswordAfterVerification ? 'Final Access' : 'Identity Check'}
-                  </h3>
-                  <p className="text-blue-200 text-[10px] sm:text-xs font-semibold uppercase tracking-widest opacity-80">
-                    {requiresPasswordAfterVerification ? 'Portal Authorization' : 'Secure Campus Network'}
-                  </p>
-                </div>
+                <button onClick={closeVerificationModal} className="text-white hover:bg-white/20 p-2 rounded-lg">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              
-              <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-amber-500 text-blue-950 rounded-md shadow-sm">
-                <AlertCircle className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-black whitespace-nowrap uppercase tracking-tighter">
-                  {verificationReason?.replace(/_/g, ' ') || 'SECURITY PROTOCOL'}
-                </span>
+              {/* Progress Bar */}
+              <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+                <div className="h-full w-1/2 bg-white rounded-full"></div>
               </div>
             </div>
-            
-            <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar bg-slate-50/50">
-              {!requiresPasswordAfterVerification ? (
-                <>
-                  <div className="mb-6 text-center">
-                    <p className="text-slate-500 text-xs font-bold uppercase tracking-wide mb-3">
-                      Authorization Code Sent To:
-                    </p>
-                    <div className="bg-white border-2 border-slate-200 rounded-lg p-3 shadow-inner">
-                      <p className="text-blue-900 font-bold text-sm break-all">{verificationEmail}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <div className="grid grid-cols-6 gap-2 mb-5">
-                      {verificationCode.map((digit, index) => (
-                        <input
-                          key={index}
-                          id={`verification-input-${index}`}
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={1}
-                          value={digit}
-                          onChange={(e) => handleVerificationCodeChange(index, e.target.value)}
-                          onKeyDown={(e) => handleVerificationKeyDown(index, e)}
-                          className="w-full aspect-square text-center text-xl font-bold bg-white border-2 border-slate-300 rounded-lg focus:border-blue-800 focus:ring-4 focus:ring-blue-800/5 outline-none transition-all text-blue-900"
-                          autoFocus={index === 0}
-                        />
-                      ))}
-                    </div>
-                    
-                    <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 py-2 rounded-full">
-                      <Clock className="w-3.5 h-3.5 text-amber-600" />
-                      <span>Expires in: <span className="text-blue-900 font-mono">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span></span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="mb-6">
-                  <p className="text-slate-700 text-sm mb-4 font-bold">
-                    Identity Confirmed. Enter Portal Password:
-                  </p>
-                  <div className="relative group">
-                    <input
-                      type="password"
-                      value={passwordAfterVerification}
-                      onChange={(e) => setPasswordAfterVerification(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full p-4 pl-5 pr-12 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-800 focus:ring-4 focus:ring-blue-800/5 outline-none transition-all text-blue-900 font-bold"
-                      autoFocus
-                    />
-                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-800 transition-colors w-5 h-5" />
-                  </div>
-                </div>
-              )}
-              
-              <div className="flex flex-col gap-3">
-                <button
-                  type="button"
-                  onClick={requiresPasswordAfterVerification ? handlePasswordAfterVerification : handleVerifyCode}
-                  disabled={verificationLoading || (!requiresPasswordAfterVerification && verificationCode.join('').length !== 6)}
-                  className="w-full flex items-center justify-center gap-3 py-4 bg-blue-900 text-white rounded-xl font-bold text-sm tracking-widest shadow-xl hover:bg-blue-950 active:scale-[0.98] transition-all disabled:bg-slate-300"
-                >
-                  {verificationLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span className="capitalize text-sm font-medium">Verifying...</span>
-                    </div>
-                  ) : (
-                    <>
-                      <CheckCircle className="w-4 h-4 text-amber-400" />
-                      <span className="uppercase tracking-widest">
-                        {requiresPasswordAfterVerification ? 'Grant Access' : 'Authorize Device'}
-                      </span>
-                    </>
-                  )}
-                </button>
 
-                {!requiresPasswordAfterVerification && (
-                  <button
-                    type="button"
-                    onClick={handleResendCode}
-                    disabled={resendLoading || countdown > 0}
-                    className="w-full py-2 text-slate-500 font-black text-[10px] uppercase tracking-widest hover:text-blue-900 transition-colors disabled:opacity-30"
-                  >
-                    Didn't receive code? <span className="text-blue-700 underline underline-offset-4">Request New</span>
-                  </button>
-                )}
+            {/* Content */}
+            <div className="p-8">
+              <div className="mb-6 text-center">
+                <p className="text-sm text-slate-600 mb-2">Code sent to:</p>
+                <p className="font-bold text-slate-900 break-all">{verificationEmail}</p>
               </div>
 
-              <div className="mt-8 pt-5 border-t-2 border-dashed border-slate-200">
-                <div className="flex gap-4 items-start">
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <ShieldAlert className="w-4 h-4 text-blue-800" />
-                  </div>
-                  <p className="text-[10px] leading-relaxed text-slate-500 font-bold uppercase tracking-tight">
-                    School Security Protocol: This session is encrypted. Unauthorized access attempts are logged and reported to katwanyaa ICT Staff.
-                  </p>
-                </div>
+              {/* Vertical Input Fields */}
+              <div className="space-y-3 mb-6">
+                {verificationCode.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`verification-input-${index}`}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    className="w-full h-14 text-center text-2xl font-bold bg-slate-100 border-2 border-slate-300 rounded-lg focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                    autoFocus={index === 0}
+                  />
+                ))}
               </div>
+
+              {/* Resend Info */}
+              <div className="flex items-center gap-2 text-xs text-slate-500 mb-6 p-3 bg-slate-50 rounded-lg">
+                <Clock className="w-4 h-4" />
+                <span>Expires in: <span className="font-bold text-slate-900">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span></span>
+              </div>
+
+              {/* Buttons */}
+              <button
+                onClick={handleVerifyCode}
+                disabled={verificationLoading}
+                className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:bg-slate-300"
+              >
+                {verificationLoading ? 'Verifying...' : 'Verify & Continue'}
+              </button>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-slate-200 p-4 bg-slate-50 text-center">
+              <button
+                onClick={handleResendCode}
+                disabled={countdown > 0}
+                className="text-sm font-bold text-indigo-600 hover:underline disabled:text-slate-400"
+              >
+                {countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
+              </button>
             </div>
           </div>
         </div>

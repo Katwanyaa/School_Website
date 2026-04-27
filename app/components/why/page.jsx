@@ -1297,42 +1297,42 @@ const pathways = [
 
       {/* ===== PATHWAY MODAL ===== */}
       {pathwayModalOpen && selectedPathway && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closePathwayModal}>
-          <div className="relative bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className={`bg-gradient-to-r ${selectedPathway.color} p-5 text-white`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                    {React.createElement(selectedPathway.icon, { className: "w-5 h-5" })}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm" onClick={closePathwayModal}>
+          <div className="relative bg-white rounded-xl sm:rounded-2xl max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className={`bg-gradient-to-r ${selectedPathway.color} p-3 sm:p-5 text-white`}>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                    {React.createElement(selectedPathway.icon, { className: "w-4 h-4 sm:w-5 sm:h-5" })}
                   </div>
-                  <h3 className="font-bold text-lg">{selectedPathway.name}</h3>
+                  <h3 className="font-bold text-sm sm:text-lg line-clamp-2">{selectedPathway.name}</h3>
                 </div>
-                <button onClick={closePathwayModal} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <FiX className="w-4 h-4" />
+                <button onClick={closePathwayModal} className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <FiX className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
-            <div className="overflow-y-auto max-h-[70vh] p-6">
-              <p className="text-slate-600 text-sm mb-4">{selectedPathway.description}</p>
-              <div className="mb-4">
-                <h4 className="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
-                  <FiBook className="text-blue-500" /> Core Subjects
+            <div className="overflow-y-auto max-h-[calc(85vh-100px)] sm:max-h-[calc(90vh-100px)] p-3 sm:p-6">
+              <p className="text-slate-600 text-xs sm:text-sm mb-3 sm:mb-4">{selectedPathway.description}</p>
+              <div className="mb-3 sm:mb-4">
+                <h4 className="font-bold text-slate-800 text-xs sm:text-sm mb-2 flex items-center gap-2">
+                  <FiBook className="text-blue-500 flex-shrink-0" /> Core Subjects
                 </h4>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {selectedPathway.subjects.map((subject, i) => (
-                    <span key={i} className="px-2 py-1 bg-slate-100 rounded-lg text-xs font-medium">{subject}</span>
+                    <span key={i} className="px-2 py-1 bg-slate-100 rounded-lg text-[10px] sm:text-xs font-medium">{subject}</span>
                   ))}
                 </div>
               </div>
               <div>
-                <h4 className="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
-                  <FiBriefcase className="text-green-500" /> Career Paths
+                <h4 className="font-bold text-slate-800 text-xs sm:text-sm mb-2 flex items-center gap-2">
+                  <FiBriefcase className="text-green-500 flex-shrink-0" /> Career Paths
                 </h4>
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-1.5">
                   {selectedPathway.careers.map((career, i) => (
-                    <div key={i} className="flex items-center gap-2 p-1.5">
-                      <div className="w-1 h-1 rounded-full bg-green-500" />
-                      <span className="text-xs text-slate-600">{career}</span>
+                    <div key={i} className="flex items-start gap-2 p-1 sm:p-1.5">
+                      <div className="w-1 h-1 rounded-full bg-green-500 mt-1.5 flex-shrink-0" />
+                      <span className="text-[10px] sm:text-xs text-slate-600 line-clamp-2">{career}</span>
                     </div>
                   ))}
                 </div>
