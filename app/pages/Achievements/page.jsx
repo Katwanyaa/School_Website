@@ -382,7 +382,6 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
   );
 };
 
-// Share Modal
 const ShareModal = ({ achievement, onClose }) => {
   const [copied, setCopied] = useState(false);
 
@@ -795,19 +794,26 @@ export default function KatwanyaaAchievementsPage() {
         </div>
       </div>
 
-      {/* Achievement Detail Modal */}
-      {selectedAchievement && !showShareModal && (
-        <AchievementDetailModal
-          achievement={selectedAchievement}
-          onClose={() => setSelectedAchievement(null)}
-          onShare={() => setShowShareModal(true)}
-        />
-      )}
+  {/* Achievement Detail Modal */}
+{selectedAchievement && !showShareModal && (
+  <AchievementDetailModal
+    achievement={selectedAchievement}
+    onClose={() => setSelectedAchievement(null)}
+    onShare={() => setShowShareModal(true)}
+  />
+)}
 
-      {/* Share Modal */}
-      {showShareModal && selectedAchievement && (
-        <ShareModal achievement={selectedAchievement} onClose={() => { setShowShareModal(false); setSelectedAchievement(null); }} />
-      )}
+{/* Share Modal - FIXED: Only shows when share modal is open AND achievement exists */}
+{showShareModal && selectedAchievement && (
+  <ShareModal 
+    achievement={selectedAchievement} 
+    onClose={() => {
+      setShowShareModal(false);
+      // IMPORTANT: DO NOT clear selectedAchievement here
+      // This keeps the achievement modal open when share modal closes
+    }} 
+  />
+)}
     </div>
   );
 }
