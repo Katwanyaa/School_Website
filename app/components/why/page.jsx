@@ -13,6 +13,7 @@ import {
   FiLayers, FiPenTool, FiActivity, FiDroplet, FiEye, FiX
 } from 'react-icons/fi';
 import { IoSparkles } from 'react-icons/io5';
+import date from 'date-and-time'; 
 
 const KatwanyaaSeniorSchoolPage = () => {
   const router = useRouter();
