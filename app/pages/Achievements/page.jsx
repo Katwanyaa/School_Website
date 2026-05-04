@@ -65,11 +65,22 @@ const KATWANYAA_THEME = {
 };
 
 // Modern Modal Component
+// Modern Modal Component - FIXED
 const ModernModal = ({ children, open, onClose, maxWidth = '800px', blur = true }) => {
   if (!open) return null;
 
+  // Handle backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 ${blur ? 'backdrop-blur-md' : 'bg-black/50'}`}>
+    <div 
+      className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 ${blur ? 'backdrop-blur-md' : 'bg-black/50'}`}
+      onClick={handleBackdropClick}
+    >
       <div
         className="relative bg-[#FDF8F0]/95 rounded-2xl sm:rounded-3xl shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden border border-[#E8DCC8]/60"
         style={{
@@ -81,7 +92,10 @@ const ModernModal = ({ children, open, onClose, maxWidth = '800px', blur = true 
       >
         <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10">
           <button
-            onClick={onClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             type="button"
             className="p-1.5 sm:p-2 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full hover:shadow-lg cursor-pointer border-0 shadow-md transition-all active:scale-95"
           >
@@ -286,6 +300,7 @@ const ModernAchievementCard = ({ achievement, onView, onBookmark, viewMode = 'gr
 };
 
 // Achievement Detail Modal
+// Achievement Detail Modal - FIXED
 const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
   if (!achievement) return null;
 
@@ -304,13 +319,39 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
   const CategoryIcon = categoryStyle.icon;
   const year = achievement.achievedDate ? new Date(achievement.achievedDate).getFullYear() : achievement.year;
 
+  // Handle backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="relative w-full h-auto max-h-[90vh] sm:max-h-[85vh] sm:max-w-3xl bg-[#FDF8F0] rounded-2xl overflow-hidden shadow-2xl flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 p-1.5 sm:p-2 bg-black/20 backdrop-blur text-white rounded-full"><IoClose size={16} className="sm:w-5 sm:h-5" /></button>
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm" 
+      onClick={handleBackdropClick}
+    >
+      <div 
+        className="relative w-full h-auto max-h-[90vh] sm:max-h-[85vh] sm:max-w-3xl bg-[#FDF8F0] rounded-2xl overflow-hidden shadow-2xl flex flex-col" 
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button - FIXED */}
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }} 
+          className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 p-1.5 sm:p-2 bg-black/20 backdrop-blur text-white rounded-full hover:bg-black/40 transition-all"
+        >
+          <IoClose size={16} className="sm:w-5 sm:h-5" />
+        </button>
 
         <div className="relative h-40 sm:h-48 md:h-64 w-full shrink-0">
-          <img src={achievement.images?.[0]?.url || '/achievement-placeholder.jpg'} alt={achievement.title} className="w-full h-full object-cover" />
+          <img 
+            src={achievement.images?.[0]?.url || '/achievement-placeholder.jpg'} 
+            alt={achievement.title} 
+            className="w-full h-full object-cover" 
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[#FDF8F0] via-transparent to-black/20" />
           <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 flex gap-2 flex-wrap">
             <span className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold ${categoryStyle.gradient === KATWANYAA_THEME.gradientGreen ? 'bg-[#2D6A4F]' : 'bg-[#3B82F6]'} text-white`}>
@@ -332,9 +373,13 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
             </div>
 
             <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-[#8B7355]">
-              <div className="flex items-center gap-1 sm:gap-1.5"><FiCalendar size={12} className="sm:w-4 sm:h-4" />{year}</div>
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <FiCalendar size={12} className="sm:w-4 sm:h-4" />{year}
+              </div>
               {achievement.recipients?.length > 0 && (
-                <div className="flex items-center gap-1 sm:gap-1.5"><FiUsers size={12} className="sm:w-4 sm:h-4" />{achievement.recipients.length} Recipient(s)</div>
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <FiUsers size={12} className="sm:w-4 sm:h-4" />{achievement.recipients.length} Recipient(s)
+                </div>
               )}
             </div>
 
@@ -371,8 +416,22 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
 
         <div className="shrink-0 p-2.5 sm:p-4 md:p-6 bg-[#FDF8F0] border-t border-[#E8DCC8]">
           <div className="flex gap-2 sm:gap-3">
-            <button onClick={onClose} className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm hover:shadow-lg transition-all active:scale-95">Close</button>
-            <button onClick={onShare} className="flex-1 py-2 sm:py-3 bg-[#FAF6F0] border border-[#E8DCC8] text-[#3E2C1F] rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-2">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }} 
+              className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm hover:shadow-lg transition-all active:scale-95"
+            >
+              Close
+            </button>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onShare();
+              }} 
+              className="flex-1 py-2 sm:py-3 bg-[#FAF6F0] border border-[#E8DCC8] text-[#3E2C1F] rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-2"
+            >
               <FiShare2 size={12} className="sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Share</span>
             </button>
           </div>
@@ -400,42 +459,89 @@ const ShareModal = ({ achievement, onClose }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Handle backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <ModernModal open={true} onClose={onClose} maxWidth="480px">
-      <div className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 p-3 sm:p-6 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full" />
-        <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="w-10 sm:w-12 h-10 sm:h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mb-2 sm:mb-3">
-            <IoShareSocialOutline className="text-lg sm:text-xl" />
-          </div>
-          <h2 className="text-base sm:text-xl font-black">Share Achievement</h2>
-          <p className="text-white/80 text-xs sm:text-sm mt-1 line-clamp-2">{achievement.title}</p>
-        </div>
-      </div>
-      <div className="p-3 sm:p-6 bg-[#FDF8F0]">
-        <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
-          {socialPlatforms.map((platform, idx) => {
-            const Icon = platform.icon;
-            return (
-              <button key={idx} onClick={platform.action} className="flex flex-col items-center gap-1 sm:gap-1.5 group">
-                <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl bg-[#EFF6FF] flex items-center justify-center text-[#3B82F6] border border-[#DBEAFE] group-active:scale-95 transition-all">
-                  <Icon className="text-sm sm:text-base" />
-                </div>
-                <span className="text-[7px] sm:text-[8px] font-black uppercase text-[#8B7355] text-center line-clamp-1">{platform.name}</span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="relative">
-          <div className="w-full p-2 sm:p-3 bg-[#FAF6F0] rounded-lg sm:rounded-xl border border-[#E8DCC8] pr-16 sm:pr-20">
-            <p className="text-[9px] sm:text-[10px] font-mono text-[#8B7355] truncate">{window.location.href}</p>
-          </div>
-          <button onClick={copyToClipboard} className={`absolute right-1 sm:right-1.5 top-1 sm:top-1.5 bottom-1 sm:bottom-1.5 px-2 sm:px-4 rounded-lg font-bold text-[9px] sm:text-[10px] transition-all ${copied ? 'bg-green-600 text-white' : 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white'}`}>
-            {copied ? 'Copied!' : 'Copy'}
+    <div 
+      className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm"
+      onClick={handleBackdropClick}
+    >
+      <div 
+        className="relative bg-[#FDF8F0]/95 rounded-2xl sm:rounded-3xl shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden border border-[#E8DCC8]/60"
+        style={{
+          width: '95%',
+          maxWidth: '480px',
+          background: 'linear-gradient(135deg, rgba(253,248,240,0.98) 0%, rgba(248,244,235,0.98) 100%)'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            type="button"
+            className="p-1.5 sm:p-2 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full hover:shadow-lg cursor-pointer border-0 shadow-md transition-all active:scale-95"
+          >
+            <FiX className="text-white w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
+
+        <div className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 p-3 sm:p-6 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full" />
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mb-2 sm:mb-3">
+              <IoShareSocialOutline className="text-lg sm:text-xl" />
+            </div>
+            <h2 className="text-base sm:text-xl font-black">Share Achievement</h2>
+            <p className="text-white/80 text-xs sm:text-sm mt-1 line-clamp-2">{achievement.title}</p>
+          </div>
+        </div>
+
+        <div className="p-3 sm:p-6 bg-[#FDF8F0]">
+          <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
+            {socialPlatforms.map((platform, idx) => {
+              const Icon = platform.icon;
+              return (
+                <button 
+                  key={idx} 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    platform.action();
+                  }} 
+                  className="flex flex-col items-center gap-1 sm:gap-1.5 group"
+                >
+                  <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl bg-[#EFF6FF] flex items-center justify-center text-[#3B82F6] border border-[#DBEAFE] group-active:scale-95 transition-all">
+                    <Icon className="text-sm sm:text-base" />
+                  </div>
+                  <span className="text-[7px] sm:text-[8px] font-black uppercase text-[#8B7355] text-center line-clamp-1">{platform.name}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="relative">
+            <div className="w-full p-2 sm:p-3 bg-[#FAF6F0] rounded-lg sm:rounded-xl border border-[#E8DCC8] pr-16 sm:pr-20">
+              <p className="text-[9px] sm:text-[10px] font-mono text-[#8B7355] truncate">{window.location.href}</p>
+            </div>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                copyToClipboard();
+              }} 
+              className={`absolute right-1 sm:right-1.5 top-1 sm:top-1.5 bottom-1 sm:bottom-1.5 px-2 sm:px-4 rounded-lg font-bold text-[9px] sm:text-[10px] transition-all ${copied ? 'bg-green-600 text-white' : 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white'}`}
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+        </div>
       </div>
-    </ModernModal>
+    </div>
   );
 };
 
@@ -794,7 +900,6 @@ export default function KatwanyaaAchievementsPage() {
         </div>
       </div>
 
-  {/* Achievement Detail Modal */}
 {selectedAchievement && !showShareModal && (
   <AchievementDetailModal
     achievement={selectedAchievement}
@@ -803,14 +908,13 @@ export default function KatwanyaaAchievementsPage() {
   />
 )}
 
-{/* Share Modal - FIXED: Only shows when share modal is open AND achievement exists */}
+
 {showShareModal && selectedAchievement && (
   <ShareModal 
     achievement={selectedAchievement} 
     onClose={() => {
       setShowShareModal(false);
-      // IMPORTANT: DO NOT clear selectedAchievement here
-      // This keeps the achievement modal open when share modal closes
+      // Keep the achievement modal open
     }} 
   />
 )}
