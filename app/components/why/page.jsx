@@ -13,7 +13,6 @@ import {
   FiLayers, FiPenTool, FiActivity, FiDroplet, FiEye, FiX
 } from 'react-icons/fi';
 import { IoSparkles } from 'react-icons/io5';
-import date from 'date-and-time'; 
 
 const KatwanyaaSeniorSchoolPage = () => {
   const router = useRouter();
@@ -34,6 +33,10 @@ const KatwanyaaSeniorSchoolPage = () => {
     { src: "/hero/sports.jpeg", alt: "Katwanyaa Senior School - Sports Activities" },
     { src: "hero/katz8.jpeg", alt: "Katwanyaa Senior School - Achievements Celebration" },
   ];
+
+const currentYear = new Date().getFullYear();
+
+
 
   // Auto-advance carousel
   useEffect(() => {
@@ -1225,7 +1228,7 @@ const pathways = [
           </h2>
          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
   Take the first step towards academic excellence and character development.
-  Applications for Form One {date.getFullYear()} are now open.
+  Applications for Form One {currentYear} are now open.
 </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button
