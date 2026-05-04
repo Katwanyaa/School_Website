@@ -1006,7 +1006,7 @@ const handleLogout = () => {
     {
       id: 'achievements',
       label: 'Achievements',
-      icon: FiStar,
+      icon: FiAward,
       badge: 'blue'
     }
   ];
