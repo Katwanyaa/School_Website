@@ -300,9 +300,9 @@ export default function ModernNavbar() {
                           )}
                         </button>
 
-                        {/* Academic Dropdown Menu - INCREASED HEIGHT on large screens only */}
+                        {/* Academic Dropdown Menu - NARROWER VERSION (w-80 like Kinyui) */}
                         {isAcademicDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-[500px] lg:w-[600px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                          <div className="absolute top-full left-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                             {/* Header Section */}
                             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3">
                               <h3 className="font-bold text-white text-[0.7rem] uppercase tracking-wider flex items-center gap-1.5">
@@ -312,72 +312,59 @@ export default function ModernNavbar() {
                               <p className="text-blue-100 text-[0.65rem] mt-0.5">Explore our academic resources and opportunities</p>
                             </div>
                             
-                            {/* Grid Layout for Items - INCREASED HEIGHT on large screens */}
-                            <div className="grid grid-cols-2 gap-2 p-3 lg:p-4 lg:min-h-[280px]">
+                            {/* Single Column Layout - NARROWER */}
+                            <div className="p-2">
                               {academicDropdownItems.map((dropdownItem) => (
                                 <a
                                   key={dropdownItem.name}
                                   href={dropdownItem.href}
-                                  className="group relative overflow-hidden rounded-lg transition-all duration-300 hover:shadow-md bg-white hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 border border-gray-100 hover:border-blue-200"
+                                  className="group flex items-start gap-3 px-3 py-3 rounded-xl transition-all duration-200 hover:bg-gray-50"
                                   onClick={() => setIsAcademicDropdownOpen(false)}
                                 >
-                                  <div className="p-2.5 lg:p-3">
-                                    <div className="flex items-start gap-2.5">
-                                      <div className="flex-shrink-0">
-                                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white shadow-md">
-                                          <dropdownItem.icon className="text-xs" />
-                                        </div>
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between gap-1">
-                                          <h4 className="font-semibold text-gray-800 text-xs group-hover:text-blue-700 transition-colors">
-                                            {dropdownItem.name}
-                                          </h4>
-                                          {dropdownItem.badge && (
-                                            <span className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white whitespace-nowrap">
-                                              {dropdownItem.badge}
-                                            </span>
-                                          )}
-                                        </div>
-                                        <p className="text-gray-500 text-[0.65rem] mt-0.5 line-clamp-2">
-                                          {dropdownItem.description}
-                                        </p>
-                                      </div>
-                                    </div>
+                                  <div className="p-2 rounded-lg bg-gray-100 text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+                                    <dropdownItem.icon className="text-sm" />
                                   </div>
-                                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-indigo-600/0 group-hover:from-blue-600/5 group-hover:to-indigo-600/5 transition-all duration-300"></div>
+                                  <div className="flex-1">
+                                    <div className="flex items-center justify-between gap-1">
+                                      <h4 className="font-semibold text-gray-800 text-sm group-hover:text-blue-700 transition-colors">
+                                        {dropdownItem.name}
+                                      </h4>
+                                      {dropdownItem.badge && (
+                                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white whitespace-nowrap">
+                                          {dropdownItem.badge}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-gray-500 text-xs mt-0.5">
+                                      {dropdownItem.description}
+                                    </p>
+                                  </div>
+                                  <FiChevronRight className="text-gray-400 text-sm mt-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:text-blue-600" />
                                 </a>
                               ))}
                               
-                              {/* Zeraki Analytics Special Card */}
+                              {/* Zeraki Analytics Special Card - Full Width */}
                               <a 
                                 href="https://analytics.zeraki.app/" 
-                                className="group relative col-span-2 overflow-hidden rounded-lg transition-all duration-300 hover:shadow-md bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 hover:border-purple-300"
+                                className="group flex items-center justify-between mt-2 p-3 rounded-xl transition-all duration-200 hover:bg-purple-50 border border-purple-100"
                                 onClick={() => setIsAcademicDropdownOpen(false)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                <div className="p-2.5 lg:p-3">
-                                  <div className="flex items-center gap-2.5">
-                                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md">
-                                      <img 
-                                        src="/zeraki.jpg" 
-                                        alt="Zeraki Analytics" 
-                                        className="w-4 h-4 rounded-md"
-                                      />
-                                    </div>
-                                    <div className="flex-1">
-                                      <div className="flex items-center justify-between">
-                                        <h4 className="font-semibold text-gray-800 text-xs">Zeraki Analytics</h4>
-                                        <span className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                                          External
-                                        </span>
-                                      </div>
-                                      <p className="text-gray-600 text-[0.65rem] mt-0.5">Advanced learning analytics and performance tracking</p>
-                                    </div>
-                                    <FiChevronRight className="text-purple-400 text-sm opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md">
+                                    <img 
+                                      src="/zeraki.jpg" 
+                                      alt="Zeraki Analytics" 
+                                      className="w-4 h-4 rounded-md"
+                                    />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold text-gray-800 text-sm">Zeraki Analytics</h4>
+                                    <p className="text-gray-500 text-xs">Advanced learning analytics platform</p>
                                   </div>
                                 </div>
+                                <FiChevronRight className="text-purple-400 text-sm opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
                               </a>
                             </div>
                           </div>
@@ -410,7 +397,7 @@ export default function ModernNavbar() {
                   );
                 })}
                 
-                {/* Resources Dropdown - INCREASED HEIGHT on large screens */}
+                {/* Resources Dropdown - NARROWER VERSION */}
                 <div 
                   className="relative"
                   ref={resourcesDropdownRef}
@@ -444,69 +431,64 @@ export default function ModernNavbar() {
                     )}
                   </button>
 
-                  {/* Resources Dropdown Menu - INCREASED HEIGHT on large screens */}
+                  {/* Resources Dropdown Menu - NARROWER VERSION (w-80 like Kinyui) */}
                   {isResourcesDropdownOpen && (
-                    <div className="absolute top-full left-0 mt-1 w-[400px] lg:w-[500px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                    <div className="absolute top-full left-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                       {/* Header */}
                       <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3">
                         <h3 className="font-bold text-white text-[0.7rem] uppercase tracking-wider flex items-center gap-1.5">
                           <FiGrid className="text-white text-xs" />
                           Resources & Administration
                         </h3>
-                        <p className="text-purple-100 text-[0.65rem] mt-0.5">Essential tools and information for our community</p>
+                        <p className="text-purple-100 text-[0.65rem] mt-0.5">Essential tools and information</p>
                       </div>
                       
-                      {/* Items - INCREASED HEIGHT on large screens */}
-                      <div className="p-3 lg:p-4 lg:min-h-[280px] space-y-1.5">
+                      {/* Items - Single Column */}
+                      <div className="p-2 space-y-1">
                         {resourcesDropdownItems.map((dropdownItem) => (
                           <a
                             key={dropdownItem.name}
                             href={dropdownItem.href}
-                            className={`group relative overflow-hidden rounded-lg transition-all duration-300 hover:shadow-md block ${
+                            className={`group flex items-start gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
                               dropdownItem.isHighlighted
-                                ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 hover:border-blue-300'
-                                : 'bg-white border border-gray-100 hover:border-purple-200 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50'
+                                ? 'hover:bg-blue-50'
+                                : 'hover:bg-gray-50'
                             }`}
                             onClick={() => setIsResourcesDropdownOpen(false)}
                           >
-                            <div className="p-2.5 lg:p-3">
-                              <div className="flex items-center gap-2.5">
-                                <div className={`flex-shrink-0 ${
-                                  dropdownItem.isHighlighted
-                                    ? 'w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500'
-                                    : 'w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500'
-                                } flex items-center justify-center text-white shadow-md`}>
-                                  <dropdownItem.icon className="text-xs" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-1">
-                                    <h4 className={`font-semibold text-xs ${
-                                      dropdownItem.isHighlighted ? 'text-blue-700' : 'text-gray-800 group-hover:text-purple-700'
-                                    } transition-colors`}>
-                                      {dropdownItem.name}
-                                    </h4>
-                                    {dropdownItem.badge && (
-                                      <span className={`text-[9px] font-bold px-1 py-0.5 rounded-full whitespace-nowrap ${
-                                        dropdownItem.isHighlighted
-                                          ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
-                                          : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                                      }`}>
-                                        {dropdownItem.badge}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <p className="text-gray-500 text-[0.65rem] mt-0.5">
-                                    {dropdownItem.description}
-                                  </p>
-                                </div>
-                                <FiChevronRight className={`text-sm opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 ${
-                                  dropdownItem.isHighlighted ? 'text-blue-400' : 'text-purple-400'
-                                }`} />
-                              </div>
+                            <div className={`p-2 rounded-lg ${
+                              dropdownItem.isHighlighted
+                                ? 'bg-blue-100 text-blue-600 group-hover:bg-blue-200'
+                                : 'bg-gray-100 text-gray-600 group-hover:bg-purple-100 group-hover:text-purple-700'
+                            } transition-colors`}>
+                              <dropdownItem.icon className="text-sm" />
                             </div>
-                            {dropdownItem.isHighlighted && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/5 to-indigo-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            )}
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between gap-1">
+                                <h4 className={`font-semibold text-sm ${
+                                  dropdownItem.isHighlighted
+                                    ? 'text-blue-700 group-hover:text-blue-800'
+                                    : 'text-gray-800 group-hover:text-purple-700'
+                                }`}>
+                                  {dropdownItem.name}
+                                </h4>
+                                {dropdownItem.badge && (
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ${
+                                    dropdownItem.isHighlighted
+                                      ? 'bg-blue-500 text-white'
+                                      : 'bg-purple-500 text-white'
+                                  }`}>
+                                    {dropdownItem.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-500 text-xs mt-0.5">
+                                {dropdownItem.description}
+                              </p>
+                            </div>
+                            <FiChevronRight className={`text-sm mt-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 ${
+                              dropdownItem.isHighlighted ? 'group-hover:text-blue-600' : 'group-hover:text-purple-600'
+                            }`} />
                           </a>
                         ))}
                       </div>
@@ -540,7 +522,7 @@ export default function ModernNavbar() {
           </div>
         </div>
 
-        {/* Mobile Menu - Responsive (unchanged text sizes) */}
+        {/* Mobile Menu - Responsive */}
         {isOpen && (
           <div className="lg:hidden bg-gradient-to-b from-blue-700 to-purple-800 border-t border-white/10">
             <div className="px-3 xs:px-4 sm:px-6 py-6 xs:py-8 max-w-2xl mx-auto">
@@ -646,7 +628,7 @@ export default function ModernNavbar() {
                   );
                 })}
 
-                {/* Mobile Resources Dropdown (Staff, Careers & Admin Login) */}
+                {/* Mobile Resources Dropdown */}
                 <div className="space-y-1.5 xs:space-y-2" ref={mobileResourcesDropdownRef}>
                   <button
                     onClick={() => setIsMobileResourcesDropdownOpen(!isMobileResourcesDropdownOpen)}
