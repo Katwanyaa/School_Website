@@ -1222,10 +1222,10 @@ const pathways = [
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-4">
             Ready to Join Katwanyaa Senior School?
           </h2>
-          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            Take the first step towards academic excellence and character development.
-            Applications for Form One 2025 are now open.
-          </p>
+         <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+  Take the first step towards academic excellence and character development.
+  Applications for Form One {date.getFullYear()} are now open.
+</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={handleApplyNow}
