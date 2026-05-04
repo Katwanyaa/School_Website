@@ -298,6 +298,13 @@ const handleLogout = () => {
       label: 'Admins & Profile', 
       icon: MdAdminPanelSettings,
       badge: 'gray'
+    },
+
+    {
+      id: 'achievements',
+      label: 'Achievements',
+      icon: FiStar,
+      badge: 'blue'
     }
   ];
 

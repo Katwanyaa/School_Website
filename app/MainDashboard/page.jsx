@@ -482,6 +482,7 @@ export default function AdminDashboard() {
         fetch('/api/studentupload'),
         fetch('/api/feebalances'),
         fetch('/api/schooldocuments')
+
       ]);
 
       const staff = staffRes.status === 'fulfilled' ? await staffRes.value.json() : { staff: [] };
@@ -876,6 +877,10 @@ const handleLogout = () => {
         case 'sms':      
           return <SMSManager />;
 
+
+      case 'achievements':
+        return <AchievementsManager />;    
+
       case 'subscribers':
         return <SubscriberManager />;
       case 'email':
@@ -995,6 +1000,13 @@ const handleLogout = () => {
       icon: FiShield,
       badge: 'gray'
     },
+
+    {
+      id: 'achievements',
+      label: 'Achievements',
+      icon: FiStar,
+      badge: 'blue'
+    }
   ];
 
   const CompactSchoolHeader = () => {
