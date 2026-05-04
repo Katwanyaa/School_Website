@@ -8,6 +8,7 @@ import {
   FaChartLine, FaBullseye, FaQuoteRight, FaSync,
   FaChevronDown, FaChevronUp, FaEye, FaEyeSlash
 } from 'react-icons/fa';
+import {FiAward } from "react-icons/fi"
 import { FiUpload, FiX, FiCheck } from 'react-icons/fi';
 import { CircularProgress, Modal, Box, TextareaAutosize } from '@mui/material';
 

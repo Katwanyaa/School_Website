@@ -22,6 +22,8 @@ import {
   FiArchive,
   FiMessageSquare
 } from 'react-icons/fi';
+import {FiAward } from "react-icons/fi"
+
 
 import { 
   IoNewspaper,
