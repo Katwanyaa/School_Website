@@ -53,7 +53,7 @@ const currentYear = new Date().getFullYear();
     setExpandedCards((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleExplorePathways = () => router.push("/pages/admissions");
+  const handleExplorePathways = () => router.push("/pages/contact");
   const handleApplyNow = () => router.push("/pages/apply-for-admissions");
 
   // Key achievements based on provided data
