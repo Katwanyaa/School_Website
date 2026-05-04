@@ -1230,6 +1230,7 @@ const pathways = [
   Take the first step towards academic excellence and character development.
   Applications for Form One {currentYear} are now open.
 </p>
+
           <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={handleApplyNow}
