@@ -462,9 +462,9 @@ export default function AdminDashboard() {
         assignmentsRes,
         galleryRes,
         guidanceRes,
+        admissionsRes,
         resourcesRes,
         careersRes,
-        studentRes,
         feesRes,
         schooldocumentsRes,
         smsRes,
@@ -480,7 +480,6 @@ export default function AdminDashboard() {
         fetch('/api/applyadmission'),
         fetch('/api/resources'),
         fetch('/api/career'),
-        fetch('/api/studentupload'),
         fetch('/api/feebalances'),
         fetch('/api/schooldocuments'),
         fetch('/api/sms'),
@@ -495,9 +494,9 @@ export default function AdminDashboard() {
       const assignments = assignmentsRes.status === 'fulfilled' ? await assignmentsRes.value.json() : { assignments: [] };
       const gallery = galleryRes.status === 'fulfilled' ? await galleryRes.value.json() : { galleries: [] };
       const guidance = guidanceRes.status === 'fulfilled' ? await guidanceRes.value.json() : { events: [] };
+      const admissions = admissionsRes.status === 'fulfilled' ? await admissionsRes.value.json() : { applications: [] };
       const resources = resourcesRes.status === 'fulfilled' ? await resourcesRes.value.json() : { resources: [] };
       const careers = careersRes.status === 'fulfilled' ? await careersRes.value.json() : { careers: [] };
-      const student = studentRes.status === 'fulfilled' ? await studentRes.value.json() : { students: [] };
       const fees = feesRes.status === 'fulfilled' ? await feesRes.value.json() : { feebalances: [] };
       const schoolDocs = schooldocumentsRes.status === 'fulfilled' ? await schooldocumentsRes.value.json() : { documents: [] };
       const sms = smsRes.status === 'fulfilled' ? await smsRes.value.json() : { sms: [] };
@@ -506,9 +505,7 @@ export default function AdminDashboard() {
       
       const upcomingEvents = events.events?.filter(e => new Date(e.eventDate) >= new Date()).length || 0;
       const activeAssignments = assignments.assignments?.filter(a => a.status === 'assigned').length || 0;
-      const admissionsData = resourcesRes.status === 'fulfilled'
-        ? (await resourcesRes.value.json()).applications || []
-        : [];
+      const admissionsData = admissions.applications || [];
       const pendingApps = admissionsData.filter(app => app.status === 'PENDING').length || 0;
       const totalAchievement = achievements.achievements?.length || 0;
 
@@ -526,7 +523,7 @@ export default function AdminDashboard() {
         Resources: resources.resources?.length || 0,
         sms: sms.sms?.length || 0,
         Careers: careers.careers?.length || 0,
-        totalStudent: student.students?.length || 0,
+        totalStudent: studentCount,
         totalFees: fees.feebalances?.length || 0,
         schooldocuments: schoolDocs.documents?.length || 0
       });

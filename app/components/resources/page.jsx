@@ -2589,23 +2589,32 @@ const handleSubmit = async (formData, id) => {
           </select>
 
           {/* Clear Filters Button */}
-          {(selectedType !== 'all' || selectedSubject !== 'All Subjects' || selectedCategory !== 'All Categories' || 
-            selectedClass !== 'All Classes' || selectedAccessLevel !== 'all' || selectedStatus !== 'all' || searchTerm) && (
-            <button
-              onClick={() => {
-                setSelectedType('all');
-                setSelectedSubject('All Subjects');
-                setSelectedCategory('All Categories');
-                setSelectedClass('All Classes');
-                setSelectedAccessLevel('all');
-                setSelectedStatus('all');
-                setSearchTerm('');
-              }}
-              className="px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold text-md  hover:bg-gray-50 cursor-pointer"
-            >
-              Clear All Filters
-            </button>
-          )}
+      {/* Clear Filters Button - FIXED */}
+{(selectedType !== 'all' || selectedSubject !== 'All Subjects' || 
+  selectedCategory !== 'All Categories' || selectedClass !== 'All Classes' || 
+  selectedAccessLevel !== 'all' || selectedStatus !== 'all' || searchTerm) && (
+  <button
+    onClick={() => {
+      // Reset ALL filter states
+      setSelectedType('all');
+      setSelectedSubject('All Subjects');
+      etSelectedCategory('All Categories');
+      setSelectedClass('All Classes');
+      setSelectedAccessLevel('all');
+      setSelectedStatus('all');
+      setSearchTerm('');
+      
+      // Also reset pagination to first page
+      setCurrentPage(1);
+      
+      // Optional: Show notification that filters were cleared
+      showNotification('info', 'Filters Cleared', 'All filters have been reset successfully');
+    }}
+    className="px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold text-md hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:border-red-300 hover:text-red-600"
+  >
+  Clear Filters
+  </button>
+)}
         </div>
       </div>
 
