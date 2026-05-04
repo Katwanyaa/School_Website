@@ -9,6 +9,7 @@ import {
   FiBook, 
   FiImage,
   FiMail,
+  FiStar,
   FiUser,
   FiShield,
   FiInfo,
