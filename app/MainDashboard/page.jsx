@@ -54,7 +54,7 @@ import Student from "../components/student/page";
 import Fees from "../components/fees/page";
 import SchoolDocs from "../components/schooldocuments/page";
 import SMSManager from "../components/sms/page";
-import Achievement from "../components/achievements/page";
+import AchievementsManager from "../components/Achievements/page";
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
