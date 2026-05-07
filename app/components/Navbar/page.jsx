@@ -264,7 +264,7 @@ export default function ModernNavbar() {
           <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
             {/* Logo */}
             <a href="/" onClick={closeAll} className="flex min-w-0 items-center gap-3">
-              <div className="h-12 w-12 shrink-0 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-400 p-[1px] shadow-lg">
+              <div className="h-12 w-12 shrink-0 rounded-md bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-400 p-[1px] shadow-lg">
                 <div className="flex h-full w-full items-center justify-center rounded-2xl bg-white">
                   <Image
                     src="/katz.jpeg"
@@ -277,11 +277,11 @@ export default function ModernNavbar() {
                 </div>
               </div>
               <div className="min-w-0">
-                <p className="truncate text-base font-black tracking-tight text-slate-950 sm:text-lg">
+                <p className="truncate text-base font-black  text-slate-950 sm:text-lg">
                   Katz
                 </p>
                 <p className="truncate text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 sm:text-[11px]">
-                  Katwanyaa Girls
+                  Katwanyaa Senior
                 </p>
               </div>
             </a>
@@ -388,13 +388,7 @@ export default function ModernNavbar() {
               })}
             </div>
 
-            {/* Desktop CTA */}
-            <a
-              href="/pages/StudentPortal"
-              className="hidden rounded-2xl bg-indigo-950 px-4 py-2.5 text-sm font-black text-white shadow-lg transition hover:bg-indigo-800 xl:inline-flex"
-            >
-              Portal
-            </a>
+            
 
             {/* Mobile hamburger */}
             <button
