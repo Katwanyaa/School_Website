@@ -684,7 +684,7 @@ export default function PublicSchoolHubPage({
     <div className="min-h-screen bg-white text-gray-900">
       <GalleryModal item={active} onClose={() => setActive(null)} />
 
-      <main className="mx-auto max-w-full px-6 py-8 sm:px-8 lg:px-12">
+      <main className="mx-auto w-full md:w-[80%] px-6 py-8 sm:px-8 lg:px-12">
         {/* Hero Section - Katwanyaa Branding */}
         <div className="mb-10 bg-gray-50 p-6 md:p-8">
           {/* Header Badges */}
@@ -713,12 +713,13 @@ export default function PublicSchoolHubPage({
               </div>
             </div>
             
-            <h1 className="text-2xl font-black tracking-tight sm:text-3xl md:text-5xl text-gray-900">
-              Welcome to{' '}
-              <span className="text-emerald-600">
-                Katwanyaa Senior School
-              </span>
-            </h1>
+           <h1 className="text-2xl font-black tracking-tight sm:text-3xl md:text-5xl text-gray-900">
+  Welcome to Our{' '}
+  <span className="text-emerald-600">
+    {title}
+  </span>{' '}
+  at Katwanyaa Senior School
+</h1>
             
             <div className="my-3 flex gap-2">
               <div className="h-1 w-12 bg-emerald-600" />
