@@ -2811,93 +2811,112 @@ const handleSubmit = async (formData, id) => {
     <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
   </div>
 
-  <div className="relative z-10 flex flex-col gap-6">
-    {/* Enhanced Header */}
-    <div className="flex items-center justify-between px-2">
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-8 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full shadow-lg shadow-orange-500/30" />
-          <div className="w-1.5 h-6 bg-orange-400/60 rounded-full" />
-        </div>
-        <div className="space-y-1">
-          <span className="text-[11px] font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-gray-400 uppercase tracking-[0.3em]">
-            Filter Engine & Search
-          </span>
-          <p className="text-[10px] text-gray-400 font-medium tracking-wide">Refine your staff directory results</p>
-        </div>
+<div className="relative z-10 flex flex-col gap-6">
+  {/* Clean Dark Header */}
+  <div className="flex items-center justify-between px-2">
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        <div className="w-2 h-8 bg-black rounded-full" />
+        <div className="w-1.5 h-6 bg-gray-300 rounded-full" />
       </div>
-      
-      {/* Quick stats chip */}
-      <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100">
-        <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-        <span className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Live Results</span>
+
+      <div className="space-y-1">
+        <span className="text-[11px] font-black text-black uppercase tracking-[0.3em]">
+          Filter Engine & Search
+        </span>
+
+        <p className="text-[10px] text-gray-500 font-medium tracking-wide">
+          Refine your staff directory results
+        </p>
       </div>
     </div>
 
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      {/* Enhanced Search Bar */}
-      <div className="lg:col-span-6 relative group">
-        <div className="absolute left-6 top-1/2 -translate-y-1/2 z-10">
-          <FiSearch className="text-2xl text-gray-400 group-focus-within:text-orange-500 transition-all duration-300 group-focus-within:scale-110" />
-        </div>
-        <input
-          type="text"
-          placeholder="Search by name, department or expertise..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-16 pr-8 py-6 bg-gradient-to-br from-gray-50 to-gray-50/50 border-2 border-gray-100 rounded-2xl text-base font-semibold placeholder:text-gray-400 focus:bg-white focus:border-orange-400/30 focus:ring-4 focus:ring-orange-500/10 transition-all duration-300 outline-none shadow-sm hover:shadow-md"
-        />
-        {/* Animated underline effect on focus */}
-        <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-300 group-focus-within:w-full rounded-full" />
-      </div>
+    <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-gray-200">
+      <div className="w-1.5 h-1.5 bg-black rounded-full" />
 
-      {/* Enhanced Department Filter */}
-      <div className="lg:col-span-3 relative group">
-        <label className="absolute -top-3 left-5 px-2.5 bg-white text-[9px] font-black text-gray-500 uppercase tracking-widest z-10 group-hover:text-orange-500 transition-colors">
-          Department
-        </label>
-        <select
-          value={selectedDepartment}
-          onChange={(e) => setSelectedDepartment(e.target.value)}
-          className="w-full px-6 py-6 bg-gradient-to-br from-gray-50 to-gray-50/50 border-2 border-gray-100 rounded-2xl text-xs font-black uppercase tracking-wider cursor-pointer hover:bg-gray-100/50 focus:bg-white focus:border-orange-400/30 transition-all duration-300 appearance-none outline-none shadow-sm"
-        >
-          <option value="all">🎯 All Departments</option>
-          {departments.map(dept => <option key={dept} value={dept}>{dept}</option>)}
-        </select>
-        <FiChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-orange-500 transition-colors group-hover:rotate-180 duration-300" />
-      </div>
-
-      {/* Enhanced Role Filter */}
-      <div className="lg:col-span-3 relative group">
-        <label className="absolute -top-3 left-5 px-2.5 bg-white text-[9px] font-black text-gray-500 uppercase tracking-widest z-10 group-hover:text-orange-500 transition-colors">
-          Staff Role
-        </label>
-        <select
-          value={selectedRole}
-          onChange={(e) => setSelectedRole(e.target.value)}
-          className="w-full px-6 py-6 bg-gradient-to-br from-gray-50 to-gray-50/50 border-2 border-gray-100 rounded-2xl text-xs font-black uppercase tracking-wider cursor-pointer hover:bg-gray-100/50 focus:bg-white focus:border-orange-400/30 transition-all duration-300 appearance-none outline-none shadow-sm"
-        >
-          <option value="all">👥 All Roles</option>
-          {roles.map(role => <option key={role} value={role}>{role}</option>)}
-        </select>
-        <FiChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-orange-500 transition-colors group-hover:rotate-180 duration-300" />
-      </div>
-
-{/* Simple Reset Section */}
-<div className="lg:col-span-12 pt-4">
-  <button
-    onClick={() => {
-      setSearchTerm('');
-      setSelectedDepartment('all');
-      setSelectedRole('all');
-    }}
-    className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-gray-600 transition-colors"
-  >
-    Reset Filters
-  </button>
-</div>
+      <span className="text-[9px] font-black text-black uppercase tracking-wider">
+        Live Results
+      </span>
     </div>
   </div>
+
+  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+    {/* Search Bar */}
+    <div className="lg:col-span-6 relative group">
+      <div className="absolute left-6 top-1/2 -translate-y-1/2 z-10">
+        <FiSearch className="text-2xl text-gray-400 transition-all duration-300" />
+      </div>
+
+      <input
+        type="text"
+        placeholder="Search by name, department or expertise..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full pl-16 pr-8 py-6 bg-white border-2 border-gray-200 rounded-2xl text-base font-semibold placeholder:text-gray-400 focus:border-black transition-all duration-300 outline-none shadow-sm"
+      />
+    </div>
+
+    {/* Department Filter */}
+    <div className="lg:col-span-3 relative">
+      <label className="absolute -top-3 left-5 px-2.5 bg-white text-[9px] font-black text-gray-500 uppercase tracking-widest z-10">
+        Department
+      </label>
+
+      <select
+        value={selectedDepartment}
+        onChange={(e) => setSelectedDepartment(e.target.value)}
+        className="w-full px-6 py-6 bg-white border-2 border-gray-200 rounded-2xl text-xs font-black uppercase tracking-wider cursor-pointer appearance-none outline-none shadow-sm focus:border-black"
+      >
+        <option value="all">All Departments</option>
+
+        {departments.map((dept) => (
+          <option key={dept} value={dept}>
+            {dept}
+          </option>
+        ))}
+      </select>
+
+      <FiChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+    </div>
+
+    {/* Role Filter */}
+    <div className="lg:col-span-3 relative">
+      <label className="absolute -top-3 left-5 px-2.5 bg-white text-[9px] font-black text-gray-500 uppercase tracking-widest z-10">
+        Staff Role
+      </label>
+
+      <select
+        value={selectedRole}
+        onChange={(e) => setSelectedRole(e.target.value)}
+        className="w-full px-6 py-6 bg-white border-2 border-gray-200 rounded-2xl text-xs font-black uppercase tracking-wider cursor-pointer appearance-none outline-none shadow-sm focus:border-black"
+      >
+        <option value="all">All Roles</option>
+
+        {roles.map((role) => (
+          <option key={role} value={role}>
+            {role}
+          </option>
+        ))}
+      </select>
+
+      <FiChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+    </div>
+
+    {/* Reset Section */}
+    <div className="lg:col-span-12 pt-2">
+      <button
+        onClick={() => {
+          setSearchTerm('');
+          setSelectedDepartment('all');
+          setSelectedRole('all');
+        }}
+        className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-black"
+      >
+        Reset Filters
+      </button>
+    </div>
+  </div>
+</div>
 </div>
 
 {stats && (
