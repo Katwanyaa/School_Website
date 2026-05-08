@@ -28,6 +28,7 @@ import {
   FiUsers,
   FiX,
 } from 'react-icons/fi';
+import { SiFacebook, SiInstagram, SiYoutube } from 'react-icons/si';
 
 // === Primary navigation links (always visible) ===
 const primaryLinks = [
@@ -44,6 +45,27 @@ const utilityLinks = [
   { name: 'School Fees', href: '/pages/fees', icon: FiDollarSign },
   { name: 'Contact', href: '/pages/contact', icon: FiPhone },
   { name: 'Admin Login', href: '/pages/adminLogin', icon: FiLock, secure: true },
+];
+
+const socialLinks = [
+  {
+    name: 'Facebook',
+    href: 'https://web.facebook.com/groups/414008468611340',
+    icon: SiFacebook,
+    className: 'bg-[#1877F2] hover:bg-[#0A5CD0]',
+  },
+  {
+    name: 'YouTube',
+    href: 'https://www.youtube.com/@A.I.C.-KATWANYAA-HIGH-SCHOOOL',
+    icon: SiYoutube,
+    className: 'bg-[#FF0000] hover:bg-[#CC0000]',
+  },
+  {
+    name: 'Instagram',
+    href: 'https://instagram.com/katwanyaahigh',
+    icon: SiInstagram,
+    className: 'bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] hover:brightness-110',
+  },
 ];
 
 // === Academics mega dropdown (mirrors the “Academics” group from Matungulu, adapted for Katwanyaa) ===
@@ -208,6 +230,25 @@ export default function ModernNavbar() {
     setActiveDropdown(null);
   };
 
+  const SocialLink = ({ item, mobile = false }) => {
+    const Icon = item.icon;
+
+    return (
+      <a
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Katwanyaa Senior School on ${item.name}`}
+        title={item.name}
+        className={`inline-flex shrink-0 items-center justify-center rounded-full text-white shadow-sm ring-1 ring-white/20 transition-all hover:-translate-y-0.5 hover:shadow-md ${item.className} ${
+          mobile ? 'h-10 w-10 text-lg' : 'h-7 w-7 text-sm'
+        }`}
+      >
+        <Icon />
+      </a>
+    );
+  };
+
   // Reusable link component (shared by top bar & main nav)
   const NavLink = ({ item, compact = false }) => {
     const Icon = item.icon;
@@ -251,10 +292,21 @@ export default function ModernNavbar() {
               <span>Education is Light</span>
             </div>
 
-            <div className="flex items-center gap-2">
-              {utilityLinks.map((item) => (
-                <NavLink key={item.name} item={item} compact />
-              ))}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 border-r border-white/10 pr-3">
+                <span className="hidden text-[10px] font-black uppercase tracking-[0.18em] text-white/45 xl:inline">
+                  Follow
+                </span>
+                {socialLinks.map((item) => (
+                  <SocialLink key={item.name} item={item} />
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                {utilityLinks.map((item) => (
+                  <NavLink key={item.name} item={item} compact />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -411,6 +463,22 @@ export default function ModernNavbar() {
                 {utilityLinks.map((item) => (
                   <NavLink key={item.name} item={item} />
                 ))}
+              </div>
+
+              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                    Follow Us
+                  </p>
+                  <p className="mt-0.5 text-xs font-bold text-slate-600">
+                    Katwanyaa Senior School updates
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {socialLinks.map((item) => (
+                    <SocialLink key={item.name} item={item} mobile />
+                  ))}
+                </div>
               </div>
 
               <MobileSection title="Main Navigation" links={primaryLinks} isActiveLink={isActiveLink} onClose={closeAll} />
