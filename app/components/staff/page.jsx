@@ -658,110 +658,152 @@ function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, 
     if (!imagePath || typeof imagePath !== 'string') {
       return staff?.gender === 'female' ? '/female.png' : '/male.png';
     }
+
     if (imagePath.startsWith('http') || imagePath.startsWith('/')) return imagePath;
     if (imagePath.startsWith('data:image')) return imagePath;
+
     return `/${imagePath}`;
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'bg-emerald-500/10 text-emerald-600 border-emerald-100';
-      case 'on-leave': return 'bg-amber-500/10 text-amber-600 border-amber-100';
-      default: return 'bg-slate-100 text-slate-500 border-slate-200';
+      case 'active':
+        return 'bg-emerald-500/10 text-emerald-700 border-emerald-200';
+
+      case 'on-leave':
+        return 'bg-amber-500/10 text-amber-700 border-amber-200';
+
+      default:
+        return 'bg-slate-100 text-slate-700 border-slate-200';
     }
   };
 
   const imageUrl = getImageUrl(staff.image);
 
   return (
-    <div className={`group bg-white rounded-2xl p-3 transition-all border-2 flex items-center gap-4 ${
-      selected ? 'border-blue-600 bg-blue-50/20' : 'border-slate-100 hover:border-slate-200'
-    }`}>
-      
+    <div
+      className={`group bg-white rounded-2xl p-4 transition-all border-2 flex items-center gap-5 ${
+        selected
+          ? 'border-blue-700 bg-blue-50/20'
+          : 'border-slate-200'
+      }`}
+    >
       {/* 1. SELECTION & IMAGE */}
       <div className="flex items-center gap-3 shrink-0">
-        <input 
-          type="checkbox" 
-          checked={selected} 
+        <input
+          type="checkbox"
+          checked={selected}
           onChange={(e) => onSelect(staff.id, e.target.checked)}
-          className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-0 cursor-pointer" 
+          className="w-5 h-5 text-blue-700 border-slate-400 rounded focus:ring-0 cursor-pointer"
         />
-        <div className="relative h-14 w-14 shrink-0">
+
+        {/* Increased image size */}
+        <div className="relative h-[72px] w-[72px] shrink-0">
           {!imageError ? (
-            <img 
-              src={imageUrl} 
-              alt={staff.name} 
+            <img
+              src={imageUrl}
+              alt={staff.name}
               onClick={() => onView(staff)}
-              className="w-full h-full object-cover rounded-xl cursor-pointer border border-slate-100"
-              onError={() => setImageError(true)} 
+              className="w-full h-full object-cover rounded-2xl cursor-pointer border border-slate-200"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-slate-100 rounded-xl text-slate-400">
-              <FiUser size={20} />
+            <div className="w-full h-full flex items-center justify-center bg-slate-100 rounded-2xl text-slate-500">
+              <FiUser size={24} />
             </div>
           )}
         </div>
       </div>
 
-      {/* 2. PRIMARY INFO (Name & Email) */}
-      <div className="flex-1 min-w-[200px]">
-        <h3 
-          onClick={() => onView(staff)} 
-          className="text-base font-bold text-slate-900 truncate cursor-pointer hover:text-blue-600 leading-tight"
+      {/* 2. PRIMARY INFO */}
+      <div className="flex-1 min-w-[220px]">
+        <h3
+          onClick={() => onView(staff)}
+          className="text-lg font-black text-black truncate cursor-pointer leading-tight"
         >
           {staff.name}
         </h3>
-        <div className="flex items-center gap-2 text-slate-400 mt-0.5">
-          <FiMail size={10} className="text-blue-500" />
-          <span className="text-[10px] font-bold uppercase tracking-tight truncate">
+
+        <div className="flex items-center gap-2 text-slate-600 mt-1">
+          <FiMail size={11} className="text-blue-700" />
+
+          <span className="text-[11px] font-black uppercase tracking-tight truncate text-slate-700">
             {staff.email || 'no-email@school.local'}
           </span>
         </div>
       </div>
 
-      {/* 3. ORGANIZATION (Dept & Role) */}
-      <div className="hidden md:block w-44 shrink-0">
-        <span className="block text-[8px] text-slate-400 font-black uppercase tracking-widest mb-0.5">Role / Dept</span>
-        <p className="text-xs font-bold text-slate-800 truncate">
-          {staff.role === 'Deputy Principal' ? 'Dep. Principal' : staff.role}
+      {/* 3. ORGANIZATION */}
+      <div className="hidden md:block w-48 shrink-0">
+        <span className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">
+          Role / Dept
+        </span>
+
+        <p className="text-sm font-black text-black truncate">
+          {staff.role === 'Deputy Principal'
+            ? 'Dep. Principal'
+            : staff.role}
         </p>
-        <p className="text-[10px] font-medium text-slate-500">{staff.department}</p>
+
+        <p className="text-[11px] font-bold text-slate-700 truncate">
+          {staff.department}
+        </p>
       </div>
 
-      {/* 4. EXPERTISE (Captured Tags) */}
-      <div className="hidden lg:flex flex-1 gap-1.5 flex-wrap px-4">
+      {/* 4. EXPERTISE */}
+      <div className="hidden lg:flex flex-1 gap-2 flex-wrap px-4 items-center">
         {staff.expertise?.slice(0, 2).map((exp, index) => (
-          <span key={index} className="bg-slate-50 text-slate-600 border border-slate-100 px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase">
-            {exp}
-          </span>
+          <div
+            key={index}
+            title={exp}
+            className="max-w-[140px] min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5"
+          >
+            <span className="block truncate text-[9px] font-black uppercase tracking-wide text-slate-800">
+              {exp}
+            </span>
+          </div>
         ))}
       </div>
 
       {/* 5. CONTACT & STATUS */}
-      <div className="hidden sm:flex items-center gap-6 shrink-0 px-4 border-l border-slate-100">
+      <div className="hidden sm:flex items-center gap-6 shrink-0 px-4 border-l border-slate-200">
         <div className="text-right">
-          <span className="block text-[8px] text-slate-400 font-black uppercase tracking-widest mb-0.5">Contact</span>
-          <span className="text-xs font-bold text-slate-700 tracking-wider flex items-center gap-1.5">
-            <FiPhoneCall size={12} className="text-blue-500" /> {staff.phone}
+          <span className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">
+            Contact
+          </span>
+
+          <span className="text-xs font-black text-black tracking-wider flex items-center gap-1.5">
+            <FiPhoneCall
+              size={12}
+              className="text-blue-700"
+            />
+
+            {staff.phone}
           </span>
         </div>
-        <div className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border shrink-0 ${getStatusColor(staff.status)}`}>
+
+        <div
+          className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border shrink-0 ${getStatusColor(
+            staff.status
+          )}`}
+        >
           {staff.status || 'active'}
         </div>
       </div>
 
       {/* 6. ACTIONS */}
       <div className="flex items-center gap-1 shrink-0 pl-2">
-        <button 
-          onClick={() => onEdit(staff)} 
-          className="p-2.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
+        <button
+          onClick={() => onEdit(staff)}
+          className="p-2.5 text-slate-500 hover:text-black hover:bg-slate-100 rounded-xl transition-colors"
           title="Edit Profile"
         >
           <FiEdit2 size={16} />
         </button>
-        <button 
-          onClick={() => onDelete(staff)} 
-          className="p-2.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+
+        <button
+          onClick={() => onDelete(staff)}
+          className="p-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors"
           title="Delete"
         >
           <FiTrash2 size={16} />
