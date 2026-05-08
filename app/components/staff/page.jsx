@@ -2905,58 +2905,86 @@ const handleSubmit = async (formData, id) => {
   </div>
 </div>
 
-{/* --- ENHANCED STATS GRID --- */}
 {stats && (
-  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mb-12">
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
     {[
-      { label: "Senior / HOD", val: stats.teaching, icon: FiBook, color: "from-blue-500 to-indigo-600", gradient: "via-blue-400", description: "Approved Leaders" },
-      { label: "Administration", val: stats.administration, icon: FiAward, color: "from-emerald-500 to-teal-600", gradient: "via-emerald-400", description: "Management Team" },
-      { label: "HOD / AHOD", val: stats.bom, icon: FiShield, color: "from-purple-500 to-pink-600", gradient: "via-purple-400", description: "Department Leads" },
-      { label: "Total Strength", val: stats.total, icon: FiTarget, color: "from-orange-500 to-red-600", gradient: "via-orange-400", description: "Complete Roster" },
-      { label: "On Leave", val: stats.onLeave, icon: FiCalendar, color: "from-amber-400 to-orange-600", gradient: "via-amber-400", description: "Temporary Absence" },
-      { label: "Active Now", val: stats.active, icon: FiCheckCircle, color: "from-green-400 to-emerald-600", gradient: "via-green-400", description: "Currently Serving" },
+      { 
+        label: "Total Strength", 
+        val: stats.total, 
+        icon: FiTarget, 
+        color: "text-blue-600", 
+        bg: "bg-blue-50",
+        desc: "Complete Staff Roster",
+        span: "md:col-span-1" 
+      },
+      { 
+        label: "Leadership & HODs", 
+        val: (stats.teaching || 0) + (stats.bom || 0), 
+        icon: FiShield, 
+        color: "text-purple-600", 
+        bg: "bg-purple-50",
+        desc: "Approved Dept Leaders",
+        span: "md:col-span-1" 
+      },
+      { 
+        label: "Administration", 
+        val: stats.administration, 
+        icon: FiAward, 
+        color: "text-emerald-600", 
+        bg: "bg-emerald-50",
+        desc: "Core Management Team",
+        span: "md:col-span-1" 
+      },
+      { 
+        label: "Current Availability", 
+        val: stats.active, 
+        icon: FiCheckCircle, 
+        color: "text-orange-600", 
+        bg: "bg-orange-50",
+        desc: `${stats.onLeave || 0} currently on leave`,
+        span: "md:col-span-1",
+        isLive: true 
+      },
     ].map((item, i) => (
-      <div key={i} className="group relative bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
-        {/* Animated gradient background */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-        
-        {/* Glossy effect */}
-        <div className="absolute -inset-full group-hover:inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-full transition-all duration-1000 pointer-events-none" />
-        
-        <div className="relative z-10">
-          <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300 group-hover:rotate-3`}>
-            <item.icon className="text-xl" />
+      <div 
+        key={i} 
+        className={`relative bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-between ${item.span}`}
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div className={`w-12 h-12 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center`}>
+            <item.icon size={24} />
           </div>
-          <div className="space-y-1.5">
-            <div>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider group-hover:text-gray-500 transition-colors">
-                {item.label}
-              </p>
-              <p className="text-[8px] text-gray-300 font-medium uppercase tracking-wider mt-0.5">
-                {item.description}
-              </p>
+          {item.isLive && (
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 rounded-full">
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-[9px] font-black text-emerald-600 uppercase tracking-tighter">Live Now</span>
             </div>
-            <div className="flex items-baseline gap-1">
-              <p className="text-3xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                {item.val}
-              </p>
-              {item.label === "Active Now" && (
-                <div className="flex items-center gap-1 ml-1">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-[7px] font-black text-green-500 uppercase">Live</span>
-                </div>
-              )}
-            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="flex items-baseline gap-2">
+            <h4 className="text-4xl font-black text-slate-900 tracking-tight">
+              {item.val}
+            </h4>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Members
+            </span>
+          </div>
+          
+          <div className="mt-1">
+            <p className="text-xs font-black text-slate-800 uppercase tracking-tight">
+              {item.label}
+            </p>
+            <p className="text-[10px] text-slate-400 font-medium">
+              {item.desc}
+            </p>
           </div>
         </div>
-        
-        {/* Bottom accent bar */}
-        <div className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r ${item.color} scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full`} />
       </div>
     ))}
   </div>
 )}
-
       {/* Bulk Actions */}
       {selectedPosts.size > 0 && (
         <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-4 shadow-lg">
