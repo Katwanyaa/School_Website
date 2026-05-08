@@ -233,18 +233,12 @@ const KATWANYAA_INFO = {
   motto: 'Education is Light',
   vision: 'To be a center of academic excellence and holistic development in Africa',
   mission: 'To provide quality education that nurtures talent, builds character, and prepares students for global leadership',
-  founded: 1985,
-  principal: 'Dr. Sarah Mwangi',
   location: 'Kitui County, Kenya',
   email: 'info@katwanyaa.ac.ke',
   phone: '+254 712 345 678',
   website: 'www.katwanyaa.ac.ke',
   colors: ['Emerald Green', 'Royal Blue', 'Gold'],
   mascot: 'The Mighty Eagle',
-  studentCount: 1850,
-  staffCount: 120,
-  departments_count: 12,
-  clubs_count: 25,
   achievements: [
     'Top Performer in Kitui County (2023)',
     'National Science Congress Champions (2022)',
@@ -878,11 +872,7 @@ export default function PublicSchoolHubPage({
               </div>
             </Link>
 
-            {/* School Motto */}
-            <div className="hidden md:block text-center">
-              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/40">Motto</p>
-              <p className="text-xs font-bold text-white/80">"{KATWANYAA_INFO.motto}"</p>
-            </div>
+        
 
             {/* Navigation Links */}
             <div className="flex items-center gap-3">
@@ -953,18 +943,7 @@ export default function PublicSchoolHubPage({
               </p>
             </div>
 
-            {/* Stats Row */}
-            {showStats && (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 mt-2">
-                <StatCounter value={KATWANYAA_INFO.studentCount} label="Students" icon={FaUsersIcon} />
-                <StatCounter value={KATWANYAA_INFO.staffCount} label="Staff" icon={FaChalkboardTeacher} />
-                <StatCounter value={2024 - KATWANYAA_INFO.founded} label="Years" icon={FiCalendar} suffix="+" />
-                <StatCounter value={KATWANYAA_INFO.clubs_count} label="Clubs" icon={FiUsers} />
-                <StatCounter value={KATWANYAA_INFO.departments_count} label="Depts" icon={FiLayers} />
-                <StatCounter value={totalImages} label="Images" icon={FiImage} />
-                <StatCounter value={items.length} label="Items" icon={FiGrid} />
-              </div>
-            )}
+            
 
             {/* Action Bar */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center mt-4">
