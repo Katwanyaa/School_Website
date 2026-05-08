@@ -26,3 +26,7 @@
 ✅ School found: Katwanyaa Senior School
 📚 Magazine data: Not present
  GET /api/school 200 in 32571ms
+ ✓ Compiled /components/schoolinfo in 42.9s (2070 modules)
+ HEAD /components/schoolinfo 200 in 286ms
+ HEAD /pages/staff 200 in 464ms
+[?25h
