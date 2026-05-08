@@ -123,6 +123,7 @@ import {
   FaPeace,
   FaDove,
   FaOwl,
+  FaHeart,
   FaWolf,
   FaEagle,
 } from 'react-icons/fa';
