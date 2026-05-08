@@ -32,6 +32,7 @@ import {
   FiAlertTriangle,
   FiAlertCircle,
   FiTag,
+  FiEdit2,
   FiUsers,
   FiTarget,    // Added for Total Staff stat
   FiArchive    // Added for Archive stat
