@@ -2014,14 +2014,18 @@ function StaffDepartmentManager({ showNotification }) {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              onClick={() => fetchDepartments(true)}
-              disabled={refreshing}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-700 disabled:opacity-50"
-            >
-              <FiRefreshCw className={refreshing ? 'animate-spin text-blue-600' : ''} />
-              Refresh
-            </button>
+      <button
+  onClick={() => fetchDepartments(true)}
+  disabled={refreshing}
+  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-700 disabled:opacity-50"
+>
+  <div
+    className={`h-4 w-4 rounded-full border-2 border-slate-300 border-t-blue-600 ${
+      refreshing ? 'animate-spin' : ''
+    }`}
+  />
+  Refresh
+</button>
             <button
               onClick={handleCreate}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-black uppercase tracking-widest text-white"
@@ -2744,30 +2748,34 @@ const handleSubmit = async (formData, id) => {
     </div>
 
     {/* Enhanced Action Group */}
-    <div className="flex flex-col sm:flex-row gap-4">
-      <button
-        onClick={() => fetchStaff(true)}
-        disabled={refreshing}
-        className="group relative flex items-center justify-center gap-3 bg-white/5 backdrop-blur-xl border border-white/15 px-8 py-4 rounded-2xl font-black text-[11px] tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white/10 hover:border-white/30 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-        {refreshing ? (
-          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-        ) : (
-          <FiRotateCw className="text-base group-hover:rotate-180 transition-transform duration-500" />
-        )}
-        REFRESH
-      </button>
-      
-      <button
-        onClick={handleCreate}
-        className="group relative flex items-center justify-center gap-3 bg-gradient-to-r from-white to-gray-100 text-[#0F172A] px-8 py-4 rounded-2xl font-black text-[11px] tracking-[0.2em] uppercase transition-all duration-300 hover:shadow-2xl hover:scale-105 active:scale-95 overflow-hidden shadow-xl"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 via-transparent to-orange-400/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-        <FiPlus className="text-lg group-hover:rotate-90 transition-transform duration-300" />
-        ADD STAFF
-      </button>
-    </div>
+<div className="flex flex-col sm:flex-row gap-4">
+  <button
+    onClick={() => fetchStaff(true)}
+    disabled={refreshing}
+    className="group relative inline-flex items-center justify-center gap-3 bg-white/5 backdrop-blur-xl border border-white/15 px-6 py-3 rounded-2xl font-black text-[11px] tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white/10 hover:border-white/30 active:scale-95 disabled:opacity-50 overflow-hidden"
+  >
+    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+    <div
+      className={`w-4 h-4 rounded-full border-2 border-white/20 border-t-white ${
+        refreshing ? 'animate-spin' : ''
+      }`}
+    />
+
+    REFRESH
+  </button>
+
+  <button
+    onClick={handleCreate}
+    className="group relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-white to-gray-100 text-[#0F172A] px-6 py-3 rounded-2xl font-black text-[11px] tracking-[0.2em] uppercase transition-all duration-300 hover:shadow-2xl active:scale-95 overflow-hidden shadow-xl"
+  >
+    <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 via-transparent to-orange-400/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+
+    <FiPlus className="text-lg group-hover:rotate-90 transition-transform duration-300" />
+
+    ADD STAFF
+  </button>
+</div>
   </div>
 </div>
 <div className="flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-slate-100 bg-white p-2 shadow-lg shadow-slate-200/60 sm:inline-flex">
@@ -2875,32 +2883,19 @@ const handleSubmit = async (formData, id) => {
         <FiChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-orange-500 transition-colors group-hover:rotate-180 duration-300" />
       </div>
 
-      {/* Enhanced Reset Section */}
-      <div className="lg:col-span-12">
-        <div className="border-t border-gray-100/80 pt-5 flex items-center justify-between">
-          <div 
-            onClick={() => {
-              setSearchTerm('');
-              setSelectedDepartment('all');
-              setSelectedRole('all');
-            }}
-            className="group flex items-center gap-2.5 text-xs font-black text-gray-500 uppercase tracking-widest cursor-pointer hover:text-orange-500 transition-all duration-300"
-          >
-            <div className="p-1.5 rounded-full bg-gray-50 group-hover:bg-orange-50 transition-colors duration-300">
-              <FiRefreshCcw className="text-sm group-hover:rotate-180 transition-transform duration-500" />
-            </div>
-            <span className="group-hover:tracking-[0.25em] transition-all duration-300">RESET FILTERS</span>
-          </div>
-          
-          {/* Active filters indicator */}
-          {(searchTerm || selectedDepartment !== 'all' || selectedRole !== 'all') && (
-            <div className="flex items-center gap-2 text-[9px] font-black text-orange-500 uppercase tracking-wider">
-              <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
-              <span>Active Filters Applied</span>
-            </div>
-          )}
-        </div>
-      </div>
+{/* Simple Reset Section */}
+<div className="lg:col-span-12 pt-4">
+  <button
+    onClick={() => {
+      setSearchTerm('');
+      setSelectedDepartment('all');
+      setSelectedRole('all');
+    }}
+    className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-gray-600 transition-colors"
+  >
+    Reset Filters
+  </button>
+</div>
     </div>
   </div>
 </div>
