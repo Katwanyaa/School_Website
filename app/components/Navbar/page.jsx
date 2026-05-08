@@ -277,12 +277,12 @@ export default function ModernNavbar() {
         }`}
       >
         {/* ---------- TOP UTILITY BAR (compact) ---------- */}
-        <div className="hidden border-b border-white/10 bg-gradient-to-r from-blue-950 via-indigo-950 to-purple-950 text-white lg:block">
+        <div className="hidden border-b py-8 border-white/10 bg-gradient-to-r from-blue-950 via-indigo-950 to-purple-950 text-white lg:block">
           <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-6">
-            <div className="flex items-center gap-5 text-[11px] font-black uppercase tracking-[0.2em] text-blue-100/80">
-              <span>Katwanyaa Senior School</span>
+            <div className="flex items-center gap-5 text-[13px] font-black uppercase tracking-[0.2em] text-blue-100/80">
+              <span>KATZ </span>
               <span className="h-1 w-1 rounded-full bg-blue-300" />
-              <span>Education is Light</span>
+              <span>GOD FIRST</span>
             </div>
 
             <div className="flex items-center gap-3">
@@ -478,9 +478,9 @@ export default function ModernNavbar() {
               <MobileSection title="Academics" links={academicLinks} isActiveLink={isActiveLink} onClose={closeAll} />
               <MobileSection title="Resources" links={schoolHubLinks} isActiveLink={isActiveLink} onClose={closeAll} />
 
-              <div className="rounded-[24px] py-8 bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4 text-center text-white">
+              <div className="rounded-[24px]  bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4 text-center text-white">
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-100/80">
-                  Katwanyaa  School
+                  Katwanyaa Senior School
                 </p>
                 <p className="mt-1 text-sm font-semibold text-white/65">
                   GOD First
