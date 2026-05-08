@@ -20,7 +20,6 @@ import {
   FiUserCheck,
   FiUsers,
   FiX,
-  FiHeart,
   FiStar,
   FiTrendingUp,
   FiClock,
