@@ -480,10 +480,10 @@ export default function ModernNavbar() {
 
               <div className="rounded-[24px] py-8 bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4 text-center text-white">
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-100/80">
-                  Katwanyaa Senior School
+                  Katwanyaa  School
                 </p>
                 <p className="mt-1 text-sm font-semibold text-white/65">
-                  Education is Light
+                  GOD First
                 </p>
               </div>
             </div>
