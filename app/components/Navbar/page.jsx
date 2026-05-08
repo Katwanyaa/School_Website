@@ -478,7 +478,7 @@ export default function ModernNavbar() {
               <MobileSection title="Academics" links={academicLinks} isActiveLink={isActiveLink} onClose={closeAll} />
               <MobileSection title="Resources" links={schoolHubLinks} isActiveLink={isActiveLink} onClose={closeAll} />
 
-              <div className="rounded-[24px] bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4 text-center text-white">
+              <div className="rounded-[24px] py-8 bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4 text-center text-white">
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-100/80">
                   Katwanyaa Senior School
                 </p>
