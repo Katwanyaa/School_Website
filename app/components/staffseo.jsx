@@ -5,8 +5,6 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import Head from 'next/head'; // IMPORTANT: Add this import
 import { 
-  FiMail, 
-  FiPhone, 
   FiMapPin, 
   FiStar, 
   FiBook, 
@@ -25,8 +23,7 @@ import {
   FiHome,
   FiX,
 } from 'react-icons/fi';
-import { SiGmail } from 'react-icons/si';
-import { FaGraduationCap, FaChalkboardTeacher, FaUserTie, FaWhatsapp, FaFacebook, FaInstagram } from 'react-icons/fa';
+import { FaGraduationCap, FaUserTie, FaWhatsapp, FaFacebook, FaInstagram } from 'react-icons/fa';
 
 export default function StaffProfilePage() {
   const params = useParams();
@@ -183,7 +180,7 @@ export default function StaffProfilePage() {
     const description = staff.bio || 
       `Meet ${fullName}, ${position} in the ${department} at ${schoolName}. ` +
       `Experienced educator specializing in ${staff.expertise?.slice(0, 3).join(', ') || 'education'}. ` +
-      `View full profile, qualifications, and contact information.`;
+      `View leadership profile, qualifications, and responsibilities.`;
     
     const profileUrl = `https://katwanyaasenior.school/pages/staff/${id}`;
     const imageUrl = staff.image?.startsWith('http') ? staff.image : `https://katwanyaasenior.school${staff.image}`;
@@ -254,8 +251,6 @@ export default function StaffProfilePage() {
               "description": description,
               "url": profileUrl,
               "image": imageUrl,
-              "email": staff.email,
-              "telephone": staff.phone,
               "knowsAbout": staff.expertise,
               "hasOccupation": {
                 "@type": "Occupation",
@@ -594,14 +589,6 @@ export default function StaffProfilePage() {
                 
                 {/* Action Icons - responsive */}
                 <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto justify-end">
-                  {staff.email && (
-                    <a href={`mailto:${staff.email}`} 
-                       className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-blue-50 rounded-lg sm:rounded-xl flex items-center justify-center text-blue-600 hover:bg-blue-100 transition-all hover:scale-110">
-                      <FiMail size={14} className="sm:hidden" />
-                      <FiMail size={16} className="hidden sm:block lg:hidden" />
-                      <FiMail size={18} className="hidden lg:block" />
-                    </a>
-                  )}
                   <button onClick={() => setShowShareModal(true)} className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-purple-50 rounded-lg sm:rounded-xl flex items-center justify-center text-purple-600 hover:bg-purple-100 transition-all hover:scale-110">
                     <FiShare2 size={14} className="sm:hidden" />
                     <FiShare2 size={16} className="hidden sm:block lg:hidden" />
@@ -783,18 +770,12 @@ export default function StaffProfilePage() {
                 </div>
               </div>
         
-              {/* Footer Contact Bar - Responsive */}
+              {/* Footer Bar - Responsive */}
               <div className="mt-5 sm:mt-6 lg:mt-10 pt-4 sm:pt-5 lg:pt-6 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4">
-                  {staff.email && (
-                    <a href={`mailto:${staff.email}`} className="flex items-center gap-1 sm:gap-1.5 lg:gap-2 text-gray-600 hover:text-blue-600 transition-colors text-[10px] sm:text-xs lg:text-sm">
-                      <FiMail size={12} className="sm:hidden" />
-                      <FiMail size={14} className="hidden sm:block lg:hidden" />
-                      <FiMail size={16} className="hidden lg:block" />
-                      <span className="hidden sm:inline">{staff.email}</span>
-                      <span className="sm:hidden">Email</span>
-                    </a>
-                  )}
+                  <span className="text-[10px] sm:text-xs lg:text-sm text-gray-500">
+                    Leadership profile
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[8px] sm:text-[10px] lg:text-xs text-gray-400">
                   <span className="whitespace-nowrap">Updated {new Date().getFullYear()}</span>

@@ -81,7 +81,6 @@ export async function generateMetadata({ params }) {
       profile: {
         firstName: staff.name.split(' ')[0],
         lastName: staff.name.split(' ').slice(1).join(' '),
-        username: staff.email || undefined,
       }
     },
     twitter: {

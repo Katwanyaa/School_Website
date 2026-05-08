@@ -222,6 +222,45 @@ model Staff {
   updatedAt        DateTime @updatedAt
 }
 
+model StaffDepartment {
+  id                Int                    @id @default(autoincrement())
+  name              String                 @db.VarChar(255)
+  category          String                 @db.VarChar(50)
+  description       String?                @db.Text
+  headName          String?                @db.VarChar(255)
+  assistantHeadName String?                @db.VarChar(255)
+  staffCount        Int                    @default(0)
+  image             String?                @db.Text
+  displayOrder      Int                    @default(0)
+  isActive          Boolean                @default(true)
+  extra             Json?
+  images            StaffDepartmentImage[]
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+  @@index([displayOrder])
+  @@map("staff_departments")
+}
+
+model StaffDepartmentImage {
+  id                Int             @id @default(autoincrement())
+  staffDepartmentId Int
+  url               String          @db.Text
+  publicId          String?         @db.VarChar(255)
+  altText           String?         @db.VarChar(255)
+  caption           String?         @db.Text
+  displayOrder      Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  staffDepartment   StaffDepartment @relation(fields: [staffDepartmentId], references: [id], onDelete: Cascade)
+
+  @@index([staffDepartmentId])
+  @@index([displayOrder])
+  @@map("staff_department_images")
+}
+
 model EmailCampaign {
   id            String    @id @default(cuid())
   title         String

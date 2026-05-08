@@ -1,8 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { 
-  FiMail, 
-  FiPhone, 
   FiAward,
   FiBookOpen,
   FiBriefcase,
@@ -116,79 +114,24 @@ const ModernStaffLeadership = () => {
           setAcademicsDeputy(foundAcademicsDeputy || null);
           setAdminDeputy(foundAdminDeputy || null);
 
-// Find ALL teaching staff (excluding principals and deputies)
-const teachingStaff = allStaff.filter(s => {
-  const role = s.role?.toLowerCase() || '';
-  const position = s.position?.toLowerCase() || '';
-  
-  // EXCLUDE leadership roles (principal, deputy principal)
-  const isLeadership = 
-    role.includes('principal') || 
-    role.includes('deputy') || 
-    position.includes('principal') ||
-    position.includes('deputy') ||
-    s.id === 1 || s.id === 2 || s.id === 3; // Backup exclusion for known leadership IDs
-  
-  // INCLUDE if they are teaching staff (not leadership)
-  return !isLeadership;
-});
+          const seniorOrDepartmentLeads = allStaff.filter(s => {
+            const role = s.role?.toLowerCase() || '';
+            const position = s.position?.toLowerCase() || '';
+            const combined = `${role} ${position}`;
 
-console.log(`🎯 Found ${teachingStaff.length} teachers eligible for random feature`);
-
-if (teachingStaff.length > 0) {
-  // Select a RANDOM teacher - changes on EVERY refresh
-  const randomIndex = Math.floor(Math.random() * teachingStaff.length);
-  const selectedTeacher = teachingStaff[randomIndex];
-  
-  console.log(`✨ Today's featured teacher: ${selectedTeacher.name} (${selectedTeacher.role || 'Teacher'})`);
-  setRandomTeacher(selectedTeacher);
-} else {
-  // Fallback: if no teaching staff found, pick any non-leadership staff
-  const nonLeadershipStaff = allStaff.filter(s => {
-    const role = s.role?.toLowerCase() || '';
-    const position = s.position?.toLowerCase() || '';
-    return !role.includes('principal') && !role.includes('deputy') && 
-           !position.includes('principal') && !position.includes('deputy');
-  });
-  
-  if (nonLeadershipStaff.length > 0) {
-    const randomIndex = Math.floor(Math.random() * nonLeadershipStaff.length);
-    setRandomTeacher(nonLeadershipStaff[randomIndex]);
-  } else {
-    setRandomTeacher(null);
-  }
-}
-
-          // Also include any staff that might be teachers but not caught by the filter
-          const otherPotentialTeachers = allStaff.filter(s => {
-            if (teachingStaff.includes(s)) return false;
-            
-            const id = s.id;
-            // Include by ID if they're known teachers (ids 4, 5, 6, etc. - adjust based on your data)
-            return [4, 5, 6, 7, 8, 9, 10].includes(id);
+            return (
+              !combined.includes('principal') &&
+              !combined.includes('deputy') &&
+              (
+                combined.includes('senior teacher') ||
+                combined.includes('head of department') ||
+                combined.includes('hod') ||
+                combined.includes('ahod')
+              )
+            );
           });
 
-          const allTeachers = [...teachingStaff, ...otherPotentialTeachers];
-          
-          if (allTeachers.length > 0) {
-            // Select a random teacher
-            const randomIndex = Math.floor(Math.random() * allTeachers.length);
-            setRandomTeacher(allTeachers[randomIndex]);
-          } else {
-            // Fallback: find any staff member that's not principal or deputies
-            const nonLeadershipStaff = allStaff.filter(s => 
-              s.id !== foundPrincipal?.id && 
-              s.id !== foundAcademicsDeputy?.id && 
-              s.id !== foundAdminDeputy?.id
-            );
-            
-            if (nonLeadershipStaff.length > 0) {
-              const randomIndex = Math.floor(Math.random() * nonLeadershipStaff.length);
-              setRandomTeacher(nonLeadershipStaff[randomIndex]);
-            } else {
-              setRandomTeacher(null);
-            }
-          }
+          setRandomTeacher(seniorOrDepartmentLeads[0] || null);
 
         } else {
           throw new Error('Format error: Expected successful staff array');
@@ -471,7 +414,7 @@ if (teachingStaff.length > 0) {
                 </div>
 
 
-                {/* Right Column: Responsibilities & Contact */}
+                {/* Right Column: Responsibilities & Profile Notes */}
                 <div className="lg:col-span-2 space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-8">
                   <div className="space-y-3 sm:space-y-4 md:space-y-6">
                     {featuredStaff?.responsibilities && featuredStaff.responsibilities.length > 0 && (
@@ -508,26 +451,16 @@ if (teachingStaff.length > 0) {
                       </ul>
                     </div>
 
-                    {/* Contact Information */}
+                    {/* Privacy-safe profile note */}
                     <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-200">
-                      <h4 className="text-sm font-bold text-slate-900 mb-2 sm:mb-3 md:mb-4">Contact Information</h4>
-                      <div className="space-y-2.5 sm:space-y-3 md:space-y-4">
-                        <div className="flex items-center gap-2 md:gap-3">
-                          <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg sm:rounded-lg md:rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-                            <FiMail className="text-blue-600 text-xs sm:text-xs md:text-sm" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-xs text-slate-500">Email Address</p>
-                            <a 
-                              href={`mailto:${featuredStaff?.email || ''}`}
-                              className="text-blue-600 hover:text-blue-700 font-medium text-xs sm:text-xs md:text-sm break-all truncate block"
-                            >
-                              {featuredStaff?.email || 'Email not available'}
-                            </a>
-                          </div>
+                      <h4 className="text-sm font-bold text-slate-900 mb-2 sm:mb-3 md:mb-4">Leadership Information</h4>
+                      <div className="flex items-start gap-2 md:gap-3">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg sm:rounded-lg md:rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                          <FiShield className="text-blue-600 text-xs sm:text-xs md:text-sm" />
                         </div>
-                        
-      
+                        <p className="text-xs md:text-sm leading-relaxed text-slate-600">
+                          Public staff information is shared for leadership context only. Direct staff contact details are handled through official school channels.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -536,7 +469,7 @@ if (teachingStaff.length > 0) {
             </div>
           </div>
 
-          {/* ========== SUB-CARD SIDEBAR - 4 CARDS: Principal + Academics Deputy + Admin Deputy + Random Teacher ========== */}
+          {/* ========== SUB-CARD SIDEBAR: Principal, deputies, and senior/HOD leadership ========== */}
           <div className="lg:col-span-4 space-y-3 sm:space-y-4 md:space-y-6 mt-4 sm:mt-5 md:mt-6 lg:mt-0">
             
             {/* 1. PRINCIPAL CARD - Mr. David Muange */}
@@ -701,7 +634,7 @@ if (teachingStaff.length > 0) {
 
         
 
-            {/* 4. RANDOM TEACHER CARD - Randomly selected from teaching staff */}
+            {/* 4. SENIOR TEACHER / HOD CARD */}
             {randomTeacher && (
               <button
                 onClick={() => handleStaffClick(randomTeacher)}
@@ -730,7 +663,7 @@ if (teachingStaff.length > 0) {
                   <div className="flex-grow min-w-0">
                     <div className="flex items-center justify-between mb-1 sm:mb-2">
                       <span className="px-2 sm:px-2.5 md:px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest rounded-full">
-                        {randomTeacher.role || 'Teaching Staff'}
+                        {randomTeacher.position || randomTeacher.role || 'Senior Leadership'}
                       </span>
                       {featuredStaff?.id === randomTeacher.id && (
                         <span className="flex items-center gap-1 text-green-600 text-[9px] sm:text-[10px] md:text-xs font-bold">
@@ -742,7 +675,7 @@ if (teachingStaff.length > 0) {
                       {randomTeacher.name}
                     </h3>
                     <p className="text-slate-500 text-xs md:text-sm mt-0.5 sm:mt-1 truncate">
-                      {randomTeacher.position || randomTeacher.department || 'Teaching Staff'}
+                      {randomTeacher.department || 'Department Leadership'}
                     </p>
                     <div className="flex items-center gap-1 text-[9px] sm:text-[10px] md:text-xs text-green-600 mt-1.5 sm:mt-2 md:mt-3 font-bold tracking-tighter">
                       View Profile <FiChevronRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
@@ -776,20 +709,19 @@ if (teachingStaff.length > 0) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs sm:text-sm opacity-90">Teaching Staff</span>
+                  <span className="text-xs sm:text-sm opacity-90">Senior/HOD</span>
                   <span className="font-bold text-sm sm:text-base">
                     {staff.filter(s => 
-                      s.role?.toLowerCase().includes('teacher') || 
-                      s.role?.toLowerCase().includes('teaching')
+                      s.role?.toLowerCase().includes('senior') ||
+                      s.role?.toLowerCase().includes('hod') ||
+                      s.position?.toLowerCase().includes('head of department')
                     ).length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs sm:text-sm opacity-90">Support Staff</span>
+                  <span className="text-xs sm:text-sm opacity-90">Departments</span>
                   <span className="font-bold text-sm sm:text-base">
-                    {staff.filter(s => 
-                      s.role?.toLowerCase().includes('support')
-                    ).length}
+                    Grouped
                   </span>
                 </div>
               </div>

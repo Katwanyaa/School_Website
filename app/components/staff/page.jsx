@@ -728,7 +728,7 @@ function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, 
           </h3>
           <p className="text-[11px] font-bold text-slate-400 mt-2 uppercase tracking-widest flex items-center gap-2">
             <FiMail className="text-blue-500" />
-            {staff.email || 'not-assigned@matungulugirls.sc.ke'}
+            {staff.email || 'not-assigned@school.local'}
           </p>
         </div>
         
@@ -816,7 +816,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     name: staff?.name || '',
-    role: staff?.role || 'Teacher',
+    role: staff?.role || 'Senior Teacher',
     position: staff?.position || '',
     department: staff?.department || 'Sciences',
     email: staff?.email || '',
@@ -847,13 +847,11 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
   ];
 
   const ROLES = [
-    { value: 'Teacher', label: 'Teacher', icon: FaChalkboardTeacher, color: 'text-blue-600' },
     { value: 'Principal', label: 'Principal', icon: FaCrown, color: 'text-purple-600' },
     { value: 'Deputy Principal', label: 'Deputy Principal', icon: FaShieldAlt, color: 'text-emerald-600' },
-    { value: 'BOM Member', label: 'BOM Member', icon: FaShieldAlt, color: 'text-red-600' },
-    { value: 'Support Staff', label: 'Support Staff', icon: FaUsers, color: 'text-yellow-600' },
-    { value: 'Librarian', label: 'Librarian', icon: FaBook, color: 'text-indigo-600' },
-    { value: 'Counselor', label: 'Counselor', icon: FaHandsHelping, color: 'text-pink-600' }
+    { value: 'Senior Teacher', label: 'Senior Teacher', icon: FaChalkboardTeacher, color: 'text-blue-600' },
+    { value: 'Head of Department', label: 'HOD', icon: FaBook, color: 'text-indigo-600' },
+    { value: 'Assistant Head of Department', label: 'AHOD', icon: FaHandsHelping, color: 'text-pink-600' }
   ];
 
   const DEPUTY_PRINCIPAL_TYPES = [
@@ -1232,17 +1230,11 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                             <option value="Chief Principal">Chief Principal</option>
                             <option value="Senior Teacher">Senior Teacher</option>
                             <option value="Head of Department">Head of Department</option>
+                            <option value="Assistant Head of Department">Assistant Head of Department</option>
                           </optgroup>
-                          <optgroup label="Teaching Staff">
-                            <option value="Teacher">Teacher</option>
-                            <option value="Subject Teacher">Subject Teacher</option>
-                            <option value="Class Teacher">Class Teacher</option>
-                          </optgroup>
-                          <optgroup label="Support">
-                            <option value="Librarian">Librarian</option>
-                            <option value="Accountant">Accountant</option>
-                            <option value="Secretary">Secretary</option>
-                            <option value="Support Staff">Support Staff</option>
+                          <optgroup label="Department Leadership">
+                            <option value="HOD">HOD</option>
+                            <option value="AHOD">AHOD</option>
                           </optgroup>
                         </select>
                       </div>
@@ -1612,6 +1604,598 @@ function StyledTagInput({ label, value, onChange, placeholder, disabled, color =
   );
 }
 
+const STAFF_DEPARTMENT_CATEGORIES = [
+  { value: 'CBC', label: 'CBC Department', icon: FiBook, color: 'from-blue-500 to-cyan-600' },
+  { value: 'EIGHT_FOUR_FOUR', label: '8-4-4 Department', icon: FiAward, color: 'from-amber-500 to-orange-600' },
+  { value: 'TEACHING', label: 'Teaching Department', icon: FiBriefcase, color: 'from-emerald-500 to-teal-600' },
+  { value: 'SUPPORT', label: 'Support / Non-Teaching', icon: FiShield, color: 'from-slate-700 to-slate-900' }
+];
+
+const getDepartmentAuthHeaders = () => {
+  const adminToken = localStorage.getItem('admin_token');
+  const deviceToken = localStorage.getItem('device_token');
+
+  if (!adminToken || !deviceToken) {
+    throw new Error('Authentication required');
+  }
+
+  return {
+    Authorization: `Bearer ${adminToken}`,
+    'x-device-token': deviceToken
+  };
+};
+
+const getDepartmentImage = (department) => (
+  department?.image || department?.images?.[0]?.url || '/teachers.png'
+);
+
+const parseDepartmentExtra = (extra) => {
+  if (!extra) return {};
+  if (typeof extra === 'object') return extra;
+  try {
+    return JSON.parse(extra);
+  } catch {
+    return {};
+  }
+};
+
+function DepartmentFormModal({ department, onClose, onSave, loading }) {
+  const extra = parseDepartmentExtra(department?.extra);
+  const [formData, setFormData] = useState({
+    name: department?.name || '',
+    category: department?.category || 'TEACHING',
+    headName: department?.headName || '',
+    assistantHeadName: department?.assistantHeadName || '',
+    staffCount: department?.staffCount || 0,
+    description: department?.description || '',
+    displayOrder: department?.displayOrder || 0,
+    isActive: department?.isActive !== false,
+    focusAreas: Array.isArray(extra.focusAreas) ? extra.focusAreas.join(', ') : (extra.focusAreas || ''),
+    subjects: Array.isArray(extra.subjects) ? extra.subjects.join(', ') : (extra.subjects || ''),
+    location: extra.location || '',
+    notes: extra.notes || ''
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(getDepartmentImage(department));
+
+  const updateField = (field, value) => {
+    setFormData((previous) => ({ ...previous, [field]: value }));
+  };
+
+  const handleImageChange = (file) => {
+    if (!file) return;
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const toList = (value) => value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const payload = new FormData();
+    payload.append('name', formData.name.trim());
+    payload.append('category', formData.category);
+    payload.append('headName', formData.headName.trim());
+    payload.append('assistantHeadName', formData.assistantHeadName.trim());
+    payload.append('staffCount', String(Math.max(0, Number(formData.staffCount) || 0)));
+    payload.append('description', formData.description.trim());
+    payload.append('displayOrder', String(Number(formData.displayOrder) || 0));
+    payload.append('isActive', formData.isActive ? 'true' : 'false');
+    payload.append('extra', JSON.stringify({
+      focusAreas: toList(formData.focusAreas),
+      subjects: toList(formData.subjects),
+      location: formData.location.trim(),
+      notes: formData.notes.trim()
+    }));
+
+    if (imageFile) {
+      payload.append('image', imageFile);
+    } else if (department?.image) {
+      payload.append('image', department.image);
+    }
+
+    onSave(payload, department?.id);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+      <div className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+        <div className="flex items-center justify-between bg-slate-900 p-5 text-white">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-300">
+              Department Management
+            </p>
+            <h2 className="mt-1 text-2xl font-black">
+              {department ? 'Update Department' : 'Add Department'}
+            </h2>
+          </div>
+          <button onClick={onClose} className="rounded-xl bg-white/10 p-2 hover:bg-white/20">
+            <FiX size={22} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="max-h-[calc(92vh-92px)] overflow-y-auto p-5 sm:p-6">
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                  Department Name
+                </label>
+                <input
+                  value={formData.name}
+                  onChange={(event) => updateField('name', event.target.value)}
+                  required
+                  className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                  placeholder="Mathematics Department"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                  Department Type / Category
+                </label>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {STAFF_DEPARTMENT_CATEGORIES.map((category) => (
+                    <button
+                      type="button"
+                      key={category.value}
+                      onClick={() => updateField('category', category.value)}
+                      className={`rounded-xl border-2 p-3 text-left transition ${
+                        formData.category === category.value
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-slate-100 bg-white hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${category.color} text-white`}>
+                          <category.icon size={15} />
+                        </div>
+                        <span className="text-xs font-black uppercase tracking-tight text-slate-800">
+                          {category.label}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                    HOD Name
+                  </label>
+                  <input
+                    value={formData.headName}
+                    onChange={(event) => updateField('headName', event.target.value)}
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                    placeholder="Head of Department"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                    AHOD Name
+                  </label>
+                  <input
+                    value={formData.assistantHeadName}
+                    onChange={(event) => updateField('assistantHeadName', event.target.value)}
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                    placeholder="Assistant HOD"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                    Staff Count
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.staffCount}
+                    onChange={(event) => updateField('staffCount', event.target.value)}
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                    Display Order
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.displayOrder}
+                    onChange={(event) => updateField('displayOrder', event.target.value)}
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                  />
+                </div>
+                <label className="flex items-end gap-3 rounded-xl border-2 border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(event) => updateField('isActive', event.target.checked)}
+                    className="h-5 w-5 rounded border-slate-300 text-blue-600"
+                  />
+                  Active
+                </label>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                  Department Image
+                </label>
+                <div className="rounded-2xl border-2 border-dashed border-slate-200 p-4">
+                  {imagePreview && (
+                    <img src={imagePreview} alt="Department preview" className="mb-3 h-36 w-full rounded-xl object-cover" />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => handleImageChange(event.target.files[0])}
+                    className="w-full text-sm text-slate-500 file:mr-3 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-bold file:text-blue-700"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                  Short Description
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(event) => updateField('description', event.target.value)}
+                  rows={5}
+                  className="w-full resize-none rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-semibold leading-relaxed outline-none focus:border-blue-500"
+                  placeholder="Brief department overview for the public staff page."
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                Focus Areas
+              </label>
+              <input
+                value={formData.focusAreas}
+                onChange={(event) => updateField('focusAreas', event.target.value)}
+                className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                placeholder="Curriculum delivery, clubs, academic support"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                Subjects / Services
+              </label>
+              <input
+                value={formData.subjects}
+                onChange={(event) => updateField('subjects', event.target.value)}
+                className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                placeholder="Biology, Chemistry, Physics"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                Location
+              </label>
+              <input
+                value={formData.location}
+                onChange={(event) => updateField('location', event.target.value)}
+                className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                placeholder="Science block"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                Internal Notes
+              </label>
+              <input
+                value={formData.notes}
+                onChange={(event) => updateField('notes', event.target.value)}
+                className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                placeholder="Public-safe department detail"
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl bg-slate-100 px-6 py-3 text-sm font-black uppercase tracking-widest text-slate-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading || !formData.name.trim()}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-black uppercase tracking-widest text-white disabled:opacity-50"
+            >
+              {loading ? <Spinner size={16} /> : <FaSave />}
+              {department ? 'Update Department' : 'Save Department'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function StaffDepartmentManager({ showNotification }) {
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('all');
+  const [showModal, setShowModal] = useState(false);
+  const [editingDepartment, setEditingDepartment] = useState(null);
+
+  const fetchDepartments = async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
+
+      const response = await fetch('/api/staff/departments?includeInactive=1', {
+        headers: getDepartmentAuthHeaders()
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to load departments');
+      }
+
+      setDepartments(data.departments || []);
+      if (isRefresh) showNotification('success', 'Departments Refreshed', 'Department groups are up to date.');
+    } catch (error) {
+      console.error('Department fetch error:', error);
+      showNotification('error', 'Department Error', error.message || 'Failed to fetch departments');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  const handleCreate = () => {
+    setEditingDepartment(null);
+    setShowModal(true);
+  };
+
+  const handleEdit = (department) => {
+    setEditingDepartment(department);
+    setShowModal(true);
+  };
+
+  const handleSave = async (payload, id) => {
+    try {
+      setSaving(true);
+      const response = await fetch(id ? `/api/staff/departments/${id}` : '/api/staff/departments', {
+        method: id ? 'PUT' : 'POST',
+        headers: getDepartmentAuthHeaders(),
+        body: payload
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to save department');
+      }
+
+      setShowModal(false);
+      setEditingDepartment(null);
+      await fetchDepartments();
+      showNotification('success', id ? 'Department Updated' : 'Department Created', `${data.department.name} saved successfully.`);
+    } catch (error) {
+      console.error('Department save error:', error);
+      showNotification('error', 'Save Failed', error.message || 'Failed to save department');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (department) => {
+    if (!window.confirm(`Delete "${department.name}" department?`)) return;
+
+    try {
+      const response = await fetch(`/api/staff/departments/${department.id}`, {
+        method: 'DELETE',
+        headers: getDepartmentAuthHeaders()
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to delete department');
+      }
+
+      await fetchDepartments();
+      showNotification('success', 'Department Deleted', `${department.name} was removed.`);
+    } catch (error) {
+      console.error('Department delete error:', error);
+      showNotification('error', 'Delete Failed', error.message || 'Failed to delete department');
+    }
+  };
+
+  const filteredDepartments = departments.filter((department) => {
+    const query = search.toLowerCase();
+    const matchesCategory = category === 'all' || department.category === category;
+    const matchesSearch = !query || [
+      department.name,
+      department.description,
+      department.headName,
+      department.assistantHeadName,
+      department.category
+    ].filter(Boolean).join(' ').toLowerCase().includes(query);
+    return matchesCategory && matchesSearch;
+  });
+
+  const totalGroupedStaff = departments.reduce((sum, department) => sum + (Number(department.staffCount) || 0), 0);
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-100/40">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-blue-600">Department Groups</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">Manage Staff Departments</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
+              Upload teaching and support staff as department-level groups for public privacy. Individual profile uploads remain for leadership only.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={() => fetchDepartments(true)}
+              disabled={refreshing}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-700 disabled:opacity-50"
+            >
+              <FiRefreshCw className={refreshing ? 'animate-spin text-blue-600' : ''} />
+              Refresh
+            </button>
+            <button
+              onClick={handleCreate}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-black uppercase tracking-widest text-white"
+            >
+              <FiPlus /> Add Department
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: 'Departments', value: departments.length, icon: FiUsers },
+            { label: 'Grouped Staff', value: totalGroupedStaff, icon: FiArchive },
+            { label: 'Active', value: departments.filter((item) => item.isActive !== false).length, icon: FiCheckCircle },
+            { label: 'Inactive', value: departments.filter((item) => item.isActive === false).length, icon: FiShield },
+          ].map((stat) => (
+            <div key={stat.label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <stat.icon className="text-xl text-blue-600" />
+              <p className="mt-3 text-2xl font-black text-slate-900">{stat.value}</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm lg:grid-cols-[1fr_260px]">
+        <div className="relative">
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search department, HOD, AHOD or description..."
+            className="w-full rounded-xl border-2 border-slate-100 bg-slate-50 py-4 pl-12 pr-4 text-sm font-bold outline-none focus:border-blue-500 focus:bg-white"
+          />
+        </div>
+        <select
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
+          className="rounded-xl border-2 border-slate-100 bg-slate-50 px-4 py-4 text-xs font-black uppercase tracking-widest text-slate-700 outline-none focus:border-blue-500"
+        >
+          <option value="all">All Categories</option>
+          {STAFF_DEPARTMENT_CATEGORIES.map((item) => (
+            <option key={item.value} value={item.value}>{item.label}</option>
+          ))}
+        </select>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center rounded-2xl bg-white p-10">
+          <Spinner size={42} />
+        </div>
+      ) : filteredDepartments.length > 0 ? (
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {filteredDepartments.map((department) => {
+            const categoryInfo = STAFF_DEPARTMENT_CATEGORIES.find((item) => item.value === department.category) || STAFF_DEPARTMENT_CATEGORIES[2];
+            return (
+              <article key={department.id} className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50">
+                <img src={getDepartmentImage(department)} alt={department.name} className="h-44 w-full object-cover" />
+                <div className="p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className={`inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${categoryInfo.color} px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white`}>
+                      <categoryInfo.icon size={12} /> {categoryInfo.label}
+                    </span>
+                    <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                      department.isActive === false ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'
+                    }`}>
+                      {department.isActive === false ? 'Inactive' : 'Active'}
+                    </span>
+                  </div>
+                  <h3 className="mt-4 text-xl font-black text-slate-900">{department.name}</h3>
+                  <p className="mt-2 line-clamp-3 min-h-[4rem] text-sm leading-relaxed text-slate-600">
+                    {department.description || 'No public description added yet.'}
+                  </p>
+                  <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
+                    <div className="rounded-xl bg-slate-50 p-3">
+                      <p className="font-black uppercase tracking-widest text-slate-400">HOD</p>
+                      <p className="mt-1 truncate font-bold text-slate-800">{department.headName || 'Not set'}</p>
+                    </div>
+                    <div className="rounded-xl bg-slate-50 p-3">
+                      <p className="font-black uppercase tracking-widest text-slate-400">Staff</p>
+                      <p className="mt-1 font-bold text-slate-800">{department.staffCount || 0}</p>
+                    </div>
+                    <div className="col-span-2 rounded-xl bg-slate-50 p-3">
+                      <p className="font-black uppercase tracking-widest text-slate-400">AHOD</p>
+                      <p className="mt-1 truncate font-bold text-slate-800">{department.assistantHeadName || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="mt-5 flex gap-2">
+                    <button
+                      onClick={() => handleEdit(department)}
+                      className="flex-1 rounded-xl bg-slate-900 px-4 py-3 text-xs font-black uppercase tracking-widest text-white"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(department)}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+          <FiUsers className="mx-auto text-5xl text-slate-300" />
+          <h3 className="mt-4 text-xl font-black text-slate-900">No departments found</h3>
+          <p className="mt-2 text-sm text-slate-500">Add a department group to replace public individual teacher cards.</p>
+          <button
+            onClick={handleCreate}
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-black uppercase tracking-widest text-white"
+          >
+            <FiPlus /> Add Department
+          </button>
+        </div>
+      )}
+
+      {showModal && (
+        <DepartmentFormModal
+          department={editingDepartment}
+          onClose={() => {
+            setShowModal(false);
+            setEditingDepartment(null);
+          }}
+          onSave={handleSave}
+          loading={saving}
+        />
+      )}
+    </div>
+  );
+}
+
 // Main Staff Manager Component
 export default function StaffManager() {
   const [staff, setStaff] = useState([]);
@@ -1631,6 +2215,7 @@ export default function StaffManager() {
   const [stats, setStats] = useState(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);
  const [refreshing, setRefreshing] = useState(false);
+ const [activeTab, setActiveTab] = useState('profiles');
 
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -1643,7 +2228,7 @@ export default function StaffManager() {
     message: ''
   });
 
-  const roles = ['Principal', 'Deputy Principal', 'Teacher', 'BOM Member', 'Support Staff', 'Librarian', 'Counselor'];
+  const roles = ['Principal', 'Deputy Principal', 'Senior Teacher', 'Head of Department', 'Assistant Head of Department'];
   const departments = ['Sciences', 'Mathematics', 'Languages', 'Humanities', 'Administration', 'Sports', 'Guidance'];
 
 
@@ -1653,11 +2238,9 @@ const getStaffHierarchy = (staff) => {
   const hierarchyOrder = {
     'Principal': 1,
     'Deputy Principal': 2,
-    'Teacher': 3,
-    'BOM Member': 4,
-    'Support Staff': 5,
-    'Librarian': 6,
-    'Counselor': 7
+    'Senior Teacher': 3,
+    'Head of Department': 4,
+    'Assistant Head of Department': 5
   };
 
   return [...staff].sort((a, b) => {
@@ -1690,9 +2273,9 @@ const getStaffHierarchy = (staff) => {
 useEffect(() => {
   const calculatedStats = {
     total: staff.length,
-    teaching: staff.filter(s => s.role === 'Teacher').length,
+    teaching: staff.filter(s => ['Senior Teacher', 'Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
     administration: staff.filter(s => s.role === 'Principal' || s.role === 'Deputy Principal').length,
-    bom: staff.filter(s => s.role === 'BOM Member').length,
+    bom: staff.filter(s => ['Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
     active: staff.filter(s => s.status === 'active').length,
     onLeave: staff.filter(s => s.status === 'on-leave').length,
     // Add deputy counts
@@ -1755,8 +2338,9 @@ const fetchStaff = async (isRefresh = false) => {
       setLoading(true);
     }
     
-    // ✅ PUBLIC ENDPOINT - No authentication needed
-    const response = await fetch('/api/staff');
+    const response = await fetch('/api/staff', {
+      headers: getAuthHeaders()
+    });
     
     const data = await response.json();
     
@@ -2026,9 +2610,9 @@ const handleSubmit = async (formData, id) => {
   useEffect(() => {
     const calculatedStats = {
       total: staff.length,
-      teaching: staff.filter(s => s.role === 'Teacher').length,
+      teaching: staff.filter(s => ['Senior Teacher', 'Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
       administration: staff.filter(s => s.role === 'Principal' || s.role === 'Deputy Principal').length,
-      bom: staff.filter(s => s.role === 'BOM Member').length,
+      bom: staff.filter(s => ['Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
       active: staff.filter(s => s.status === 'active').length,
       onLeave: staff.filter(s => s.status === 'on-leave').length,
     };
@@ -2142,7 +2726,7 @@ const handleSubmit = async (formData, id) => {
         <div className="h-12 w-1.5 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full shadow-[0_0_20px_rgba(249,115,22,0.6)] animate-pulse" />
         <div className="space-y-1.5">
           <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.3em] text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400">
-            Matungulu Girls Senior School 
+            Staff Administration
           </h2>
           <p className="text-[10px] italic font-bold text-white/50 tracking-[0.2em] uppercase flex items-center gap-2">
             <span className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
@@ -2225,6 +2809,30 @@ const handleSubmit = async (formData, id) => {
     </div>
   </div>
 </div>
+<div className="grid grid-cols-1 gap-3 rounded-2xl border border-slate-100 bg-white p-2 shadow-lg shadow-slate-200/60 sm:grid-cols-2">
+  {[
+    { id: 'profiles', label: 'Leadership Profiles', icon: FiUser },
+    { id: 'departments', label: 'Departments', icon: FiUsers }
+  ].map((tab) => (
+    <button
+      key={tab.id}
+      onClick={() => setActiveTab(tab.id)}
+      className={`flex items-center justify-center gap-3 rounded-xl px-5 py-4 text-xs font-black uppercase tracking-widest transition ${
+        activeTab === tab.id
+          ? 'bg-slate-900 text-white shadow-xl'
+          : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+      }`}
+    >
+      <tab.icon />
+      {tab.label}
+    </button>
+  ))}
+</div>
+
+{activeTab === 'departments' ? (
+  <StaffDepartmentManager showNotification={showNotification} />
+) : (
+<>
 {/* --- ENLARGED SEARCH & FILTER ENGINE --- */}
 <div className="bg-gradient-to-br from-white via-gray-50/30 to-white rounded-[2.5rem] p-8 shadow-2xl shadow-gray-200/50 border border-gray-100/80 backdrop-blur-sm mb-8 transition-all duration-500 hover:shadow-3xl">
   
@@ -2340,9 +2948,9 @@ const handleSubmit = async (formData, id) => {
 {stats && (
   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mb-12">
     {[
-      { label: "Teaching Staff", val: stats.teaching, icon: FiBook, color: "from-blue-500 to-indigo-600", gradient: "via-blue-400", description: "Faculty Members" },
+      { label: "Senior / HOD", val: stats.teaching, icon: FiBook, color: "from-blue-500 to-indigo-600", gradient: "via-blue-400", description: "Approved Leaders" },
       { label: "Administration", val: stats.administration, icon: FiAward, color: "from-emerald-500 to-teal-600", gradient: "via-emerald-400", description: "Management Team" },
-      { label: "BOM Hub", val: stats.bom, icon: FiShield, color: "from-purple-500 to-pink-600", gradient: "via-purple-400", description: "Board Members" },
+      { label: "HOD / AHOD", val: stats.bom, icon: FiShield, color: "from-purple-500 to-pink-600", gradient: "via-purple-400", description: "Department Leads" },
       { label: "Total Strength", val: stats.total, icon: FiTarget, color: "from-orange-500 to-red-600", gradient: "via-orange-400", description: "Complete Roster" },
       { label: "On Leave", val: stats.onLeave, icon: FiCalendar, color: "from-amber-400 to-orange-600", gradient: "via-amber-400", description: "Temporary Absence" },
       { label: "Active Now", val: stats.active, icon: FiCheckCircle, color: "from-green-400 to-emerald-600", gradient: "via-green-400", description: "Currently Serving" },
@@ -2496,6 +3104,8 @@ const handleSubmit = async (formData, id) => {
           onEdit={handleEdit}
         />
       )}
+    </>
+  )}
     </div>
   );
 }
