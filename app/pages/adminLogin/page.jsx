@@ -1109,53 +1109,82 @@ export default function AdminLoginPage() {
 
       {/* Verification Modal */}
       {showVerificationModal && (
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-[9999] animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md my-auto bg-white rounded-xl md:rounded-2xl shadow-2xl border-2 border-blue-900/10 overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
-            
-            <div className="relative p-5 sm:p-6 bg-[#002366] text-white shrink-0 border-b-4 border-amber-500">
-              <button
-                onClick={closeVerificationModal}
-                className="absolute top-3 right-3 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-90"
-              >
-                <X className="w-5 h-5 text-amber-400" />
-              </button>
-              
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center shrink-0 border border-white/20">
-                  <ShieldCheck className="w-6 h-6 md:w-7 md:h-7 text-amber-400" />
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-slate-950/85 p-3 backdrop-blur-md sm:items-center sm:p-5">
+          <div className="relative my-auto grid w-full max-w-3xl overflow-hidden rounded-[28px] border border-white/10 bg-white shadow-2xl md:grid-cols-[0.9fr_1.1fr]">
+            <button
+              onClick={closeVerificationModal}
+              className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-slate-950/70 text-white shadow-lg backdrop-blur transition hover:bg-slate-900 active:scale-95"
+              aria-label="Close verification"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="relative overflow-hidden bg-slate-950 p-6 text-white sm:p-8">
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-blue-400 to-cyan-300" />
+              <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full border border-white/10" />
+              <div className="absolute bottom-6 right-6 h-20 w-20 rounded-full border border-blue-300/20" />
+
+              <div className="relative">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-blue-100">
+                  <Key className="h-3.5 w-3.5 text-amber-300" />
+                  Token Gate
                 </div>
-                <div className="min-w-0">
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight uppercase">
-                    {requiresPasswordAfterVerification ? 'Final Access' : 'Identity Check'}
-                  </h3>
-                  <p className="text-blue-200 text-[10px] sm:text-xs font-semibold uppercase tracking-widest opacity-80">
-                    {requiresPasswordAfterVerification ? 'Portal Authorization' : 'Secure Campus Network'}
-                  </p>
+
+                <h3 className="mt-6 max-w-xs text-2xl font-black leading-tight tracking-tight sm:text-3xl">
+                  {requiresPasswordAfterVerification ? 'Confirm final access' : 'Verify this admin device'}
+                </h3>
+                <p className="mt-3 text-sm font-medium leading-6 text-slate-300">
+                  {requiresPasswordAfterVerification
+                    ? 'Your code is accepted. Confirm your password to complete the protected admin session.'
+                    : 'A one-time token was sent to the admin email so this browser can be trusted safely.'}
+                </p>
+
+                <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Verification reason</p>
+                  <div className="mt-2 flex items-center gap-2 text-sm font-black uppercase tracking-wide text-white">
+                    <AlertCircle className="h-4 w-4 text-amber-300" />
+                    {verificationReason?.replace(/_/g, ' ') || 'SECURITY PROTOCOL'}
+                  </div>
                 </div>
-              </div>
-              
-              <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-amber-500 text-blue-950 rounded-md shadow-sm">
-                <AlertCircle className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-black whitespace-nowrap uppercase tracking-tighter">
-                  {verificationReason?.replace(/_/g, ' ') || 'SECURITY PROTOCOL'}
-                </span>
+
+                <div className="mt-6 space-y-3">
+                  {[
+                    'Encrypted token check',
+                    'Device fingerprint review',
+                    'Session audit logging',
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3 text-xs font-bold text-slate-200">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300">
+                        <CheckCircle className="h-3.5 w-3.5" />
+                      </span>
+                      {item}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            
-            <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar bg-slate-50/50">
+
+            <div className="max-h-[88vh] overflow-y-auto bg-white p-5 sm:p-8">
+              <div className="mb-6 pr-10">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-600">
+                  Katwanyaa Admin Access
+                </p>
+                <h4 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
+                  {requiresPasswordAfterVerification ? 'Password required' : 'Enter verification token'}
+                </h4>
+              </div>
+
               {!requiresPasswordAfterVerification ? (
                 <>
-                  <div className="mb-6 text-center">
-                    <p className="text-slate-500 text-xs font-bold uppercase tracking-wide mb-3">
-                      Authorization Code Sent To:
+                  <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">
+                      Sent to
                     </p>
-                    <div className="bg-white border-2 border-slate-200 rounded-lg p-3 shadow-inner">
-                      <p className="text-blue-900 font-bold text-sm break-all">{verificationEmail}</p>
-                    </div>
+                    <p className="mt-1 break-all text-sm font-black text-slate-900">{verificationEmail}</p>
                   </div>
-                  
+
                   <div className="mb-6">
-                    <div className="grid grid-cols-6 gap-2 mb-5">
+                    <div className="grid grid-cols-6 gap-2 sm:gap-3">
                       {verificationCode.map((digit, index) => (
                         <input
                           key={index}
@@ -1166,22 +1195,27 @@ export default function AdminLoginPage() {
                           value={digit}
                           onChange={(e) => handleVerificationCodeChange(index, e.target.value)}
                           onKeyDown={(e) => handleVerificationKeyDown(index, e)}
-                          className="w-full aspect-square text-center text-xl font-bold bg-white border-2 border-slate-300 rounded-lg focus:border-blue-800 focus:ring-4 focus:ring-blue-800/5 outline-none transition-all text-blue-900"
+                          className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 text-center text-xl font-black text-slate-950 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:h-14"
                           autoFocus={index === 0}
                         />
                       ))}
                     </div>
-                    
-                    <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 py-2 rounded-full">
-                      <Clock className="w-3.5 h-3.5 text-amber-600" />
-                      <span>Expires in: <span className="text-blue-900 font-mono">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span></span>
+
+                    <div className="mt-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold text-slate-500">
+                      <span className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-blue-600" />
+                        Token window
+                      </span>
+                      <span className="font-mono text-sm font-black text-slate-950">
+                        {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}
+                      </span>
                     </div>
                   </div>
                 </>
               ) : (
-                <div className="mb-6">
-                  <p className="text-slate-700 text-sm mb-4 font-bold">
-                    Identity Confirmed. Enter Portal Password:
+                <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+                    Confirm portal password
                   </p>
                   <div className="relative group">
                     <input
@@ -1189,32 +1223,30 @@ export default function AdminLoginPage() {
                       value={passwordAfterVerification}
                       onChange={(e) => setPasswordAfterVerification(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full p-4 pl-5 pr-12 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-800 focus:ring-4 focus:ring-blue-800/5 outline-none transition-all text-blue-900 font-bold"
+                      className="w-full rounded-2xl border border-slate-200 bg-white p-4 pr-12 font-bold text-slate-950 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                       autoFocus
                     />
-                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-800 transition-colors w-5 h-5" />
+                    <Lock className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-300 transition-colors group-focus-within:text-blue-700" />
                   </div>
                 </div>
               )}
-              
+
               <div className="flex flex-col gap-3">
                 <button
                   type="button"
                   onClick={requiresPasswordAfterVerification ? handlePasswordAfterVerification : handleVerifyCode}
                   disabled={verificationLoading || (!requiresPasswordAfterVerification && verificationCode.join('').length !== 6)}
-                  className="w-full flex items-center justify-center gap-3 py-4 bg-blue-900 text-white rounded-xl font-bold text-sm tracking-widest shadow-xl hover:bg-blue-950 active:scale-[0.98] transition-all disabled:bg-slate-300"
+                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-950 py-4 text-sm font-black uppercase tracking-[0.18em] text-white shadow-xl shadow-slate-200 transition-all hover:bg-blue-950 active:scale-[0.98] disabled:bg-slate-300 disabled:shadow-none"
                 >
                   {verificationLoading ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span className="capitalize text-sm font-medium">Verifying...</span>
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      <span className="text-sm font-medium capitalize">Verifying...</span>
                     </div>
                   ) : (
                     <>
-                      <CheckCircle className="w-4 h-4 text-amber-400" />
-                      <span className="uppercase tracking-widest">
-                        {requiresPasswordAfterVerification ? 'Grant Access' : 'Authorize Device'}
-                      </span>
+                      <ShieldCheck className="h-4 w-4 text-amber-300" />
+                      <span>{requiresPasswordAfterVerification ? 'Grant Access' : 'Verify Token'}</span>
                     </>
                   )}
                 </button>
@@ -1224,20 +1256,18 @@ export default function AdminLoginPage() {
                     type="button"
                     onClick={handleResendCode}
                     disabled={resendLoading || countdown > 0}
-                    className="w-full py-2 text-slate-500 font-black text-[10px] uppercase tracking-widest hover:text-blue-900 transition-colors disabled:opacity-30"
+                    className="w-full rounded-2xl border border-slate-200 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500 transition hover:border-blue-200 hover:text-blue-700 disabled:opacity-40"
                   >
-                    Didn't receive code? <span className="text-blue-700 underline underline-offset-4">Request New</span>
+                    Didn't receive it? <span className="text-blue-700">Request new token</span>
                   </button>
                 )}
               </div>
 
-              <div className="mt-8 pt-5 border-t-2 border-dashed border-slate-200">
-                <div className="flex gap-4 items-start">
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <ShieldAlert className="w-4 h-4 text-blue-800" />
-                  </div>
-                  <p className="text-[10px] leading-relaxed text-slate-500 font-bold uppercase tracking-tight">
-                    School Security Protocol: This session is encrypted. Unauthorized access attempts are logged and reported to katwanyaa ICT Staff.
+              <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50 p-4">
+                <div className="flex gap-3">
+                  <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
+                  <p className="text-[11px] font-bold leading-5 text-amber-900">
+                    Admin verification is monitored by Katwanyaa ICT. Do not approve a token request you did not start.
                   </p>
                 </div>
               </div>
@@ -1248,127 +1278,153 @@ export default function AdminLoginPage() {
 
       {/* Terms & Conditions Modal */}
       {showTermsModal && (
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-[9999] animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-2xl my-auto bg-white rounded-xl md:rounded-2xl shadow-2xl border-2 border-blue-900/10 overflow-hidden flex flex-col max-h-[90vh]">
-            
-            <div className="relative p-5 sm:p-6 bg-gradient-to-r from-slate-900 to-blue-900 text-white shrink-0 border-b-4 border-amber-500">
-              <button
-                onClick={closeTermsModal}
-                className="absolute top-3 right-3 p-2 hover:bg-white/10 rounded-lg transition-colors active:scale-90"
-              >
-                <X className="w-5 h-5 text-amber-400" />
-              </button>
-              
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center shrink-0 border border-white/20">
-                  <ShieldAlert className="w-6 h-6 md:w-7 md:h-7 text-amber-400" />
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-slate-950/85 p-3 backdrop-blur-md sm:items-center sm:p-5">
+          <div className="relative my-auto grid w-full max-w-5xl overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-2xl lg:grid-cols-[320px_1fr]">
+            <button
+              onClick={closeTermsModal}
+              className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-700 shadow-lg transition hover:bg-slate-100 active:scale-95"
+              aria-label="Close terms"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <aside className="relative overflow-hidden bg-slate-950 p-6 text-white sm:p-8">
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-blue-400 to-emerald-300" />
+              <div className="absolute -bottom-16 -right-16 h-44 w-44 rounded-full border border-white/10" />
+              <div className="relative">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-amber-300">
+                  <ShieldAlert className="h-7 w-7" />
                 </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight uppercase">
-                    Terms & Conditions
-                  </h3>
-                  <p className="text-blue-200 text-[10px] sm:text-xs font-semibold uppercase tracking-widest opacity-80">
-                    Authorized Access Only
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar bg-slate-50/50">
-              
-              <div className="mb-6 bg-red-50 border-l-4 border-red-600 p-4 rounded-r-lg">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-black text-red-900 text-sm uppercase tracking-wide mb-1">
-                      ⚠️ Legal Warning
-                    </h4>
-                    <p className="text-xs sm:text-sm text-red-800 font-bold leading-relaxed">
-                      Unauthorized access to this system is strictly prohibited and will be treated as a cyber crime under the Computer Misuse and Cybercrimes Act. All access attempts are logged and monitored. Violators will face legal prosecution to the fullest extent of the law.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4 text-slate-700">
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
-                    <Database className="w-4 h-4 text-blue-600" />
-                    1. Authorized Use
-                  </h5>
-                  <p className="text-xs sm:text-sm leading-relaxed">
-                    This administrative portal is exclusively for authorized katwanyaa ' Senior School personnel. Access credentials are personal and non-transferable. Any sharing of credentials constitutes a security breach and will result in immediate revocation of access privileges and potential legal action.
-                  </p>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-blue-600" />
-                    2. Data Protection & Privacy
-                  </h5>
-                  <p className="text-xs sm:text-sm leading-relaxed">
-                    All student, staff, and institutional data accessed through this portal is protected under the Data Protection Act. Users are legally obligated to maintain confidentiality and must not disclose, copy, or misuse any information obtained through this system. Data breaches must be reported immediately to the ICT department.
-                  </p>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-blue-600" />
-                    3. Monitoring & Logging
-                  </h5>
-                  <p className="text-xs sm:text-sm leading-relaxed">
-                    All activities within this portal are subject to continuous monitoring and logging. This includes, but is not limited to: login attempts, data access patterns, modifications to records, and system interactions. These logs are regularly reviewed and may be used as evidence in disciplinary or legal proceedings.
-                  </p>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
-                    <Cpu className="w-4 h-4 text-blue-600" />
-                    4. Security Obligations
-                  </h5>
-                  <p className="text-xs sm:text-sm leading-relaxed">
-                    Users must ensure their devices meet minimum security standards, including up-to-date antivirus software and secure network connections. Access from public or unsecured networks is prohibited. Users are responsible for immediately reporting any suspected security incidents or unusual system behavior.
-                  </p>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <h5 className="font-black text-slate-900 text-sm uppercase tracking-wide mb-2 flex items-center gap-2">
-                    <Building className="w-4 h-4 text-blue-600" />
-                    5. Institutional Compliance
-                  </h5>
-                  <p className="text-xs sm:text-sm leading-relaxed">
-                    By accessing this portal, you acknowledge your understanding of and compliance with all katwanyaa ' Senior School ICT policies, the Computer Misuse and Cybercrimes Act, and all applicable Kenyan laws regarding data protection and electronic transactions. Violations will be reported to relevant authorities.
-                  </p>
+                <p className="mt-6 text-[10px] font-black uppercase tracking-[0.24em] text-blue-200">
+                  Admin Portal Policy
+                </p>
+                <h3 className="mt-3 text-3xl font-black leading-tight tracking-tight">
+                  Terms for secure school access
+                </h3>
+                <p className="mt-4 text-sm font-medium leading-6 text-slate-300">
+                  These conditions protect Katwanyaa Senior School records, staff tools, student data, and official communication channels.
+                </p>
+
+                <div className="mt-8 space-y-3">
+                  {[
+                    'Authorized users only',
+                    'Activity is monitored',
+                    'Data must remain confidential',
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 text-xs font-bold text-slate-100">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-emerald-300" />
+                      {item}
+                    </div>
+                  ))}
                 </div>
               </div>
-              
-              <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-[10px] sm:text-xs font-black uppercase tracking-wide text-amber-900 text-center">
-                  ⚡ This system is protected by advanced security protocols. 
-                  Unauthorized access attempts trigger immediate alerts to the ICT Security Team.
+            </aside>
+
+            <div className="flex max-h-[90vh] flex-col bg-slate-50">
+              <div className="border-b border-slate-200 bg-white p-5 pr-16 sm:p-7 sm:pr-16">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-600">
+                  Terms & Conditions
+                </p>
+                <h4 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
+                  Before you continue
+                </h4>
+                <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-600">
+                  Read and accept these conditions before signing in. The login flow and device verification remain protected by the existing API controls.
                 </p>
               </div>
-            </div>
-            
-            <div className="p-4 sm:p-5 border-t border-slate-200 bg-white shrink-0">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => {
-                    setAgreedToTerms(true);
-                    closeTermsModal();
-                    toast.success('You have accepted the Terms & Conditions');
-                  }}
-                  className="flex-1 bg-blue-900 text-white py-3 px-4 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-blue-950 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  I Understand & Accept
-                </button>
-                <button
-                  onClick={closeTermsModal}
-                  className="flex-1 bg-slate-100 text-slate-700 py-3 px-4 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-slate-200 transition-all active:scale-[0.98]"
-                >
-                  Close
-                </button>
+
+              <div className="overflow-y-auto p-5 sm:p-7">
+                <div className="mb-5 rounded-2xl border border-red-100 bg-red-50 p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+                    <div>
+                      <h5 className="text-sm font-black uppercase tracking-[0.18em] text-red-900">
+                        Legal Notice
+                      </h5>
+                      <p className="mt-2 text-sm font-bold leading-6 text-red-800">
+                        Unauthorized access is prohibited. Login attempts, device details, and system activity may be logged, reviewed, and used for disciplinary or legal action where necessary.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  {[
+                    {
+                      title: 'Authorized Use',
+                      icon: Database,
+                      body: 'This portal is reserved for approved Katwanyaa Senior School personnel. Credentials are personal and must not be shared, transferred, or used on behalf of another person.',
+                    },
+                    {
+                      title: 'Data Protection',
+                      icon: Shield,
+                      body: 'Student, staff, parent, and institutional records must be handled confidentially. Users must not copy, expose, or misuse information accessed through the system.',
+                    },
+                    {
+                      title: 'Monitoring & Logs',
+                      icon: Clock,
+                      body: 'The system may record sign-ins, device verification, record changes, uploads, and administrative actions for audit and accountability.',
+                    },
+                    {
+                      title: 'Device Responsibility',
+                      icon: Cpu,
+                      body: 'Use a trusted device and secure network. Report suspected compromise, unusual behavior, or unauthorized account activity to the ICT team immediately.',
+                    },
+                    {
+                      title: 'Institutional Compliance',
+                      icon: Building,
+                      body: 'Access confirms that you will follow school ICT policy, data protection expectations, and applicable Kenyan laws governing electronic systems.',
+                    },
+                    {
+                      title: 'Session Care',
+                      icon: Key,
+                      body: 'Sign out after administrative work, protect verification tokens, and never approve a token prompt that you did not personally request.',
+                    },
+                  ].map((section) => {
+                    const SectionIcon = section.icon;
+                    return (
+                      <div key={section.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <div className="mb-3 flex items-center gap-3">
+                          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                            <SectionIcon className="h-5 w-5" />
+                          </span>
+                          <h5 className="text-sm font-black uppercase tracking-[0.16em] text-slate-900">
+                            {section.title}
+                          </h5>
+                        </div>
+                        <p className="text-sm font-medium leading-6 text-slate-600">{section.body}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-amber-100 bg-amber-50 p-4">
+                  <p className="text-center text-xs font-black uppercase tracking-[0.14em] text-amber-900">
+                    Protected system: suspicious access attempts can trigger immediate ICT review.
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-200 bg-white p-4 sm:p-5">
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    onClick={() => {
+                      setAgreedToTerms(true);
+                      closeTermsModal();
+                      toast.success('You have accepted the Terms & Conditions');
+                    }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.16em] text-white transition-all hover:bg-blue-950 active:scale-[0.98]"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    I Understand & Accept
+                  </button>
+                  <button
+                    onClick={closeTermsModal}
+                    className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.16em] text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1411,39 +1467,73 @@ export default function AdminLoginPage() {
                 </Link>
               </div>
 
-              <div className="my-auto py-10 sm:py-12 px-4 max-w-md mx-auto text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-5 sm:mb-6">
+              <div className="my-auto max-w-xl py-10">
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-200">
                   <ShieldCheck size={14} />
-                  Authorized Personnel Only
+                  Verified Administration
                 </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight mb-5 sm:mb-6">
-                  Secure{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-                    Admin
-                  </span>{" "}
-                  Portal
+
+                <h1 className="mt-6 text-3xl font-black leading-tight tracking-tight lg:text-5xl">
+                  Protected access for school operations.
                 </h1>
-                <p className="text-sm sm:text-md text-slate-50 font-medium leading-relaxed max-w-xs sm:max-w-sm mx-auto">
-                  Enter your credentials to securely access the school's administrative system, manage operations, and oversee essential academic and institutional activities.
+                <p className="mt-5 max-w-lg text-sm font-medium leading-7 text-slate-200 lg:text-base">
+                  Sign in to manage Katwanyaa Senior School content, records, communication, uploads, and daily administration from a verified device.
                 </p>
+
+                <div className="mt-8 grid gap-3">
+                  {[
+                    {
+                      title: 'Device-aware access',
+                      text: 'Trusted-device checks help keep admin actions tied to approved sessions.',
+                      icon: Smartphone,
+                    },
+                    {
+                      title: 'Protected school records',
+                      text: 'Operational data remains behind authenticated dashboard controls.',
+                      icon: Database,
+                    },
+                    {
+                      title: 'Admin activity trail',
+                      text: 'Sensitive actions are designed for monitoring and accountability.',
+                      icon: Network,
+                    },
+                  ].map((item) => {
+                    const ItemIcon = item.icon;
+                    return (
+                      <div key={item.title} className="flex gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-200">
+                          <ItemIcon className="h-5 w-5" />
+                        </span>
+                        <div>
+                          <p className="text-sm font-black text-white">{item.title}</p>
+                          <p className="mt-1 text-xs font-medium leading-5 text-slate-300">{item.text}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="mt-auto pt-8 mb-[5%] border-t border-white/5">
-                <div className="flex flex-col gap-6">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-100">School Motto</p>
-                    <p className="text-2xl font-black italic tracking-tight text-white drop-shadow-md">
-                      "Education is light"
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-200 tracking-widest uppercase mt-4">
-                    <span>&copy; {new Date().getFullYear()} katwanyaa Senior</span>
-                    <span className="flex items-center gap-2">
-                      <Server size={10} />
-Katz ict
-                    </span>
-                  </div>
+              <div className="mt-auto border-t border-white/10 pt-6">
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    ['Token', 'Checked'],
+                    ['Device', 'Verified'],
+                    ['Session', 'Logged'],
+                  ].map(([label, value]) => (
+                    <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-3">
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{label}</p>
+                      <p className="mt-1 text-xs font-black uppercase tracking-wide text-white">{value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                  <span>&copy; {new Date().getFullYear()} Katwanyaa Senior</span>
+                  <span className="flex items-center gap-2">
+                    <Server size={10} />
+                    KATZ ICT
+                  </span>
                 </div>
               </div>
             </div>

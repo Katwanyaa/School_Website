@@ -31,7 +31,7 @@ const KatwanyaaSeniorSchoolPage = () => {
     { src: "/hero/student.jpeg", alt: "Katwanyaa Senior School - Student Life" },
     { src: "/hero/env.jpeg", alt: "Katwanyaa Senior School - Environmental Initiatives" },
     { src: "/hero/sports.jpeg", alt: "Katwanyaa Senior School - Sports Activities" },
-    { src: "hero/katz8.jpeg", alt: "Katwanyaa Senior School - Achievements Celebration" },
+    { src: "/hero/katz8.jpeg", alt: "Katwanyaa Senior School - Achievements Celebration" },
   ];
 
 const currentYear = new Date().getFullYear();
@@ -1150,70 +1150,140 @@ const pathways = [
       </section>
 
       {/* ===== CBC PATHWAYS SECTION ===== */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-50 rounded-full mb-4">
-              <FiBookOpen className="w-4 h-4 text-purple-600" />
-              <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider">CBC Framework</span>
+      <section className="relative overflow-hidden bg-[#F8FAFC] px-4 py-16 sm:px-6 lg:px-8">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1 shadow-sm">
+                <FiCompass className="h-4 w-4 text-blue-600" />
+                <span className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">
+                  CBC Tracking
+                </span>
+              </div>
+              <h2 className="max-w-2xl text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl md:text-4xl">
+                CBC pathway tracing at <span className="text-blue-700">Katwanyaa Senior</span>
+              </h2>
+              <p className="mt-4 max-w-xl text-sm font-medium leading-7 text-slate-600 sm:text-base">
+                Learners are guided from common core subjects into focused pathway routes, then linked to subject choices and career direction.
+              </p>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900">
-              Learning <span className="text-purple-600">Pathways</span>
-            </h2>
-            <p className="text-slate-600 max-w-2xl mx-auto mt-3">
-              The Competency Based Curriculum organizes learning around three main pathways
-            </p>
+
+            <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              {[
+                { label: "Pathways", value: pathways.length },
+                { label: "Core Subjects", value: "10" },
+                { label: "Career Routes", value: `${pathways.reduce((sum, path) => sum + path.careers.length, 0)}+` },
+              ].map((item, index) => (
+                <div key={item.label} className={`p-4 text-center ${index > 0 ? "border-l border-slate-100" : ""}`}>
+                  <p className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">{item.value}</p>
+                  <p className="mt-1 text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">{item.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pathways.map((path, idx) => {
-              const PathIcon = path.icon;
-              return (
-                <div
-                  key={idx}
-                  className="group relative bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
-                  onClick={() => openPathwayModal(path)}
-                >
-                  <div className={`h-1.5 w-full bg-gradient-to-r ${path.color}`} />
-                  <div className="p-6">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${path.color} flex items-center justify-center text-white shadow-md mb-4`}>
-                      <PathIcon className="w-6 h-6" />
-                    </div>
-                    <h3 className="font-black text-slate-800 text-lg mb-2">{path.name}</h3>
-                    <p className="text-slate-500 text-sm mb-4">{path.description}</p>
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {path.subjects.slice(0, 3).map((subj, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[9px] font-bold uppercase">
-                          {subj}
-                        </span>
-                      ))}
-                      {path.subjects.length > 3 && (
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[9px] font-bold">
-                          +{path.subjects.length - 3}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 text-purple-600 text-[10px] font-bold uppercase">
-                      Explore Careers <FiArrowRight size={12} />
-                    </div>
+          <div className="relative grid gap-4 lg:grid-cols-[260px_1fr]">
+            <div className="rounded-2xl border border-slate-200 bg-slate-950 p-5 text-white shadow-xl shadow-slate-200">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-blue-200">
+                <FiTarget className="h-6 w-6" />
+              </div>
+              <h3 className="mt-5 text-xl font-black tracking-tight">Pathway Map</h3>
+              <p className="mt-2 text-sm font-medium leading-6 text-slate-300">
+                Each route shows the learning area, sample subjects, and the breadth of careers connected to that pathway.
+              </p>
+              <div className="mt-6 space-y-3">
+                {["Common Core", "Pathway Choice", "Subject Cluster", "Career Direction"].map((step, index) => (
+                  <div key={step} className="flex items-center gap-3">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-[10px] font-black text-white">
+                      {index + 1}
+                    </span>
+                    <span className="text-xs font-bold text-slate-200">{step}</span>
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {pathways.map((path, idx) => {
+                const PathIcon = path.icon;
+                return (
+                  <button
+                    type="button"
+                    key={path.id}
+                    onClick={() => openPathwayModal(path)}
+                    className="group w-full overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-xl hover:shadow-slate-200"
+                  >
+                    <div className="grid gap-0 md:grid-cols-[170px_1fr]">
+                      <div className={`relative flex min-h-[150px] items-end overflow-hidden bg-gradient-to-br ${path.color} p-5 text-white`}>
+                        <div className="absolute right-[-32px] top-[-32px] h-28 w-28 rounded-full border border-white/25" />
+                        <div className="absolute right-5 top-5 text-5xl font-black text-white/15">
+                          0{idx + 1}
+                        </div>
+                        <div className="relative">
+                          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
+                            <PathIcon className="h-6 w-6" />
+                          </div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/75">
+                            Route {idx + 1}
+                          </p>
+                          <h3 className="mt-1 text-xl font-black tracking-tight">{path.name}</h3>
+                        </div>
+                      </div>
+
+                      <div className="p-5 sm:p-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <p className="text-sm font-semibold leading-6 text-slate-600">{path.description}</p>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {path.subjects.map((subject) => (
+                                <span key={subject} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-600">
+                                  {subject}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 sm:min-w-[170px]">
+                            <div className="rounded-xl bg-slate-50 p-3">
+                              <p className="text-lg font-black text-slate-950">{path.subjects.length}</p>
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Subjects</p>
+                            </div>
+                            <div className="rounded-xl bg-slate-50 p-3">
+                              <p className="text-lg font-black text-slate-950">{path.careers.length}+</p>
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Careers</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                            View subjects and careers
+                          </span>
+                          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white transition-transform group-hover:translate-x-1">
+                            <FiArrowRight className="h-4 w-4" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Core Subjects */}
-          <div className="mt-8 bg-white rounded-2xl border border-slate-200 p-6">
-            <h4 className="font-bold text-slate-800 text-md mb-4 flex items-center gap-2">
-              <FiLayers className="text-blue-600" />
-              Mandatory Core Subjects
-            </h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-              {["Mathematics", "English", "Kiswahili", "Integrated Science", "Social Studies", "Religious Education", "Creative Arts", "Agriculture", "Life Skills", "Physical Education"].map((subject, i) => (
-                <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100">
-                  <FiBook className="text-blue-500 text-xs" />
-                  <span className="text-[11px] font-medium text-slate-700">{subject}</span>
-                </div>
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <h4 className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.18em] text-slate-900">
+                <FiLayers className="text-blue-600" />
+                Mandatory Core Subjects
+              </h4>
+              <p className="text-xs font-semibold text-slate-500">Shared foundation before pathway specialization</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {["Mathematics", "English", "Kiswahili", "Integrated Science", "Social Studies", "Religious Education", "Creative Arts", "Agriculture", "Life Skills", "Physical Education"].map((subject) => (
+                <span key={subject} className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-slate-700">
+                  <FiBook className="h-3.5 w-3.5 text-blue-600" />
+                  {subject}
+                </span>
               ))}
             </div>
           </div>
