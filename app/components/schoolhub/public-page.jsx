@@ -119,7 +119,6 @@ import {
   FaSun as FaSunIcon,
   FaMoon as FaMoonIcon,
   FaStar,
-  FaHeart as FaHeartIcon,
   FaInfinity,
   FaPeace,
   FaDove,
