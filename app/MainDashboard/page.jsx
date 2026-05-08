@@ -16,6 +16,7 @@ import {
   FiShield,
   FiMessageCircle,
   FiInfo,
+  FiGrid,
   FiTrendingUp,
   FiAward,
   FiClipboard,
@@ -55,6 +56,7 @@ import Fees from "../components/fees/page";
 import SchoolDocs from "../components/schooldocuments/page";
 import SMSManager from "../components/sms/page";
 import AchievementsManager from "../components/Achievements/page";
+import SchoolHubManager from "../components/schoolhub/page";
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -862,6 +864,8 @@ const handleLogout = () => {
         return <SchoolInfoTab />;
       case 'schooldocuments':
         return <SchoolDocs />;
+      case 'schoolhub':
+        return <SchoolHubManager />;
       case 'guidance-counseling':
         return <GuidanceCounselingTab />;
       case 'staff':
@@ -925,6 +929,12 @@ const handleLogout = () => {
       label: 'School Documents',
       icon: FiArchive, 
       badge: 'indigo'
+    },
+    {
+      id: 'schoolhub',
+      label: 'School Hub',
+      icon: FiGrid,
+      badge: 'emerald'
     },
     { 
       id: 'staff', 

@@ -261,6 +261,50 @@ model StaffDepartmentImage {
   @@map("staff_department_images")
 }
 
+model SchoolHubItem {
+  id               Int              @id @default(autoincrement())
+  type             String           @db.VarChar(50)
+  title            String           @db.VarChar(255)
+  shortDescription String?          @db.Text
+  description      String?          @db.Text
+  image            String?          @db.Text
+  location         String?          @db.VarChar(255)
+  established      String?          @db.VarChar(100)
+  website          String?          @db.Text
+  socialMedia      Json?
+  contactName      String?          @db.VarChar(255)
+  contactPhone     String?          @db.VarChar(50)
+  contactEmail     String?          @db.VarChar(255)
+  details          Json?
+  isActive         Boolean          @default(true)
+  displayOrder     Int              @default(0)
+  images           SchoolHubImage[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([type])
+  @@index([isActive])
+  @@index([displayOrder])
+  @@map("school_hub_items")
+}
+
+model SchoolHubImage {
+  id              Int           @id @default(autoincrement())
+  schoolHubItemId Int
+  url             String        @db.Text
+  publicId        String?       @db.VarChar(255)
+  altText         String?       @db.VarChar(255)
+  caption         String?       @db.Text
+  displayOrder    Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  schoolHubItem   SchoolHubItem @relation(fields: [schoolHubItemId], references: [id], onDelete: Cascade)
+
+  @@index([schoolHubItemId])
+  @@index([displayOrder])
+  @@map("school_hub_images")
+}
+
 model EmailCampaign {
   id            String    @id @default(cuid())
   title         String

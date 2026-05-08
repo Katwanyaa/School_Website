@@ -20,7 +20,8 @@ import {
   FiDollarSign,
   FiFolder, 
   FiArchive,
-  FiMessageSquare
+  FiMessageSquare,
+  FiGrid
 } from 'react-icons/fi';
 import {FiAward } from "react-icons/fi"
 
@@ -228,6 +229,12 @@ const handleLogout = () => {
       label: 'School Documents',
       icon: FiArchive, 
       badge: 'indigo'
+    },
+    {
+      id: 'schoolhub',
+      label: 'School Hub',
+      icon: FiGrid,
+      badge: 'emerald'
     },
     { 
       id: 'assignments', 

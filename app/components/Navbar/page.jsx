@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
-  FiActivity,
   FiAward,
   FiBookOpen,
   FiBriefcase,
@@ -95,12 +94,6 @@ const academicLinks = [
     description: 'Policies, rules & student expectations',
   },
   {
-    name: 'School Magazine',
-    href: '/pages/School Magazine',
-    icon: FiBookOpen,
-    description: 'School publications & newsletters',
-  },
-  {
     name: 'Alumni Network',
     href: 'https://www.facebook.com/groups/414008468611340/',
     icon: FiExternalLink,
@@ -125,10 +118,10 @@ const schoolHubLinks = [
     description: 'Co‑curricular activities & student communities',
   },
   {
-    name: 'Farm & Projects',
-    href: '/pages/Farm',
-    icon: FiActivity,
-    description: 'Practical learning & farm initiatives',
+    name: 'Student Council',
+    href: '/pages/student-council',
+    icon: FiUsers,
+    description: 'Student leadership and representation',
   },
   {
     name: 'Boarding',
