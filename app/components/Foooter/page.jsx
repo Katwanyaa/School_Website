@@ -17,7 +17,6 @@ import {
   FiGlobe,
   FiLock,
   FiShield,
-  FiAward,
   FiGithub,
   
   FiTarget,
@@ -31,7 +30,6 @@ import {
 } from 'react-icons/fi';
 import { 
   SiFacebook, 
-  SiX,
   SiYoutube, 
   SiLinkedin, 
   SiWhatsapp 
@@ -62,6 +60,37 @@ export default function ModernFooter() {
     { name: 'Staff Directory', href: '/pages/staff', icon: FiUsers },
     { name: 'Admin Login', href: '/pages/adminLogin', icon: FiLock },
     { name: 'School Policies', href: '/pages/OurSchoolPolicies', icon: FiShield },
+  ];
+
+  const footerRoutes = [
+    {
+      name: 'CBC Pathway Tracking',
+      href: '/components/why',
+      icon: FiTarget,
+      description: 'Learning routes, core subjects, and pathway direction',
+      accent: 'bg-blue-500'
+    },
+    {
+      name: 'Admissions Journey',
+      href: '/pages/apply-for-admissions',
+      icon: FiUserPlus,
+      description: 'Application steps, requirements, and school entry',
+      accent: 'bg-emerald-500'
+    },
+    {
+      name: 'Student Support',
+      href: '/pages/Guidance-and-Councelling',
+      icon: FiHelpCircle,
+      description: 'Counselling, guidance, and learner wellbeing',
+      accent: 'bg-amber-500'
+    },
+    {
+      name: 'Staff Departments',
+      href: '/pages/staff',
+      icon: FiUsers,
+      description: 'Leadership profiles and department groupings',
+      accent: 'bg-indigo-500'
+    }
   ];
 
   // Social Media Links with React-colored icons
@@ -190,18 +219,9 @@ export default function ModernFooter() {
     }
   ];
 
-// Achievements
-const achievements = [
-  '3rd Best Public School in Matungulu Sub-county (2019) - Produced A- candidate',
-  'Top Improving School in KCSE (2024) - Matungulu Sub-county',
-  'KShs 6 Million ICT Donation (2023) - 50+ laptops from Angaza Centre',
-  '40% Cost Reduction (2022) - LPG adoption with KCB KShs 1.2M funding',
-  '975 Students Enrolled - Mixed day & boarding',
-  'Consistent University Placement - Kenyan universities'
-];
-
   return (
-    <footer className="w-full  bg-slate-900 text-white">
+    <footer className="relative w-full overflow-hidden bg-slate-950 text-white">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-300/60 to-transparent" />
       {/* Main Footer Content */}
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <div className="max-w-7xl mx-auto">
@@ -286,19 +306,39 @@ const achievements = [
                 })}
               </div>
 
-              {/* Achievements */}
-              <div className="mt-6 pt-6 border-t border-white/20 space-y-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <FiAward className="text-white text-lg flex-shrink-0" />
-                  <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-white break-words">Achievements</h4>
+              {/* School Routes */}
+              <div className="mt-6 border-t border-white/10 pt-6">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <FiTarget className="text-blue-300 text-lg flex-shrink-0" />
+                    <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-white break-words">School Routes</h4>
+                  </div>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/45">
+                    Map
+                  </span>
                 </div>
-                <div className="space-y-2">
-                  {achievements.map((achievement, index) => (
-                    <div key={index} className="flex items-start gap-3 text-gray-300 text-sm font-normal group">
-                      <FiCheckCircle className="flex-shrink-0 text-lg mt-0.5 text-green-400" />
-                      <span className="min-w-0 flex-1 break-words leading-relaxed">{achievement}</span>
-                    </div>
-                  ))}
+                <div className="mt-4 space-y-2">
+                  {footerRoutes.map((route, index) => {
+                    const RouteIcon = route.icon;
+                    return (
+                      <a
+                        key={route.name}
+                        href={route.href}
+                        className="group flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 transition-all hover:border-blue-300/40 hover:bg-white/[0.08]"
+                      >
+                        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white ${route.accent}`}>
+                          <RouteIcon className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-xs font-black text-white">{route.name}</span>
+                          <span className="mt-0.5 block text-[11px] font-medium leading-5 text-slate-400">{route.description}</span>
+                        </span>
+                        <span className="text-[10px] font-black text-white/25 transition group-hover:text-blue-200">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             </div>

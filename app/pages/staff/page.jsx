@@ -197,6 +197,59 @@ const SectionHeader = ({ icon: Icon, title, subtitle }) => (
   </div>
 );
 
+const DepartmentIntro = ({ departments, totalStaff }) => {
+  const previewDepartments = departments.slice(0, 4);
+
+  return (
+    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
+        <div className="p-6 sm:p-8">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">
+            <FiLayers size={14} />
+            Department Groups
+          </div>
+          <h2 className="max-w-2xl text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl">
+            Teaching and support staff are shown by department for privacy
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm font-medium leading-7 text-slate-600">
+            The school admin manages each department with its own image, public description, HOD, AHOD where needed, and staff count. This keeps the Staff page useful while avoiding public exposure of every individual teacher or support staff member.
+          </p>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatPill icon={FiLayers} value={departments.length} label="Departments" tone="blue" />
+            <StatPill icon={FiUsers} value={totalStaff} label="Grouped Staff" tone="emerald" />
+            <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
+            <StatPill icon={FiBookOpen} value="Custom" label="Descriptions" tone="amber" />
+          </div>
+        </div>
+
+        <div className="grid min-h-[260px] grid-cols-2 gap-2 bg-slate-950 p-3">
+          {previewDepartments.length > 0 ? (
+            previewDepartments.map((department, index) => (
+              <div key={department.id || index} className="relative overflow-hidden rounded-xl bg-slate-800">
+                <img
+                  src={getDepartmentImage(department)}
+                  alt={department.name}
+                  className="h-full min-h-[118px] w-full object-cover opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                <p className="absolute bottom-3 left-3 right-3 line-clamp-2 text-xs font-black leading-tight text-white">
+                  {department.name}
+                </p>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-2 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+              <p className="text-xs font-bold leading-6 text-slate-300">
+                Department images uploaded by the admin will appear here.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const LeadershipCard = ({ staff, viewMode }) => {
   const title = staff.position || staff.role || "School Leadership";
   const profileHref = `/pages/staff/${staff.id}/${generateSlug(staff.name, staff.id)}`;
@@ -453,6 +506,10 @@ export default function StaffDirectory() {
     (sum, department) => sum + (Number(department.staffCount) || 0),
     0
   );
+  const filteredDepartmentStaff = filteredDepartments.reduce(
+    (sum, department) => sum + (Number(department.staffCount) || 0),
+    0
+  );
 
   const hasResults = filteredLeadership.length > 0 || filteredDepartments.length > 0;
 
@@ -677,6 +734,10 @@ export default function StaffDirectory() {
                       ))}
                     </div>
                   </section>
+                )}
+
+                {filteredDepartments.length > 0 && selectedFilter !== "leadership" && (
+                  <DepartmentIntro departments={filteredDepartments} totalStaff={filteredDepartmentStaff} />
                 )}
 
                 {Object.entries(departmentsByCategory).map(([category, items]) => {
