@@ -169,10 +169,10 @@ export default function StaffProfilePage() {
       `${schoolName} staff`,
       `${schoolName} teachers`,
       `${schoolName} faculty`,
-      `teacher at Katwanyaa`,
-      `Katwanyaa High School staff`,
-      `AIC Katwanyaa teachers`,
-      `Katz school teachers`,
+      `teacher at Katwanyaa Senior School`,
+      `Katwanyaa Senior School staff`,
+      `Katwanyaa Senior School teachers`,
+      `Katwanyaa Senior School leadership`,
       ...staff.expertise || []
     ].filter(Boolean).join(', ');
     
@@ -238,12 +238,12 @@ export default function StaffProfilePage() {
               "worksFor": {
                 "@type": "EducationalOrganization",
                 "name": schoolName,
-                "alternateName": ["Katwanyaa High School", "AIC Katwanyaa", "Katz School"],
+                "alternateName": ["Katwanyaa Senior School", "Katwanyaa Secondary School"],
                 "description": schoolDescription,
                 "url": "https://katwanyaasenior.school",
                 "address": {
                   "@type": "PostalAddress",
-                  "addressLocality": "Matungulu",
+                  "addressLocality": "Katwanyaa",
                   "addressRegion": "Machakos County",
                   "addressCountry": "KE"
                 }

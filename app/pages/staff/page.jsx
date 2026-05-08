@@ -479,7 +479,7 @@ export default function StaffDirectory() {
             <Link href="/" className="flex items-center gap-3">
               <img src="/katz.jpeg" alt="School logo" className="h-10 w-10 rounded-xl object-contain" />
               <div className="hidden sm:block">
-                <p className="text-sm font-black uppercase tracking-widest text-slate-900">Katz Staff</p>
+                <p className="text-sm font-black uppercase tracking-widest text-slate-900">Katwanyaa Senior Staff</p>
                 <p className="text-[10px] font-bold text-slate-400">Leadership and departments</p>
               </div>
             </Link>

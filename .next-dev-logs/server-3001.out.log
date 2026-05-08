@@ -1,0 +1,28 @@
+
+> katwanyaa-high@0.1.0 dev
+> next dev -p 3001 -H 0.0.0.0 -p 3001
+
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3001
+  - Network:      http://0.0.0.0:3001
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 10.6s
+ ○ Compiling /api/staff/departments ...
+ ✓ Compiled /pages/staff in 3.7s (309 modules)
+ ✓ Compiled in 21.4s (320 modules)
+🔧 Configuring Cloudinary...
+✅ Using CLOUDINARY_URL from environment
+🌤️ Cloudinary configured for cloud: dfrtfnqp9
+🔑 API Key: ✓ SET
+🔒 API Secret: ✓ SET
+🔍 GET /api/school - Fetching school info
+ ✓ Compiled in 1885ms (302 modules)
+ GET /pages/staff 200 in 26340ms
+ ○ Compiling /components/schoolinfo ...
+ GET /api/staff 200 in 32340ms
+ GET /api/staff/departments 200 in 32221ms
+✅ School found: Katwanyaa Senior School
+📚 Magazine data: Not present
+ GET /api/school 200 in 32571ms
