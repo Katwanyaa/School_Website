@@ -349,7 +349,7 @@ export default function AdminDashboard() {
 
   // Loading Screen
   const LoadingScreen = () => (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 z-50 flex flex-col items-center justify-center">
+    <div className="fixed inset-0 bg-blue-900 z-50 flex flex-col items-center justify-center">
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(15)].map((_, i) => (
           <div

@@ -447,8 +447,7 @@ const handleLogout = () => {
           <div className="flex items-center justify-between p-4 lg:p-5 border-b border-gray-200 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/30">
-                  <img 
+<div className="w-10 h-10 lg:w-12 lg:h-12 bg-blue-900 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-900/30">                  <img 
                     src="/katz.jpeg" 
                     alt="School Logo" 
                     className="w-full h-full object-contain p-2"
