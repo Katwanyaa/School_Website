@@ -288,7 +288,7 @@ export default function ModernNavbar() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 border-r border-white/10 pr-3">
                 <span className="hidden text-[10px] font-black uppercase tracking-[0.18em] text-white/45 xl:inline">
-                  Follow
+                  Follow uS
                 </span>
                 {socialLinks.map((item) => (
                   <SocialLink key={item.name} item={item} />
