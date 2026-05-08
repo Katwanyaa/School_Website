@@ -1446,7 +1446,7 @@ export default function AdminLoginPage() {
             <div className="relative z-10 flex flex-col h-full w-full">
               <div className="mb-auto">
                 <Link href="/" className="flex items-center gap-5 group transition-transform hover:translate-x-1">
-                  <div className="relative p-1 bg-white/10 rounded-full backdrop-blur-xl border border-white/20 shadow-2xl">
+                  <div className="relative p-1 bg-white/10 rounded-lg backdrop-blur-xl border border-white/20 shadow-2xl">
                     <Image
                       src="/katz.png"
                       alt="katwanyaa Logo"
