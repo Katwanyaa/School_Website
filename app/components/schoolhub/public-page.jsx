@@ -311,7 +311,7 @@ const AnimatedBorder = ({ children, className = "" }) => (
   </div>
 );
 
-// Particle Background Component
+// Particle Background Component (no longer used on white bg)
 const ParticleBackground = () => {
   const [particles, setParticles] = useState([]);
   
@@ -332,7 +332,7 @@ const ParticleBackground = () => {
       {particles.map((particle) => (
         <div
           key={particle.id}
-          className="absolute rounded-full bg-white/20 animate-float"
+          className="absolute rounded-full bg-slate-200 animate-float"
           style={{
             left: `${particle.x}%`,
             top: `${particle.y}%`,
@@ -343,17 +343,6 @@ const ParticleBackground = () => {
           }}
         />
       ))}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.2; }
-          25% { transform: translateY(-20px) translateX(10px); opacity: 0.5; }
-          50% { transform: translateY(10px) translateX(-15px); opacity: 0.3; }
-          75% { transform: translateY(-10px) translateX(20px); opacity: 0.4; }
-        }
-        .animate-float {
-          animation: float infinite ease-in-out;
-        }
-      `}</style>
     </div>
   );
 };
@@ -381,7 +370,7 @@ const InfoPill = ({ icon: Icon, children, variant = "default" }) => {
   );
 };
 
-// Stats Counter Component
+// Stats Counter Component (light version)
 const StatCounter = ({ value, label, icon: Icon, suffix = "" }) => {
   const [count, setCount] = useState(0);
   
@@ -402,26 +391,26 @@ const StatCounter = ({ value, label, icon: Icon, suffix = "" }) => {
   }, [value]);
 
   return (
-    <div className="text-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group">
+    <div className="text-center p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white transition-all duration-300 group">
       <div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 mb-3 group-hover:scale-110 transition-transform">
-        <Icon className="text-2xl text-emerald-400" />
+        <Icon className="text-2xl text-emerald-600" />
       </div>
-      <p className="text-2xl md:text-3xl font-black text-white">
+      <p className="text-2xl md:text-3xl font-black text-gray-900">
         {count}{suffix}
       </p>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-1">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mt-1">{label}</p>
     </div>
   );
 };
 
-// Feature Card Component
+// Feature Card Component (light version)
 const FeatureCard = ({ icon: Icon, title, description, gradient }) => (
-  <div className="group p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+  <div className="group p-6 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
     <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${gradient} mb-4 group-hover:scale-110 transition-transform`}>
       <Icon className="text-xl text-white" />
     </div>
-    <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-    <p className="text-sm text-white/60 leading-relaxed">{description}</p>
+    <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
+    <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
   </div>
 );
 
@@ -446,7 +435,7 @@ const ModernLoadingSpinner = ({ message = "Loading amazing content..." }) => (
         <div className="w-6 h-6 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-bounce" />
       </div>
     </div>
-    <p className="mt-6 text-sm font-bold text-white/80">{message}</p>
+    <p className="mt-6 text-sm font-bold text-gray-600">{message}</p>
     <div className="flex gap-1 mt-3">
       {[0, 1, 2].map(i => (
         <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
@@ -479,7 +468,7 @@ const RefreshButton = ({ refreshing, onClick }) => (
   </button>
 );
 
-// Gallery Modal Component
+// Gallery Modal Component (unchanged, still works for dark overlay)
 const GalleryModal = ({ item, onClose }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -676,7 +665,7 @@ const GalleryModal = ({ item, onClose }) => {
   );
 };
 
-// Hub Card Component
+// Hub Card Component (existing, already white bg, works great)
 const HubCard = ({ item, onView }) => {
   const images = normalizeSchoolImages(item);
   const image = images[0]?.url;
@@ -854,13 +843,10 @@ export default function PublicSchoolHubPage({
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[#0a0a2a] to-slate-900 text-slate-100">
-      <ParticleBackground />
-      <GalleryModal item={active} onClose={() => setActive(null)} />
-
-      {/* Modern Header with Glass Morphism */}
+    <div className="min-h-screen bg-white text-slate-900">
+      {/* Header stays dark slate */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-2xl">
-        <div className="mx-auto max-w-full px-6 py-3 sm:px-8">
+        <div className="mx-auto max-w-7xl px-6 py-3 sm:px-8">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
             <Link href="/" className="flex items-center gap-3 group">
@@ -894,35 +880,34 @@ export default function PublicSchoolHubPage({
         </div>
       </header>
 
-      <main className="mx-auto max-w-full px-6 py-8 sm:px-8 lg:px-12">
-        {/* Hero Section - Katwanyaa Branding */}
-        <div className="group relative mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 via-teal-900/20 to-cyan-900/30 p-6 text-white shadow-2xl md:p-8 border border-white/10 backdrop-blur-sm">
-          {/* Animated Background */}
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/20 blur-[100px] animate-pulse" />
-          <div className="absolute -bottom-24 left-0 h-64 w-64 rounded-full bg-teal-500/20 blur-[100px] animate-pulse" />
+      {/* Main content with max-width */}
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        {/* Light Hero Section */}
+        <div className="group relative mb-10 overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-lg p-6 md:p-8">
+          {/* Subtle background pattern */}
+          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
           
           {/* Decorative Elements */}
           <div className="absolute top-4 right-4 opacity-10">
-            <FaCrown className="text-4xl" />
+            <FaCrown className="text-4xl text-emerald-500" />
           </div>
           
           <div className="relative z-10 flex flex-col gap-6">
             {/* Header Badges */}
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5">
                 <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500">
                   <span className="text-[8px] font-black text-white">K</span>
                 </div>
-                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-white/90">{eyebrow}</span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-emerald-700">{eyebrow}</span>
               </div>
               
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="text-[7px] font-bold uppercase tracking-wider text-white/80">Live Platform</span>
+                <span className="text-[7px] font-bold uppercase tracking-wider text-gray-600">Live Platform</span>
               </div>
             </div>
 
@@ -932,12 +917,12 @@ export default function PublicSchoolHubPage({
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
                   <HeroIcon className="text-2xl text-white" />
                 </div>
-                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl blur opacity-50" />
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl blur opacity-30" />
               </div>
               
-              <h1 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl md:text-5xl">
+              <h1 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl md:text-5xl text-gray-900">
                 Welcome to{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600">
                   Katwanyaa Senior School
                 </span>
               </h1>
@@ -948,7 +933,7 @@ export default function PublicSchoolHubPage({
                 <div className="h-1 w-3 rounded-full bg-teal-500/30" />
               </div>
               
-              <p className="text-sm font-medium leading-6 text-white/80 max-w-2xl">
+              <p className="text-sm font-medium leading-6 text-gray-600 max-w-2xl">
                 {description || KATWANYAA_INFO.description}
               </p>
             </div>
@@ -971,19 +956,19 @@ export default function PublicSchoolHubPage({
               <RefreshButton refreshing={refreshing} onClick={() => load(true)} />
 
               <div className="relative flex-1">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm" />
+                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder={`Search ${title.toLowerCase()}...`}
-                  className="w-full rounded-xl border border-white/15 bg-white/10 py-2.5 pl-9 pr-3 text-sm font-medium text-white placeholder:text-white/40 outline-none backdrop-blur-md focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/30"
+                  className="w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-9 pr-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/30"
                 />
               </div>
 
               <div className="flex gap-2">
                 <button 
                   onClick={() => setShowStats(!showStats)}
-                  className="rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white/70 hover:bg-white/10 transition-all"
+                  className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:bg-gray-50 transition-all"
                 >
                   {showStats ? "Hide Stats" : "Show Stats"}
                 </button>
@@ -997,8 +982,8 @@ export default function PublicSchoolHubPage({
           <div className="flex items-center gap-3 mb-5">
             <div className="h-8 w-1 rounded-full bg-gradient-to-b from-emerald-500 to-teal-500" />
             <div>
-              <h2 className="text-base font-black tracking-tight text-white">Why Choose Katwanyaa?</h2>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-400/70">Our Core Strengths</p>
+              <h2 className="text-base font-black tracking-tight text-gray-900">Why Choose Katwanyaa?</h2>
+              <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-600">Our Core Strengths</p>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -1010,9 +995,9 @@ export default function PublicSchoolHubPage({
 
         {/* Error Display */}
         {error && (
-          <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-300 flex items-center justify-between">
+          <div className="mb-6 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 flex items-center justify-between">
             <span className="flex items-center gap-2"><FiAlertTriangle /> {error}</span>
-            <button onClick={() => setError('')} className="text-red-400 hover:text-red-200">
+            <button onClick={() => setError('')} className="text-red-500 hover:text-red-700">
               <FiX />
             </button>
           </div>
@@ -1022,12 +1007,12 @@ export default function PublicSchoolHubPage({
         {loading ? (
           <ModernLoadingSpinner message={`Loading amazing ${title.toLowerCase()} content...`} />
         ) : visibleItems.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center backdrop-blur-sm">
-            <div className="inline-flex p-4 rounded-2xl bg-white/5 mb-4">
-              <FiLayers className="text-4xl text-white/30" />
+          <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
+            <div className="inline-flex p-4 rounded-2xl bg-gray-50 mb-4">
+              <FiLayers className="text-4xl text-gray-300" />
             </div>
-            <h2 className="text-xl font-black text-white/70">{emptyText}</h2>
-            <p className="text-sm text-white/40 mt-2">Check back soon for updates!</p>
+            <h2 className="text-xl font-black text-gray-500">{emptyText}</h2>
+            <p className="text-sm text-gray-400 mt-2">Check back soon for updates!</p>
           </div>
         ) : (
           <div className="space-y-10">
@@ -1042,14 +1027,14 @@ export default function PublicSchoolHubPage({
                       <SectionIcon className="text-base" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-black tracking-tight text-white">{section.title}</h2>
-                      <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-400/70">
+                      <h2 className="text-lg font-black tracking-tight text-gray-900">{section.title}</h2>
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-600">
                         {section.items.length} {section.items.length === 1 ? 'item' : 'items'} available
                       </p>
                     </div>
                   </div>
 
-                  {/* Items Grid - Responsive with more columns */}
+                  {/* Items Grid - Responsive */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     {section.items.map((item) => (
                       <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => setActive(item)} />
@@ -1063,18 +1048,18 @@ export default function PublicSchoolHubPage({
         
         {/* Footer Note */}
         {!loading && visibleItems.length > 0 && (
-          <div className="mt-10 pt-6 border-t border-white/10 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+          <div className="mt-10 pt-6 border-t border-gray-200 text-center">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
               Katwanyaa Senior School — {KATWANYAA_INFO.motto}
             </p>
             <div className="flex flex-wrap justify-center gap-4 mt-3">
-              <a href={`mailto:${KATWANYAA_INFO.email}`} className="inline-flex items-center gap-1 text-[9px] text-white/50 hover:text-white/80 transition-colors">
+              <a href={`mailto:${KATWANYAA_INFO.email}`} className="inline-flex items-center gap-1 text-[9px] text-gray-400 hover:text-gray-600 transition-colors">
                 <FiMail className="text-[10px]" /> {KATWANYAA_INFO.email}
               </a>
-              <a href={`tel:${KATWANYAA_INFO.phone}`} className="inline-flex items-center gap-1 text-[9px] text-white/50 hover:text-white/80 transition-colors">
+              <a href={`tel:${KATWANYAA_INFO.phone}`} className="inline-flex items-center gap-1 text-[9px] text-gray-400 hover:text-gray-600 transition-colors">
                 <FiPhone className="text-[10px]" /> {KATWANYAA_INFO.phone}
               </a>
-              <span className="inline-flex items-center gap-1 text-[9px] text-white/50">
+              <span className="inline-flex items-center gap-1 text-[9px] text-gray-400">
                 <FiMapPin className="text-[10px]" /> {KATWANYAA_INFO.location}
               </span>
             </div>
