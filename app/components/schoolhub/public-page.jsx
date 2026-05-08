@@ -690,7 +690,7 @@ export default function PublicSchoolHubPage({
           {/* Header Badges */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div className="inline-flex items-center gap-2 bg-gray-100 px-3 py-1.5">
-              <div className="flex h-5 w-5 items-center justify-center bg-emerald-600">
+              <div className="flex h-5 w-5 items-center justify-center bg-blue-900">
                 <span className="text-xs font-black text-white">K</span>
               </div>
               <span className="text-xs font-bold uppercase tracking-wider text-gray-600">{eyebrow}</span>
