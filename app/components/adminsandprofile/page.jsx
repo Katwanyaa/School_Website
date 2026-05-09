@@ -1846,7 +1846,7 @@ if (loading) {
                 <div className="space-y-4">
                   <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl p-5 border border-teal-200">
                     <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      🔐 {editingAdmin ? 'New Password (optional)' : 'Password <span className="text-red-500">*</span>'}
+                      🔐 {editingAdmin ? 'New Password (optional)' : 'Password*'}
                       <span className="text-gray-500 text-xs font-normal ml-2">8+ chars, uppercase, lowercase, number & special char</span>
                     </label>
                     <div className="relative">
