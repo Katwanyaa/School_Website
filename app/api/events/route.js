@@ -184,6 +184,10 @@ async function uploadImageToCloudinary(file) {
   }
 }
 
+const isUploadedImage = (file) => {
+  return file && typeof file !== "string" && file.size > 0 && typeof file.arrayBuffer === "function";
+};
+
 // Helper: delete image from Cloudinary
 async function deleteImageFromCloudinary(imageUrl) {
   try {
@@ -294,7 +298,7 @@ export async function POST(req) {
     // Step 4: Handle optional image upload to Cloudinary
     let imageUrl = null;
     const file = formData.get("image");
-    if (file && file.size > 0) {
+    if (isUploadedImage(file)) {
       const result = await uploadImageToCloudinary(file);
       if (result) {
         imageUrl = result.secure_url;
@@ -316,8 +320,10 @@ export async function POST(req) {
         image: imageUrl,
         attendees,
         speaker,
-        // Track who created this event
-    
+        createdBy: auth.user.id || null,
+        updatedBy: auth.user.id || null,
+        updatedByName: auth.user.name || null,
+        updatedByRole: auth.user.role || null,
       },
       select: {
         id: true,

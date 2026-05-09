@@ -136,6 +136,10 @@ const uploadImageToCloudinary = async (file) => {
   }
 };
 
+const isUploadedImage = (file) => {
+  return file && typeof file !== "string" && file.size > 0 && typeof file.arrayBuffer === "function";
+};
+
 const deleteImageFromCloudinary = async (imageUrl) => {
   if (!imageUrl?.includes('cloudinary.com')) return;
 
@@ -227,6 +231,7 @@ export async function PUT(req, { params }) {
         id: true,
         title: true,
         image: true,
+        createdBy: true,
       }
     });
 
@@ -279,7 +284,7 @@ export async function PUT(req, { params }) {
     const file = formData.get("image");
     const removeImage = formData.get("removeImage") === "true";
     
-    if (file && file.size > 0) {
+    if (isUploadedImage(file)) {
       // Delete old image if exists
       if (existingNews.image) {
         await deleteImageFromCloudinary(existingNews.image);
@@ -298,6 +303,9 @@ export async function PUT(req, { params }) {
     }
 
     updateData.updatedAt = new Date();
+    updateData.updatedBy = auth.user.id || null;
+    updateData.updatedByName = auth.user.name || null;
+    updateData.updatedByRole = auth.user.role || null;
 
     const updatedNews = await prisma.news.update({
       where: { id },
@@ -360,6 +368,7 @@ export async function DELETE(req, { params }) {
         id: true,
         title: true,
         image: true,
+        createdBy: true,
       }
     });
 

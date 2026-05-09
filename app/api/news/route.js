@@ -141,6 +141,10 @@ const uploadImageToCloudinary = async (file) => {
   }
 };
 
+const isUploadedImage = (file) => {
+  return file && typeof file !== "string" && file.size > 0 && typeof file.arrayBuffer === "function";
+};
+
 // 🔹 GET all news (PUBLIC)
 export async function GET(req) {
   try {
@@ -256,7 +260,7 @@ if (!title || !excerpt || !dateStr) {
     // Handle image upload
     let imageUrl = null;
     const file = formData.get("image");
-    if (file && file.size > 0) {
+    if (isUploadedImage(file)) {
       const result = await uploadImageToCloudinary(file);
       if (result) {
         imageUrl = result.secure_url;
@@ -274,7 +278,10 @@ if (!title || !excerpt || !dateStr) {
         category,
         author,
         image: imageUrl,
-     
+        createdBy: auth.user.id || null,
+        updatedBy: auth.user.id || null,
+        updatedByName: auth.user.name || null,
+        updatedByRole: auth.user.role || null,
       },
       select: {
         id: true,

@@ -764,6 +764,7 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false); // Add this for local saving state
   const [notification, setNotification] = useState({ // Add local notification
     open: false,
@@ -774,6 +775,8 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
 
   useEffect(() => {
     console.log('🔄 Loading item for editing:', item);
+    setImageFile(null);
+    setRemoveImage(false);
     
     if (item) {
       const newFormData = { ...formData };
@@ -798,6 +801,9 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
       if (item.image) {
         newFormData.image = item.image;
         setImagePreview(item.image);
+      } else {
+        newFormData.image = '';
+        setImagePreview('');
       }
       
       // Map featured ONLY for events
@@ -871,10 +877,18 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
+      setRemoveImage(false);
       const reader = new FileReader();
       reader.onload = (e) => setImagePreview(e.target.result);
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setRemoveImage(true);
+    setImagePreview('');
+    setFormData(prev => ({ ...prev, image: '' }));
   };
 
   const handleChange = (field, value) => {
@@ -933,6 +947,7 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
       
       // Append all form fields
       Object.keys(formData).forEach(key => {
+        if (key === 'image') return;
         if (formData[key] !== null && formData[key] !== undefined && formData[key] !== '') {
           submitFormData.append(key, formData[key]);
           console.log(`Appending ${key}:`, formData[key]);
@@ -944,9 +959,11 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
         // New image uploaded
         submitFormData.append('image', imageFile);
         console.log('Appending new image file:', imageFile.name);
-      } else if (formData.image && !imageFile) {
-        // Keep existing image - send as string
-        submitFormData.append('image', formData.image);
+      } else if (removeImage) {
+        submitFormData.append('removeImage', 'true');
+        console.log('Removing existing image');
+      } else if (formData.image) {
+        submitFormData.append('existingImage', formData.image);
         console.log('Keeping existing image:', formData.image);
       }
       
@@ -983,8 +1000,8 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
           `${type === 'news' ? 'News' : 'Event'} ${item?.id ? 'updated' : 'created'} successfully!`
         );
         
-        // Call onSave with the result
-        onSave(result.data || result.item || result);
+        const savedItem = result.data || result.event || result.news || result.item || result;
+        await onSave(savedItem);
         
         // Close modal after short delay to show success message
         setTimeout(() => {
@@ -1114,6 +1131,15 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
                         </label>
                       )}
                     </div>
+                    {(imagePreview || formData.image) && !saving && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs font-black uppercase tracking-widest text-red-600 transition-colors hover:bg-red-100"
+                      >
+                        <FiX size={15} /> Remove Image
+                      </button>
+                    )}
                   </div>
 
                   {/* Featured Toggle - Only for Events */}
@@ -1338,7 +1364,7 @@ export default function NewsEventsManager() {
 // Fetch news from API - FIXED MAPPING
 const fetchNews = async () => {
   try {
-    const response = await fetch('/api/news');
+    const response = await fetch('/api/news', { cache: 'no-store' });
     const data = await response.json();
     
     console.log('News API Response:', data); // Debug log
@@ -1376,7 +1402,7 @@ const fetchNews = async () => {
 // Fetch events from API
 const fetchEvents = async () => {
   try {
-    const response = await fetch('/api/events');
+    const response = await fetch('/api/events', { cache: 'no-store' });
     const data = await response.json();
     
     console.log('Events API Response:', data); // Debug log
@@ -1394,6 +1420,7 @@ const fetchEvents = async () => {
         image: item.image || '',
         featured: item.featured || false,
         time: item.time || '',
+        type: item.type || 'internal',
         location: item.location || '',
         speaker: item.speaker || '',
         attendees: item.attendees || 'students',
@@ -1514,78 +1541,15 @@ const confirmDelete = async () => {
   }
 };
 
-// Inside ModernItemModal component - add this state at the top with other useState declarations
-
-// Updated handleSubmit function:
-const handleSubmit = async (e) => {
-  e.preventDefault(); // CRITICAL: Prevents page refresh
-  
-  setSaving(true);
-  try {
-    console.log('📥 Saving form data:', formData);
-    console.log('📥 Editing item:', item);
-    
-    // Create FormData for multipart/form-data
-    const submitFormData = new FormData();
-    
-    // Append all form fields
-    Object.keys(formData).forEach(key => {
-      if (formData[key] !== null && formData[key] !== undefined && formData[key] !== '') {
-        submitFormData.append(key, formData[key]);
-        console.log(`Appending ${key}:`, formData[key]);
-      }
-    });
-    
-    // Handle image file if present (new file uploaded)
-    if (imageFile) {
-      submitFormData.append('image', imageFile);
-      console.log('Appending image file:', imageFile.name);
-    } else if (formData.image) {
-      // Keep existing image if no new file was uploaded
-      submitFormData.append('existingImage', formData.image);
-      console.log('Keeping existing image:', formData.image);
-    }
-    
-    // Get authentication headers
-    const authHeaders = getAuthHeaders();
-    
-    // Determine endpoint and method based on whether we're editing or creating
-    const endpoint = item?.id 
-      ? (type === 'news' ? `/api/news/${item.id}` : `/api/events/${item.id}`)
-      : (type === 'news' ? '/api/news' : '/api/events');
-    
-    const method = item?.id ? 'PUT' : 'POST';
-    
-    console.log(`📤 Sending ${method} request to ${endpoint}`);
-    
-    const response = await fetch(endpoint, {
-      method,
-      headers: {
-        ...authHeaders,
-        // Don't set Content-Type - browser will set it with boundary for FormData
-      },
-      body: submitFormData,
-    });
-
-    const result = await response.json();
-    console.log('✅ API Response:', result);
-
-    if (result.success) {
-      // Success - close modal and notify parent
-      onSave(result.data || result.item || result);
-      onClose();
-      
-      // Optional: Show success message
-      alert(item?.id ? 'Updated successfully!' : 'Created successfully!');
-    } else {
-      throw new Error(result.error || result.message || 'Save failed');
-    }
-  } catch (error) {
-    console.error('❌ Error saving:', error);
-    alert(`Save failed: ${error.message}`);
-  } finally {
-    setSaving(false);
-  }
+const handleSubmit = async () => {
+  await fetchData();
+  setShowModal(false);
+  setEditingItem(null);
+  showNotification(
+    'success',
+    'Saved',
+    `${activeSection === 'news' ? 'News article' : 'Event'} saved successfully.`
+  );
 };
 
 // Add getAuthHeaders helper inside the component

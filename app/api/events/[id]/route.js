@@ -184,6 +184,10 @@ async function uploadImageToCloudinary(file) {
   }
 }
 
+const isUploadedImage = (file) => {
+  return file && typeof file !== "string" && file.size > 0 && typeof file.arrayBuffer === "function";
+};
+
 // Helper: delete image from Cloudinary
 async function deleteImageFromCloudinary(imageUrl) {
   try {
@@ -296,6 +300,7 @@ export async function PUT(req, { params }) {
         image: true,
         attendees: true,
         speaker: true,
+        createdBy: true,
       }
     });
 
@@ -335,9 +340,12 @@ export async function PUT(req, { params }) {
       time: formData.get("time")?.trim() || existingEvent.time,
       type: formData.get("type")?.trim() || existingEvent.type,
       location: formData.get("location")?.trim() || existingEvent.location,
-      featured: formData.get("featured") === "true",
+      featured: formData.has("featured") ? formData.get("featured") === "true" : existingEvent.featured,
       attendees: formData.get("attendees") || existingEvent.attendees,
       speaker: formData.get("speaker")?.trim() || existingEvent.speaker,
+      updatedBy: auth.user.id || null,
+      updatedByName: auth.user.name || null,
+      updatedByRole: auth.user.role || null,
       updatedAt: new Date(),
 
     };
@@ -355,7 +363,7 @@ export async function PUT(req, { params }) {
     const file = formData.get("image");
     const removeImage = formData.get("removeImage") === "true";
     
-    if (file && file.size > 0) {
+    if (isUploadedImage(file)) {
       // Delete old image from Cloudinary if exists
       if (existingEvent.image) {
         await deleteImageFromCloudinary(existingEvent.image);
@@ -450,6 +458,7 @@ export async function DELETE(req, { params }) {
         id: true,
         title: true,
         image: true,
+        createdBy: true,
       }
     });
 
