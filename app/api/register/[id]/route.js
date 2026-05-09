@@ -189,6 +189,14 @@ const requiresAdminPrivilege = (operation, targetUserRole, currentUserRole) => {
   if (normalizedCurrentRole === 'SUPER_ADMIN') {
     return { allowed: true, message: 'Super admin access granted' };
   }
+
+  if (operation === 'DELETE') {
+    return {
+      allowed: false,
+      message: 'Only SUPER_ADMIN can delete admin users',
+      requiresSuperAdmin: true
+    };
+  }
   
   // Check if current user has admin role
   const adminRoles = ['ADMIN'];
@@ -250,7 +258,6 @@ export async function GET(req, { params }) {
         email: true,
         phone: true,
         role: true,
-        status: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -297,7 +304,7 @@ export async function PUT(req, { params }) {
     }
     
     const { id } = params;
-    const { name, email, phone, password, role, status } = await req.json();
+    const { name, email, phone, password, role } = await req.json();
 
     // Get target user to check role
     const targetUser = await prisma.user.findUnique({
@@ -329,7 +336,7 @@ export async function PUT(req, { params }) {
       updatedBy: auth.user.name,
       targetUser: targetUser.email,
       isSelfUpdate: auth.user.id === id,
-      changes: { name, email, phone, role, status, passwordChanged: !!password }
+      changes: { name, email, phone, role, passwordChanged: !!password }
     });
 
     // Validate input (excluding status since it's not in schema)

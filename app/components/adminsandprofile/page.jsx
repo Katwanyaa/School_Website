@@ -594,9 +594,8 @@ const confirmDelete = async () => {
       targetRole: adminToDelete.role
     });
     
-    // ADMIN cannot delete SUPER_ADMIN
-    if (adminToDelete.role === 'SUPER_ADMIN' && currentUser.role !== 'SUPER_ADMIN') {
-      toast.error('Only SUPER_ADMIN can delete other SUPER_ADMIN users');
+    if (currentUser.role !== 'SUPER_ADMIN') {
+      toast.error('Only SUPER_ADMIN can delete admin users');
       setShowDeleteConfirm(false);
       setAdminToDelete(null);
       return;
@@ -779,9 +778,8 @@ const handleSaveAdmin = async (e) => {
       return;
     }
     
-    // Role permission check: ADMIN cannot create SUPER_ADMIN
-    if (currentUser.role !== 'SUPER_ADMIN' && adminData.role === 'SUPER_ADMIN') {
-      toast.error('Only SUPER_ADMIN can create other SUPER_ADMIN users');
+    if (currentUser.role !== 'SUPER_ADMIN') {
+      toast.error('Only SUPER_ADMIN can create or update admin users');
       setSavingAdmin(false);
       return;
     }
@@ -1448,8 +1446,8 @@ if (loading) {
     </span>
   </button>
   
-{/* Create Action - Visible to ADMIN and SUPER_ADMIN */}
-{(currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN') && (
+{/* Create Action - Visible to SUPER_ADMIN only */}
+{currentUserRole === 'SUPER_ADMIN' && (
   <button
     onClick={handleCreateAdmin}
     className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-teal-700 shadow-xl shadow-slate-200 hover:shadow-teal-200/50 transition-all duration-300 active:scale-95"
@@ -1635,8 +1633,8 @@ if (loading) {
                   </td>
                  <td className="px-6 py-4">
   <div className="flex items-center gap-2">
-    {/* Edit button - Visible to ADMIN and SUPER_ADMIN */}
-    {(currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN') && (
+    {/* Edit button - Visible to SUPER_ADMIN only */}
+    {currentUserRole === 'SUPER_ADMIN' && (
       <button
         onClick={() => handleEditAdmin(admin)}
         className="p-2 bg-gradient-to-r from-teal-50 to-teal-100 hover:from-teal-100 hover:to-teal-200 text-teal-700 rounded-xl transition-all duration-200 border border-teal-200 hover:scale-100 active:scale-95"
@@ -1645,17 +1643,14 @@ if (loading) {
       </button>
     )}
     
-    {/* Delete button - Visible to ADMIN and SUPER_ADMIN, but with restrictions */}
-    {(currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN') && session?.user && admin.id !== session.user.id && (
-      // ADMIN can delete other ADMINS, but not SUPER_ADMIN
-      (currentUserRole === 'SUPER_ADMIN' || (currentUserRole === 'ADMIN' && admin.role !== 'SUPER_ADMIN')) && (
+    {/* Delete button - Visible to SUPER_ADMIN only */}
+    {currentUserRole === 'SUPER_ADMIN' && session?.user && admin.id !== session.user.id && (
         <button
           onClick={() => handleDelete(admin)}
           className="p-2 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 text-red-600 rounded-xl transition-all duration-200 border border-red-200 hover:scale-100 active:scale-95"
         >
           <Trash2 className="text-sm" />
         </button>
-      )
     )}
   </div>
 </td>

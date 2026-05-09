@@ -145,7 +145,7 @@ const authenticateRequest = (req) => {
   return {
     authenticated: true,
     user: validationResult.user,
-    deviceInfo: validationResult.devInfo
+    deviceInfo: validationResult.deviceInfo
   };
 };
 
@@ -466,40 +466,6 @@ const validateInput = (name, email, password, role) => {
 // Main POST
 export async function POST(request) {
   try {
-    // ===================== TOKEN VERIFICATION DISABLED FOR TESTING =====================
-    // Authentication is disabled to allow user creation for testing purposes.
-    // Uncomment the following block to re-enable admin/device token checks.
-    /*
-    // Authenticate request first - only ADMIN and SUPERADMIN can create users
-    const auth = authenticateRequest(request);
-    if (!auth.authenticated) {
-      return auth.response;
-    }
-    // Check if user has permission to create new users (only ADMIN or SUPERADMIN)
-    const adminRoles = ['ADMIN', 'SUPERADMIN', 'SUPER_ADMIN', 'administrator', 'PRINCIPAL'];
-    if (!adminRoles.includes(auth.user.role?.toUpperCase())) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: "Permission Denied",
-          message: "Only administrators can create new users"
-        },
-        { status: 403 }
-      );
-    }
-    // Log the user creation attempt for audit
-    console.log('👤 User creation attempt:', {
-      createdBy: auth.user.name,
-      createdById: auth.user.id,
-      createdByRole: auth.user.role,
-      device: auth.deviceInfo,
-      timestamp: new Date().toISOString()
-    });
-    */
-    // ===================== END TOKEN VERIFICATION DISABLED =====================
-
-    // ================ REST OF YOUR EXISTING CODE CONTINUES HERE ================
-
     let { name, email, password, phone, role } = await request.json();
     // Normalize role to Prisma enum (ADMIN or SUPER_ADMIN)
     let dbRole = (role || '').toUpperCase().replace(/[- ]/g, '_');
@@ -509,25 +475,31 @@ export async function POST(request) {
 
     // Only allow ADMIN or SUPERADMIN to create users (unless no users exist yet)
     const userCount = await prisma.user.count();
+    let auth = null;
     if (userCount > 0) {
-      // Token verification is DISABLED for user creation (for testing)
-      /*
-      const auth = authenticateRequest(request);
+      auth = authenticateRequest(request);
       if (!auth.authenticated) {
         return auth.response;
       }
-      const allowedRoles = ['ADMIN', 'SUPERADMIN'];
-      if (!allowedRoles.includes((auth.user.role || '').toUpperCase())) {
+
+      if ((auth.user.role || '').toUpperCase() !== 'SUPER_ADMIN') {
         return NextResponse.json(
           {
             success: false,
             error: 'Permission Denied',
-            message: 'Only ADMIN or SUPERADMIN can create new users.'
+            message: 'Only SUPER_ADMIN can create new admin users.'
           },
           { status: 403 }
         );
       }
-      */
+
+      console.log('👤 User creation attempt:', {
+        createdBy: auth.user.name,
+        createdById: auth.user.id,
+        createdByRole: auth.user.role,
+        device: auth.deviceInfo,
+        timestamp: new Date().toISOString()
+      });
     }
 
     // Prevent non-SUPERADMIN role assignment for first user
@@ -595,8 +567,8 @@ export async function POST(request) {
         success: true,
         message: 'User registered successfully',
         user: sanitizeUser(user),
-        token
-        // createdBy: only included if authentication is enabled
+        token,
+        createdBy: auth?.user?.name || 'bootstrap'
       },
       { status: 201 }
     );
