@@ -163,22 +163,26 @@ const getLeadershipSearchText = (staff) => {
     .toLowerCase();
 };
 
-const StatPill = ({ icon: Icon, label, value, tone = "blue" }) => {
+const StatPill = ({ icon: Icon, value, label, tone }) => {
   const tones = {
-    blue: "bg-blue-50 text-blue-700 ring-blue-100",
-    emerald: "bg-emerald-50 text-emerald-700 ring-emerald-100",
-    amber: "bg-amber-50 text-amber-700 ring-amber-100",
-    slate: "bg-slate-50 text-slate-700 ring-slate-100",
+    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    slate: "bg-slate-500/10 text-slate-400 border-slate-500/20",
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3 shadow-sm">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ${tones[tone] || tones.blue}`}>
+    <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all ${tones[tone]} min-w-0`}>
+      <div className="shrink-0">
         <Icon size={18} />
       </div>
-      <div className="min-w-0">
-        <p className="text-lg font-black leading-none text-slate-900">{value}</p>
-        <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
+      <div className="min-w-0 flex flex-col">
+        <span className="text-lg font-black leading-none tracking-tight truncate">
+          {value}
+        </span>
+        <span className="text-[9px] font-bold uppercase tracking-widest opacity-70 truncate">
+          {label}
+        </span>
       </div>
     </div>
   );
@@ -604,12 +608,13 @@ export default function StaffDirectory() {
                 Individual public profiles are limited to leadership roles. Teaching and support teams are shown as department groups to protect staff privacy.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:w-[520px]">
-              <StatPill icon={FiUser} value={leadership.length} label="Leaders" tone="blue" />
-              <StatPill icon={FiLayers} value={departments.length} label="Departments" tone="emerald" />
-              <StatPill icon={FiUsers} value={totalDepartmentStaff} label="Grouped Staff" tone="amber" />
-              <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
-            </div>
+     {/* Updated StatPill Container */}
+<div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end lg:gap-4">
+  <StatPill icon={FiUser} value={leadership.length} label="Leaders" tone="blue" />
+  <StatPill icon={FiLayers} value={departments.length} label="Depts" tone="emerald" />
+  <StatPill icon={FiUsers} value={totalDepartmentStaff} label="Staff" tone="amber" />
+  <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
+</div>
           </div>
         </section>
 
