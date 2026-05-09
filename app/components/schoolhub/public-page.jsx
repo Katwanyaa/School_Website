@@ -284,7 +284,7 @@ const ModernLoadingSpinner = ({ message = "Loading amazing content..." }) => (
     <p className="mt-6 text-sm font-medium text-gray-600">{message}</p>
     <div className="flex gap-1 mt-3">
       {[0, 1, 2].map(i => (
-        <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+        <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-800 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
       ))}
     </div>
   </div>
@@ -295,7 +295,7 @@ const RefreshButton = ({ refreshing, onClick }) => (
   <button
     onClick={onClick}
     disabled={refreshing}
-    className="inline-flex items-center justify-center gap-2 bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 active:scale-95 disabled:opacity-60"
+    className="inline-flex items-center justify-center gap-2 bg-blue-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 active:scale-95 disabled:opacity-60"
   >
     {refreshing ? (
       <>
@@ -699,30 +699,28 @@ export default function PublicSchoolHubPage({
             <div className="inline-flex items-center gap-2 bg-gray-100 px-3 py-1.5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-600">Live Platform</span>
             </div>
           </div>
 
           {/* Title Section */}
           <div className="max-w-3xl">
             <div className="relative inline-block mb-3">
-              <div className="flex h-12 w-12 items-center justify-center bg-emerald-600">
+              <div className="flex h-12 w-12 items-center justify-center bg-blue-800">
                 <HeroIcon className="text-2xl text-white" />
               </div>
             </div>
             
            <h1 className="text-2xl font-black tracking-tight sm:text-3xl md:text-5xl text-gray-900">
   Welcome to Our{' '}
-  <span className="text-emerald-600">
+  <span className="text-cyan-800">
     {title}
   </span>{' '}
   at Katwanyaa Senior School
 </h1>
             
             <div className="my-3 flex gap-2">
-              <div className="h-1 w-12 bg-emerald-600" />
+              <div className="h-1 w-12 bg-blue-800" />
               <div className="h-1 w-6 bg-emerald-300" />
               <div className="h-1 w-3 bg-emerald-200" />
             </div>
@@ -732,20 +730,28 @@ export default function PublicSchoolHubPage({
             </p>
           </div>
 
-          {/* Action Bar */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center mt-6">
-            <RefreshButton refreshing={refreshing} onClick={() => load(true)} />
+    {/* Action Bar */}
+<div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
+  
+  {/* Refresh Button - Now centered on mobile */}
+  <div className="shrink-0">
+    <RefreshButton refreshing={refreshing} onClick={() => load(true)} />
+  </div>
 
-            <div className="relative flex-1">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={`Search ${title.toLowerCase()}...`}
-                className="w-full bg-gray-100 py-2.5 pl-9 pr-3 text-sm font-medium text-gray-900 placeholder:text-gray-500 outline-none"
-              />
-            </div>
-          </div>
+  {/* Search Bar - Modernized & Width-Constrained */}
+  <div className="relative w-full max-w-md group">
+    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+      <FiSearch className="text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+    </div>
+    <input
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder={`Search ${title.toLowerCase()}...`}
+      className="w-full bg-white border border-slate-200 py-3 pl-11 pr-4 rounded-2xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal outline-none shadow-sm transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5"
+    />
+  </div>
+  
+</div>
         </div>
 
         {/* Error Display */}
@@ -778,12 +784,12 @@ export default function PublicSchoolHubPage({
                 <section key={section.title}>
                   {/* Section Header */}
                   <div className="mb-5 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center bg-emerald-600 text-white">
+                    <div className="flex h-10 w-10 items-center justify-center bg-blue-800 text-white">
                       <SectionIcon className="text-base" />
                     </div>
                     <div>
                       <h2 className="text-lg font-bold tracking-tight text-gray-900">{section.title}</h2>
-                      <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                      <p className="text-xs font-bold uppercase tracking-wider text-cyan-800">
                         {section.items.length} {section.items.length === 1 ? 'item' : 'items'} available
                       </p>
                     </div>
