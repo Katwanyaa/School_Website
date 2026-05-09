@@ -778,8 +778,9 @@ const handleSaveAdmin = async (e) => {
       return;
     }
     
-    if (currentUser.role !== 'SUPER_ADMIN') {
-      toast.error('Only SUPER_ADMIN can create or update admin users');
+    // Role permission check: ADMIN cannot create SUPER_ADMIN
+    if (currentUser.role !== 'SUPER_ADMIN' && adminData.role === 'SUPER_ADMIN') {
+      toast.error('Only SUPER_ADMIN can create other SUPER_ADMIN users');
       setSavingAdmin(false);
       return;
     }
@@ -1155,7 +1156,7 @@ if (loading) {
            Loading For Administrators
           </p>
           <p className="text-slate-400 text-[10px] sm:text-xs uppercase tracking-widest mt-1 font-bold">
-            Katwanyaa Senior School
+            Katwanyaa senior School
           </p>
         </div>
       </Stack>
@@ -1446,8 +1447,8 @@ if (loading) {
     </span>
   </button>
   
-{/* Create Action - Visible to SUPER_ADMIN only */}
-{currentUserRole === 'SUPER_ADMIN' && (
+{/* Create Action - Visible to ADMIN and SUPER_ADMIN */}
+{(currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN') && (
   <button
     onClick={handleCreateAdmin}
     className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-teal-700 shadow-xl shadow-slate-200 hover:shadow-teal-200/50 transition-all duration-300 active:scale-95"
@@ -1633,8 +1634,8 @@ if (loading) {
                   </td>
                  <td className="px-6 py-4">
   <div className="flex items-center gap-2">
-    {/* Edit button - Visible to SUPER_ADMIN only */}
-    {currentUserRole === 'SUPER_ADMIN' && (
+    {/* Edit button - Visible to ADMIN and SUPER_ADMIN */}
+    {(currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN') && (
       <button
         onClick={() => handleEditAdmin(admin)}
         className="p-2 bg-gradient-to-r from-teal-50 to-teal-100 hover:from-teal-100 hover:to-teal-200 text-teal-700 rounded-xl transition-all duration-200 border border-teal-200 hover:scale-100 active:scale-95"
@@ -1643,7 +1644,7 @@ if (loading) {
       </button>
     )}
     
-    {/* Delete button - Visible to SUPER_ADMIN only */}
+    {/* Delete button - only SUPER_ADMIN can delete admin users */}
     {currentUserRole === 'SUPER_ADMIN' && session?.user && admin.id !== session.user.id && (
         <button
           onClick={() => handleDelete(admin)}
