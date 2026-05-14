@@ -310,7 +310,7 @@ function getRegistrationSuccessTemplate(user) {
                       <td style="padding: 6% 5%; text-align: center;">
                         <h3 style="color: #0f172a; font-size: clamp(15px, 3.8vw, 16px); font-weight: 700; margin: 0 0 8px;">🚀 Get Started Now</h3>
                         <p style="margin: 0 0 16px; font-size: clamp(13px, 3.2vw, 14px); color: #475569;">Access your dashboard and start managing the school system</p>
-                        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://kinyui-senior.vercel.app'}/MainDashboard" 
+                        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://katwanyaasenior.school/'}/MainDashboard" 
                            style="display: inline-block; 
                                   width: 80%; 
                                   max-width: 260px; 

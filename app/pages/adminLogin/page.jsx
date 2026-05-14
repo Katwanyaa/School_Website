@@ -1576,7 +1576,7 @@ export default function AdminLoginPage() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      placeholder="admin@kinyui.ac.ke"
+                      placeholder="admin@katz.ac.ke"
                       className="w-full pl-12 pr-4 py-3.5 sm:py-4 bg-slate-50 border text-slate-900 font-semibold border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all shadow-sm text-sm sm:text-base"
                     />
                   </div>
