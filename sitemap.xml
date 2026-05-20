@@ -183,6 +183,88 @@
     </image:image>
   </url>
 
+  <!-- ==================== STUDENT ACTIVITIES ==================== -->
+  
+  <!-- Student Council -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/student-council</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Student Council</image:title>
+      <image:caption>Student leadership and governance</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Clubs & Societies -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/clubs</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Clubs and Societies</image:title>
+      <image:caption>Join our diverse student organizations</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Achievements -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/Achievements</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>School Achievements</image:title>
+      <image:caption>Our proud accomplishments and awards</image:caption>
+    </image:image>
+  </url>
+
+  <!-- ==================== OTHER PAGES ==================== -->
+  
+  <!-- Departments -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/Departments</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>School Departments</image:title>
+      <image:caption>Learn about our academic departments</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Boarding -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/Boarding</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Boarding Information</image:title>
+      <image:caption>Hostel facilities and boarding details</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Security -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/Security</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>School Security</image:title>
+      <image:caption>Campus safety and security measures</image:caption>
+    </image:image>
+  </url>
+
   <!-- ==================== ADMIN PAGES (Low Priority) ==================== -->
   
   <!-- Admin Login -->
