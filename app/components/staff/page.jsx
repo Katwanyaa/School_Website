@@ -505,8 +505,13 @@ function ModernStaffDetailModal({ staff, onClose, onEdit }) {
             <div className="flex-1 space-y-2">
 <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-2">
   <span className="bg-orange-600 text-[10px] font-black uppercase tracking-widest text-white px-3 py-1 rounded-full">
-    {staff.role}
+    {staff.role === 'Teacher' ? 'Teacher' : staff.role}
   </span>
+  {staff.role === 'Teacher' && staff.subjectOffered && (
+    <span className="bg-emerald-600 text-[10px] font-black uppercase tracking-widest text-white px-3 py-1 rounded-full">
+      {staff.subjectOffered}
+    </span>
+  )}
   {staff.role === 'Deputy Principal' && staff.position && (
     <span className={`text-[10px] font-black uppercase tracking-widest text-white px-3 py-1 rounded-full ${
       staff.position.includes('Academics') ? 'bg-emerald-600' : 'bg-amber-600'
@@ -653,6 +658,7 @@ function ModernStaffDetailModal({ staff, onClose, onEdit }) {
 
 function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, actionLoading }) {
   const [imageError, setImageError] = useState(false);
+  const isTeacher = staff?.staffType === 'Teacher' || staff?.role === 'Teacher';
 
   const getImageUrl = (imagePath) => {
     if (!imagePath || typeof imagePath !== 'string') {
@@ -725,10 +731,10 @@ function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, 
         </h3>
 
         <div className="flex items-center gap-2 text-slate-600 mt-1">
-          <FiMail size={11} className="text-blue-700" />
+          {isTeacher ? <FiBook size={11} className="text-emerald-700" /> : <FiMail size={11} className="text-blue-700" />}
 
           <span className="text-[11px] font-black uppercase tracking-tight truncate text-slate-700">
-            {staff.email || 'no-email@school.local'}
+            {isTeacher ? (staff.subjectOffered || 'Subject teacher') : (staff.email || 'no-email@school.local')}
           </span>
         </div>
       </div>
@@ -740,19 +746,21 @@ function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, 
         </span>
 
         <p className="text-sm font-black text-black truncate">
-          {staff.role === 'Deputy Principal'
+          {isTeacher
+            ? 'Teacher'
+            : staff.role === 'Deputy Principal'
             ? 'Dep. Principal'
             : staff.role}
         </p>
 
         <p className="text-[11px] font-bold text-slate-700 truncate">
-          {staff.department}
+          {isTeacher ? `${staff.department || 'Department not set'}${staff.subjectOffered ? ` • ${staff.subjectOffered}` : ''}` : staff.department}
         </p>
       </div>
 
       {/* 4. EXPERTISE */}
       <div className="hidden lg:flex flex-1 gap-2 flex-wrap px-4 items-center">
-        {staff.expertise?.slice(0, 2).map((exp, index) => (
+        {(isTeacher ? [staff.subjectOffered].filter(Boolean) : (staff.expertise?.slice(0, 2) || [])).map((exp, index) => (
           <div
             key={index}
             title={exp}
@@ -778,7 +786,7 @@ function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, 
               className="text-blue-700"
             />
 
-            {staff.phone}
+            {staff.phone || 'Not provided'}
           </span>
         </div>
 
@@ -815,14 +823,18 @@ function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, 
 
 // REPLACE YOUR ModernStaffModal WITH THIS - SAME STYLING AS ModernSchoolModal
 // REPLACE YOUR ModernStaffModal WITH THIS - EXACT SAME STYLE AS ModernSchoolModal
-function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCounts }) {
+function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCounts, departmentOptions = [] }) {
   const isUpdateMode = !!staff && staff.id;
+  const isInitialTeacher = staff?.staffType === 'Teacher' || staff?.role === 'Teacher';
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     name: staff?.name || '',
-    role: staff?.role || 'Senior Teacher',
-    position: staff?.position || '',
-    department: staff?.department || 'Sciences',
+    staffType: isInitialTeacher ? 'Teacher' : 'Leadership',
+    role: isInitialTeacher ? 'Teacher' : (staff?.role || 'Senior Teacher'),
+    position: isInitialTeacher ? 'Teacher' : (staff?.position || ''),
+    department: staff?.department || '',
+    departmentId: staff?.departmentId ? String(staff.departmentId) : '',
+    subjectOffered: staff?.subjectOffered || '',
     email: staff?.email || '',
     phone: staff?.phone || '',
     image: staff?.image || '',
@@ -843,19 +855,26 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
   const [imageError, setImageError] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
-  const steps = [
-    { id: 'basic', label: 'Basic Info', icon: FaUser },
-    { id: 'contact', label: 'Contact', icon: FaEnvelope },
-    { id: 'profile', label: 'Profile', icon: FaUserCircle },
-    { id: 'details', label: 'Details', icon: FaInfoCircle }
-  ];
+  const isTeacherForm = formData.staffType === 'Teacher' || formData.role === 'Teacher';
+
+  const steps = isTeacherForm
+    ? [
+        { id: 'basic', label: 'Teacher Setup', icon: FaChalkboardTeacher },
+        { id: 'profile', label: 'Teacher Image', icon: FaUserCircle },
+        { id: 'details', label: 'Review', icon: FaClipboardCheck }
+      ]
+    : [
+        { id: 'basic', label: 'Basic Info', icon: FaUser },
+        { id: 'contact', label: 'Contact', icon: FaEnvelope },
+        { id: 'profile', label: 'Profile', icon: FaUserCircle },
+        { id: 'details', label: 'Details', icon: FaInfoCircle }
+      ];
 
   const ROLES = [
     { value: 'Principal', label: 'Principal', icon: FaCrown, color: 'text-purple-600' },
     { value: 'Deputy Principal', label: 'Deputy Principal', icon: FaShieldAlt, color: 'text-emerald-600' },
     { value: 'Senior Teacher', label: 'Senior Teacher', icon: FaChalkboardTeacher, color: 'text-blue-600' },
     { value: 'Head of Department', label: 'HOD', icon: FaBook, color: 'text-indigo-600' },
-    { value: 'Assistant Head of Department', label: 'AHOD', icon: FaHandsHelping, color: 'text-pink-600' }
   ];
 
   const DEPUTY_PRINCIPAL_TYPES = [
@@ -875,16 +894,26 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
     }
   ];
 
-  const DEPARTMENTS = [
-    'Sciences', 'Mathematics', 'Languages', 'Humanities', 
-    'Administration', 'Sports', 'Guidance', 'Arts', 'Technology'
-  ];
-
   const STATUS_OPTIONS = [
     { value: 'active', label: 'Active', icon: FaCheckCircle, color: 'text-green-600' },
     { value: 'on-leave', label: 'On Leave', icon: FaCalendar, color: 'text-yellow-600' },
     { value: 'inactive', label: 'Inactive', icon: FaTimesCircle, color: 'text-red-600' }
   ];
+
+  const normalizedDepartmentOptions = [
+    ...((Array.isArray(departmentOptions) ? departmentOptions : []).filter(Boolean))
+  ];
+
+  if (
+    formData.departmentId &&
+    !normalizedDepartmentOptions.some((dept) => String(dept.id) === String(formData.departmentId))
+  ) {
+    normalizedDepartmentOptions.unshift({
+      id: formData.departmentId,
+      name: formData.department || `Department ${formData.departmentId}`,
+      isActive: false
+    });
+  }
 
   useEffect(() => {
     if (staff?.image && typeof staff.image === 'string') {
@@ -893,7 +922,14 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
     }
   }, [staff]);
 
+  useEffect(() => {
+    if (currentStep > steps.length - 1) {
+      setCurrentStep(steps.length - 1);
+    }
+  }, [currentStep, steps.length]);
+
   const validateDeputyPrincipal = () => {
+    if (isTeacherForm) return true;
     if (formData.role === 'Deputy Principal') {
       if (!formData.position) {
         setCurrentStep(0);
@@ -906,6 +942,39 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
     return true;
   };
 
+  const handleStaffTypeChange = (value) => {
+    if (value === 'Teacher') {
+      setFormData((prev) => ({
+        ...prev,
+        staffType: 'Teacher',
+        role: 'Teacher',
+        position: 'Teacher',
+        department: prev.department || '',
+        departmentId: prev.departmentId || '',
+        subjectOffered: prev.subjectOffered || '',
+        email: '',
+        phone: '',
+        bio: '',
+        quote: '',
+        education: '',
+        experience: '',
+        expertise: [],
+        responsibilities: [],
+        achievements: []
+      }));
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      staffType: 'Leadership',
+      role: prev.role === 'Teacher' ? 'Senior Teacher' : (prev.role || 'Senior Teacher'),
+      position: prev.role === 'Teacher' ? '' : prev.position,
+      departmentId: '',
+      subjectOffered: ''
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (currentStep < steps.length - 1) return;
@@ -916,7 +985,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
       
       if (!imageFile && !staff?.image && !imagePreview) {
         setImageError('Staff image is required.');
-        setCurrentStep(2);
+        setCurrentStep(isTeacherForm ? 1 : 2);
         return;
       }
 
@@ -940,8 +1009,10 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
         formDataToSend.append('image', '');
       }
       
-      await onSave(formDataToSend, staff?.id);
-      onClose();
+      const saved = await onSave(formDataToSend, staff?.id);
+      if (saved !== false) {
+        onClose();
+      }
     } catch (error) {
       alert(error.message);
     } finally {
@@ -986,6 +1057,21 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
   };
 
   const handleChange = (field, value) => {
+    if (field === 'departmentId') {
+      const selectedDepartment = normalizedDepartmentOptions.find((dept) => String(dept.id) === String(value));
+      setFormData(prev => ({
+        ...prev,
+        departmentId: value,
+        department: selectedDepartment?.name || prev.department
+      }));
+      return;
+    }
+
+    if (field === 'role' && value === 'Teacher') {
+      handleStaffTypeChange('Teacher');
+      return;
+    }
+
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -998,6 +1084,19 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
   };
 
   const isStepValid = () => {
+    if (isTeacherForm) {
+      switch (currentStep) {
+        case 0:
+          return formData.name.trim() && formData.departmentId && formData.subjectOffered.trim();
+        case 1:
+          return (imageFile || staff?.image || imagePreview) && !imageError;
+        case 2:
+          return true;
+        default:
+          return true;
+      }
+    }
+
     switch (currentStep) {
       case 0: return formData.name.trim() && formData.role.trim();
       case 1: return formData.email.trim() && formData.phone.trim();
@@ -1029,10 +1128,14 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
               </div>
               <div>
                 <h2 className="text-lg md:text-xl font-bold">
-                  {isUpdateMode ? 'Update Staff Information' : 'Add New Staff Member'}
+                  {isTeacherForm
+                    ? (isUpdateMode ? 'Update Teacher Record' : 'Add New Teacher')
+                    : (isUpdateMode ? 'Update Staff Information' : 'Add New Staff Member')}
                 </h2>
                 <p className="text-white/80 text-xs mt-0.5">
-                  {isUpdateMode ? 'Modify existing staff details' : 'Add a new staff member to the directory'}
+                  {isTeacherForm
+                    ? 'Link this teacher to an existing department and subject area'
+                    : (isUpdateMode ? 'Modify existing staff details' : 'Add a new staff member to the directory')}
                 </p>
               </div>
             </div>
@@ -1093,6 +1196,51 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
             {/* Step 1: Basic Information */}
             {currentStep === 0 && (
               <div className="space-y-6">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {[
+                    {
+                      value: 'Leadership',
+                      label: 'Leadership Profile',
+                      description: 'Principal, deputy principal, senior teacher, HOD or AHOD.',
+                      icon: FaShieldAlt,
+                      styles: 'from-slate-900 via-slate-800 to-slate-700'
+                    },
+                    {
+                      value: 'Teacher',
+                      label: 'Teacher Record',
+                      description: 'Name, department, subject offered, and image only.',
+                      icon: FaChalkboardTeacher,
+                      styles: 'from-emerald-600 via-teal-600 to-cyan-600'
+                    }
+                  ].map((type) => {
+                    const active = formData.staffType === type.value;
+                    return (
+                      <button
+                        key={type.value}
+                        type="button"
+                        onClick={() => handleStaffTypeChange(type.value)}
+                        className={`rounded-2xl border p-4 text-left transition-all ${
+                          active
+                            ? `bg-gradient-to-r ${type.styles} text-white shadow-xl border-transparent`
+                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`rounded-2xl p-3 ${active ? 'bg-white/15' : 'bg-slate-100'}`}>
+                            <type.icon className={active ? 'text-white' : 'text-slate-700'} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-black uppercase tracking-[0.18em]">{type.label}</p>
+                            <p className={`mt-2 text-sm leading-relaxed ${active ? 'text-white/85' : 'text-slate-500'}`}>
+                              {type.description}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-5 border border-blue-200">
@@ -1109,83 +1257,148 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                       />
                     </div>
 
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200">
-                      <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaUserTie className="text-purple-600" /> Role <span className="text-red-500">*</span>
-                      </label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {ROLES.map((role) => (
-                          <div 
-                            key={role.value} 
-                            onClick={() => handleChange('role', role.value)}
-                            className={`p-3 rounded-xl cursor-pointer transition-all ${
-                              formData.role === role.value 
-                                ? 'bg-purple-600 text-white shadow-lg' 
-                                : 'bg-white border-2 border-purple-200 hover:border-purple-400'
-                            }`}
+                    {isTeacherForm ? (
+                      <>
+                        <div className="bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl p-5 border border-emerald-200">
+                          <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <FaBuilding className="text-emerald-600" /> Department <span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            value={formData.departmentId}
+                            onChange={(e) => handleChange('departmentId', e.target.value)}
+                            className="w-full px-4 py-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-base font-bold"
+                            required
                           >
-                            <div className="flex items-center gap-2">
-                              <role.icon className={`text-sm ${formData.role === role.value ? 'text-white' : role.color}`} />
-                              <span className="text-sm font-bold">{role.label}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                            <option value="">Select an existing department...</option>
+                            {normalizedDepartmentOptions.map((dept) => (
+                              <option key={dept.id} value={dept.id}>
+                                {dept.name}{dept.isActive === false ? ' (Inactive)' : ''}
+                              </option>
+                            ))}
+                          </select>
+                          <p className="mt-2 text-xs font-semibold text-slate-500">
+                            Teachers can only be attached to departments already added in the system.
+                          </p>
+                        </div>
 
-                    <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5 border border-orange-200">
-                      <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaBuilding className="text-orange-600" /> Department
-                      </label>
-                      <select
-                        value={formData.department}
-                        onChange={(e) => handleChange('department', e.target.value)}
-                        className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-base font-bold"
-                      >
-                        {DEPARTMENTS.map(dept => (
-                          <option key={dept} value={dept}>{dept}</option>
-                        ))}
-                      </select>
-                    </div>
+                        <div className="bg-gradient-to-br from-cyan-50 to-blue-100 rounded-2xl p-5 border border-cyan-200">
+                          <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <FaBook className="text-cyan-700" /> Subject Offered <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.subjectOffered}
+                            onChange={(e) => handleChange('subjectOffered', e.target.value)}
+                            placeholder="e.g. Mathematics, English, Physics"
+                            className="w-full px-4 py-3 border-2 border-cyan-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white text-base font-bold"
+                            required
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200">
+                          <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <FaUserTie className="text-purple-600" /> Role <span className="text-red-500">*</span>
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {ROLES.map((role) => (
+                              <div 
+                                key={role.value} 
+                                onClick={() => handleChange('role', role.value)}
+                                className={`p-3 rounded-xl cursor-pointer transition-all ${
+                                  formData.role === role.value 
+                                    ? 'bg-purple-600 text-white shadow-lg' 
+                                    : 'bg-white border-2 border-purple-200 hover:border-purple-400'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <role.icon className={`text-sm ${formData.role === role.value ? 'text-white' : role.color}`} />
+                                  <span className="text-sm font-bold">{role.label}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5 border border-orange-200">
+                          <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <FaBuilding className="text-orange-600" /> Department
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.department}
+                            onChange={(e) => handleChange('department', e.target.value)}
+                            placeholder="Leadership department or office"
+                            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-base font-bold"
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   <div className="space-y-4">
-                    <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-5 border border-emerald-200">
-                      <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaCalendarAlt className="text-emerald-600" /> Join Date
-                      </label>
-                      <input
-                        type="date"
-                        value={formData.joinDate}
-                        onChange={(e) => handleChange('joinDate', e.target.value)}
-                        className="w-full px-4 py-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-base font-bold"
-                      />
-                    </div>
-
-                    <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-5 border border-red-200">
-                      <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaUserCheck className="text-red-600" /> Status
-                      </label>
-                      <div className="flex gap-3">
-                        {STATUS_OPTIONS.map((status) => (
-                          <div 
-                            key={status.value} 
-                            onClick={() => handleChange('status', status.value)}
-                            className={`flex-1 p-3 rounded-xl cursor-pointer text-center transition-all ${
-                              formData.status === status.value 
-                                ? 'bg-red-600 text-white shadow-lg' 
-                                : 'bg-white border-2 border-red-200 hover:border-red-400'
-                            }`}
-                          >
-                            <status.icon className={`text-sm mx-auto ${formData.status === status.value ? 'text-white' : status.color}`} />
-                            <span className="text-xs font-bold block mt-1">{status.label}</span>
+                    {isTeacherForm ? (
+                      <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">
+                          <FaCheckCircle />
+                          Department-linked teacher
+                        </div>
+                        <h3 className="mt-4 text-xl font-black text-slate-900">Teacher records stay department-first</h3>
+                        <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                          This teacher will be published under the selected department on the public staff page. Leadership-only fields stay hidden here so the setup stays clean.
+                        </p>
+                        <div className="mt-5 space-y-3 rounded-2xl bg-slate-50 p-4 text-sm">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="font-black uppercase tracking-[0.14em] text-slate-400">Selected Department</span>
+                            <span className="font-bold text-slate-900">{formData.department || 'Not selected yet'}</span>
                           </div>
-                        ))}
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="font-black uppercase tracking-[0.14em] text-slate-400">Subject</span>
+                            <span className="font-bold text-slate-900">{formData.subjectOffered || 'Not set yet'}</span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <>
+                        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-5 border border-emerald-200">
+                          <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <FaCalendarAlt className="text-emerald-600" /> Join Date
+                          </label>
+                          <input
+                            type="date"
+                            value={formData.joinDate}
+                            onChange={(e) => handleChange('joinDate', e.target.value)}
+                            className="w-full px-4 py-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-base font-bold"
+                          />
+                        </div>
+
+                        <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-5 border border-red-200">
+                          <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <FaUserCheck className="text-red-600" /> Status
+                          </label>
+                          <div className="flex gap-3">
+                            {STATUS_OPTIONS.map((status) => (
+                              <div 
+                                key={status.value} 
+                                onClick={() => handleChange('status', status.value)}
+                                className={`flex-1 p-3 rounded-xl cursor-pointer text-center transition-all ${
+                                  formData.status === status.value 
+                                    ? 'bg-red-600 text-white shadow-lg' 
+                                    : 'bg-white border-2 border-red-200 hover:border-red-400'
+                                }`}
+                              >
+                                <status.icon className={`text-sm mx-auto ${formData.status === status.value ? 'text-white' : status.color}`} />
+                                <span className="text-xs font-bold block mt-1">{status.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
 
                     {/* Deputy Principal Section */}
-                    {formData.role === 'Deputy Principal' && (
+                    {!isTeacherForm && formData.role === 'Deputy Principal' && (
                       <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-5 border border-amber-200">
                         <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
                           <FaShieldAlt className="text-amber-600" /> Deputy Principal Type <span className="text-red-500">*</span>
@@ -1219,7 +1432,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                       </div>
                     )}
 
-                    {formData.role !== 'Deputy Principal' && (
+                    {!isTeacherForm && formData.role !== 'Deputy Principal' && (
                       <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
                         <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
                           <FaBriefcase className="text-cyan-600" /> Position
@@ -1234,17 +1447,15 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                             <option value="Chief Principal">Chief Principal</option>
                             <option value="Senior Teacher">Senior Teacher</option>
                             <option value="Head of Department">Head of Department</option>
-                            <option value="Assistant Head of Department">Assistant Head of Department</option>
                           </optgroup>
                           <optgroup label="Department Leadership">
                             <option value="HOD">HOD</option>
-                            <option value="AHOD">AHOD</option>
                           </optgroup>
                         </select>
                       </div>
                     )}
 
-                    {existingDeputyCounts && (
+                    {!isTeacherForm && existingDeputyCounts && (
                       <div className="bg-gray-100 rounded-xl p-3 text-sm text-gray-700">
                         <span className="font-bold">Current Deputy Principals:</span> Academics: {existingDeputyCounts.academics || 0}/1 | Admin: {existingDeputyCounts.administration || 0}/1 | Total: {existingDeputyCounts.total || 0}/2
                       </div>
@@ -1256,158 +1467,239 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
 
             {/* Step 2: Contact Information */}
             {currentStep === 1 && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-5 border border-blue-200">
+              isTeacherForm ? (
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
                     <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <FaEnvelope className="text-blue-600" /> Email Address <span className="text-red-500">*</span>
+                      <FaUpload className="text-cyan-600" /> Teacher Image <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleChange('email', e.target.value)}
-                      placeholder="staff@school.edu"
-                      className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-base font-bold"
-                      required
+                    <div className="flex flex-col sm:flex-row items-start gap-4">
+                      {imagePreview && (
+                        <div className="relative">
+                          <img src={imagePreview} alt="Preview" className="w-24 h-24 rounded-2xl object-cover border-2 border-cyan-300" />
+                          <button
+                            type="button"
+                            onClick={handleImageRemove}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-lg text-xs"
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageChange(e.target.files[0])}
+                          className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-cyan-100 file:text-cyan-700 hover:file:bg-cyan-200"
+                        />
+                        {imageError && <p className="text-sm text-red-600 mt-2">{imageError}</p>}
+                        <p className="text-xs text-gray-500 mt-2">Max size: 5MB. JPG, PNG, WEBP</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-[2rem] border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-6">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700 shadow-sm">
+                      <FaCheckCircle />
+                      Public display preview
+                    </div>
+                    <div className="mt-5 rounded-[1.5rem] border border-white/80 bg-white p-5 shadow-sm">
+                      <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-400">Teacher Card</p>
+                      <div className="mt-4 flex items-center gap-4">
+                        <div className="h-16 w-16 overflow-hidden rounded-2xl bg-slate-100">
+                          {imagePreview ? (
+                            <img src={imagePreview} alt="Teacher preview" className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-slate-400">
+                              <FaUser />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-lg font-black text-slate-900">{formData.name || 'Teacher name'}</p>
+                          <p className="mt-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#1f5f3a]">
+                            {formData.subjectOffered || 'Subject offered'}
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-slate-500">
+                            {formData.department || 'Selected department'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-5 border border-blue-200">
+                      <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <FaEnvelope className="text-blue-600" /> Email Address <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleChange('email', e.target.value)}
+                        placeholder="staff@school.edu"
+                        className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-base font-bold"
+                        required
+                      />
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5 border border-green-200">
+                      <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <FaPhoneAlt className="text-green-600" /> Phone Number <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => handleChange('phone', e.target.value)}
+                        placeholder="+254 700 000 000"
+                        className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-base font-bold"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <FaGraduationCap className="text-purple-600" /> Education
+                    </label>
+                    <textarea
+                      value={formData.education}
+                      onChange={(e) => handleChange('education', e.target.value)}
+                      placeholder="Educational background, degrees, certifications..."
+                      rows="3"
+                      className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none bg-white text-base font-bold"
                     />
                   </div>
 
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5 border border-green-200">
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5 border border-orange-200">
                     <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <FaPhoneAlt className="text-green-600" /> Phone Number <span className="text-red-500">*</span>
+                      <FaBriefcase className="text-orange-600" /> Experience
                     </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => handleChange('phone', e.target.value)}
-                      placeholder="+254 700 000 000"
-                      className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-base font-bold"
-                      required
+                    <textarea
+                      value={formData.experience}
+                      onChange={(e) => handleChange('experience', e.target.value)}
+                      placeholder="Previous experience, years of service..."
+                      rows="3"
+                      className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none bg-white text-base font-bold"
                     />
                   </div>
                 </div>
-
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 border border-purple-200">
-                  <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaGraduationCap className="text-purple-600" /> Education
-                  </label>
-                  <textarea
-                    value={formData.education}
-                    onChange={(e) => handleChange('education', e.target.value)}
-                    placeholder="Educational background, degrees, certifications..."
-                    rows="3"
-                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none bg-white text-base font-bold"
-                  />
-                </div>
-
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5 border border-orange-200">
-                  <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaBriefcase className="text-orange-600" /> Experience
-                  </label>
-                  <textarea
-                    value={formData.experience}
-                    onChange={(e) => handleChange('experience', e.target.value)}
-                    placeholder="Previous experience, years of service..."
-                    rows="3"
-                    className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none bg-white text-base font-bold"
-                  />
-                </div>
-              </div>
+              )
             )}
 
             {/* Step 3: Profile & Bio */}
             {currentStep === 2 && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-5 border border-pink-200">
-                  <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaUserCircle className="text-pink-600" /> Gender
-                  </label>
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      onClick={() => handleGenderChange('male')}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-all ${
-                        formData.gender === 'male'
-                          ? 'bg-blue-600 text-white shadow-lg'
-                          : 'bg-white border-2 border-pink-200 text-gray-700 hover:border-pink-400'
-                      }`}
-                    >
-                      <FaMale className="text-sm" /> Male
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleGenderChange('female')}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-all ${
-                        formData.gender === 'female'
-                          ? 'bg-pink-600 text-white shadow-lg'
-                          : 'bg-white border-2 border-pink-200 text-gray-700 hover:border-pink-400'
-                      }`}
-                    >
-                      <FaFemale className="text-sm" /> Female
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
-                  <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaUpload className="text-cyan-600" /> Profile Image <span className="text-red-500">*</span>
-                  </label>
-                  <div className="flex flex-col sm:flex-row items-start gap-4">
-                    {imagePreview && (
-                      <div className="relative">
-                        <img src={imagePreview} alt="Preview" className="w-20 h-20 rounded-xl object-cover border-2 border-cyan-300" />
-                        <button
-                          type="button"
-                          onClick={handleImageRemove}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-lg text-xs"
-                        >
-                          <FaTimes />
-                        </button>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e.target.files[0])}
-                        className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-cyan-100 file:text-cyan-700 hover:file:bg-cyan-200"
-                      />
-                      {imageError && <p className="text-sm text-red-600 mt-2">{imageError}</p>}
-                      <p className="text-xs text-gray-500 mt-2">Max size: 5MB. JPG, PNG, WEBP</p>
+              isTeacherForm ? (
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200">
+                    <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <FaClipboardCheck className="text-gray-600" /> Teacher Summary
+                    </h3>
+                    <div className="space-y-2 text-sm bg-white p-4 rounded-xl">
+                      <p><span className="font-bold">Name:</span> {formData.name || '—'}</p>
+                      <p><span className="font-bold">Type:</span> Teacher</p>
+                      <p><span className="font-bold">Department:</span> {formData.department || '—'}</p>
+                      <p><span className="font-bold">Subject Offered:</span> {formData.subjectOffered || '—'}</p>
+                      <p><span className="font-bold">Image:</span> {imagePreview ? 'Ready for upload' : 'Not selected yet'}</p>
                     </div>
                   </div>
                 </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-5 border border-pink-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <FaUserCircle className="text-pink-600" /> Gender
+                    </label>
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={() => handleGenderChange('male')}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-all ${
+                          formData.gender === 'male'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'bg-white border-2 border-pink-200 text-gray-700 hover:border-pink-400'
+                        }`}
+                      >
+                        <FaMale className="text-sm" /> Male
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleGenderChange('female')}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-all ${
+                          formData.gender === 'female'
+                            ? 'bg-pink-600 text-white shadow-lg'
+                            : 'bg-white border-2 border-pink-200 text-gray-700 hover:border-pink-400'
+                        }`}
+                      >
+                        <FaFemale className="text-sm" /> Female
+                      </button>
+                    </div>
+                  </div>
 
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-5 border border-indigo-200">
-                  <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaQuoteLeft className="text-indigo-600" /> Biography
-                  </label>
-                  <textarea
-                    value={formData.bio}
-                    onChange={(e) => handleChange('bio', e.target.value)}
-                    placeholder="Professional background..."
-                    rows="4"
-                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white text-base font-bold"
-                  />
-                </div>
+                  <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <FaUpload className="text-cyan-600" /> Profile Image <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-start gap-4">
+                      {imagePreview && (
+                        <div className="relative">
+                          <img src={imagePreview} alt="Preview" className="w-20 h-20 rounded-xl object-cover border-2 border-cyan-300" />
+                          <button
+                            type="button"
+                            onClick={handleImageRemove}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-lg text-xs"
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageChange(e.target.files[0])}
+                          className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-cyan-100 file:text-cyan-700 hover:file:bg-cyan-200"
+                        />
+                        {imageError && <p className="text-sm text-red-600 mt-2">{imageError}</p>}
+                        <p className="text-xs text-gray-500 mt-2">Max size: 5MB. JPG, PNG, WEBP</p>
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-5 border border-amber-200">
-                  <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaQuoteRight className="text-amber-600" /> Personal Quote
-                  </label>
-                  <textarea
-                    value={formData.quote}
-                    onChange={(e) => handleChange('quote', e.target.value)}
-                    placeholder="Motto or favorite quote..."
-                    rows="3"
-                    className="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none bg-white text-base font-bold"
-                  />
+                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-5 border border-indigo-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <FaQuoteLeft className="text-indigo-600" /> Biography
+                    </label>
+                    <textarea
+                      value={formData.bio}
+                      onChange={(e) => handleChange('bio', e.target.value)}
+                      placeholder="Professional background..."
+                      rows="4"
+                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white text-base font-bold"
+                    />
+                  </div>
+
+                  <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-5 border border-amber-200">
+                    <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <FaQuoteRight className="text-amber-600" /> Personal Quote
+                    </label>
+                    <textarea
+                      value={formData.quote}
+                      onChange={(e) => handleChange('quote', e.target.value)}
+                      placeholder="Motto or favorite quote..."
+                      rows="3"
+                      className="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none bg-white text-base font-bold"
+                    />
+                  </div>
                 </div>
-              </div>
+              )
             )}
 
             {/* Step 4: Details */}
-            {currentStep === 3 && (
+            {currentStep === 3 && !isTeacherForm && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-5 border border-blue-200">
                   <StyledTagInput
@@ -1518,7 +1810,11 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                     ) : (
                       <>
                         <FaSave className="text-sm" />
-                        <span>{isUpdateMode ? 'Update Staff' : 'Save Staff'}</span>
+                        <span>
+                          {isTeacherForm
+                            ? (isUpdateMode ? 'Update Teacher' : 'Save Teacher')
+                            : (isUpdateMode ? 'Update Staff' : 'Save Staff')}
+                        </span>
                       </>
                     )}
                   </button>
@@ -1629,9 +1925,23 @@ const getDepartmentAuthHeaders = () => {
   };
 };
 
-const getDepartmentImage = (department) => (
-  department?.image || department?.images?.[0]?.url || '/teachers.png'
-);
+const isAllowedDepartmentImage = (imageUrl) => {
+  if (!imageUrl || typeof imageUrl !== 'string') return false;
+  const normalized = imageUrl.toLowerCase();
+  return !normalized.includes('/teachers.png') &&
+    !normalized.includes('a.i.c_katwanyaa') &&
+    !normalized.includes('katwanyaa') &&
+    !normalized.includes('/katz');
+};
+
+const getDepartmentImage = (department) => {
+  const images = [
+    department?.image,
+    ...(Array.isArray(department?.images) ? department.images.map((image) => image?.url) : []),
+  ].filter(isAllowedDepartmentImage);
+
+  return images[0] || null;
+};
 
 const parseDepartmentExtra = (extra) => {
   if (!extra) return {};
@@ -1642,6 +1952,8 @@ const parseDepartmentExtra = (extra) => {
     return {};
   }
 };
+
+const MAX_DEPARTMENT_IMAGE_SIZE = 3 * 1024 * 1024;
 
 function DepartmentFormModal({ department, onClose, onSave, loading }) {
   const extra = parseDepartmentExtra(department?.extra);
@@ -1659,19 +1971,35 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
     location: extra.location || '',
     notes: extra.notes || ''
   });
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(getDepartmentImage(department));
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState(
+    department?.images?.length
+      ? department.images.map((image) => image.url).filter(isAllowedDepartmentImage)
+      : [department?.image].filter(isAllowedDepartmentImage)
+  );
+  const [imageError, setImageError] = useState('');
+  const hasDepartmentImage = imageFiles.length > 0 || imagePreviews.length > 0 || Boolean(getDepartmentImage(department));
 
   const updateField = (field, value) => {
     setFormData((previous) => ({ ...previous, [field]: value }));
   };
 
-  const handleImageChange = (file) => {
-    if (!file) return;
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setImagePreview(reader.result);
-    reader.readAsDataURL(file);
+  const handleImageChange = (files) => {
+    const selectedFiles = Array.from(files || []);
+    if (!selectedFiles.length) return;
+
+    const oversized = selectedFiles.find((file) => file.size > MAX_DEPARTMENT_IMAGE_SIZE);
+    if (oversized) {
+      setImageError(`"${oversized.name}" is larger than 3 MB.`);
+      return;
+    }
+
+    setImageError('');
+    setImageFiles(selectedFiles);
+    setImagePreviews([
+      ...(department?.images?.map((image) => image.url) || []),
+      ...selectedFiles.map((file) => URL.createObjectURL(file)),
+    ]);
   };
 
   const toList = (value) => value
@@ -1681,6 +2009,10 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!hasDepartmentImage) {
+      setImageError('Department image is required. Upload at least one Matungulu Girls department photo.');
+      return;
+    }
 
     const payload = new FormData();
     payload.append('name', formData.name.trim());
@@ -1698,10 +2030,12 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
       notes: formData.notes.trim()
     }));
 
-    if (imageFile) {
-      payload.append('image', imageFile);
+    if (imageFiles.length > 0) {
+      imageFiles.forEach((file) => payload.append('images', file));
     } else if (department?.image) {
       payload.append('image', department.image);
+    } else if (department?.images?.[0]?.url) {
+      payload.append('image', department.images[0].url);
     }
 
     onSave(payload, department?.id);
@@ -1833,18 +2167,25 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
             <div className="space-y-4">
               <div>
                 <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
-                  Department Image
+                  Department Image <span className="text-red-500">*</span>
                 </label>
                 <div className="rounded-2xl border-2 border-dashed border-slate-200 p-4">
-                  {imagePreview && (
-                    <img src={imagePreview} alt="Department preview" className="mb-3 h-36 w-full rounded-xl object-cover" />
+                  {imagePreviews.length > 0 && (
+                    <div className="mb-3 grid grid-cols-2 gap-2">
+                      {imagePreviews.map((preview, index) => (
+                        <img key={`${preview}-${index}`} src={preview} alt="Department preview" className="h-28 w-full rounded-xl object-cover" />
+                      ))}
+                    </div>
                   )}
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(event) => handleImageChange(event.target.files[0])}
+                    multiple
+                    onChange={(event) => handleImageChange(event.target.files)}
                     className="w-full text-sm text-slate-500 file:mr-3 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-bold file:text-blue-700"
                   />
+                  <p className="mt-2 text-xs font-semibold text-slate-500">Required. Upload real Matungulu Girls department images. Each image must be under 3 MB.</p>
+                  {imageError && <p className="mt-2 text-xs font-bold text-red-600">{imageError}</p>}
                 </div>
               </div>
 
@@ -1920,7 +2261,7 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
             </button>
             <button
               type="submit"
-              disabled={loading || !formData.name.trim()}
+              disabled={loading || !formData.name.trim() || !hasDepartmentImage}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-black uppercase tracking-widest text-white disabled:opacity-50"
             >
               {loading ? <Spinner size={16} /> : <FaSave />}
@@ -2124,9 +2465,16 @@ function StaffDepartmentManager({ showNotification }) {
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filteredDepartments.map((department) => {
             const categoryInfo = STAFF_DEPARTMENT_CATEGORIES.find((item) => item.value === department.category) || STAFF_DEPARTMENT_CATEGORIES[2];
+            const departmentImage = getDepartmentImage(department);
             return (
               <article key={department.id} className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50">
-                <img src={getDepartmentImage(department)} alt={department.name} className="h-44 w-full object-cover" />
+                {departmentImage ? (
+                  <img src={departmentImage} alt={department.name} className="h-44 w-full object-cover" />
+                ) : (
+                  <div className="flex h-44 w-full items-center justify-center bg-slate-100 text-center text-xs font-black uppercase tracking-widest text-slate-400">
+                    Department image required
+                  </div>
+                )}
                 <div className="p-5">
                   <div className="flex items-center justify-between gap-3">
                     <span className={`inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${categoryInfo.color} px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white`}>
@@ -2208,6 +2556,7 @@ function StaffDepartmentManager({ showNotification }) {
 export default function StaffManager() {
   const [staff, setStaff] = useState([]);
   const [filteredStaff, setFilteredStaff] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
   const [selectedRole, setSelectedRole] = useState('all');
@@ -2236,8 +2585,19 @@ export default function StaffManager() {
     message: ''
   });
 
-  const roles = ['Principal', 'Deputy Principal', 'Senior Teacher', 'Head of Department', 'Assistant Head of Department'];
-  const departments = ['Sciences', 'Mathematics', 'Languages', 'Humanities', 'Administration', 'Sports', 'Guidance'];
+  const roles = Array.from(new Set([
+    'Principal',
+    'Deputy Principal',
+    'Senior Teacher',
+    'Head of Department',
+    'Teacher',
+    ...staff.map((item) => item?.role).filter(Boolean)
+  ]));
+
+  const departments = Array.from(new Set([
+    ...departmentOptions.map((item) => item?.name).filter(Boolean),
+    ...staff.map((item) => item?.department).filter(Boolean)
+  ]));
 
 
 
@@ -2248,7 +2608,7 @@ const getStaffHierarchy = (staff) => {
     'Deputy Principal': 2,
     'Senior Teacher': 3,
     'Head of Department': 4,
-    'Assistant Head of Department': 5
+    'Teacher': 5,
   };
 
   return [...staff].sort((a, b) => {
@@ -2281,9 +2641,9 @@ const getStaffHierarchy = (staff) => {
 useEffect(() => {
   const calculatedStats = {
     total: staff.length,
-    teaching: staff.filter(s => ['Senior Teacher', 'Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
+    teaching: staff.filter(s => ['Teacher', 'Senior Teacher', 'Head of Department', 'HOD'].includes(s.role) || s.staffType === 'Teacher').length,
     administration: staff.filter(s => s.role === 'Principal' || s.role === 'Deputy Principal').length,
-    bom: staff.filter(s => ['Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
+    bom: staff.filter(s => ['Head of Department', 'HOD'].includes(s.role)).length,
     active: staff.filter(s => s.status === 'active').length,
     onLeave: staff.filter(s => s.status === 'on-leave').length,
     // Add deputy counts
@@ -2317,6 +2677,7 @@ useEffect(() => {
   
   checkAuth();
   fetchStaff();
+  fetchDepartmentOptions(true);
 }, []);
 
 
@@ -2376,20 +2737,44 @@ const fetchStaff = async (isRefresh = false) => {
   }
 };
 
+const fetchDepartmentOptions = async (quiet = false) => {
+  try {
+    const response = await fetch('/api/staff/departments', {
+      headers: getAuthHeaders()
+    });
 
+    const data = await response.json();
 
-  useEffect(() => {
-    fetchStaff();
-  }, []);
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'Failed to fetch departments');
+    }
+
+    const activeDepartments = (data.departments || []).filter((department) => department?.isActive !== false);
+    setDepartmentOptions(activeDepartments);
+  } catch (error) {
+    console.error('Error fetching staff departments:', error);
+    setDepartmentOptions([]);
+    if (!quiet) {
+      showNotification('error', 'Department Fetch Failed', error.message || 'Failed to fetch departments');
+    }
+  }
+};
+
+useEffect(() => {
+  if (activeTab === 'profiles') {
+    fetchDepartmentOptions(true);
+  }
+}, [activeTab]);
 
   useEffect(() => {
     let filtered = staff;
 
     if (searchTerm) {
       filtered = filtered.filter(staffMember =>
-        staffMember.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        staffMember.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        staffMember.department.toLowerCase().includes(searchTerm.toLowerCase())
+        (staffMember.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (staffMember.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (staffMember.department || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (staffMember.subjectOffered || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -2422,11 +2807,13 @@ const fetchStaff = async (isRefresh = false) => {
   };
 
   const handleCreate = () => {
+    fetchDepartmentOptions(true);
     setEditingStaff(null);
     setShowModal(true);
   };
 
   const handleEdit = (staffMember) => {
+    fetchDepartmentOptions(true);
     setEditingStaff(staffMember);
     setShowModal(true);
   };
@@ -2581,9 +2968,11 @@ const handleSubmit = async (formData, id) => {
 
     if (result.success) {
       await fetchStaff();
+      await fetchDepartmentOptions(true);
       setShowModal(false);
       showNotification('success', id ? 'Updated' : 'Created', 
         `Staff member ${id ? 'updated' : 'created'} successfully!`);
+      return true;
     } else {
       // Handle specific error for missing image
       if (result.error?.includes('image') || result.error?.includes('Image')) {
@@ -2593,6 +2982,7 @@ const handleSubmit = async (formData, id) => {
         showNotification('error', 'Save Failed', 
           result.error || `Failed to ${id ? 'update' : 'create'} staff member`);
       }
+      return false;
     }
   } catch (error) {
     console.error('Error saving staff member:', error);
@@ -2607,6 +2997,7 @@ const handleSubmit = async (formData, id) => {
     } else {
       showNotification('error', 'Error', 'Error saving staff member');
     }
+    return false;
   } finally {
     setSaving(false);
   }
@@ -2618,11 +3009,20 @@ const handleSubmit = async (formData, id) => {
   useEffect(() => {
     const calculatedStats = {
       total: staff.length,
-      teaching: staff.filter(s => ['Senior Teacher', 'Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
+      teaching: staff.filter(s => ['Teacher', 'Senior Teacher', 'Head of Department', 'HOD'].includes(s.role) || s.staffType === 'Teacher').length,
       administration: staff.filter(s => s.role === 'Principal' || s.role === 'Deputy Principal').length,
-      bom: staff.filter(s => ['Head of Department', 'Assistant Head of Department', 'HOD', 'AHOD'].includes(s.role)).length,
+      bom: staff.filter(s => ['Head of Department', 'HOD'].includes(s.role)).length,
       active: staff.filter(s => s.status === 'active').length,
       onLeave: staff.filter(s => s.status === 'on-leave').length,
+      deputyAcademics: staff.filter(s =>
+        s.role === 'Deputy Principal' &&
+        s.position?.includes('Academics')
+      ).length,
+      deputyAdmin: staff.filter(s =>
+        s.role === 'Deputy Principal' &&
+        s.position?.includes('Administration')
+      ).length,
+      deputyTotal: staff.filter(s => s.role === 'Deputy Principal').length,
     };
     setStats(calculatedStats);
   }, [staff]);
@@ -2892,7 +3292,7 @@ const handleSubmit = async (formData, id) => {
 
       <input
         type="text"
-        placeholder="Search by name, department or expertise..."
+        placeholder="Search by name, department, subject or expertise..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="w-full pl-16 pr-8 py-6 bg-white border-2 border-gray-200 rounded-2xl text-base font-semibold placeholder:text-gray-400 focus:border-black transition-all duration-300 outline-none shadow-sm"
@@ -3148,6 +3548,7 @@ const handleSubmit = async (formData, id) => {
     onSave={handleSubmit} 
     staff={editingStaff} 
     loading={saving}
+    departmentOptions={departmentOptions}
     existingDeputyCounts={{
       academics: stats?.deputyAcademics || 0,
       administration: stats?.deputyAdmin || 0,

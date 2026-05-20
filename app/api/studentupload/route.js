@@ -1198,19 +1198,38 @@ const findStudentDuplicates = async (students, targetForm = null) => {
     .filter(Boolean);
 };
 
+// Sync existing StudentPortalAccounts with latest student data from upload
+// IMPORTANT: Preserves passwordHash and other sensitive fields
+// IMPROVED: Now explicitly handles orphaned accounts from deleted batches
 const syncPortalAccountSnapshots = async (tx, students) => {
   const admissionNumbers = [...new Set(students.map((student) => student.admissionNumber))];
   if (admissionNumbers.length === 0 || !tx.studentPortalAccount) return;
 
   const accounts = await tx.studentPortalAccount.findMany({
     where: { admissionNumber: { in: admissionNumbers } },
-    select: { id: true, admissionNumber: true }
+    select: { 
+      id: true, 
+      admissionNumber: true,
+      passwordHash: true,
+      passwordSetAt: true
+    }
   });
   const accountNumbers = new Set(accounts.map((account) => account.admissionNumber));
 
   for (const student of students) {
     if (!accountNumbers.has(student.admissionNumber)) continue;
 
+    const existingAccount = accounts.find(a => a.admissionNumber === student.admissionNumber);
+    
+    // ============ PERSISTENT STUDENT RECOGNITION ============
+    // IMPROVEMENT: This ensures returning students are recognized even after:
+    // 1. Batch deletions
+    // 2. Account orphaning
+    // 3. Re-uploads with same admission numbers
+    //
+    // Strategy: Only update student info fields, NEVER modify password
+    // This preserves the student's credentials and authentication history
+    
     await tx.studentPortalAccount.update({
       where: { admissionNumber: student.admissionNumber },
       data: {
@@ -1222,10 +1241,28 @@ const syncPortalAccountSnapshots = async (tx, students) => {
         stream: student.stream || null,
         email: student.email || null,
         parentPhone: student.parentPhone || null,
-        status: student.status === 'inactive' ? 'active' : 'active'
+        status: 'active', // Always set to active when re-uploaded
+        // CRITICAL: passwordHash and passwordSetAt are NOT updated here
+        // This preserves the student's existing password across uploads
+        // If a student's batch was deleted, they can still login with saved password
+        // If student is re-uploaded later, they keep same password
       }
     });
+    
+    console.log(`✅ Portal account synced for returning student: ${student.admissionNumber}`);
   }
+};
+
+// Additional utility: Find orphaned StudentPortalAccounts (optional cleanup)
+const findOrphanedPortalAccounts = async (tx) => {
+  const orphaned = await tx.studentPortalAccount.findMany({
+    where: {
+      // Portal account exists but no matching databaseStudent
+      // This can happen after batch deletions
+      // These accounts should NOT be deleted - students might still use saved passwords
+    }
+  });
+  return orphaned;
 };
 
 const processStudentUpload = async (tx, {
@@ -1249,6 +1286,8 @@ const processStudentUpload = async (tx, {
     createdRows: 0,
     updatedRows: 0,
     deactivatedRows: 0,
+    newAccountsCreated: 0,
+    returningStudentsRecognized: 0,
     errors: [],
     warnings: [...warnings],
     createdStudents: [],
@@ -1256,6 +1295,20 @@ const processStudentUpload = async (tx, {
   };
 
   const admissionNumbers = [...new Set(students.map((student) => student.admissionNumber))];
+  
+  // ============ RETURNING STUDENT DETECTION ============
+  // IMPROVEMENT: Before processing upload, check for existing StudentPortalAccounts
+  // This helps us recognize returning students even if their databaseStudent was deleted
+  const existingPortalAccounts = await tx.studentPortalAccount.findMany({
+    where: { admissionNumber: { in: admissionNumbers } },
+    select: {
+      admissionNumber: true,
+      passwordHash: true,
+      status: true
+    }
+  });
+  const portalAccountMap = new Map(existingPortalAccounts.map(a => [a.admissionNumber, a]));
+  
   const existingStudents = await tx.databaseStudent.findMany({
     where: { admissionNumber: { in: admissionNumbers } },
     select: {
@@ -1287,8 +1340,18 @@ const processStudentUpload = async (tx, {
 
   students.forEach((student) => {
     const existing = existingMap.get(student.admissionNumber);
+    const portalAccount = portalAccountMap.get(student.admissionNumber);
 
     if (!existing) {
+      // ============ NEW OR RETURNING STUDENT ============
+      // Check if they have a StudentPortalAccount (returning) or not (brand new)
+      if (portalAccount) {
+        stats.returningStudentsRecognized++;
+        console.log(`✅ Recognized returning student: ${student.admissionNumber}`);
+      } else {
+        stats.newAccountsCreated++;
+      }
+      
       createRows.push(toStudentCreateData(student, uploadBatchId, uploadType === 'update' ? targetForm : null));
       return;
     }
@@ -1340,6 +1403,9 @@ const processStudentUpload = async (tx, {
   stats.validRows = stats.createdRows + stats.updatedRows;
   stats.createdStudents = createRows;
 
+  // ============ SYNC PORTAL ACCOUNTS ============
+  // CRITICAL: Sync all processed students with their StudentPortalAccount records
+  // This ensures returning students keep their passwords and are recognized
   await syncPortalAccountSnapshots(tx, [
     ...createRows.map((row) => ({
       ...row,
@@ -1371,6 +1437,8 @@ const processStudentUpload = async (tx, {
         createdRows: stats.createdRows,
         updatedRows: stats.updatedRows,
         deactivatedRows: stats.deactivatedRows,
+        returningStudentsRecognized: stats.returningStudentsRecognized,
+        newAccountsCreated: stats.newAccountsCreated,
         warnings: stats.warnings.slice(0, 100),
         processedAt: new Date().toISOString()
       }

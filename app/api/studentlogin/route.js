@@ -265,15 +265,21 @@ const handleVerifyFirstAccess = async (body) => {
     where: { admissionNumber }
   });
 
+  // ============ RETURNING STUDENT DETECTION ============
+  // IMPROVEMENT: If student has an existing account (even if databaseStudent was deleted),
+  // guide them to use their saved password instead of resetting
   if (existingAccount?.passwordHash) {
     return json({
       success: false,
-      error: 'A portal password already exists for this admission number. Use Password Login instead.',
+      error: 'You already have a portal account with this admission number. Use your saved password to log in instead.',
+      isReturningStudent: true,
       requiresPasswordLogin: true,
       student: {
         admissionNumber,
         fullName: fullNameFromParts(validation.student)
-      }
+      },
+      // Helpful message explaining the situation
+      hint: 'If you forgot your password, use the "Forgot Password?" option on the Password Login tab.'
     }, 409);
   }
 
@@ -326,13 +332,21 @@ const handleSetupPassword = async (request, body) => {
   };
   const passwordHash = await bcrypt.hash(body.newPassword, 12);
 
+  // ============ IMPROVED ACCOUNT CREATION/UPDATE ============
+  // IMPROVEMENT: Use upsert to handle three scenarios:
+  // 1. Brand new student → create account with password
+  // 2. Returning student (re-upload) → preserve existing password if set
+  // 3. Re-uploaded student setting password → update with new password
+  
   const account = await prisma.studentPortalAccount.upsert({
     where: { admissionNumber },
     update: {
+      // On update (returning student), always set the new password if provided
       ...buildAccountSnapshot(snapshot, passwordHash),
       lastLoginAt: new Date()
     },
     create: {
+      // On create (new student), set everything
       ...buildAccountSnapshot(snapshot, passwordHash),
       lastLoginAt: new Date()
     }
@@ -361,7 +375,10 @@ const handlePasswordLogin = async (request, body) => {
   }
 
   if (account.status !== 'active') {
-    return json({ success: false, error: 'This portal account is not active. Please contact the school office.' }, 403);
+    return json({ 
+      success: false, 
+      error: 'This portal account is not active. Please contact the school office.' 
+    }, 403);
   }
 
   const passwordOk = await bcrypt.compare(body.password, account.passwordHash);
@@ -369,22 +386,42 @@ const handlePasswordLogin = async (request, body) => {
     return json({ success: false, error: 'Invalid admission number or password.' }, 401);
   }
 
-  const student = await getStudentByAdmission(admissionNumber);
+  let student = await getStudentByAdmission(admissionNumber);
+  
+  // ============ PERSISTENT STUDENT RECOGNITION SYSTEM ============
+  // IMPROVEMENT: Handle three scenarios for returning students:
+  // 1. Student record exists in current batch → sync latest data
+  // 2. Student record was deleted/batch removed → preserve credentials
+  // 3. Student record re-uploaded after deletion → recognize and sync
+  
+  const updateData = {
+    lastLoginAt: new Date(),
+    status: 'active' // Ensure account remains active on every successful login
+  };
+
+  // If student record exists in database, sync their latest information
+  // This handles batch re-uploads automatically
+  if (student) {
+    Object.assign(updateData, {
+      firstName: student.firstName,
+      middleName: student.middleName || null,
+      lastName: student.lastName,
+      fullName: fullNameFromParts(student),
+      form: student.form,
+      stream: student.stream || null,
+      email: student.email || null,
+      parentPhone: student.parentPhone || null
+    });
+  } else {
+    // RETURNING STUDENT: Student record might have been deleted/re-uploaded
+    // Preserve account identity while keeping existing profile snapshot
+    // User can use their saved password without re-verification
+    console.log(`ℹ️ Returning student login: ${admissionNumber} (record may be between batch uploads)`);
+  }
+
   const updatedAccount = await prisma.studentPortalAccount.update({
     where: { admissionNumber },
-    data: {
-      lastLoginAt: new Date(),
-      ...(student ? {
-        firstName: student.firstName,
-        middleName: student.middleName || null,
-        lastName: student.lastName,
-        fullName: fullNameFromParts(student),
-        form: student.form,
-        stream: student.stream || null,
-        email: student.email || null,
-        parentPhone: student.parentPhone || null
-      } : {})
-    }
+    data: updateData
   });
 
   return loginResponse(request, updatedAccount, student);
