@@ -280,4 +280,30 @@
     </image:image>
   </url>
 
+  <!-- Student Forgot Password -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/studentforgotpassword</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Student Password Recovery</image:title>
+      <image:caption>Reset your student portal password</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Student Reset Password -->
+  <url>
+    <loc>https://katwanyaasenior.school/pages/studentresetpassword</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Student Password Reset</image:title>
+      <image:caption>Complete your password reset process</image:caption>
+    </image:image>
+  </url>
+
 </urlset>
