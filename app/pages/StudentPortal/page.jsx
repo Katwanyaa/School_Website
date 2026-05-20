@@ -512,6 +512,10 @@ export default function ModernStudentPortalPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [requiresContact, setRequiresContact] = useState(false);
+  const [passwordSetupToken, setPasswordSetupToken] = useState(null);
+  const [passwordSetupStudent, setPasswordSetupStudent] = useState(null);
+  const [loginInitialMode, setLoginInitialMode] = useState('password');
+  const [defaultAdmissionNumber, setDefaultAdmissionNumber] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   // View State
@@ -722,35 +726,63 @@ const router = useRouter();
     }
   };
 
-  // Handle login
-  const handleStudentLogin = async (fullName, admissionNumber) => {
+  const completePortalLogin = (data) => {
+    localStorage.setItem('student_token', data.token);
+    setStudent(data.student);
+    setToken(data.token);
+    setShowLoginModal(false);
+    setPasswordSetupToken(null);
+    setPasswordSetupStudent(null);
+    setLoginInitialMode('password');
+    setDefaultAdmissionNumber('');
+
+    toast.success('Login successful', {
+      description: `Welcome ${data.student.fullName}`
+    });
+
+    fetchAllData();
+  };
+
+  // Handle password login and first-time verification
+  const handleStudentLogin = async (payloadOrFullName, legacyAdmissionNumber) => {
     setLoginLoading(true);
     setLoginError(null);
     setRequiresContact(false);
 
     try {
+      const payload = typeof payloadOrFullName === 'object'
+        ? payloadOrFullName
+        : {
+            action: 'verify-first-access',
+            fullName: payloadOrFullName,
+            admissionNumber: legacyAdmissionNumber
+          };
+
       const response = await fetch('/api/studentlogin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName, admissionNumber })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
 
-      if (data.success) {
-        localStorage.setItem('student_token', data.token);
-        setStudent(data.student);
-        setToken(data.token);
-        setShowLoginModal(false);
-        
-        toast.success('🎉 Login successful!', {
-          description: `Welcome ${data.student.fullName}`
+      if (data.success && data.requiresPasswordSetup) {
+        setPasswordSetupToken(data.setupToken);
+        setPasswordSetupStudent(data.student);
+        setDefaultAdmissionNumber(data.student?.admissionNumber || payload.admissionNumber || payload.identifier || '');
+        setLoginInitialMode('password');
+        toast.success('Record verified', {
+          description: 'Create your portal password to continue.'
         });
-
-        fetchAllData();
+      } else if (data.success && data.token) {
+        completePortalLogin(data);
       } else {
         setLoginError(data.error);
         setRequiresContact(data.requiresContact || false);
+        if (data.requiresFirstAccess) {
+          setLoginInitialMode('firstAccess');
+          setDefaultAdmissionNumber(payload.identifier || payload.admissionNumber || '');
+        }
         
         if (data.requiresContact) {
           toast.error('Student record not found', {
@@ -769,6 +801,66 @@ const router = useRouter();
     }
   };
 
+  const handleSetupPassword = async (payload) => {
+    setLoginLoading(true);
+    setLoginError(null);
+    setRequiresContact(false);
+
+    try {
+      const response = await fetch('/api/studentlogin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+
+      if (data.success && data.token) {
+        completePortalLogin(data);
+      } else {
+        setLoginError(data.error || 'Could not create password.');
+        toast.error(data.error || 'Could not create password.');
+      }
+    } catch (error) {
+      console.error('Password setup error:', error);
+      setLoginError('Network error. Please try again.');
+      toast.error('Network error. Please try again.');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handlePasswordResetRequest = async (payload) => {
+    setLoginLoading(true);
+    setLoginError(null);
+    setRequiresContact(false);
+
+    try {
+      const response = await fetch('/api/studentlogin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+
+      if (!data.success) {
+        setLoginError(data.error || 'Could not send password request.');
+        toast.error(data.error || 'Could not send password request.');
+        return data;
+      }
+
+      toast.success(data.message || 'Password request sent.');
+      return data;
+    } catch (error) {
+      console.error('Password request error:', error);
+      const result = { success: false, error: 'Network error. Please try again.' };
+      setLoginError(result.error);
+      toast.error(result.error);
+      return result;
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
   // Handle logout
   const handleLogout = async () => {
     try {
@@ -780,6 +872,10 @@ const router = useRouter();
       setStudent(null);
       setToken(null);
       setShowLoginModal(true);
+      setPasswordSetupToken(null);
+      setPasswordSetupStudent(null);
+      setLoginInitialMode('password');
+      setDefaultAdmissionNumber('');
       setAssignments([]);
       setResources([]);
       setStudentResults([]);
@@ -798,6 +894,16 @@ const router = useRouter();
     
     fetchAllData();
     toast.success('🔄 Refreshing data...');
+  };
+
+  const handleLoginModalClose = () => {
+    setShowLoginModal(false);
+    setLoginError(null);
+    setRequiresContact(false);
+    setPasswordSetupToken(null);
+    setPasswordSetupStudent(null);
+    setLoginInitialMode('password');
+    setDefaultAdmissionNumber('');
   };
 
   // Handle download
@@ -1123,11 +1229,17 @@ if (!student || !token) {
       {/* Login Modal */}
       <StudentLoginModal
         isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
+        onClose={handleLoginModalClose}
         onLogin={handleStudentLogin}
+        onSetupPassword={handleSetupPassword}
+        onPasswordResetRequest={handlePasswordResetRequest}
         isLoading={loginLoading}
         error={loginError}
         requiresContact={requiresContact}
+        passwordSetupToken={passwordSetupToken}
+        passwordSetupStudent={passwordSetupStudent}
+        initialMode={loginInitialMode}
+        defaultAdmissionNumber={defaultAdmissionNumber}
       />
     </div>
   );
@@ -1141,11 +1253,17 @@ if (!student || !token) {
       {/* Login Modal */}
       <StudentLoginModal
         isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
+        onClose={handleLoginModalClose}
         onLogin={handleStudentLogin}
+        onSetupPassword={handleSetupPassword}
+        onPasswordResetRequest={handlePasswordResetRequest}
         isLoading={loginLoading}
         error={loginError}
         requiresContact={requiresContact}
+        passwordSetupToken={passwordSetupToken}
+        passwordSetupStudent={passwordSetupStudent}
+        initialMode={loginInitialMode}
+        defaultAdmissionNumber={defaultAdmissionNumber}
       />
 
       {/* Mobile Menu Overlay */}

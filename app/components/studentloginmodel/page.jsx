@@ -1,626 +1,648 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  FiUser, FiLock, FiAlertCircle, FiX, 
+import {
+  FiUser, FiLock, FiAlertCircle, FiX,
   FiHelpCircle, FiBook, FiShield, FiClock,
-  FiLogIn, FiEdit2, FiCheckCircle
+  FiLogIn, FiCheckCircle, FiAward, FiEye, FiEyeOff, FiSend
 } from 'react-icons/fi';
-import { IoSchool } from 'react-icons/io5';
+import Image from 'next/image';
+import CircularProgress from '@mui/material/CircularProgress';
 
-import CircularProgress from "@mui/material/CircularProgress";
+const EMPTY_FORM_DATA = {
+  identifier: '',
+  password: '',
+  fullName: '',
+  admissionNumber: '',
+  newPassword: '',
+  confirmPassword: '',
+  currentPassword: '',
+  resetMessage: ''
+};
 
+const EMPTY_PASSWORD_VISIBILITY = {
+  login: false,
+  setup: false,
+  confirm: false,
+  current: false
+};
 
-export default function StudentLoginModal({ 
-  isOpen, 
-  onClose, 
+const buildInitialFormData = (admissionNumber = '') => ({
+  ...EMPTY_FORM_DATA,
+  identifier: admissionNumber,
+  admissionNumber
+});
+
+export default function StudentLoginModal({
+  isOpen,
+  onClose,
   onLogin,
+  onSetupPassword = () => {},
+  onPasswordResetRequest = () => {},
   isLoading = false,
   error = null,
-  requiresContact = false
+  requiresContact = false,
+  passwordSetupToken = null,
+  passwordSetupStudent = null,
+  initialMode = 'password',
+  defaultAdmissionNumber = ''
 }) {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    admissionNumber: ''
-  });
+  const [mode, setMode] = useState('password');
+  const [formData, setFormData] = useState(EMPTY_FORM_DATA);
   const [localError, setLocalError] = useState(null);
-  const [showContactInfo, setShowContactInfo] = useState(false);
+  const [localSuccess, setLocalSuccess] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const [visiblePasswords, setVisiblePasswords] = useState(EMPTY_PASSWORD_VISIBILITY);
 
   useEffect(() => {
-    if (error) {
-      setLocalError(error);
-      if (requiresContact) {
-        setShowContactInfo(true);
-      }
-    } else {
-      setLocalError(null);
-      setShowContactInfo(false);
+    setLocalError(error || null);
+  }, [error]);
+
+  useEffect(() => {
+    if (!isOpen || passwordSetupToken) return;
+
+    setMode(initialMode);
+    setFormData(buildInitialFormData(defaultAdmissionNumber));
+    setLocalError(null);
+    setLocalSuccess(null);
+    setValidationErrors({});
+    setVisiblePasswords(EMPTY_PASSWORD_VISIBILITY);
+  }, [isOpen, passwordSetupToken, initialMode, defaultAdmissionNumber]);
+
+  useEffect(() => {
+    if (passwordSetupToken) {
+      setMode('setup');
+      setFormData(EMPTY_FORM_DATA);
+      setLocalSuccess(null);
+      setValidationErrors({});
+      setVisiblePasswords(EMPTY_PASSWORD_VISIBILITY);
     }
-  }, [error, requiresContact]);
+  }, [passwordSetupToken, passwordSetupStudent]);
 
   if (!isOpen) return null;
 
-  const validateInputs = () => {
-    const errors = {};
-    
-    // Name validation
-    if (!formData.fullName.trim()) {
-      errors.fullName = 'Please enter your name';
-    } else {
-      const nameParts = formData.fullName.trim().split(/\s+/).filter(part => part.length > 0);
-      if (nameParts.length < 1) {
-        errors.fullName = 'Please enter at least your first name';
-      }
-    }
+  const updateField = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setLocalError(null);
+    setLocalSuccess(null);
+    setValidationErrors(prev => ({ ...prev, [field]: '' }));
+  };
 
-    // Admission number validation
-    if (!formData.admissionNumber.trim()) {
-      errors.admissionNumber = 'Please enter your admission number';
-    } else if (!/^[A-Z0-9]{2,10}$/i.test(formData.admissionNumber.trim())) {
-      errors.admissionNumber = 'Admission number should be 2-10 letters or numbers';
+  const switchMode = (nextMode) => {
+    setMode(nextMode);
+    setFormData(EMPTY_FORM_DATA);
+    setLocalError(null);
+    setLocalSuccess(null);
+    setValidationErrors({});
+    setVisiblePasswords(EMPTY_PASSWORD_VISIBILITY);
+  };
+
+  const passwordStrength = (password) => {
+    const checks = [
+      password.length >= 8,
+      /[a-z]/.test(password),
+      /[A-Z]/.test(password),
+      /\d/.test(password),
+      /[^A-Za-z0-9]/.test(password)
+    ];
+    return checks.filter(Boolean).length;
+  };
+
+  const validatePasswordSetup = () => {
+    const errors = {};
+    const score = passwordStrength(formData.newPassword);
+
+    if (score < 5) {
+      errors.newPassword = 'Use at least 8 characters with uppercase, lowercase, a number, and a symbol.';
+    }
+    if (formData.newPassword !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match.';
     }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLocalError(null);
-    setShowContactInfo(false);
-    setValidationErrors({});
-    
-    if (!validateInputs()) {
-      return;
-    }
+  const handlePasswordLogin = (event) => {
+    event.preventDefault();
+    const errors = {};
+    if (!formData.identifier.trim()) errors.identifier = 'Enter your admission number.';
+    if (!formData.password) errors.password = 'Enter your password.';
+    setValidationErrors(errors);
+    if (Object.keys(errors).length) return;
 
-    onLogin(formData.fullName.trim(), formData.admissionNumber.trim());
+    onLogin({
+      action: 'login',
+      identifier: formData.identifier.trim(),
+      password: formData.password
+    });
   };
 
-  const handleClear = () => {
-    setFormData({ fullName: '', admissionNumber: '' });
-    setLocalError(null);
-    setShowContactInfo(false);
-    setValidationErrors({});
+  const handleFirstAccess = (event) => {
+    event.preventDefault();
+    const errors = {};
+    if (!formData.fullName.trim()) errors.fullName = 'Enter your registered name.';
+    if (!formData.admissionNumber.trim()) errors.admissionNumber = 'Enter your admission number.';
+    setValidationErrors(errors);
+    if (Object.keys(errors).length) return;
+
+    onLogin({
+      action: 'verify-first-access',
+      fullName: formData.fullName.trim(),
+      admissionNumber: formData.admissionNumber.trim()
+    });
+  };
+
+  const handleSetupPassword = (event) => {
+    event.preventDefault();
+    if (!validatePasswordSetup()) return;
+
+    onSetupPassword({
+      action: 'setup-password',
+      setupToken: passwordSetupToken,
+      newPassword: formData.newPassword,
+      confirmPassword: formData.confirmPassword
+    });
+  };
+
+  const handlePasswordResetRequest = async (event) => {
+    event.preventDefault();
+    const errors = {};
+    if (!formData.admissionNumber.trim()) errors.admissionNumber = 'Enter your admission number.';
+    if (mode === 'changePassword' && !formData.currentPassword) {
+      errors.currentPassword = 'Enter your current password to request a password change.';
+    }
+    setValidationErrors(errors);
+    if (Object.keys(errors).length) return;
+
+    const result = await onPasswordResetRequest({
+      action: mode === 'changePassword' ? 'request-change-password' : 'request-forgot-password',
+      requestType: mode === 'changePassword' ? 'change' : 'forgot',
+      admissionNumber: formData.admissionNumber.trim().toUpperCase(),
+      currentPassword: formData.currentPassword,
+      message: formData.resetMessage.trim()
+    });
+
+    if (result?.success) {
+      setLocalError(null);
+      setLocalSuccess(result.message || 'Password help request received by the school office.');
+    }
   };
 
   const handleClose = () => {
-    handleClear();
+    setMode('password');
+    setFormData(EMPTY_FORM_DATA);
+    setLocalError(null);
+    setLocalSuccess(null);
+    setValidationErrors({});
+    setVisiblePasswords(EMPTY_PASSWORD_VISIBILITY);
     onClose();
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear errors when user starts typing
-    if (localError) setLocalError(null);
-    if (validationErrors[field]) {
-      setValidationErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  // Updated with Kamba names
-  const studentExamples = [
-    { name: "Musau Mwanzia Mutuku", admission: "2903" },
-    { name: "Mwende Mumbua Kalondu", admission: "2902" },
-    { name: "Mwikali Kasimu", admission: "1234" },
-    { name: "Mutinda Kitheka", admission: "5678" },
-    { name: "Kalondu Mutua", admission: "9012" }
-  ];
-
-  const nameFormats = [
-    "Musau Mutuku",
-    "Musau Mwanzia Mutuku", 
-    "MUSAU MUTUKU",
-    "musau mutuku",
-    "M. Mutuku",
-    "Mutuku Musau",
-    "Mwanzia Mutuku",
-    "Mwende Mumbua",
-    "Mumbua Kalondu",
-    "Mwikali Kasimu"
-  ];
+  const strength = passwordStrength(formData.newPassword);
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-1 sm:p-2 animate-fadeIn overflow-y-auto"
+    <div
+      className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="login-modal-title"
-      aria-describedby="login-modal-description"
+      aria-labelledby="student-login-title"
     >
-      <main className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-2xl w-full max-w-3xl border-2 border-blue-200 overflow-hidden transform transition-all duration-300 scale-100 my-auto max-h-[85vh] flex flex-col">
-        {/* Header - Compact */}
-        <header className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 px-4 py-3 sm:px-5 sm:py-3 text-white flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <figure className="p-1.5 bg-white/20 rounded-xl backdrop-blur-sm">
-                <IoSchool className="text-lg sm:text-xl" aria-hidden="true" />
-              </figure>
+      <main className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+        <header className="relative bg-slate-950 px-5 sm:px-7 py-5 text-white flex-shrink-0">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-emerald-400 to-amber-400" />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl p-1 shadow-xl overflow-hidden">
+                <Image
+                  src="/katz.jpeg"
+                  alt="Katwanyaa Senior School Logo"
+                  width={56}
+                  height={56}
+                  className="object-contain"
+                />
+              </div>
               <div>
-                <h1 id="login-modal-title" className="text-lg sm:text-xl font-bold">Student Login Portal</h1>
-                <p id="login-modal-description" className="text-blue-100/90 text-xs mt-0.5">Access Katwanyaa Portal learning resources</p>
+                <h1 id="student-login-title" className="text-lg sm:text-xl font-black tracking-tight">
+                  Katwanyaa Student Portal
+                </h1>
+                <p className="text-slate-300 text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em]">
+                  Secure student access
+                </p>
               </div>
             </div>
-            <button 
+
+            <button
               onClick={handleClose}
-              className="p-1 hover:bg-white/20 rounded-xl transition-colors"
+              className="p-2 hover:bg-white/10 rounded-xl transition-colors"
               aria-label="Close login modal"
             >
-              <FiX className="text-lg" aria-hidden="true" />
+              <FiX className="text-xl" aria-hidden="true" />
             </button>
           </div>
         </header>
 
-        {/* Body - Compact Scrollable */}
-        <article className="p-3 sm:p-4 overflow-y-auto flex-grow">
-          {/* Flexible Name Instructions - Compact */}
-          <section className="mb-3 sm:mb-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2.5 sm:p-3 border border-emerald-200">
-            <div className="flex items-start gap-2">
-              <FiCheckCircle className="text-emerald-600 text-sm mt-0.5 flex-shrink-0" aria-hidden="true" />
-              <div className="flex-1">
-                <h2 className="text-xs font-bold text-emerald-800 mb-0.5">Flexible Name Entry</h2>
-                <p className="text-emerald-700 text-xs">
-                  Any format: uppercase, lowercase, 2 or 3 names, any order
-                </p>
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {nameFormats.slice(0, 4).map((format, idx) => (
-                    <button 
-                      key={idx}
-                      onClick={() => handleInputChange('fullName', format)}
-                      className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs cursor-pointer hover:bg-emerald-200 transition-colors border border-emerald-300"
-                      type="button"
-                      aria-label={`Use name format: ${format}`}
-                    >
-                      {format}
-                    </button>
-                  ))}
-                </div>
+        <article className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] min-h-0 overflow-y-auto">
+          <aside className="bg-slate-50 border-r border-slate-200 p-5 sm:p-7">
+            <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center mb-4">
+                <FiShield className="text-xl" />
+              </div>
+              <h2 className="text-lg font-black text-slate-950">How access works</h2>
+              <div className="mt-4 space-y-4">
+                {[
+                  ['First time', 'Verify your admission number and registered name.'],
+                  ['Create password', 'Set a strong password that stays saved after record refreshes.'],
+                  ['Password help', 'Forgot and change requests are recorded for secure school follow-up.']
+                ].map(([title, text]) => (
+                  <div key={title} className="flex gap-3">
+                    <div className="mt-0.5 w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                      <FiCheckCircle className="text-sm" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-slate-900">{title}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed">{text}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </section>
 
-          {/* Error/Contact Info Section - Compact */}
-          <aside>
-            {(showContactInfo || localError) && (
-              <div className="mb-3 sm:mb-4 animate-slideDown">
-                <div className="flex items-start gap-2 mb-2">
-                  <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0 border ${showContactInfo ? 'bg-red-100 border-red-200' : 'bg-yellow-100 border-yellow-200'}`}>
-                    <FiAlertCircle className={`text-sm ${showContactInfo ? 'text-red-600' : 'text-yellow-600'}`} aria-hidden="true" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-bold text-gray-900 mb-0.5">
-                      {showContactInfo ? 'Record Verification Needed' : 'Login Issue'}
-                    </h3>
-                    <p className="text-gray-600 text-xs">
-                      {localError}
+            <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+              <div className="flex items-center gap-2 text-blue-900 font-black text-sm">
+                <FiClock />
+                Session duration
+              </div>
+              <p className="text-xs text-blue-800 mt-1">For safety, student sessions expire after 2 hours.</p>
+            </div>
+          </aside>
+
+          <section className="p-5 sm:p-7">
+            {!passwordSetupToken && (
+              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1 mb-5">
+                <button
+                  type="button"
+                  onClick={() => switchMode('password')}
+                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'password' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-600 hover:text-slate-950'}`}
+                >
+                  Password Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchMode('firstAccess')}
+                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'firstAccess' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-600 hover:text-slate-950'}`}
+                >
+                  First-Time Access
+                </button>
+              </div>
+            )}
+
+            {localError && (
+              <div className="mb-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+                <div className="p-2 bg-red-100 rounded-xl text-red-700">
+                  <FiAlertCircle />
+                </div>
+                <div>
+                  <p className="text-sm font-black text-red-900">{requiresContact ? 'Record needs attention' : 'Access issue'}</p>
+                  <p className="text-sm text-red-700 mt-1">{localError}</p>
+                  {requiresContact && (
+                    <p className="text-xs text-red-700 mt-2 flex items-center gap-1">
+                      <FiHelpCircle /> Contact your class teacher or the school office.
                     </p>
-                    
-                    {showContactInfo && (
-                      <div className="mt-2 space-y-1">
-                        <div className="flex items-center gap-1.5 text-xs text-blue-700">
-                          <FiHelpCircle className="text-blue-500 text-xs" aria-hidden="true" />
-                          <span className="font-medium">You can:</span>
-                        </div>
-                        <ol className="text-xs text-gray-700 space-y-0.5 pl-3">
-                          <li className="flex items-center gap-1.5">
-                            <span className="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-[10px]">1</span>
-                            <span>Re-enter details below</span>
-                          </li>
-                          <li className="flex items-center gap-1.5">
-                            <span className="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-[10px]">2</span>
-                            <span>Contact class teacher</span>
-                          </li>
-                          <li className="flex items-center gap-1.5">
-                            <span className="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-[10px]">3</span>
-                            <span>Visit school office</span>
-                          </li>
-                        </ol>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             )}
-          </aside>
 
-          {/* Login Form - Compact */}
-          <section>
-            <div className="mb-3 sm:mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg">
-                  <FiShield className="text-blue-700 text-sm" aria-hidden="true" />
+            {localSuccess && (
+              <div className="mb-5 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                <div className="p-2 bg-emerald-100 rounded-xl text-emerald-700">
+                  <FiCheckCircle />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">Secure Student Login</h3>
-                  <div className="flex items-center gap-1 text-gray-600 text-xs">
-                    <FiClock className="text-blue-500 text-xs" aria-hidden="true" />
-                    <time>Session: <strong>2 hours</strong></time>
-                  </div>
+                  <p className="text-sm font-black text-emerald-900">Request sent</p>
+                  <p className="text-sm text-emerald-700 mt-1">{localSuccess}</p>
                 </div>
               </div>
+            )}
 
-              <div className="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-lg p-2.5 sm:p-3 border border-blue-200">
-                <p className="text-blue-700 text-xs">
-                  <strong>Note:</strong> Use official admission number. Names in any format to access Katwanyaa Portal.
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4" aria-label="Student login form">
-              {/* Name Input - Enhanced Border Visibility */}
-              <fieldset>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
-                    <FiUser className="text-blue-600 text-xs" aria-hidden="true" />
-                    <span>Your Name (Any Format)</span>
-                  </label>
-                  <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
-                    Flexible
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  value={formData.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  placeholder="Examples: Musau Mutuku, MUSAU MUTUKU, M. Mutuku, Mutuku Musau"
-                  className={`
-                    w-full px-3 py-2.5 sm:px-4 sm:py-3 
-                    border-[3px] rounded-xl
-                    focus:ring-2 focus:ring-blue-500/40 focus:border-blue-600 
-                  
-                    active:border-blue-700 active:ring-2 active:ring-blue-500/30
-                    text-sm sm:text-base placeholder:text-gray-400
-                    bg-white shadow-md
-                    font-medium tracking-wide
-                    ${validationErrors.fullName 
-                      ? 'border-red-500 focus:border-red-600 focus:ring-red-500/40' 
-                      : 'border-blue-400'
-                    }
-                  `}
-                  disabled={isLoading}
-                  autoComplete="name"
-                  aria-label="Full Name"
-                  aria-invalid={!!validationErrors.fullName}
-                  aria-describedby={validationErrors.fullName ? "name-error" : undefined}
-                />
-                {validationErrors.fullName && (
-                  <p id="name-error" className="text-red-600 text-[10px] mt-0.5 font-medium flex items-center gap-1">
-                    <FiAlertCircle className="text-xs" />
-                    {validationErrors.fullName}
+            {mode === 'setup' && passwordSetupToken ? (
+              <form onSubmit={handleSetupPassword} className="space-y-5" autoComplete="off">
+                <div>
+                  <h2 className="text-xl font-black text-slate-950">Create Your Password</h2>
+                  <p className="text-sm text-slate-600 mt-1">
+                    Verified for {passwordSetupStudent?.fullName || 'student'} ({passwordSetupStudent?.admissionNumber}).
                   </p>
-                )}
-                <div className="mt-1.5">
-                  <p className="text-gray-500 text-[10px] mb-1">Click examples:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {studentExamples.slice(0, 3).map((student, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          handleInputChange('fullName', student.name);
-                          handleInputChange('admissionNumber', student.admission);
-                        }}
-                        className="
-                          px-1.5 py-1 
-                          bg-gradient-to-r from-blue-100 to-blue-200 
-                          hover:from-blue-200 hover:to-blue-300
-                          active:from-blue-300 active:to-blue-400
-                          text-blue-700 rounded text-[10px] 
-                          border border-blue-400
-                          shadow-sm hover:shadow-md
-                          font-medium
-                        "
-                        aria-label={`Fill with student ${student.name}, admission ${student.admission}`}
-                      >
-                        {student.name.split(' ')[0]} - {student.admission}
-                      </button>
+                </div>
+
+                <InputField
+                  label="New Password"
+                  icon={FiLock}
+                  type={visiblePasswords.setup ? 'text' : 'password'}
+                  value={formData.newPassword}
+                  onChange={(value) => updateField('newPassword', value)}
+                  error={validationErrors.newPassword}
+                  placeholder="Create a strong password"
+                  disabled={isLoading}
+                  autoComplete="new-password"
+                  rightAction={
+                    <PasswordVisibilityButton
+                      visible={visiblePasswords.setup}
+                      onClick={() => setVisiblePasswords(prev => ({ ...prev, setup: !prev.setup }))}
+                      label="new password"
+                    />
+                  }
+                />
+
+                <div>
+                  <div className="grid grid-cols-5 gap-2 mb-2">
+                    {[0, 1, 2, 3, 4].map(index => (
+                      <div key={index} className={`h-1.5 rounded-full ${index < strength ? 'bg-emerald-500' : 'bg-slate-200'}`} />
                     ))}
                   </div>
+                  <p className="text-xs text-slate-500">Use 8+ characters with uppercase, lowercase, a number, and a symbol.</p>
                 </div>
-              </fieldset>
 
-              {/* Admission Number Input - Enhanced Border Visibility */}
-              <fieldset>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
-                    <FiLock className="text-blue-600 text-xs" aria-hidden="true" />
-                    <span>Admission Number</span>
-                  </label>
-                  <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
-                    Unique ID
-                  </span>
+                <InputField
+                  label="Confirm Password"
+                  icon={FiLock}
+                  type={visiblePasswords.confirm ? 'text' : 'password'}
+                  value={formData.confirmPassword}
+                  onChange={(value) => updateField('confirmPassword', value)}
+                  error={validationErrors.confirmPassword}
+                  placeholder="Repeat password"
+                  disabled={isLoading}
+                  autoComplete="new-password"
+                  rightAction={
+                    <PasswordVisibilityButton
+                      visible={visiblePasswords.confirm}
+                      onClick={() => setVisiblePasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
+                      label="confirm password"
+                    />
+                  }
+                />
+
+                <SubmitButton loading={isLoading} label="Create Password" loadingLabel="Creating..." icon={FiShield} />
+              </form>
+            ) : mode === 'firstAccess' ? (
+              <form onSubmit={handleFirstAccess} className="space-y-5" autoComplete="off">
+                <div>
+                  <h2 className="text-xl font-black text-slate-950">Verify Student Record</h2>
+                  <p className="text-sm text-slate-600 mt-1">Use your uploaded student record details for first-time access.</p>
                 </div>
-                <input
-                  type="text"
-                  value={formData.admissionNumber}
-                  onChange={(e) => handleInputChange('admissionNumber', e.target.value.toUpperCase())}
-                  placeholder="Enter your unique admission number"
-                  className={`
-                    w-full px-3 py-2.5 sm:px-4 sm:py-3 
-                    border-[3px] rounded-xl
-                    focus:ring-2 focus:ring-blue-500/40 focus:border-blue-600 
-                    active:border-blue-700 active:ring-2 active:ring-blue-500/30
-                    text-sm sm:text-base placeholder:text-gray-400
-                    bg-white shadow-md
-                    font-medium tracking-wide
-                    ${validationErrors.admissionNumber 
-                      ? 'border-red-500 focus:border-red-600 focus:ring-red-500/40' 
-                      : 'border-blue-400'
-                    }
-                  `}
+
+                <InputField
+                  label="Registered Name"
+                  icon={FiUser}
+                  value={formData.fullName}
+                  onChange={(value) => updateField('fullName', value)}
+                  error={validationErrors.fullName}
+                  placeholder="Name as it appears in school records"
                   disabled={isLoading}
                   autoComplete="off"
-                  aria-label="Admission Number"
-                  aria-invalid={!!validationErrors.admissionNumber}
-                  aria-describedby={validationErrors.admissionNumber ? "admission-error" : undefined}
                 />
-                {validationErrors.admissionNumber && (
-                  <p id="admission-error" className="text-red-600 text-[10px] mt-0.5 font-medium flex items-center gap-1">
-                    <FiAlertCircle className="text-xs" />
-                    {validationErrors.admissionNumber}
-                  </p>
-                )}
-                <div className="mt-1.5">
-                  <p className="text-gray-500 text-[10px] mb-1">Format: 2-10 letters/numbers</p>
-                  <div className="flex flex-wrap gap-1">
-                    {['1234', 'AB12', '2023001', 'STU456', 'KM001'].map((example, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => handleInputChange('admissionNumber', example)}
-                        className="
-                          px-1.5 py-1 
-                          bg-gradient-to-r from-green-100 to-emerald-200 
-                          hover:from-green-200 hover:to-emerald-300
-                          active:from-green-300 active:to-emerald-400
-                          text-green-700 rounded text-[10px] 
-                          transition-all duration-150 
-                          border border-green-400
-                          shadow-sm hover:shadow-md
-                          font-medium
-                        "
-                        aria-label={`Use admission number: ${example}`}
-                      >
-                        {example}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </fieldset>
 
-              {/* Modernized Buttons */}
-              <div className="flex gap-2 pt-1 flex-nowrap">
+                <InputField
+                  label="Admission Number"
+                  icon={FiBook}
+                  value={formData.admissionNumber}
+                  onChange={(value) => updateField('admissionNumber', value.toUpperCase())}
+                  error={validationErrors.admissionNumber}
+                  placeholder="e.g. 2903"
+                  disabled={isLoading}
+                />
+
+                <SubmitButton loading={isLoading} label="Verify and Continue" loadingLabel="Verifying..." icon={FiCheckCircle} />
+              </form>
+            ) : mode === 'forgotPassword' || mode === 'changePassword' ? (
+              <form onSubmit={handlePasswordResetRequest} className="space-y-5" autoComplete="off">
+                <div>
+                  <h2 className="text-xl font-black text-slate-950">
+                    {mode === 'changePassword' ? 'Request Password Change' : 'Forgot Password'}
+                  </h2>
+                  <p className="text-sm text-slate-600 mt-1">
+                    {mode === 'changePassword'
+                      ? 'Confirm your current password so the school office can help safely.'
+                      : 'Send a secure password help request to the school office.'}
+                  </p>
+                </div>
+
+                <InputField
+                  label="Admission Number"
+                  icon={FiUser}
+                  value={formData.admissionNumber}
+                  onChange={(value) => updateField('admissionNumber', value.toUpperCase())}
+                  error={validationErrors.admissionNumber}
+                  placeholder="Admission number"
+                  disabled={isLoading}
+                />
+
+                {mode === 'changePassword' && (
+                  <InputField
+                    label="Current Password"
+                    icon={FiLock}
+                    type={visiblePasswords.current ? 'text' : 'password'}
+                    value={formData.currentPassword}
+                    onChange={(value) => updateField('currentPassword', value)}
+                    error={validationErrors.currentPassword}
+                    placeholder="Enter your current portal password"
+                    disabled={isLoading}
+                    autoComplete="current-password"
+                    rightAction={
+                      <PasswordVisibilityButton
+                        visible={visiblePasswords.current}
+                        onClick={() => setVisiblePasswords(prev => ({ ...prev, current: !prev.current }))}
+                        label="current password"
+                      />
+                    }
+                  />
+                )}
+
+                <InputField
+                  label="Optional Note"
+                  icon={FiAlertCircle}
+                  value={formData.resetMessage}
+                  onChange={(value) => updateField('resetMessage', value)}
+                  error={validationErrors.resetMessage}
+                  placeholder="Optional note for the school office"
+                  disabled={isLoading}
+                />
+
+                <SubmitButton
+                  loading={isLoading}
+                  label={mode === 'changePassword' ? 'Send Change Request' : 'Send Reset Request'}
+                  loadingLabel="Sending..."
+                  icon={FiSend}
+                />
+
                 <button
                   type="button"
-                  onClick={handleClear}
+                  onClick={() => switchMode('password')}
+                  className="w-full text-sm font-bold text-slate-700 hover:text-slate-950"
+                >
+                  Back to password login.
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handlePasswordLogin} className="space-y-5" autoComplete="off">
+                <div>
+                  <h2 className="text-xl font-black text-slate-950">Sign In Securely</h2>
+                  <p className="text-sm text-slate-600 mt-1">Use your admission number and your portal password.</p>
+                </div>
+
+                <InputField
+                  label="Admission Number"
+                  icon={FiUser}
+                  value={formData.identifier}
+                  onChange={(value) => updateField('identifier', value.toUpperCase())}
+                  error={validationErrors.identifier}
+                  placeholder="Admission number"
                   disabled={isLoading}
-                  className="
-                    flex-1
-                    py-3
-                    px-4
-                    bg-gradient-to-r from-gray-200 to-gray-300
-                    hover:from-gray-300 hover:to-gray-400
-                    active:from-gray-400 active:to-gray-500
-                    text-gray-700
-                    rounded-xl
-                    font-bold
-                    text-sm
-                    disabled:opacity-50
-                    disabled:cursor-not-allowed
-                    flex items-center justify-center gap-2
-                    order-2 sm:order-1
-                    transition-all duration-200
-                    shadow-md hover:shadow-lg
-                    border-2 border-gray-400 hover:border-gray-500
-                    active:scale-[0.98]
-                  "
-                  aria-label="Clear all inputs"
-                >
-                  <FiX className="text-sm" aria-hidden="true" />
-                  <span>Clear All</span>
-                </button>
+                />
 
-                <button
-                  type="submit"
-                  disabled={
-                    isLoading ||
-                    !formData.fullName.trim() ||
-                    !formData.admissionNumber.trim()
+                <InputField
+                  label="Password"
+                  icon={FiLock}
+                  type={visiblePasswords.login ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={(value) => updateField('password', value)}
+                  error={validationErrors.password}
+                  placeholder="Your portal password"
+                  disabled={isLoading}
+                  autoComplete="current-password"
+                  rightAction={
+                    <PasswordVisibilityButton
+                      visible={visiblePasswords.login}
+                      onClick={() => setVisiblePasswords(prev => ({ ...prev, login: !prev.login }))}
+                      label="password"
+                    />
                   }
-                  className="
-                    flex-1
-                    py-3
-                    px-4
-                    bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700
-                    hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800
-                    active:from-blue-800 active:via-blue-900 active:to-indigo-900
-                    text-white
-                    rounded-xl
-                    font-bold
-                    text-sm
-                    disabled:opacity-70
-                    disabled:cursor-not-allowed
-                    flex items-center justify-center gap-2
-                    order-1 sm:order-2
-                    transition-all duration-200
-                    shadow-lg hover:shadow-xl
-                    border-2 border-blue-600 hover:border-blue-700
-                    active:scale-[0.98]
-                    transform hover:-translate-y-0.5
-                  "
-                  aria-label="Login to Katwanyaa Portal"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <CircularProgress size={16} thickness={4} sx={{ color: "white" }} aria-label="Verifying" />
-                      <span>Verifying...</span>
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <FiLogIn className="text-sm" aria-hidden="true" />
-                      <span>Login  o Portal</span>
-                    </span>
-                  )}
-                </button>
-              </div>
-            </form>
+                />
 
-            {/* Features - Compact */}
-            <section className="mt-3 sm:mt-4 pt-3 border-t border-gray-200">
-              <h3 className="sr-only">Katwanyaa Portal Features</h3>
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <div className="text-center p-1.5 sm:p-2 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
-                  <FiBook className="text-blue-600 text-xs sm:text-sm mx-auto mb-1" aria-hidden="true" />
-                  <p className="text-[10px] font-semibold text-blue-800">Resources</p>
+                <SubmitButton loading={isLoading} label="Login to Portal" loadingLabel="Signing in..." icon={FiLogIn} />
+
+                <div className="grid gap-2 text-center">
+                  <button
+                    type="button"
+                    onClick={() => switchMode('firstAccess')}
+                    className="w-full text-sm font-bold text-slate-700 hover:text-slate-950"
+                  >
+                    First time here? Verify your record and create a password.
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchMode('forgotPassword')}
+                    className="w-full text-sm font-bold text-blue-700 hover:text-blue-900"
+                  >
+                    Forgot password? Send reset request.
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchMode('changePassword')}
+                    className="w-full text-sm font-bold text-emerald-700 hover:text-emerald-900"
+                  >
+                    Change password? Verify current password first.
+                  </button>
                 </div>
-                <div className="text-center p-1.5 sm:p-2 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg">
-                  <FiShield className="text-emerald-600 text-xs sm:text-sm mx-auto mb-1" aria-hidden="true" />
-                  <p className="text-[10px] font-semibold text-emerald-800">Secure</p>
+              </form>
+            )}
+
+            <div className="mt-6 pt-5 border-t border-slate-200 grid grid-cols-3 gap-3">
+              {[
+                [FiBook, 'Resources'],
+                [FiShield, 'Secure'],
+                [FiAward, 'Results']
+              ].map(([Icon, label]) => (
+                <div key={label} className="text-center rounded-2xl bg-slate-50 p-3">
+                  <Icon className="text-slate-800 mx-auto mb-1" />
+                  <p className="text-[10px] font-black text-slate-700">{label}</p>
                 </div>
-                <div className="text-center p-1.5 sm:p-2 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
-                  <FiClock className="text-purple-600 text-xs sm:text-sm mx-auto mb-1" aria-hidden="true" />
-                  <p className="text-[10px] font-semibold text-purple-800">2 Hours</p>
-                </div>
-              </div>
-            </section>
+              ))}
+            </div>
           </section>
         </article>
-
-        {/* Footer - Compact */}
-        <footer className="px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex-shrink-0">
-          <p className="text-center text-gray-600 text-[10px] sm:text-xs">
-            For assistance with Katwanyaa Portal: Contact class teacher or school office
-          </p>
-        </footer>
       </main>
-
-      {/* Global Styles for Responsiveness */}
-      <style jsx global>{`
-        @media (max-width: 640px) {
-          .text-xl { font-size: 1.125rem; }
-          .text-lg { font-size: 1rem; }
-          .text-base { font-size: 0.875rem; }
-        }
-        
-        @media (max-width: 480px) {
-          .text-xl { font-size: 1rem; }
-          .max-w-3xl { max-width: 95vw; }
-        }
-        
-        /* Prevent zoom issues */
-        html {
-          text-size-adjust: 100%;
-          -webkit-text-size-adjust: 100%;
-        }
-        
-        body {
-          overflow-x: hidden;
-        }
-        
-        /* Animation for error messages */
-        @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-slideDown {
-          animation: slideDown 0.2s ease-out;
-        }
-        
-        /* Prevent iOS zoom on input focus */
-        @media screen and (max-width: 768px) {
-          input, select, textarea {
-            font-size: 16px !important;
-          }
-        }
-        
-        /* Responsive handling for high zoom levels */
-        @media (min-width: 768px) and (max-width: 1200px) {
-          .max-w-3xl {
-            max-width: 85vw !important;
-          }
-        }
-        
-        /* For very small screens */
-        @media (max-width: 320px) {
-          .max-w-3xl {
-            max-width: 98vw !important;
-            margin: 0.25rem;
-          }
-        }
-        
-        /* Custom scrollbar for modal body */
-        .overflow-y-auto {
-          scrollbar-width: thin;
-          scrollbar-color: #cbd5e1 #f1f5f9;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar {
-          width: 4px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-track {
-          background: #f1f5f9;
-          border-radius: 2px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 2px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-        
-        /* Enhanced focus styles for better accessibility */
-        *:focus-visible {
-          outline: 3px solid #3b82f6;
-          outline-offset: 3px;
-        }
-        
-        /* Better input placeholder visibility */
-        ::placeholder {
-          color: #9ca3af;
-          opacity: 0.9;
-          font-weight: 500;
-        }
-        
-        /* Smooth transitions for interactive elements */
-        button, input, a {
-          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Enhanced border visibility for all inputs */
-        input {
-          border-width: 3px !important;
-        }
-        
-        /* Make focused inputs more prominent */
-        input:focus {
-          border-width: 3px !important;
-          transform: translateY(-1px);
-          box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2) !important;
-        }
-        
-        /* Error state enhancement */
-        input:invalid, input.error-border {
-          border-width: 3px !important;
-          animation: pulseError 0.5s ease-in-out;
-        }
-        
-        @keyframes pulseError {
-          0%, 100% { border-color: #ef4444; }
-          50% { border-color: #fca5a5; }
-        }
-        
-        /* Active state enhancement */
-        input:active {
-          border-width: 3px !important;
-          transform: translateY(0);
-        }
-      `}</style>
     </div>
+  );
+}
+
+function InputField({
+  label,
+  icon: Icon,
+  value,
+  onChange,
+  error,
+  type = 'text',
+  placeholder,
+  disabled,
+  autoComplete = 'off',
+  rightAction = null
+}) {
+  return (
+    <div>
+      <label className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-2">
+        <Icon className="text-slate-600" />
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          autoComplete={autoComplete}
+          className={`w-full rounded-2xl border-2 bg-white px-4 py-3.5 text-slate-900 placeholder-slate-400 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500 ${rightAction ? 'pr-12' : ''} ${error ? 'border-red-400' : 'border-slate-200 hover:border-slate-300'}`}
+        />
+        {rightAction && (
+          <div className="absolute inset-y-0 right-2 flex items-center">
+            {rightAction}
+          </div>
+        )}
+      </div>
+      {error && (
+        <p className="mt-1.5 text-xs font-bold text-red-600 flex items-center gap-1">
+          <FiAlertCircle />
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function PasswordVisibilityButton({ visible, onClick, label }) {
+  const Icon = visible ? FiEyeOff : FiEye;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-200"
+      aria-label={`${visible ? 'Hide' : 'Show'} ${label}`}
+    >
+      <Icon className="h-5 w-5" aria-hidden="true" />
+    </button>
+  );
+}
+
+function SubmitButton({ loading, label, loadingLabel, icon: Icon }) {
+  return (
+    <button
+      type="submit"
+      disabled={loading}
+      className="w-full py-3.5 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-black flex items-center justify-center gap-2 disabled:opacity-70 transition-all shadow-lg shadow-slate-900/20"
+    >
+      {loading ? (
+        <>
+          <CircularProgress size={18} thickness={4} sx={{ color: 'white' }} />
+          {loadingLabel}
+        </>
+      ) : (
+        <>
+          <Icon />
+          {label}
+        </>
+      )}
+    </button>
   );
 }

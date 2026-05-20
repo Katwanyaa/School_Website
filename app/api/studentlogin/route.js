@@ -1,412 +1,554 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { prisma } from '../../../libs/prisma';
 
-// Constants
-const JWT_SECRET = process.env.JWT_SECRET || 'Katwanyaa-student-secret-key-2024';
-const STUDENT_TOKEN_EXPIRY = '2h'; // Changed from 15m to 2 hours
+export const dynamic = 'force-dynamic';
 
-// Generate student JWT token
-const generateStudentToken = (student) => {
-  return jwt.sign(
+const JWT_SECRET = process.env.JWT_SECRET || 'Katwanyaa-student-secret-key-2024';
+const STUDENT_TOKEN_EXPIRY = '2h';
+const SESSION_MS = 2 * 60 * 60 * 1000;
+const SETUP_TOKEN_EXPIRY = '20m';
+
+const json = (body, status = 200, headers = {}) => (
+  NextResponse.json(body, { status, headers })
+);
+
+const normalizeAdmissionNumber = (value) => String(value || '').trim().toUpperCase();
+
+const normalizeName = (name) => (
+  String(name || '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/[^a-z\s]/g, '')
+    .split(' ')
+    .filter(Boolean)
+    .sort()
+);
+
+const getClientInfo = (request) => ({
+  ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown',
+  userAgent: request.headers.get('user-agent') || 'unknown'
+});
+
+const findStudentByName = (student, nameParts) => {
+  const dbNames = [
+    student.firstName,
+    student.middleName,
+    student.lastName
+  ]
+    .map((name) => String(name || '').toLowerCase().trim())
+    .filter(Boolean);
+
+  return nameParts.every((part) => (
+    dbNames.some((dbName) => (
+      dbName === part ||
+      dbName.startsWith(part) ||
+      part.startsWith(dbName) ||
+      (part.length === 1 && dbName[0] === part)
+    ))
+  ));
+};
+
+const fullNameFromParts = (record) => (
+  [record?.firstName, record?.middleName, record?.lastName]
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+);
+
+const sanitizeStudent = (account, student = null) => {
+  const source = student || account;
+  const fullName = fullNameFromParts(source) || account.fullName || 'Student';
+
+  return {
+    id: student?.id || account.id,
+    portalAccountId: account.id,
+    admissionNumber: account.admissionNumber,
+    firstName: source.firstName || null,
+    middleName: source.middleName || null,
+    lastName: source.lastName || null,
+    name: fullName,
+    fullName,
+    form: source.form || null,
+    stream: source.stream || null,
+    email: source.email || null,
+    gender: student?.gender || null,
+    dateOfBirth: student?.dateOfBirth || null,
+    parentPhone: source.parentPhone || null,
+    address: student?.address || null,
+    recordStatus: student?.status || null,
+    portalStatus: account.status,
+    recordLinked: Boolean(student)
+  };
+};
+
+const validatePasswordStrength = (password) => {
+  const checks = [
+    String(password || '').length >= 8,
+    /[a-z]/.test(password || ''),
+    /[A-Z]/.test(password || ''),
+    /\d/.test(password || ''),
+    /[^A-Za-z0-9]/.test(password || '')
+  ];
+
+  return checks.every(Boolean);
+};
+
+const getStudentByAdmission = (admissionNumber) => (
+  prisma.databaseStudent.findUnique({
+    where: { admissionNumber: normalizeAdmissionNumber(admissionNumber) }
+  })
+);
+
+const validateStudentCredentials = async (fullName, admissionNumber) => {
+  const cleanAdmissionNumber = normalizeAdmissionNumber(admissionNumber);
+  const cleanFullName = String(fullName || '').trim();
+  const nameParts = normalizeName(cleanFullName);
+
+  if (!cleanAdmissionNumber) {
+    return { success: false, error: 'Enter your admission number.', status: 400 };
+  }
+
+  if (nameParts.length < 1) {
+    return { success: false, error: 'Enter your registered name.', status: 400 };
+  }
+
+  const student = await getStudentByAdmission(cleanAdmissionNumber);
+
+  if (!student) {
+    return {
+      success: false,
+      error: 'Student record was not found. Please contact your class teacher or the school office to confirm your details.',
+      requiresContact: true,
+      status: 404
+    };
+  }
+
+  if (student.status !== 'active') {
+    return {
+      success: false,
+      error: 'This student record is not active. Please contact your class teacher or the school office.',
+      requiresContact: true,
+      status: 403
+    };
+  }
+
+  if (!findStudentByName(student, nameParts)) {
+    return {
+      success: false,
+      error: 'The name does not match this admission number. Check the spelling or contact the school office for help.',
+      requiresContact: true,
+      status: 401
+    };
+  }
+
+  return { success: true, student };
+};
+
+const buildAccountSnapshot = (student, passwordHash) => ({
+  admissionNumber: normalizeAdmissionNumber(student.admissionNumber),
+  passwordHash,
+  firstName: student.firstName || null,
+  middleName: student.middleName || null,
+  lastName: student.lastName || null,
+  fullName: fullNameFromParts(student),
+  form: student.form || null,
+  stream: student.stream || null,
+  email: student.email || null,
+  parentPhone: student.parentPhone || null,
+  status: 'active',
+  passwordSetAt: new Date()
+});
+
+const generateSetupToken = (student) => (
+  jwt.sign(
     {
-      studentId: student.id,
-      admissionNumber: student.admissionNumber,
-      name: `${student.firstName} ${student.lastName}`,
-      form: student.form,
-      stream: student.stream,
-      role: 'student',
+      type: 'student-password-setup',
+      admissionNumber: normalizeAdmissionNumber(student.admissionNumber),
+      studentSnapshot: {
+        firstName: student.firstName,
+        middleName: student.middleName,
+        lastName: student.lastName,
+        fullName: fullNameFromParts(student),
+        form: student.form,
+        stream: student.stream,
+        email: student.email,
+        parentPhone: student.parentPhone
+      }
+    },
+    JWT_SECRET,
+    { expiresIn: SETUP_TOKEN_EXPIRY }
+  )
+);
+
+const generateStudentToken = (account, student = null) => (
+  jwt.sign(
+    {
+      portalAccountId: account.id,
+      admissionNumber: account.admissionNumber,
+      name: sanitizeStudent(account, student).fullName,
+      role: 'student'
     },
     JWT_SECRET,
     { expiresIn: STUDENT_TOKEN_EXPIRY }
-  );
+  )
+);
+
+const createSession = async (request, account, token, student = null) => {
+  const { ipAddress, userAgent } = getClientInfo(request);
+
+  await prisma.studentSession.create({
+    data: {
+      studentId: account.id,
+      admissionNumber: account.admissionNumber,
+      name: sanitizeStudent(account, student).fullName,
+      token,
+      expiresAt: new Date(Date.now() + SESSION_MS),
+      ipAddress,
+      userAgent
+    }
+  });
 };
 
-// Clean and normalize name for comparison
-const normalizeName = (name) => {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-    .replace(/[^a-z\s]/g, '') // Remove special characters and numbers
-    .split(' ')
-    .filter(word => word.length > 0) // Remove empty strings
-    .sort(); // Sort alphabetically for comparison
+const loginResponse = async (request, account, student = null) => {
+  const token = generateStudentToken(account, student);
+  await createSession(request, account, token, student);
+
+  return json({
+    success: true,
+    message: 'Login successful',
+    student: sanitizeStudent(account, student),
+    token,
+    expiresIn: '2 hours',
+    permissions: {
+      canViewResources: true,
+      canViewAssignments: true,
+      canDownloadMaterials: true
+    }
+  }, 200, {
+    'Set-Cookie': `student_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=7200; Secure=${process.env.NODE_ENV === 'production'}`
+  });
 };
 
-// Find student by admission number with flexible name matching
-const findStudentByName = (student, nameParts) => {
-  // Get all possible name combinations from database student
-  const dbNameVariations = [
-    student.firstName?.toLowerCase() || '',
-    student.lastName?.toLowerCase() || '',
-    student.middleName?.toLowerCase() || ''
-  ].filter(name => name && name.length > 0);
+const extractToken = (request) => {
+  const cookieHeader = request.headers.get('cookie');
+  if (cookieHeader) {
+    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+      const [key, ...parts] = cookie.trim().split('=');
+      acc[key] = parts.join('=');
+      return acc;
+    }, {});
 
-  // Sort both arrays for comparison
-  const sortedNameParts = [...nameParts].sort();
-  const sortedDbNames = [...dbNameVariations].sort();
+    if (cookies.student_token) return cookies.student_token;
+  }
 
-  // Check if all entered name parts exist in database names
-  const allPartsMatch = sortedNameParts.every(part => {
-    return sortedDbNames.some(dbName => {
-      // Exact match or partial match (for abbreviations)
-      return dbName === part || 
-             dbName.startsWith(part) || 
-             part.startsWith(dbName) ||
-             (part.length === 1 && dbName[0] === part); // Handle initials
-    });
+  return request.headers.get('authorization')?.replace('Bearer ', '') || null;
+};
+
+const handleVerifyFirstAccess = async (body) => {
+  const validation = await validateStudentCredentials(body.fullName, body.admissionNumber);
+
+  if (!validation.success) {
+    return json({
+      success: false,
+      error: validation.error,
+      requiresContact: validation.requiresContact || false
+    }, validation.status || 401);
+  }
+
+  const admissionNumber = normalizeAdmissionNumber(validation.student.admissionNumber);
+  const existingAccount = await prisma.studentPortalAccount.findUnique({
+    where: { admissionNumber }
   });
 
-  return allPartsMatch;
-};
-
-// Validate student credentials with flexible name matching
-const validateStudentCredentials = async (fullName, admissionNumber) => {
-  try {
-    // Clean inputs
-    const cleanAdmissionNumber = admissionNumber.trim().toUpperCase();
-    const cleanFullName = fullName.trim();
-
-    // Parse and normalize name parts
-    const nameParts = normalizeName(cleanFullName);
-    
-    if (nameParts.length < 1) {
-      return { 
-        success: false, 
-        error: 'Please enter your name',
-        requiresContact: false 
-      };
-    }
-
-    // Find student by admission number
-    const student = await prisma.databaseStudent.findUnique({
-      where: { 
-        admissionNumber: cleanAdmissionNumber
+  if (existingAccount?.passwordHash) {
+    return json({
+      success: false,
+      error: 'A portal password already exists for this admission number. Use Password Login instead.',
+      requiresPasswordLogin: true,
+      student: {
+        admissionNumber,
+        fullName: fullNameFromParts(validation.student)
       }
-    });
-
-    if (!student) {
-      return { 
-        success: false, 
-        error: 'Student not found with this admission number. Please contact your class teacher or the school administrator/secretary to add or confirm your records.',
-        requiresContact: true 
-      };
-    }
-
-    // Check if student is active
-    if (student.status !== 'active') {
-      return { 
-        success: false, 
-        error: 'Student account is not active. Please contact your class teacher or the school administrator/secretary.',
-        requiresContact: true 
-      };
-    }
-
-    // Check name match with flexible matching
-    const isNameMatch = findStudentByName(student, nameParts);
-
-    if (!isNameMatch) {
-      return { 
-        success: false, 
-        error: 'Name does not match admission number. Please check and try again, or contact your class teacher or the school administrator/secretary to confirm your details.',
-        requiresContact: true 
-      };
-    }
-
-    return { 
-      success: true, 
-      student 
-    };
-
-  } catch (error) {
-    console.error('Student validation error:', error);
-    return { 
-      success: false, 
-      error: 'Authentication failed. Please try again.',
-      requiresContact: false 
-    };
+    }, 409);
   }
+
+  return json({
+    success: true,
+    requiresPasswordSetup: true,
+    message: 'Student record verified. Create your portal password to continue.',
+    setupToken: generateSetupToken(validation.student),
+    student: {
+      admissionNumber,
+      fullName: fullNameFromParts(validation.student),
+      form: validation.student.form,
+      stream: validation.student.stream
+    }
+  });
 };
 
-// POST - Student Login
+const handleSetupPassword = async (request, body) => {
+  if (!body.setupToken) {
+    return json({ success: false, error: 'Password setup session is missing. Verify your record again.' }, 400);
+  }
+
+  if (!body.newPassword || body.newPassword !== body.confirmPassword) {
+    return json({ success: false, error: 'Passwords do not match.' }, 400);
+  }
+
+  if (!validatePasswordStrength(body.newPassword)) {
+    return json({
+      success: false,
+      error: 'Use at least 8 characters with uppercase, lowercase, a number, and a symbol.'
+    }, 400);
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(body.setupToken, JWT_SECRET);
+  } catch (error) {
+    return json({ success: false, error: 'Password setup link expired. Verify your record again.' }, 401);
+  }
+
+  if (decoded.type !== 'student-password-setup' || !decoded.admissionNumber) {
+    return json({ success: false, error: 'Invalid password setup session.' }, 401);
+  }
+
+  const admissionNumber = normalizeAdmissionNumber(decoded.admissionNumber);
+  const currentStudent = await getStudentByAdmission(admissionNumber);
+  const snapshot = currentStudent || {
+    admissionNumber,
+    ...decoded.studentSnapshot
+  };
+  const passwordHash = await bcrypt.hash(body.newPassword, 12);
+
+  const account = await prisma.studentPortalAccount.upsert({
+    where: { admissionNumber },
+    update: {
+      ...buildAccountSnapshot(snapshot, passwordHash),
+      lastLoginAt: new Date()
+    },
+    create: {
+      ...buildAccountSnapshot(snapshot, passwordHash),
+      lastLoginAt: new Date()
+    }
+  });
+
+  return loginResponse(request, account, currentStudent);
+};
+
+const handlePasswordLogin = async (request, body) => {
+  const admissionNumber = normalizeAdmissionNumber(body.identifier || body.admissionNumber || body.username);
+
+  if (!admissionNumber || !body.password) {
+    return json({ success: false, error: 'Admission number and password are required.' }, 400);
+  }
+
+  const account = await prisma.studentPortalAccount.findUnique({
+    where: { admissionNumber }
+  });
+
+  if (!account?.passwordHash) {
+    return json({
+      success: false,
+      error: 'No portal password exists for this admission number. Use First-Time Access to verify your record and create one.',
+      requiresFirstAccess: true
+    }, 404);
+  }
+
+  if (account.status !== 'active') {
+    return json({ success: false, error: 'This portal account is not active. Please contact the school office.' }, 403);
+  }
+
+  const passwordOk = await bcrypt.compare(body.password, account.passwordHash);
+  if (!passwordOk) {
+    return json({ success: false, error: 'Invalid admission number or password.' }, 401);
+  }
+
+  const student = await getStudentByAdmission(admissionNumber);
+  const updatedAccount = await prisma.studentPortalAccount.update({
+    where: { admissionNumber },
+    data: {
+      lastLoginAt: new Date(),
+      ...(student ? {
+        firstName: student.firstName,
+        middleName: student.middleName || null,
+        lastName: student.lastName,
+        fullName: fullNameFromParts(student),
+        form: student.form,
+        stream: student.stream || null,
+        email: student.email || null,
+        parentPhone: student.parentPhone || null
+      } : {})
+    }
+  });
+
+  return loginResponse(request, updatedAccount, student);
+};
+
+const handlePasswordResetRequest = async (request, body) => {
+  const admissionNumber = normalizeAdmissionNumber(body.admissionNumber || body.identifier);
+  const requestType = body.requestType === 'change' ? 'change' : 'forgot';
+
+  if (!admissionNumber) {
+    return json({ success: false, error: 'Admission number is required.' }, 400);
+  }
+
+  const account = await prisma.studentPortalAccount.findUnique({
+    where: { admissionNumber }
+  });
+  const student = await getStudentByAdmission(admissionNumber);
+
+  if (!account?.passwordHash) {
+    return json({
+      success: false,
+      error: 'No portal account was found for this admission number. Use First-Time Access first.'
+    }, 404);
+  }
+
+  if (requestType === 'change') {
+    if (!body.currentPassword) {
+      return json({ success: false, error: 'Current password is required to request a password change.' }, 400);
+    }
+
+    const passwordOk = await bcrypt.compare(body.currentPassword, account.passwordHash);
+    if (!passwordOk) {
+      return json({ success: false, error: 'Current password is not correct.' }, 401);
+    }
+  }
+
+  const rawToken = crypto.randomBytes(32).toString('hex');
+  const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+  const { ipAddress, userAgent } = getClientInfo(request);
+
+  await prisma.studentPasswordResetRequest.create({
+    data: {
+      admissionNumber,
+      requestType,
+      fullName: student ? fullNameFromParts(student) : account.fullName,
+      email: student?.email || account.email || null,
+      parentEmail: student?.email || account.email || null,
+      parentPhone: student?.parentPhone || account.parentPhone || null,
+      message: String(body.message || '').trim() || null,
+      tokenHash,
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+      status: 'pending',
+      requestedByIp: ipAddress,
+      requestedByUserAgent: userAgent
+    }
+  });
+
+  return json({
+    success: true,
+    message: 'Password help request received. The school office can now send a secure reset link using the registered parent contact.'
+  });
+};
+
 export async function POST(request) {
   try {
-    const { fullName, admissionNumber } = await request.json();
+    const body = await request.json();
+    const action = body.action || (body.password ? 'login' : 'verify-first-access');
 
-    if (!fullName || !admissionNumber) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Full name and admission number are required' 
-        },
-        { status: 400 }
-      );
+    if (action === 'verify-first-access') return handleVerifyFirstAccess(body);
+    if (action === 'setup-password') return handleSetupPassword(request, body);
+    if (action === 'login') return handlePasswordLogin(request, body);
+    if (action === 'request-forgot-password' || action === 'request-change-password') {
+      return handlePasswordResetRequest(request, body);
     }
 
-    // Validate student credentials with flexible name matching
-    const validation = await validateStudentCredentials(fullName, admissionNumber);
-
-    if (!validation.success) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: validation.error,
-          requiresContact: validation.requiresContact || false
-        },
-        { status: validation.requiresContact ? 404 : 401 }
-      );
-    }
-
-    const student = validation.student;
-
-    // Generate JWT token with 2-hour expiry
-    const token = generateStudentToken(student);
-
-    // Create student session record with 2-hour expiry
-    try {
-      await prisma.studentSession.create({
-        data: {
-          studentId: student.id,
-          admissionNumber: student.admissionNumber,
-          name: `${student.firstName} ${student.lastName}`,
-          token,
-          expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
-          ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-          userAgent: request.headers.get('user-agent') || 'unknown'
-        }
-      });
-    } catch (sessionError) {
-      console.warn('Could not create student session (might not be in schema yet):', sessionError);
-      // Continue without session tracking for now
-    }
-
-    // Return success response
-    return NextResponse.json({
-      success: true,
-      message: 'Login successful',
-      student: {
-        id: student.id,
-        admissionNumber: student.admissionNumber,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        middleName: student.middleName,
-        fullName: `${student.firstName} ${student.lastName}`,
-        form: student.form,
-        stream: student.stream,
-        email: student.email,
-        gender: student.gender,
-        dateOfBirth: student.dateOfBirth,
-        parentPhone: student.parentPhone,
-        address: student.address
-      },
-      token,
-      expiresIn: '2 hours',
-      permissions: {
-        canViewResources: true,
-        canViewAssignments: true,
-        canDownloadMaterials: true
-      }
-    }, {
-      status: 200,
-      headers: {
-        'Set-Cookie': `student_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=7200; Secure=${process.env.NODE_ENV === 'production'}`
-      }
-    });
-
+    return json({ success: false, error: 'Unsupported student portal action.' }, 400);
   } catch (error) {
-    console.error('Student login error:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Internal server error. Please try again.' 
-      },
-      { status: 500 }
-    );
+    console.error('Student portal auth error:', error);
+    return json({ success: false, error: 'Student portal authentication failed. Please try again.' }, 500);
   }
 }
 
-// GET - Verify student token
 export async function GET(request) {
   try {
-    // Try to get token from cookie first
-    const cookieHeader = request.headers.get('cookie');
-    let token = null;
-    
-    if (cookieHeader) {
-      const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-        const [key, value] = cookie.trim().split('=');
-        acc[key] = value;
-        return acc;
-      }, {});
-      token = cookies.student_token;
-    }
-    
-    // Fallback to Authorization header
-    if (!token) {
-      token = request.headers.get('authorization')?.replace('Bearer ', '');
-    }
+    const token = extractToken(request);
 
     if (!token) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          authenticated: false,
-          error: 'No token provided' 
-        },
-        { status: 401 }
-      );
+      return json({ success: false, authenticated: false, error: 'No token provided' }, 401);
     }
 
-    // Verify token
     const decoded = jwt.verify(token, JWT_SECRET);
-
-    // Check if token is for student
-    if (decoded.role !== 'student') {
-      return NextResponse.json(
-        { 
-          success: false, 
-          authenticated: false,
-          error: 'Invalid token type' 
-        },
-        { status: 401 }
-      );
+    if (decoded.role !== 'student' || !decoded.portalAccountId) {
+      return json({ success: false, authenticated: false, error: 'Invalid student session' }, 401);
     }
 
-    // FIXED: Use findUnique with only unique field (id), then check status separately
-    const student = await prisma.databaseStudent.findUnique({
-      where: { 
-        id: decoded.studentId  // Only unique field here
+    const account = await prisma.studentPortalAccount.findUnique({
+      where: { id: decoded.portalAccountId }
+    });
+
+    if (!account || account.status !== 'active') {
+      return json({
+        success: false,
+        authenticated: false,
+        error: 'Portal account is not active. Please sign in again.'
+      }, 401);
+    }
+
+    const session = await prisma.studentSession.findFirst({
+      where: {
+        token,
+        studentId: account.id,
+        expiresAt: { gt: new Date() }
       }
     });
 
-    // Check if student exists AND is active
-    if (!student || student.status !== 'active') {
-      return NextResponse.json(
-        { 
-          success: false, 
-          authenticated: false,
-          error: 'Student not found or inactive' 
-        },
-        { status: 401 }
-      );
+    if (!session) {
+      return json({
+        success: false,
+        authenticated: false,
+        error: 'Session expired. Please log in again.',
+        requiresReauth: true
+      }, 401);
     }
 
-    // Try to check session if available
-    try {
-      const session = await prisma.studentSession?.findFirst?.({
-        where: {
-          token: token,
-          expiresAt: {
-            gt: new Date()
-          }
-        }
-      });
+    const student = await getStudentByAdmission(account.admissionNumber);
 
-      if (!session) {
-        // If session table doesn't exist or session expired, just warn but don't block
-        console.warn('Session not found or expired, but continuing with token validation');
-      }
-    } catch (sessionError) {
-      console.warn('Session check failed, continuing with token validation:', sessionError);
-    }
-
-    return NextResponse.json({
+    return json({
       success: true,
       authenticated: true,
-      student: {
-        id: student.id,
-        admissionNumber: student.admissionNumber,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        middleName: student.middleName,
-        name: `${student.firstName} ${student.lastName}`,
-        fullName: `${student.firstName} ${student.lastName}`,
-        form: student.form,
-        stream: student.stream,
-        email: student.email,
-        gender: student.gender,
-        dateOfBirth: student.dateOfBirth,
-        parentPhone: student.parentPhone,
-        address: student.address
-      },
-      expiresAt: decoded.exp ? new Date(decoded.exp * 1000).toISOString() : null
+      student: sanitizeStudent(account, student),
+      expiresAt: decoded.exp ? new Date(decoded.exp * 1000).toISOString() : session.expiresAt
     });
-
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      return NextResponse.json(
-        { 
-          success: false, 
-          authenticated: false,
-          error: 'Session expired. Please log in again.',
-          requiresReauth: true 
-        },
-        { status: 401 }
-      );
+      return json({
+        success: false,
+        authenticated: false,
+        error: 'Session expired. Please log in again.',
+        requiresReauth: true
+      }, 401);
     }
 
-    console.error('Token verification error:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        authenticated: false,
-        error: 'Invalid token' 
-      },
-      { status: 401 }
-    );
+    console.error('Student token verification error:', error);
+    return json({ success: false, authenticated: false, error: 'Invalid token' }, 401);
   }
 }
 
-// DELETE - Student Logout
 export async function DELETE(request) {
   try {
-    // Get token from cookie or Authorization header
-    const cookieHeader = request.headers.get('cookie');
-    let token = null;
-    
-    if (cookieHeader) {
-      const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-        const [key, value] = cookie.trim().split('=');
-        acc[key] = value;
-        return acc;
-      }, {});
-      token = cookies.student_token;
-    }
-    
-    if (!token) {
-      token = request.headers.get('authorization')?.replace('Bearer ', '');
+    const token = extractToken(request);
+
+    if (token) {
+      await prisma.studentSession.deleteMany({ where: { token } });
     }
 
-    // If we have a token and studentSession exists, try to delete the session
-    if (token && prisma.studentSession) {
-      try {
-        await prisma.studentSession.deleteMany({
-          where: {
-            token: token
-          }
-        });
-      } catch (error) {
-        console.warn('Error deleting session (might not exist in schema):', error);
-      }
-    }
-
-    return NextResponse.json(
+    return json(
+      { success: true, message: 'Logged out successfully' },
+      200,
       {
-        success: true,
-        message: 'Logged out successfully'
-      },
-      {
-        headers: {
-          'Set-Cookie': `student_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure=${process.env.NODE_ENV === 'production'}`
-        }
+        'Set-Cookie': `student_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure=${process.env.NODE_ENV === 'production'}`
       }
     );
   } catch (error) {
-    console.error('Logout error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Logout failed' },
-      { status: 500 }
-    );
+    console.error('Student logout error:', error);
+    return json({ success: false, error: 'Logout failed' }, 500);
   }
 }

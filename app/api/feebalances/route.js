@@ -288,7 +288,8 @@ const normalizeTerm = (termValue) => {
   return normalized;
 };
 
-// Normalize academic year with validation
+// Normalize academic year with validation. New records use the start year only
+// (for example 2026), while query helpers still look for old 2026/2027 rows.
 const normalizeAcademicYear = (yearValue) => {
   if (!yearValue) {
     console.warn('⚠️ No academic year provided');
@@ -298,12 +299,12 @@ const normalizeAcademicYear = (yearValue) => {
   const str = String(yearValue).trim();
   console.log(`🔍 Academic year input: "${str}"`);
   
-  // Check if already in format 2024/2025
+  // Old format like 2024/2025: keep the start year for new saves.
   if (/^\d{4}\/\d{4}$/.test(str)) {
     const [year1, year2] = str.split('/').map(Number);
     if (year2 === year1 + 1) {
-      console.log(`✅ Academic year already in correct format: ${str}`);
-      return str;
+      console.log(`✅ Academic year converted: ${str} -> ${year1}`);
+      return String(year1);
     }
   }
   
@@ -311,9 +312,8 @@ const normalizeAcademicYear = (yearValue) => {
   if (/^\d{4}$/.test(str)) {
     const year = parseInt(str);
     if (year >= 1900 && year <= 2100) {
-      const result = `${year}/${year + 1}`;
-      console.log(`✅ Single year converted: ${str} -> ${result}`);
-      return result;
+      console.log(`✅ Academic year normalized: ${str}`);
+      return String(year);
     }
   }
   
@@ -323,7 +323,7 @@ const normalizeAcademicYear = (yearValue) => {
     const year1 = parseInt(yearMatch[1]);
     const year2 = parseInt(yearMatch[2]);
     if (year1 >= 1900 && year1 <= 2100 && year2 >= 1900 && year2 <= 2100) {
-      const result = `${year1}/${year2}`;
+      const result = String(year1);
       console.log(`✅ Extracted years: ${str} -> ${result}`);
       return result;
     }
@@ -335,7 +335,7 @@ const normalizeAcademicYear = (yearValue) => {
     const year1 = parseInt(malformedMatch[1]);
     const year2 = parseInt(malformedMatch[2]);
     if (year1 >= 1900 && year1 <= 2100 && year2 >= 1900 && year2 <= 2100) {
-      const result = `${year1}/${year2}`;
+      const result = String(year1);
       console.log(`✅ Fixed malformed year: ${str} -> ${result}`);
       return result;
     }
@@ -343,6 +343,19 @@ const normalizeAcademicYear = (yearValue) => {
   
   console.warn(`❌ Could not normalize academic year: ${str}`);
   return str;
+};
+
+const academicYearVariants = (yearValue) => {
+  const normalized = normalizeAcademicYear(yearValue);
+  if (!normalized) return [];
+
+  const year = parseInt(normalized, 10);
+  const variants = new Set([normalized]);
+  if (!Number.isNaN(year)) {
+    variants.add(`${year}/${year + 1}`);
+  }
+
+  return [...variants];
 };
 
 // Parse amount values
@@ -539,10 +552,10 @@ const checkDuplicateFeeBalances = async (feeBalances, targetForm = null, term = 
   }
   
   if (academicYear) {
-    const normalizedYear = normalizeAcademicYear(academicYear);
-    if (normalizedYear) {
-      whereClause.academicYear = normalizedYear;
-      console.log(`🔍 Filtering by year: ${normalizedYear}`);
+    const yearOptions = academicYearVariants(academicYear);
+    if (yearOptions.length > 0) {
+      whereClause.academicYear = { in: yearOptions };
+      console.log(`🔍 Filtering by year variants: ${yearOptions.join(', ')}`);
     }
   }
   
@@ -571,13 +584,17 @@ const checkDuplicateFeeBalances = async (feeBalances, targetForm = null, term = 
   const duplicates = feeBalances
     .map((fee, index) => {
       const feeTerm = term || normalizeTerm(fee.term);
-      const feeYear = academicYear || normalizeAcademicYear(fee.academicYear);
+      const feeYearOptions = academicYear
+        ? academicYearVariants(academicYear)
+        : academicYearVariants(fee.academicYear);
       const feeForm = targetForm || normalizeForm(fee.form);
       
-      const key = `${fee.admissionNumber}_${feeForm}_${feeTerm}_${feeYear}`;
-      
-      if (existingFeeMap.has(key)) {
-        const existing = existingFeeMap.get(key);
+      const matchingKey = feeYearOptions
+        .map((year) => `${fee.admissionNumber}_${feeForm}_${feeTerm}_${year}`)
+        .find((key) => existingFeeMap.has(key));
+
+      if (matchingKey) {
+        const existing = existingFeeMap.get(matchingKey);
         return {
           row: index + 2,
           admissionNumber: fee.admissionNumber,
@@ -733,8 +750,8 @@ const parseFeeCSV = async (file, uploadStrategy) => {
                     : normalizeTerm(row.term || 'Term 1'),
                   
                   academicYear: uploadStrategy?.uploadType === 'update'
-                    ? (uploadStrategy.academicYear || normalizeAcademicYear(row.academicYear || `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`))
-                    : normalizeAcademicYear(row.academicYear || `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`),
+                    ? normalizeAcademicYear(uploadStrategy.academicYear || row.academicYear || new Date().getFullYear())
+                    : normalizeAcademicYear(row.academicYear || new Date().getFullYear()),
                   
                   amount: parseAmount(row.amount || 0),
                   amountPaid: parseAmount(row.amountPaid || 0),
@@ -841,8 +858,8 @@ const parseFeeExcel = async (file, uploadStrategy) => {
               : normalizeTerm(normalizedRow.term || 'Term 1'),
             
             academicYear: uploadStrategy?.uploadType === 'update'
-              ? (uploadStrategy.academicYear || normalizeAcademicYear(normalizedRow.academicYear || `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`))
-              : normalizeAcademicYear(normalizedRow.academicYear || `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`),
+              ? normalizeAcademicYear(uploadStrategy.academicYear || normalizedRow.academicYear || new Date().getFullYear())
+              : normalizeAcademicYear(normalizedRow.academicYear || new Date().getFullYear()),
             
             amount: parseAmount(normalizedRow.amount || 0),
             amountPaid: parseAmount(normalizedRow.amountPaid || 0),
@@ -1105,7 +1122,7 @@ const processNewFeeUpload = async (fees, uploadBatchId, uploadStrategy) => {
   const normalizedForm = normalizeForm(uploadStrategy.selectedForm);
   const firstRow = fees[0];
   const normalizedTerm = normalizeTerm(firstRow?.term || 'Term 1');
-  const normalizedYear = normalizeAcademicYear(firstRow?.academicYear || `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`);
+  const normalizedYear = normalizeAcademicYear(firstRow?.academicYear || new Date().getFullYear());
   
   console.log(`🎯 New upload for: ${normalizedForm} - ${normalizedTerm} ${normalizedYear}`);
   
@@ -1314,7 +1331,7 @@ export async function POST(request) {
       uploadType,
       selectedForm: normalizedForm,
       term: uploadType === 'update' ? term : undefined,
-      academicYear: uploadType === 'update' ? academicYear : undefined
+      academicYear: uploadType === 'update' ? normalizeAcademicYear(academicYear) : undefined
     };
     
     console.log('📋 Upload Strategy:', uploadStrategy);
@@ -1548,7 +1565,10 @@ export async function GET(request) {
       if (admissionNumber) where.admissionNumber = admissionNumber;
       if (form) where.form = form;
       if (term) where.term = term;
-      if (academicYear) where.academicYear = academicYear;
+      if (academicYear) {
+        const yearOptions = academicYearVariants(academicYear);
+        if (yearOptions.length > 0) where.academicYear = { in: yearOptions };
+      }
       if (paymentStatus) where.paymentStatus = paymentStatus;
       
       // Search across admission number and student names
@@ -1620,14 +1640,14 @@ if (action === 'uploads') {
     if (action === 'stats') {
       // Get current academic year
       const currentYear = new Date().getFullYear();
-      const currentAcademicYear = `${currentYear}/${currentYear + 1}`;
+      const currentAcademicYear = String(currentYear);
       
       // Build WHERE clause for active records only
       const statsWhere = {
         isActive: true,
         ...(form && { form }),
         ...(term && { term }),
-        ...(academicYear && { academicYear }),
+        ...(academicYear && { academicYear: { in: academicYearVariants(academicYear) } }),
         ...(paymentStatus && { paymentStatus })
       };
       
@@ -1693,12 +1713,12 @@ if (action === 'uploads') {
         // Current academic year focus
         currentAcademicYear: {
           year: currentAcademicYear,
-          count: allActiveFees.filter(f => f.academicYear === currentAcademicYear).length,
+          count: allActiveFees.filter(f => academicYearVariants(currentAcademicYear).includes(f.academicYear)).length,
           amount: allActiveFees
-            .filter(f => f.academicYear === currentAcademicYear)
+            .filter(f => academicYearVariants(currentAcademicYear).includes(f.academicYear))
             .reduce((sum, fee) => sum + (fee.amount || 0), 0),
           paid: allActiveFees
-            .filter(f => f.academicYear === currentAcademicYear)
+            .filter(f => academicYearVariants(currentAcademicYear).includes(f.academicYear))
             .reduce((sum, fee) => sum + (fee.amountPaid || 0), 0)
         }
       };
@@ -1781,7 +1801,7 @@ if (action === 'uploads') {
           admissionNumber,
           ...(form && { form }),
           ...(term && { term }),
-          ...(academicYear && { academicYear })
+          ...(academicYear && { academicYear: { in: academicYearVariants(academicYear) } })
         },
         orderBy: [
           { academicYear: 'desc' },  // Newest year first
@@ -2249,7 +2269,7 @@ export async function DELETE(request) {
         where: {
           form: form,
           term: term,
-          academicYear: academicYear
+          academicYear: { in: academicYearVariants(academicYear) }
         }
       });
 

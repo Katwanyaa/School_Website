@@ -337,15 +337,27 @@ const normalizeAcademicYear = (year) => {
   
   const yearStr = String(year).trim();
   if (/^\d{4}$/.test(yearStr)) {
-    const startYear = parseInt(yearStr);
-    return `${startYear}/${startYear + 1}`;
-  }
-  
-  if (/^\d{4}\/\d{4}$/.test(yearStr)) {
     return yearStr;
   }
   
+  if (/^\d{4}\/\d{4}$/.test(yearStr)) {
+    return yearStr.split('/')[0];
+  }
+  
   return yearStr;
+};
+
+const academicYearVariants = (year) => {
+  const normalized = normalizeAcademicYear(year);
+  if (!normalized) return [];
+
+  const startYear = parseInt(normalized, 10);
+  const variants = new Set([normalized]);
+  if (!Number.isNaN(startYear)) {
+    variants.add(`${startYear}/${startYear + 1}`);
+  }
+
+  return [...variants];
 };
 
 const normalizeSubjectName = (subjectName) => {
@@ -422,7 +434,7 @@ const buildWhereClause = (params) => {
   if (admissionNumber) where.admissionNumber = admissionNumber;
   if (form) where.form = form;
   if (term) where.term = term;
-  if (academicYear) where.academicYear = academicYear;
+  if (academicYear) where.academicYear = { in: academicYearVariants(academicYear) };
   
   if (search && search.trim()) {
     const searchTerm = search.toLowerCase();
@@ -755,7 +767,7 @@ const checkDuplicateResults = async (results, targetForm = null, term = null, ac
   
   if (targetForm) whereClause.form = targetForm;
   if (term) whereClause.term = term;
-  if (academicYear) whereClause.academicYear = academicYear;
+  if (academicYear) whereClause.academicYear = { in: academicYearVariants(academicYear) };
   
   const existingResults = await prisma.studentResult.findMany({
     where: whereClause,
@@ -775,7 +787,7 @@ const checkDuplicateResults = async (results, targetForm = null, term = null, ac
         r.admissionNumber === result.admissionNumber &&
         r.form === (targetForm || result.form) &&
         r.term === (term || result.term) &&
-        r.academicYear === (academicYear || result.academicYear)
+        academicYearVariants(academicYear || result.academicYear).includes(r.academicYear)
       );
       if (existing) {
         return {
@@ -1157,7 +1169,7 @@ const processUpdateResultsUpload = async (results, uploadBatchId, targetForm, te
     where: {
       form: targetForm,
       term: normalizeTerm(term),
-      academicYear: normalizeAcademicYear(academicYear)
+      academicYear: { in: academicYearVariants(academicYear) }
     },
     select: {
       admissionNumber: true,
@@ -1704,7 +1716,7 @@ export async function GET(request) {
         const where = {};
         if (form) where.form = form;
         if (term) where.term = term;
-        if (academicYear) where.academicYear = academicYear;
+        if (academicYear) where.academicYear = { in: academicYearVariants(academicYear) };
         if (search) {
           where.OR = [
             { admissionNumber: { contains: search, mode: 'insensitive' } }
@@ -2124,7 +2136,7 @@ export async function POST(request) {
         uploadedBy: auth.user.name,
         status: 'processing',
         term: term || null,
-        academicYear: academicYear || null,
+        academicYear: academicYear ? normalizeAcademicYear(academicYear) : null,
         uploadMode: uploadType,
         totalRows: 0,
         validRows: 0,
