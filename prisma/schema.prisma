@@ -520,6 +520,19 @@ model SchoolDocument {
   feesBoardingYear            Int?
   feesBoardingTerm            String?   @db.VarChar(50)
 
+  // Legacy fields preserved to avoid data loss during schema push
+  admissionFeeDistribution     String?   @db.Text
+  admissionFeePdf              String?   @db.Text
+  admissionFeePdfName          String?   @db.VarChar(255)
+  admissionFeePdfSize          Int?
+  admissionFeePdfUploadDate    DateTime?
+  curriculumPDF                String?   @db.Text
+  curriculumPdfName            String?   @db.VarChar(255)
+  curriculumPdfSize            Int?
+  curriculumPdfUploadDate      DateTime?
+  feesDayDistributionJson      Json?
+  feesBoardingDistributionJson Json?
+
   // KCSE Results PDF
   kcseResultsPdf  String?   @db.Text
   kcsePdfName     String?   @db.VarChar(255)

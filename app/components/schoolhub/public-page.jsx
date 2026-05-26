@@ -524,7 +524,7 @@ const HubCard = ({ item, onView }) => {
       className={`w-full bg-white text-left hover:bg-gray-50 transition-colors ${theme.bg} bg-opacity-30`}
     >
       {/* Image Section - Compact */}
-      <div className="relative h-36 w-full bg-gray-100">
+      <div className="relative h-48 w-full bg-gray-100">
         {image ? (
           <img src={image} alt={item.title} className="h-full w-full object-cover" />
         ) : (
@@ -795,8 +795,8 @@ export default function PublicSchoolHubPage({
                     </div>
                   </div>
 
-                  {/* Items Grid - Responsive with more columns */}
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {/* Items Grid - Wider cards for better readability */}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
                     {section.items.map((item) => (
                       <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => setActive(item)} />
                     ))}
