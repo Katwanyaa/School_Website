@@ -25,6 +25,7 @@ import {
 
 
 import {FiInfo, FiBook, FiDollarSign, FiFileText, FiBarChart2   } from 'react-icons/fi';
+import { MdOutlineBoardingSchool } from 'react-icons/md';
 
 import { 
   CircularProgress, Modal, Box, TextField,
@@ -1463,8 +1464,8 @@ function ModernPdfUpload({
   const [selectedFileForMetadata, setSelectedFileForMetadata] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // File size limit (0.8 MB individual file limit)
-  const MAX_INDIVIDUAL_SIZE = 0.8 * 1024 * 1024;
+  // File size limit (2 MB individual file limit)
+  const MAX_INDIVIDUAL_SIZE = 2 * 1024 * 1024;
   
   // Allowed file types
   const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx'];
@@ -2538,15 +2539,6 @@ const [formData, setFormData] = useState(() => {
   
   // Define all possible fields with their getters
   const documentFields = [
-    // Main documents
-    { 
-      key: 'curriculumPDF',
-      nameField: 'curriculumPdfName',
-      sizeField: 'curriculumPdfSize',
-      yearField: 'curriculumYear',
-      descriptionField: 'curriculumDescription',
-      termField: 'curriculumTerm'
-    },
     { 
       key: 'feesDayDistributionPdf',
       nameField: 'feesDayPdfName',
@@ -2562,55 +2554,6 @@ const [formData, setFormData] = useState(() => {
       yearField: 'feesBoardingYear',
       descriptionField: 'feesBoardingDescription',
       termField: 'feesBoardingTerm'
-    },
-    { 
-      key: 'admissionFeePdf',
-      nameField: 'admissionFeePdfName',
-      sizeField: 'admissionFeePdfSize',
-      yearField: 'admissionFeeYear',
-      descriptionField: 'admissionFeeDescription',
-      termField: 'admissionFeeTerm'
-    },
-    // Exam results
-    { 
-      key: 'form1ResultsPdf',
-      nameField: 'form1ResultsPdfName',
-      sizeField: 'form1ResultsPdfSize',
-      yearField: 'form1ResultsYear',
-      descriptionField: 'form1ResultsDescription',
-      termField: 'form1ResultsTerm'
-    },
-    { 
-      key: 'form2ResultsPdf',
-      nameField: 'form2ResultsPdfName',
-      sizeField: 'form2ResultsPdfSize',
-      yearField: 'form2ResultsYear',
-      descriptionField: 'form2ResultsDescription',
-      termField: 'form2ResultsTerm'
-    },
-    { 
-      key: 'form3ResultsPdf',
-      nameField: 'form3ResultsPdfName',
-      sizeField: 'form3ResultsPdfSize',
-      yearField: 'form3ResultsYear',
-      descriptionField: 'form3ResultsDescription',
-      termField: 'form3ResultsTerm'
-    },
-    { 
-      key: 'form4ResultsPdf',
-      nameField: 'form4ResultsPdfName',
-      sizeField: 'form4ResultsPdfSize',
-      yearField: 'form4ResultsYear',
-      descriptionField: 'form4ResultsDescription',
-      termField: 'form4ResultsTerm'
-    },
-    { 
-      key: 'mockExamsResultsPdf',
-      nameField: 'mockExamsPdfName',
-      sizeField: 'mockExamsPdfSize',
-      yearField: 'mockExamsYear',
-      descriptionField: 'mockExamsDescription',
-      termField: 'mockExamsTerm'
     },
     { 
       key: 'kcseResultsPdf',
@@ -2649,32 +2592,11 @@ const [formData, setFormData] = useState(() => {
   // COMPLETE FIX: Preload existing fee breakdowns
   const [feeBreakdowns, setFeeBreakdowns] = useState({
     feesDay: Array.isArray(documents?.feesDayDistributionJson) ? documents.feesDayDistributionJson : [],
-    feesBoarding: Array.isArray(documents?.feesBoardingDistributionJson) ? documents.feesBoardingDistributionJson : [],
-    admissionFee: Array.isArray(documents?.admissionFeeDistribution) ? documents.admissionFeeDistribution : []
+    feesBoarding: Array.isArray(documents?.feesBoardingDistributionJson) ? documents.feesBoardingDistributionJson : []
   });
 
   // COMPLETE FIX: Preload existing exam metadata
   const [examMetadata, setExamMetadata] = useState({
-    form1ResultsYear: documents?.form1ResultsYear?.toString() || '',
-    form1ResultsTerm: documents?.form1ResultsTerm || '',
-    form1ResultsDescription: documents?.form1ResultsDescription || '',
-    
-    form2ResultsYear: documents?.form2ResultsYear?.toString() || '',
-    form2ResultsTerm: documents?.form2ResultsTerm || '',
-    form2ResultsDescription: documents?.form2ResultsDescription || '',
-    
-    form3ResultsYear: documents?.form3ResultsYear?.toString() || '',
-    form3ResultsTerm: documents?.form3ResultsTerm || '',
-    form3ResultsDescription: documents?.form3ResultsDescription || '',
-    
-    form4ResultsYear: documents?.form4ResultsYear?.toString() || '',
-    form4ResultsTerm: documents?.form4ResultsTerm || '',
-    form4ResultsDescription: documents?.form4ResultsDescription || '',
-    
-    mockExamsYear: documents?.mockExamsYear?.toString() || '',
-    mockExamsTerm: documents?.mockExamsTerm || '',
-    mockExamsDescription: documents?.mockExamsDescription || '',
-    
     kcseYear: documents?.kcseYear?.toString() || '',
     kcseTerm: documents?.kcseTerm || '',
     kcseDescription: documents?.kcseDescription || ''
@@ -2685,28 +2607,16 @@ const [formData, setFormData] = useState(() => {
 
   const steps = [
     { 
-      id: 'curriculum', 
-      label: 'Curriculum', 
-      icon: FaBook, 
-      description: 'Academic curriculum documents' 
-    },
-    { 
       id: 'fees', 
       label: 'Fee Structures', 
       icon: FaMoneyBillWave, 
       description: 'Day and boarding fee documents' 
     },
     { 
-      id: 'admission', 
-      label: 'Admission', 
-      icon: FaUserCheck, 
-      description: 'Admission fee documents' 
-    },
-    { 
-      id: 'exams', 
-      label: 'Exam Results', 
+      id: 'kcse', 
+      label: 'KCSE Results', 
       icon: FaAward, 
-      description: 'Academic results documents' 
+      description: 'KCSE results upload' 
     },
     { 
       id: 'review', 
@@ -2799,11 +2709,6 @@ const handleSubmitAfterReview = async () => {
       console.log('✅ Appending feesBoardingDistributionJson:', feeBreakdowns.feesBoarding);
     }
     
-    if (feeBreakdowns.admissionFee && feeBreakdowns.admissionFee.length > 0) {
-      data.append('admissionFeeDistribution', JSON.stringify(feeBreakdowns.admissionFee));
-      console.log('✅ Appending admissionFeeDistribution:', feeBreakdowns.admissionFee);
-    }
-    
     // Append year/term/description for fee documents
     if (formData.feesDayDistributionPdf?.year) {
       data.append('feesDayYear', formData.feesDayDistributionPdf.year);
@@ -2823,16 +2728,6 @@ const handleSubmitAfterReview = async () => {
     }
     if (formData.feesBoardingDistributionPdf?.description) {
       data.append('feesBoardingDescription', formData.feesBoardingDistributionPdf.description);
-    }
-    
-    if (formData.admissionFeePdf?.year) {
-      data.append('admissionFeeYear', formData.admissionFeePdf.year);
-    }
-    if (formData.admissionFeePdf?.term) {
-      data.append('admissionFeeTerm', formData.admissionFeePdf.term);
-    }
-    if (formData.admissionFeePdf?.description) {
-      data.append('admissionFeeDescription', formData.admissionFeePdf.description);
     }
     
     // Append exam metadata
@@ -3051,28 +2946,7 @@ const getExistingPdfData = (field) => {
 
   const renderStepContent = () => {
     switch(currentStep) {
-      case 0: // Curriculum
-        return (
-          <div className="space-y-6">
-            <div className="w-full max-w-2xl">
-              <ModernPdfUpload
-                pdfFile={formData.curriculumPDF?.file || null}
-                onPdfChange={(file, year, description, term) => 
-                  handleFileChange('curriculumPDF', file, year, description, term)
-                }
-                onRemove={() => handleFileRemove('curriculumPDF')}
-                label="Curriculum PDF"
-                required={true}
-                existingPdf={getExistingPdfData('curriculumPDF')}
-                onCancelExisting={(existingFile) => handleCancelExisting('curriculumPDF', existingFile)}
-                onRemoveExisting={() => handleRemoveExisting('curriculumPDF')}
-                type="curriculum"
-              />
-            </div>
-          </div>
-        );
-      
-      case 1: // Fee Structures
+      case 0:
         return (
           <div className="space-y-8">
             <div className="w-full max-w-2xl">
@@ -3110,79 +2984,31 @@ const getExistingPdfData = (field) => {
             </div>
           </div>
         );
-      
-      case 2: // Admission
+
+      case 1:
         return (
           <div className="space-y-6">
             <div className="w-full max-w-2xl">
               <ModernPdfUpload
-                pdfFile={formData.admissionFeePdf?.file || null}
-                onPdfChange={(file, year, description, term) => 
-                  handleFileChange('admissionFeePdf', file, year, description, term)
-                }
-                onRemove={() => handleFileRemove('admissionFeePdf')}
-                label="Admission Fee PDF"
-                existingPdf={getExistingPdfData('admissionFeePdf')}
-                onCancelExisting={(existingFile) => handleCancelExisting('admissionFeePdf', existingFile)}
-                onRemoveExisting={() => handleRemoveExisting('admissionFeePdf')}
-                feeBreakdown={feeBreakdowns.admissionFee}
-                onFeeBreakdownChange={(breakdown) => handleFeeBreakdownChange('admissionFee', breakdown)}
-                type="admission"
+                pdfFile={formData.kcseResultsPdf?.file || null}
+                onPdfChange={(file, year, description, term) => {
+                  handleFileChange('kcseResultsPdf', file, year, description, term);
+                  if (year) handleExamMetadataChange('kcseYear', year);
+                  if (term) handleExamMetadataChange('kcseTerm', term);
+                  if (description) handleExamMetadataChange('kcseDescription', description);
+                }}
+                onRemove={() => handleFileRemove('kcseResultsPdf')}
+                label="KCSE Results PDF"
+                existingPdf={getExistingPdfData('kcseResultsPdf')}
+                onCancelExisting={(existingFile) => handleCancelExisting('kcseResultsPdf', existingFile)}
+                onRemoveExisting={() => handleRemoveExisting('kcseResultsPdf')}
+                type="results"
               />
             </div>
           </div>
         );
-      
-      case 3: // Exam Results
-        return (
-          <div className="space-y-8">
-            {[
-              { key: 'form1Results', label: 'Form 1 Results', field: 'form1ResultsPdf' },
-              { key: 'form2Results', label: 'Form 2 Results', field: 'form2ResultsPdf' },
-              { key: 'form3Results', label: 'Form 3 Results', field: 'form3ResultsPdf' },
-              { key: 'form4Results', label: 'Form 4 Results', field: 'form4ResultsPdf' },
-              { key: 'mockExams', label: 'Mock Exams Results', field: 'mockExamsResultsPdf' },
-              { key: 'kcse', label: 'KCSE Results', field: 'kcseResultsPdf' }
-            ].map((exam) => (
-              <div key={exam.key} className="w-full max-w-2xl">
-                <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                    <FaAward className="text-orange-600" />
-                    <span className="text-base">{exam.label}</span>
-                  </label>
-                  
-                  {/* Display existing metadata if available */}
-                  {getExistingPdfData(exam.field) && (
-                    <div className="text-xs text-gray-600 font-bold">
-                      {examMetadata[`${exam.key}Year`] && `Year: ${examMetadata[`${exam.key}Year`]}`}
-                      {examMetadata[`${exam.key}Term`] && ` • Term: ${examMetadata[`${exam.key}Term`]}`}
-                    </div>
-                  )}
-                </div>
-                
-                <ModernPdfUpload
-                  pdfFile={formData[exam.field]?.file || null}
-                  onPdfChange={(file, year, description, term) => {
-                    handleFileChange(exam.field, file, year, description, term);
-                    if (year || description || term) {
-                      if (year) handleExamMetadataChange(`${exam.key}Year`, year);
-                      if (term) handleExamMetadataChange(`${exam.key}Term`, term);
-                      if (description) handleExamMetadataChange(`${exam.key}Description`, description);
-                    }
-                  }}
-                  onRemove={() => handleFileRemove(exam.field)}
-                  label={`${exam.label} PDF`}
-                  existingPdf={getExistingPdfData(exam.field)}
-                  onCancelExisting={(existingFile) => handleCancelExisting(exam.field, existingFile)}
-                  onRemoveExisting={() => handleRemoveExisting(exam.field)}
-                  type="results"
-                />
-              </div>
-            ))}
-          </div>
-        );
 
-      case 4: // Review
+      case 2:
         return (
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border-2 border-blue-200">
@@ -3225,15 +3051,8 @@ const getExistingPdfData = (field) => {
                     if (!fileData || fileData.markedForDeletion) return null;
                     
                     const labels = {
-                      curriculumPDF: 'Curriculum Document',
                       feesDayDistributionPdf: 'Day School Fees',
                       feesBoardingDistributionPdf: 'Boarding School Fees',
-                      admissionFeePdf: 'Admission Fees',
-                      form1ResultsPdf: 'Form 1 Results',
-                      form2ResultsPdf: 'Form 2 Results',
-                      form3ResultsPdf: 'Form 3 Results',
-                      form4ResultsPdf: 'Form 4 Results',
-                      mockExamsResultsPdf: 'Mock Exams Results',
                       kcseResultsPdf: 'KCSE Results'
                     };
                     
@@ -3564,15 +3383,8 @@ const handleDeleteDocument = async () => {
   }
 
 const hasDocuments = documents && (
-  documents.curriculumPDF ||
   documents.feesDayDistributionPdf ||
   documents.feesBoardingDistributionPdf ||
-  documents.admissionFeePdf ||
-  documents.form1ResultsPdf ||
-  documents.form2ResultsPdf ||
-  documents.form3ResultsPdf ||
-  documents.form4ResultsPdf ||
-  documents.mockExamsResultsPdf ||
   documents.kcseResultsPdf
 );
 
@@ -3682,27 +3494,23 @@ const hasDocuments = documents && (
       <div className="flex items-start gap-2 max-w-2xl">
         <FiInfo className="w-4 h-4 text-white/50 mt-0.5 flex-shrink-0" />
         <p className="text-blue-50/80 text-sm md:text-base font-medium leading-relaxed">
-          Manage all school documents including curriculum, dynamic fee structures, admission forms, and exam results.
+          Manage the school's fee structure and KCSE results uploads in a simplified, secure interface.
         </p>
       </div>
       
       {/* Document Categories Quick Stats */}
       <div className="flex flex-wrap items-center gap-2 mt-4">
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-          <FiBook className="w-3 h-3 text-blue-300" />
-          <span className="text-[9px] font-bold text-white/80">Curriculum</span>
-        </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
           <FiDollarSign className="w-3 h-3 text-emerald-300" />
-          <span className="text-[9px] font-bold text-white/80">Fee Structure</span>
+          <span className="text-[9px] font-bold text-white/80">Day School Fees</span>
         </div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-          <FiFileText className="w-3 h-3 text-purple-300" />
-          <span className="text-[9px] font-bold text-white/80">Admission Forms</span>
+          <MdOutlineBoardingSchool className="w-3 h-3 text-blue-300" />
+          <span className="text-[9px] font-bold text-white/80">Boarding School Fees</span>
         </div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-          <FiBarChart2 className="w-3 h-3 text-amber-300" />
-          <span className="text-[9px] font-bold text-white/80">Exam Results</span>
+          <FiAward className="w-3 h-3 text-amber-300" />
+          <span className="text-[9px] font-bold text-white/80">KCSE Results</span>
         </div>
       </div>
     </div>
@@ -3837,27 +3645,6 @@ const hasDocuments = documents && (
 
             {/* GRID CONTAINER */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* CURRICULUM DOCUMENT */}
-              {documents.curriculumPDF && (
-                <ModernDocumentCard
-                  title="Curriculum Document"
-                  description="Official school curriculum and syllabus"
-                  pdfUrl={documents.curriculumPDF}
-                  pdfName={documents.curriculumPdfName || "curriculum.pdf"}
-                  year={documents.curriculumYear}
-                  type="curriculum"
-                  fileSize={documents.curriculumPdfSize}
-                  uploadDate={documents.curriculumUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onRemove={() => {
-                    if (confirm("Remove curriculum document?")) {
-                      // Handle removal
-                    }
-                  }}
-                />
-              )}
-              
               {/* DAY SCHOOL FEES DOCUMENT */}
               {documents.feesDayDistributionPdf && (
                 <ModernDocumentCard
@@ -3880,7 +3667,7 @@ const hasDocuments = documents && (
                   }}
                 />
               )}
-              
+
               {/* BOARDING SCHOOL FEES DOCUMENT */}
               {documents.feesBoardingDistributionPdf && (
                 <ModernDocumentCard
@@ -3903,141 +3690,7 @@ const hasDocuments = documents && (
                   }}
                 />
               )}
-              
-              {/* ADMISSION FEES DOCUMENT */}
-              {documents.admissionFeePdf && (
-                <ModernDocumentCard
-                  title="Admission Fees"
-                  description="Admission and registration fees structure"
-                  pdfUrl={documents.admissionFeePdf}
-                  pdfName={documents.admissionFeePdfName || "admission-fees.pdf"}
-                  year={documents.admissionFeeYear}
-                  term={documents.admissionFeeTerm}
-                  admissionBreakdown={documents.admissionFeeDistribution || []}
-                  type="admission"
-                  fileSize={documents.admissionFeePdfSize}
-                  uploadDate={documents.admissionFeeUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onRemove={() => {
-                    if (confirm("Remove admission fees document?")) {
-                      // Handle removal
-                    }
-                  }}
-                />
-              )}
-              
-              {/* EXAM RESULTS DOCUMENTS */}
-              {/* Form 1 Results */}
-              {documents.form1ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 1 Results"
-                  description={documents.form1ResultsDescription || "Form 1 examination results"}
-                  pdfUrl={documents.form1ResultsPdf}
-                  pdfName={documents.form1ResultsPdfName || "form1-results.pdf"}
-                  year={documents.form1ResultsYear}
-                  term={documents.form1ResultsTerm}
-                  type="results"
-                  fileSize={documents.form1ResultsPdfSize}
-                  uploadDate={documents.form1ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onRemove={() => {
-                    if (confirm("Remove Form 1 results?")) {
-                      // Handle removal
-                    }
-                  }}
-                />
-              )}
-              
-              {/* Form 2 Results */}
-              {documents.form2ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 2 Results"
-                  description={documents.form2ResultsDescription || "Form 2 examination results"}
-                  pdfUrl={documents.form2ResultsPdf}
-                  pdfName={documents.form2ResultsPdfName || "form2-results.pdf"}
-                  year={documents.form2ResultsYear}
-                  term={documents.form2ResultsTerm}
-                  type="results"
-                  fileSize={documents.form2ResultsPdfSize}
-                  uploadDate={documents.form2ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onRemove={() => {
-                    if (confirm("Remove Form 2 results?")) {
-                      // Handle removal
-                    }
-                  }}
-                />
-              )}
-              
-              {/* Form 3 Results */}
-              {documents.form3ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 3 Results"
-                  description={documents.form3ResultsDescription || "Form 3 examination results"}
-                  pdfUrl={documents.form3ResultsPdf}
-                  pdfName={documents.form3ResultsPdfName || "form3-results.pdf"}
-                  year={documents.form3ResultsYear}
-                  term={documents.form3ResultsTerm}
-                  type="results"
-                  fileSize={documents.form3ResultsPdfSize}
-                  uploadDate={documents.form3ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onRemove={() => {
-                    if (confirm("Remove Form 3 results?")) {
-                      // Handle removal
-                    }
-                  }}
-                />
-              )}
-              
-              {/* Form 4 Results */}
-              {documents.form4ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 4 Results"
-                  description={documents.form4ResultsDescription || "Form 4 examination results"}
-                  pdfUrl={documents.form4ResultsPdf}
-                  pdfName={documents.form4ResultsPdfName || "form4-results.pdf"}
-                  year={documents.form4ResultsYear}
-                  term={documents.form4ResultsTerm}
-                  type="results"
-                  fileSize={documents.form4ResultsPdfSize}
-                  uploadDate={documents.form4ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onRemove={() => {
-                    if (confirm("Remove Form 4 results?")) {
-                      // Handle removal
-                    }
-                  }}
-                />
-              )}
-              
-              {/* Mock Exams Results */}
-              {documents.mockExamsResultsPdf && (
-                <ModernDocumentCard
-                  title="Mock Exams Results"
-                  description={documents.mockExamsDescription || "Mock examination results"}
-                  pdfUrl={documents.mockExamsResultsPdf}
-                  pdfName={documents.mockExamsPdfName || "mock-exams-results.pdf"}
-                  year={documents.mockExamsYear}
-                  term={documents.mockExamsTerm}
-                  type="results"
-                  fileSize={documents.mockExamsPdfSize}
-                  uploadDate={documents.mockExamsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onRemove={() => {
-                    if (confirm("Remove mock exams results?")) {
-                      // Handle removal
-                    }
-                  }}
-                />
-              )}
-              
+
               {/* KCSE Results */}
               {documents.kcseResultsPdf && (
                 <ModernDocumentCard
@@ -4061,52 +3714,10 @@ const hasDocuments = documents && (
               )}
             </div>
 
-{/* REMOVE THIS ENTIRE SECTION */}
-{documents.additionalDocuments && documents.additionalDocuments.length > 0 && (
-  <div className="mt-8">
-    <div className="flex justify-between items-center mb-4">
-      <h3 className="text-xl font-bold text-gray-900">Additional Documents</h3>
-      <span className="text-sm text-gray-500 font-bold">
-        {documents.additionalDocuments.length} document{documents.additionalDocuments.length !== 1 ? 's' : ''}
-      </span>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {documents.additionalDocuments.map((doc, index) => (
-        <ModernDocumentCard
-          key={doc.id || index}
-          title={doc.filename || `Document ${index + 1}`}
-          description={doc.description || "Additional school document"}
-          pdfUrl={doc.filepath}
-          pdfName={doc.filename}
-          year={doc.year}
-          term={doc.term}
-          type="additional"
-          fileSize={doc.filesize}
-          uploadDate={doc.uploadDate}
-          existing={true}
-          onReplace={() => setShowModal(true)}
-          onRemove={() => {
-            if (confirm("Remove this document?")) {
-              // Handle removal
-            }
-          }}
-        />
-      ))}
-    </div>
-  </div>
-)}
             {/* EMPTY STATE IF NO DOCUMENTS IN GRID (edge case) */}
-            {!documents.curriculumPDF && 
-             !documents.feesDayDistributionPdf && 
+            {!documents.feesDayDistributionPdf && 
              !documents.feesBoardingDistributionPdf && 
-             !documents.admissionFeePdf && 
-             !documents.form1ResultsPdf && 
-             !documents.form2ResultsPdf && 
-             !documents.form3ResultsPdf && 
-             !documents.form4ResultsPdf && 
-             !documents.mockExamsResultsPdf && 
-             !documents.kcseResultsPdf && 
-             (!documents.additionalDocuments || documents.additionalDocuments.length === 0) && (
+             !documents.kcseResultsPdf && (
 <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-12 text-center transition-all duration-300 hover:shadow-2xl">
   <div className="w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-blue-50 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-white shadow-inner">
     <FaFile className="w-8 h-8 md:w-12 md:h-12 text-blue-400/80" />
@@ -4186,12 +3797,9 @@ const hasDocuments = documents && (
               </div>
               <div className="space-y-2.5">
                 {[
-                  'All curriculum documents and syllabi',
-                  'Complete fee structures (day & boarding)',
-                  'Admission fee breakdowns and policies',
-                  'All examination results and reports',
-                  'Additional school documents and files',
-                  'Upload history and file metadata'
+                  'Day and boarding fee structure documents',
+                  'KCSE results upload and metadata',
+                  'Uploaded file history and references'
                 ].map((item, index) => (
                   <div key={index} className="flex items-start gap-2.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0"></div>

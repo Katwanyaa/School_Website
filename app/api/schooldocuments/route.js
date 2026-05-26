@@ -153,7 +153,7 @@ const uploadPdfToCloudinary = async (file, folder) => {
       throw new Error(`Only PDF, DOC, and DOCX files are allowed`);
     }
 
-    const maxSize = 4.5 * 1024 * 1024;
+    const maxSize = 2 * 1024 * 1024;
     if (file.size > maxSize) {
       throw new Error(`File too large. Maximum size: ${(maxSize / (1024 * 1024)).toFixed(1)}MB`);
     }
