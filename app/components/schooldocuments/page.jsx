@@ -10,7 +10,7 @@ import {
   FaExclamationTriangle, FaCheckCircle, FaSave,
   FaArrowRight, FaArrowDown, FaCog, FaBuilding,
   FaShieldAlt, FaInfoCircle, FaCalendar, 
-  FaUsers, FaChalkboardTeacher, FaDollarSign,
+  FaUsers, FaChalkboardTeacher, FaDollarSign,FiAward,
   FaUserCheck, FaClock, FaMapMarkerAlt, FaPhone,
   FaEnvelope, FaGlobe, FaChevronRight, FaChevronLeft,
   FaPercentage, FaTasks, FaClipboardList, FaUser,
