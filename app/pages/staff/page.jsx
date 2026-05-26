@@ -70,7 +70,8 @@ const FILTERS = [
 const CATEGORY_ORDER = ["CBC", "EIGHT_FOUR_FOUR", "TEACHING", "SUPPORT"];
 
 const generateSlug = (name = "staff", id = "") => {
-  const cleanName = name
+  const safeName = name == null ? "staff" : String(name);
+  const cleanName = safeName
     .toLowerCase()
     .replace(/[^\w\s-]/g, "")
     .replace(/\s+/g, "-")
@@ -80,7 +81,10 @@ const generateSlug = (name = "staff", id = "") => {
   return `${cleanName || "staff"}-${id}`;
 };
 
-const normalizeText = (value = "") => value.toString().trim().toLowerCase();
+const normalizeText = (value) => {
+  if (value == null) return "";
+  return String(value).trim().toLowerCase();
+};
 
 const isHodValue = (value = "") => {
   const normalized = normalizeText(value);
