@@ -537,7 +537,7 @@ export default function StaffProfilePage() {
           <div className="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg sm:shadow-xl overflow-hidden">
             
             {/* Header with Pattern - Responsive height */}
-            <div className="relative h-28 sm:h-36 lg:h-48 bg-gradient-to-r from-blue-600 via-blue-900 to-purple-600">
+            <div className="relative h-28 sm:h-36 lg:h-48 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600">
               {/* Abstract Pattern - scales with container */}
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-0 left-0 w-40 sm:w-60 lg:w-80 h-40 sm:h-60 lg:h-80 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>

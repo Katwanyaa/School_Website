@@ -140,7 +140,7 @@ const ModernGalleryCard = ({ gallery, onView, onFavorite, viewMode = 'grid', onS
   const getCategoryStyle = (category) => {
     const styles = {
       GENERAL: { 
-        gradient: 'from-blue-500 to-blue-900', 
+        gradient: 'from-blue-500 to-cyan-500', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -164,12 +164,12 @@ const ModernGalleryCard = ({ gallery, onView, onFavorite, viewMode = 'grid', onS
         iconColor: 'text-purple-600'
       },
       LABORATORIES: { 
-        gradient: 'from-slate-950 to-purple-500', 
-        bg: 'bg-blue-900', 
-        text: 'text-blue-900',
-        border: 'border-blue-900',
-        iconBg: 'bg-blue-900',
-        iconColor: 'text-blue-900'
+        gradient: 'from-indigo-500 to-purple-500', 
+        bg: 'bg-indigo-50', 
+        text: 'text-indigo-700',
+        border: 'border-indigo-200',
+        iconBg: 'bg-indigo-100',
+        iconColor: 'text-indigo-600'
       },
       SPORTS_DAY: { 
         gradient: 'from-amber-500 to-orange-500', 
@@ -729,10 +729,10 @@ const ModernGalleryDetailModal = ({ gallery, onClose, onDownload, onShare }) => 
 
   const getCategoryStyle = (category) => {
     const styles = {
-      GENERAL: { gradient: 'from-blue-500 to-blue-900', icon: FiGlobe },
+      GENERAL: { gradient: 'from-blue-500 to-cyan-500', icon: FiGlobe },
       CLASSROOMS: { gradient: 'from-emerald-500 to-green-500', icon: FiBookOpen },
       TEACHING: { gradient: 'from-purple-500 to-pink-500', icon: FiBook },
-      LABORATORIES: { gradient: 'from-slate-950 to-purple-500', icon: FiTarget },
+      LABORATORIES: { gradient: 'from-indigo-500 to-purple-500', icon: FiTarget },
       SPORTS_DAY: { gradient: 'from-amber-500 to-orange-500', icon: FiAward },
       GRADUATION: { gradient: 'from-rose-500 to-red-500', icon: FiAward }
     };
@@ -1184,10 +1184,10 @@ export default function ModernGallery() {
   // Categories for filtering
   const categoryOptions = [
     { id: 'all', name: 'All Galleries', icon: FiGlobe, gradient: 'from-slate-500 to-slate-600' },
-    { id: 'GENERAL', name: 'General', icon: FiGlobe, gradient: 'from-blue-500 to-blue-900' },
+    { id: 'GENERAL', name: 'General', icon: FiGlobe, gradient: 'from-blue-500 to-cyan-500' },
     { id: 'CLASSROOMS', name: 'Classrooms', icon: FiBookOpen, gradient: 'from-emerald-500 to-green-500' },
     { id: 'TEACHING', name: 'Teaching', icon: FiBook, gradient: 'from-purple-500 to-pink-500' },
-    { id: 'LABORATORIES', name: 'Laboratories', icon: FiTarget, gradient: 'from-slate-950 to-purple-500' },
+    { id: 'LABORATORIES', name: 'Laboratories', icon: FiTarget, gradient: 'from-indigo-500 to-purple-500' },
     { id: 'SPORTS_DAY', name: 'Sports Day', icon: FiAward, gradient: 'from-amber-500 to-orange-500' },
     { id: 'GRADUATION', name: 'Graduation', icon: FiAward, gradient: 'from-rose-500 to-red-500' }
   ];
@@ -1198,7 +1198,7 @@ export default function ModernGallery() {
       number: '0', 
       label: 'Media Files', 
       sublabel: 'Total files',
-      gradient: 'from-blue-500 to-blue-900'
+      gradient: 'from-blue-500 to-cyan-500'
     },
     { 
       icon: FiFolder, 
@@ -1247,7 +1247,7 @@ export default function ModernGallery() {
               number: totalFiles.toString(), 
               label: 'Media Files', 
               sublabel: 'Total files',
-              gradient: 'from-blue-500 to-blue-900'
+              gradient: 'from-blue-500 to-cyan-500'
             },
             { 
               icon: FiFolder, 
@@ -1739,7 +1739,7 @@ export default function ModernGallery() {
                 </div>
 
                 {/* Year Info Banner */}
-                <div className="bg-gradient-to-r from-blue-50 to-blue-900 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 border border-blue-100">
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 border border-blue-100">
                   <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg sm:rounded-xl">
                       <FiCalendar className="text-blue-600 text-sm sm:text-base" />
@@ -1774,7 +1774,7 @@ export default function ModernGallery() {
                 </div>
 
                 {/* Confidentiality Banner */}
-                <div className="bg-gradient-to-r from-purple-900 to-blue-900 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 text-white overflow-hidden relative">
+                <div className="bg-gradient-to-r from-purple-900 to-indigo-900 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 text-white overflow-hidden relative">
                   <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white/10 blur-[30px] sm:blur-[40px]" />
                   <div className="relative z-10">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/10 rounded-lg sm:rounded-xl md:rounded-2xl flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
@@ -1805,7 +1805,7 @@ export default function ModernGallery() {
           </div>
 
           {/* Feature Banner */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-purple-900 to-blue-900 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-8 shadow-xl">
+          <div className="relative overflow-hidden bg-gradient-to-r from-purple-900 to-indigo-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-8 shadow-xl">
             {/* Abstract Background */}
             <div className="absolute top-0 right-0 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 bg-white/5 blur-[60px] sm:blur-[80px] rounded-full -mr-16 sm:-mr-20 md:-mr-24 -mt-16 sm:-mt-20 md:-mt-24" />
             <div className="absolute bottom-0 left-0 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 bg-purple-500/10 blur-[60px] sm:blur-[80px] rounded-full -ml-16 sm:-ml-20 md:-ml-24 -mb-16 sm:-mb-20 md:-mb-24" />

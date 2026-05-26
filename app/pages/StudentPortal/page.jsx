@@ -149,26 +149,26 @@ function ModernStudentHeader({
     const char = name.trim().charAt(0).toUpperCase();
     const gradients = {
       A: "bg-gradient-to-r from-red-500 to-pink-600",
-      B: "bg-gradient-to-r from-blue-500 to-blue-900",
+      B: "bg-gradient-to-r from-blue-500 to-cyan-600",
       C: "bg-gradient-to-r from-green-500 to-emerald-600",
       D: "bg-gradient-to-r from-purple-500 to-pink-600",
       E: "bg-gradient-to-r from-emerald-500 to-teal-600",
       F: "bg-gradient-to-r from-pink-500 to-rose-600",
       G: "bg-gradient-to-r from-orange-500 to-amber-600",
-      H: "bg-gradient-to-r from-slate-950 to-blue-900",
-      I: "bg-gradient-to-r from-blue-900 to-blue-600",
+      H: "bg-gradient-to-r from-indigo-500 to-violet-600",
+      I: "bg-gradient-to-r from-cyan-500 to-blue-600",
       J: "bg-gradient-to-r from-rose-500 to-red-600",
       K: "bg-gradient-to-r from-amber-500 to-yellow-600",
-      L: "bg-gradient-to-r from-slate-950 to-purple-600",
+      L: "bg-gradient-to-r from-violet-500 to-purple-600",
       M: "bg-gradient-to-r from-lime-500 to-green-600",
       N: "bg-gradient-to-r from-sky-500 to-blue-600",
       O: "bg-gradient-to-r from-fuchsia-500 to-purple-600",
       P: "bg-gradient-to-r from-teal-500 to-emerald-600",
       Q: "bg-gradient-to-r from-slate-600 to-gray-700",
       R: "bg-gradient-to-r from-red-400 to-pink-500",
-      S: "bg-gradient-to-r from-blue-400 to-blue-900",
+      S: "bg-gradient-to-r from-blue-400 to-cyan-500",
       T: "bg-gradient-to-r from-emerald-400 to-green-500",
-      U: "bg-gradient-to-r from-slate-950 to-purple-500",
+      U: "bg-gradient-to-r from-indigo-400 to-purple-500",
       V: "bg-gradient-to-r from-purple-400 to-pink-500",
       W: "bg-gradient-to-r from-orange-400 to-amber-500",
       X: "bg-gradient-to-r from-gray-500 to-slate-600",
@@ -272,7 +272,7 @@ function ModernHomeView({ student, feeBalance, feeLoading, token }) {
       label: 'Current Form', 
       value: `${student?.form || 'N/A'}`, 
       icon: <FaUser className="text-base sm:text-lg md:text-xl" />, 
-      gradient: 'from-blue-500 to-blue-900',
+      gradient: 'from-blue-500 to-cyan-600',
       bgGradient: 'from-blue-50 to-blue-100'
     },
     { 
@@ -304,8 +304,8 @@ function ModernHomeView({ student, feeBalance, feeLoading, token }) {
       title: 'Learning Hub',
       description: 'Access all your academic learning tools in one place, including assignments, revision materials, notes, and other essential learning resources provided by your teachers to support your daily studies and exam preparation.',
       icon: <FiBookOpen className="text-lg sm:text-xl md:text-2xl" />,
-      gradient: 'from-blue-500 to-blue-900',
-      bgGradient: 'from-blue-50 to-blue-900',
+      gradient: 'from-blue-500 to-indigo-600',
+      bgGradient: 'from-blue-50 to-indigo-100',
       actions: ['View Assignments', 'Browse Learning Resources']
     },
     {
@@ -954,7 +954,7 @@ if (!student || !token) {
       desc: "View and submit your subject tasks and holiday projects." 
     },
     { 
-      icon: <FaChartBar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-900" />, 
+      icon: <FaChartBar className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />, 
       title: "Academic Results", 
       desc: "Personalized performance tracking vs class & KCSE targets." 
     },

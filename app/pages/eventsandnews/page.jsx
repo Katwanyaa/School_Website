@@ -95,7 +95,7 @@ const ModernEventCard = ({ event, onView, onShare, onCalendar, onBookmark, viewM
 const getCategoryStyle = (category) => {
   const styles = {
     academic: { 
-      gradient: 'from-blue-500 to-blue-900', 
+      gradient: 'from-blue-500 to-cyan-500', 
       bg: 'bg-blue-50', 
       text: 'text-blue-700',
       border: 'border-blue-200', // Add this
@@ -342,7 +342,7 @@ const ModernNewsCard = ({ news, onView, onShare, onBookmark, viewMode = 'grid' }
         icon: <FiAward className="w-4 h-4" />
       },
       announcement: { 
-        gradient: 'from-blue-500 to-blue-900', 
+        gradient: 'from-blue-500 to-cyan-500', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -950,7 +950,7 @@ export default function ModernEventsNewsPage() {
 
   // Categories
   const categories = [
-    { id: 'all', name: 'All Events', icon: IoCalendarClearOutline, color: 'bg-gradient-to-r from-blue-500 to-blue-900' },
+    { id: 'all', name: 'All Events', icon: IoCalendarClearOutline, color: 'bg-gradient-to-r from-blue-500 to-cyan-500' },
     { id: 'academic', name: 'Academic', icon: IoNewspaperOutline, color: 'bg-gradient-to-r from-blue-500 to-purple-500' },
     { id: 'cultural', name: 'Cultural', icon: FiMusic, color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
     { id: 'sports', name: 'Sports', icon: FiTrendingUp, color: 'bg-gradient-to-r from-emerald-500 to-green-500' },
@@ -963,7 +963,7 @@ export default function ModernEventsNewsPage() {
       icon: IoCalendarClearOutline, 
       label: 'Upcoming Events', 
       sublabel: 'This month',
-      gradient: 'from-blue-500 to-blue-900'
+      gradient: 'from-blue-500 to-cyan-500'
     },
     { 
       icon: IoNewspaperOutline, 

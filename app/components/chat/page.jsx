@@ -891,7 +891,7 @@ ${schoolData ? 'For the most current information, choose a category below! 👇'
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-gradient-to-r from-blue-500 to-blue-900 hover:from-blue-600 hover:to-blue-900 text-white rounded-full p-4 shadow-lg transition-all hover:scale-100 active:scale-95"
+          className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full p-4 shadow-lg transition-all hover:scale-100 active:scale-95"
           aria-label="Open chat assistant"
           style={{
             transform: 'translateZ(0)',
@@ -916,7 +916,7 @@ ${schoolData ? 'For the most current information, choose a category below! 👇'
           }}
         >
           {/* Header with logo */}
-<div className="bg-gradient-to-r from-blue-600 to-blue-900 text-white p-3 sm:p-4 flex-shrink-0">
+<div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 sm:p-4 flex-shrink-0">
   <div className="flex justify-between items-center gap-2">
     
     {/* LEFT: Branding Section */}
@@ -1039,7 +1039,7 @@ ${schoolData ? 'For the most current information, choose a category below! 👇'
                             className={`inline-flex items-center gap-1 text-xs px-2 py-1.5 rounded transition-all font-medium whitespace-nowrap flex-shrink-0 ${
                               link.action === 'download'
                                 ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white'
-                                : 'bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-900 text-white'
+                                : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white'
                             }`}
                           >
                             {link.icon && <SafeIcon name={link.icon} className="w-3 h-3" />}

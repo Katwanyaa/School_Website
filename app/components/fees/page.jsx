@@ -71,20 +71,20 @@ function ModernLoadingSpinner({ message = "Loading fee data...", size = "medium"
             <CircularProgress 
               size={outer} 
               thickness={5}
-              className="text-blue-900"
+              className="text-indigo-600"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-slate-950 to-blue-900 rounded-full" style={{ width: inner, height: inner }}></div>
+              <div className="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full" style={{ width: inner, height: inner }}></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full blur-xl opacity-30" />
+          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30" />
         </div>
         
         <div className="mt-8 space-y-3">
           <span className="block text-lg font-semibold text-gray-800">{message}</span>
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-blue-900 rounded-full"></div>
+              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full"></div>
             ))}
           </div>
         </div>
@@ -509,7 +509,7 @@ function ModernFeeEditModal({ fee, student, onClose, onSave, loading }) {
         bgcolor: 'background.paper', borderRadius: 3, boxShadow: 24, overflow: 'hidden',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-white bg-opacity-20 rounded-2xl">
@@ -925,7 +925,7 @@ function ModernFeeChart({
         {/* Header: Reduced text and spacing */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className={`shrink-0 w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-blue-900 flex items-center justify-center shadow-md`}>
+            <div className={`shrink-0 w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-md`}>
               <span className="text-white text-lg">📊</span>
             </div>
             <div>
@@ -1150,7 +1150,7 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
         flexDirection: 'column'
       }}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-2 bg-white/20 rounded-xl">
@@ -1424,7 +1424,7 @@ function DuplicateValidationModal({ open, onClose, duplicates, onProceed, loadin
         <div className={`p-4 sm:p-6 text-white ${
           uploadType === 'update' 
             ? 'bg-gradient-to-r from-amber-500 to-orange-600' 
-            : 'bg-gradient-to-r from-blue-600 to-blue-900'
+            : 'bg-gradient-to-r from-blue-600 to-indigo-600'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -1690,7 +1690,7 @@ export default function ModernSchoolFeesManagement() {
 const getFormBadgeColor = (form) => {
   const formColors = {
     '1': 'bg-blue-100 text-blue-800',
-    '2': 'bg-blue-900 text-blue-900',
+    '2': 'bg-indigo-100 text-indigo-800',
     '3': 'bg-purple-100 text-purple-800',
     '4': 'bg-pink-100 text-pink-800',
     '5': 'bg-rose-100 text-rose-800',
@@ -1707,7 +1707,7 @@ const getFormBadgeColor = (form) => {
 const getFormTextColor = (form) => {
   const formTextColors = {
     '1': 'text-blue-700',
-    '2': 'text-blue-900',
+    '2': 'text-indigo-700',
     '3': 'text-purple-700',
     '4': 'text-pink-700',
     '5': 'text-rose-700',
@@ -1810,7 +1810,7 @@ function FeeDuplicateValidationModal({
         <div className={`p-4 sm:p-6 text-white ${
           uploadType === 'update' 
             ? 'bg-gradient-to-r from-orange-500 to-red-600' 
-            : 'bg-gradient-to-r from-blue-600 to-blue-900'
+            : 'bg-gradient-to-r from-blue-600 to-indigo-600'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -2950,7 +2950,7 @@ if (loading && view === 'fees' && schoolFees.length === 0) {
           title="Collection Rate" 
           value={stats.collectionRate ? `${stats.collectionRate.toFixed(1)}%` : '0%'} 
           icon={FiPercent} 
-          color="from-slate-950 to-blue-900" 
+          color="from-indigo-500 to-indigo-700" 
           trend={0} 
           description="Percentage of fees collected"
         />
@@ -3537,7 +3537,7 @@ if (loading && view === 'fees' && schoolFees.length === 0) {
           <td className="px-6 py-5">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-900 flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
                   <FiUser className="w-5 h-5 text-white" />
                 </div>
                 <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
@@ -3688,7 +3688,7 @@ if (loading && view === 'fees' && schoolFees.length === 0) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-900 flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
                 <FiUser className="w-5 h-5 text-white" />
               </div>
               <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${

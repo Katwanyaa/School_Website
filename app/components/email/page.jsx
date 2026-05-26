@@ -245,7 +245,7 @@ const UploadAttachments = ({ open, onClose, onFilesSelected, existingAttachments
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-4 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-4 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -315,7 +315,7 @@ const UploadAttachments = ({ open, onClose, onFilesSelected, existingAttachments
               className={`px-4 py-2 rounded-lg font-medium ${
                 currentTotalSize >= MAX_TOTAL_SIZE
                   ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-500 to-blue-900 text-white'
+                  : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
               }`}
               disabled={currentTotalSize >= MAX_TOTAL_SIZE}
             >
@@ -372,7 +372,7 @@ const UploadAttachments = ({ open, onClose, onFilesSelected, existingAttachments
               </div>
               <div className="space-y-2">
                 {files.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50/50 to-blue-900 rounded-lg border border-blue-200/60">
+                  <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 rounded-lg border border-blue-200/60">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{getFileIcon(file.name.split('.').pop())}</span>
                       <div>
@@ -414,7 +414,7 @@ const UploadAttachments = ({ open, onClose, onFilesSelected, existingAttachments
               className={`flex-1 px-4 py-2.5 rounded-xl font-medium transition-all ${
                 currentTotalSize > MAX_TOTAL_SIZE || uploading || files.length === 0
                   ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-500 to-blue-900 text-white hover:shadow-lg'
+                  : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:shadow-lg'
               }`}
             >
               {uploading ? (
@@ -482,7 +482,7 @@ const ConfirmationModal = ({
               className={`flex-1 px-4 py-2.5 text-white rounded-xl font-medium transition-all ${
                 isDanger 
                   ? 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700' 
-                  : 'bg-gradient-to-r from-blue-500 to-blue-900 hover:from-blue-600 hover:to-blue-900'
+                  : 'bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700'
               }`}
               disabled={loading}
             >
@@ -716,7 +716,7 @@ const CampaignCard = ({
                 {campaign.status === 'draft' && (
                   <button
                     onClick={() => onEdit(campaign)}
-                    className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-black text-blue-900 bg-blue-900 border-2 border-blue-900 rounded-xl hover:bg-blue-900 hover:border-blue-900 transition-all active:scale-95 shadow-sm"
+                    className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-black text-indigo-800 bg-indigo-50 border-2 border-indigo-200 rounded-xl hover:bg-indigo-100 hover:border-indigo-300 transition-all active:scale-95 shadow-sm"
                   >
                     <Edit className="w-4 h-4" /> Edit
                   </button>
@@ -1000,9 +1000,9 @@ const recipientGroups = useMemo(() => {
       label: 'All Recipients',
       shortLabel: 'All',
       count: calculateTotalRecipients(),
-      color: 'from-blue-500 to-blue-900',
+      color: 'from-blue-500 to-cyan-500',
       icon: Users,
-      gradient: 'bg-gradient-to-r from-blue-500 to-blue-900'
+      gradient: 'bg-gradient-to-r from-blue-500 to-cyan-500'
     },
     { 
       value: 'parents', 
@@ -1045,18 +1045,18 @@ const recipientGroups = useMemo(() => {
       label: 'Support Staff',
       shortLabel: 'Support',
       count: getSupportStaffCount(),
-      color: 'from-slate-950 to-blue-900',
+      color: 'from-indigo-500 to-violet-500',
       icon: Users,
-      gradient: 'bg-gradient-to-r from-slate-950 to-blue-900'
+      gradient: 'bg-gradient-to-r from-indigo-500 to-violet-500'
     },
     { 
       value: 'staff', 
       label: 'All School Staff',
       shortLabel: 'Staff',
       count: getAllStaffCount(),
-      color: 'from-blue-900 to-blue-500',
+      color: 'from-cyan-500 to-blue-500',
       icon: Users,
-      gradient: 'bg-gradient-to-r from-blue-900 to-blue-500'
+      gradient: 'bg-gradient-to-r from-cyan-500 to-blue-500'
     }
   ];
 }, [students, staff]);
@@ -1832,11 +1832,11 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
 <div className="group relative bg-[#0F172A] rounded-xl md:rounded-[2.5rem] p-5 md:p-8 text-white overflow-hidden shadow-2xl border border-white/5 transition-all duration-500 mb-6 sm:mb-8">
   
   {/* Abstract Gradient Orbs - Blue/Cyan/ Emerald Theme */}
-  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-blue-600/30 via-blue-900 to-transparent rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-blue-600/30 via-cyan-600/20 to-transparent rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
   <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-gradient-to-tr from-emerald-600/20 via-teal-600/10 to-transparent rounded-full blur-[80px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
   
   {/* Central Floating Orb for Depth */}
-  <div className="absolute top-[30%] left-[20%] w-[180px] h-[180px] bg-gradient-to-r from-blue-900 to-blue-600/20 rounded-full blur-[70px] pointer-events-none animate-pulse" />
+  <div className="absolute top-[30%] left-[20%] w-[180px] h-[180px] bg-gradient-to-r from-cyan-600/20 to-blue-600/20 rounded-full blur-[70px] pointer-events-none animate-pulse" />
   
   {/* Subtle Grid Pattern Overlay */}
   <div className="absolute inset-0 opacity-[0.02]" style={{ 
@@ -1858,7 +1858,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
       <div className="flex-1 min-w-0">
         {/* Premium Institution Badge */}
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-blue-500 via-blue-900 to-emerald-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+          <div className="h-7 w-1 bg-gradient-to-b from-blue-500 via-cyan-500 to-emerald-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
           <div>
             <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400">
               Katwanyaa Senior School
@@ -1873,19 +1873,19 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
         <div className="flex items-start gap-4 mb-3">
           <div className="relative shrink-0">
             {/* Icon with Multi-layer Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-blue-900 to-emerald-500 rounded-xl md:rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 rounded-xl md:rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl md:rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="absolute inset-0 rounded-xl md:rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             
             {/* Main Icon Container */}
-            <div className="relative p-3 md:p-4 bg-gradient-to-br from-blue-600 via-blue-900 to-emerald-600 rounded-xl md:rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
+            <div className="relative p-3 md:p-4 bg-gradient-to-br from-blue-600 via-cyan-600 to-emerald-600 rounded-xl md:rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
               <Mail className="text-white w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>
           
           <div className="flex-1 min-w-0">
             {/* Communication Badge - Now Always Visible */}
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-gradient-to-r from-blue-500/20 via-blue-900 to-emerald-500/20 backdrop-blur-sm rounded-full mb-2 border border-white/10">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-emerald-500/20 backdrop-blur-sm rounded-full mb-2 border border-white/10">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-[10px] xs:text-xs font-bold text-white uppercase tracking-widest">
                 Communication Hub
@@ -1894,7 +1894,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
             
        <h1 className="text-2xl md:text-3xl font-black tracking-tight">
   <span className="text-white">Email</span>{' '}
-  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-900 to-emerald-200">
+  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-cyan-200 to-emerald-200">
     Campaign Manager
   </span>
 </h1>
@@ -1904,9 +1904,9 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
         {/* Enhanced Description */}
         <p className="text-blue-100/70 text-sm md:text-[15px] font-medium leading-relaxed max-w-3xl">
           Create, schedule, and manage email campaigns for effective school communication.
-          <span className="block mt-1 text-xs text-blue-900">
+          <span className="block mt-1 text-xs text-cyan-300/60">
             Powered by{' '}
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-blue-500/20 to-blue-900 text-blue-900 border border-blue-900 font-bold">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-cyan-300 border border-cyan-500/20 font-bold">
               <Mail className="w-3 h-3" />
               SMTP Relay
             </span>
@@ -1920,7 +1920,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
             <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">Service: Active</span>
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-            <Mail className="w-3 h-3 text-blue-900" />
+            <Mail className="w-3 h-3 text-cyan-400" />
             <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">{campaigns?.length || 0} Campaigns</span>
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
@@ -1966,7 +1966,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
           {/* New Campaign Button - Gradient Primary */}
           <button
             onClick={openCreateModal}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5 px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-900 to-emerald-600 hover:from-blue-700 hover:via-blue-900 hover:to-emerald-700 text-white rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 shadow-[0_8px_20px_rgba(6,182,212,0.3)] hover:shadow-[0_12px_30px_rgba(6,182,212,0.4)] w-full xs:w-auto"
+            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5 px-6 py-3 bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 hover:from-blue-700 hover:via-cyan-700 hover:to-emerald-700 text-white rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 shadow-[0_8px_20px_rgba(6,182,212,0.3)] hover:shadow-[0_12px_30px_rgba(6,182,212,0.4)] w-full xs:w-auto"
           >
             {/* Button Shine Effect */}
             <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -2008,9 +2008,9 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
       
       {/* Email Service */}
       <div className="flex items-center gap-2">
-        <Mail className="w-3 h-3 text-blue-900" />
+        <Mail className="w-3 h-3 text-cyan-400" />
         <span className="text-white/40">Service:</span>
-        <span className="text-blue-900">SMTP Active</span>
+        <span className="text-cyan-400">SMTP Active</span>
       </div>
       
       {/* Campaign Count */}
@@ -2074,7 +2074,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
       { label: 'Draft', value: stats.draft, icon: <FcClock />, bg: 'hover:border-amber-200' },
       { label: 'Sent', value: stats.published, icon: <FcOk />, bg: 'hover:border-emerald-200' },
       { label: 'Recipients', value: stats.totalRecipients, icon: <FcConferenceCall />, bg: 'hover:border-purple-200' },
-      { label: 'Success', value: `${stats.successRate}%`, icon: <FcLineChart />, bg: 'hover:border-blue-900' }
+      { label: 'Success', value: `${stats.successRate}%`, icon: <FcLineChart />, bg: 'hover:border-cyan-200' }
     ].map((stat) => (
       <div
         key={stat.label}
@@ -2118,7 +2118,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
 
       {/* Selection Actions Bar */}
       {selectedCampaigns.size > 0 && (
-        <div className="bg-gradient-to-r from-blue-50/80 to-blue-900 backdrop-blur-sm border border-blue-200/50 rounded-xl p-4 mb-6 animate-in slide-in-from-top-2 duration-300">
+        <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border border-blue-200/50 rounded-xl p-4 mb-6 animate-in slide-in-from-top-2 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-blue-100/80 backdrop-blur-sm text-blue-700 px-3 py-1.5 rounded-lg font-medium flex items-center gap-2 shadow-xs">
@@ -2303,11 +2303,11 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
         onClick={openCreateModal}
         className="
           inline-flex items-center gap-2
-          bg-gradient-to-r from-blue-500 to-blue-900
+          bg-gradient-to-r from-blue-500 to-cyan-500
           text-white px-4 py-2.5 rounded-xl
           transition-all duration-300 font-medium
           hover:scale-101
-          hover:from-blue-600 hover:to-blue-900
+          hover:from-blue-600 hover:to-cyan-600
           hover:shadow-blue-500/25
         "
       >
@@ -2438,7 +2438,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
         {selectedCampaign && (
           <>
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-900 p-4 text-white">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 p-4 text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="p-2 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -2462,7 +2462,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
               <div className="space-y-6">
                 {/* Campaign Info */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-900 rounded-lg p-4 border border-blue-200/50">
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200/50">
                     <h3 className="font-bold text-gray-900 mb-2">Campaign Information</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
@@ -2500,7 +2500,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
                       {selectedCampaign.sentAt && (
                         <div className="flex justify-between">
                           <span className="text-gray-600">Sent:</span>
-                          <span className="font-bold bg-gradient-to-r from-slate-950 to-blue-900 bg-clip-text text-transparent">
+                          <span className="font-bold bg-gradient-to-r from-violet-700 to-violet-800 bg-clip-text text-transparent">
                             {new Date(selectedCampaign.sentAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -2529,7 +2529,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Emails Sent:</span>
-                        <span className="font-bold bg-gradient-to-r from-blue-900 to-blue-900 bg-clip-text text-transparent">
+                        <span className="font-bold bg-gradient-to-r from-cyan-700 to-cyan-800 bg-clip-text text-transparent">
                           {selectedCampaign.sentCount || 0}
                         </span>
                       </div>
@@ -2580,12 +2580,12 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
                     }}
                     className="
                       flex-1
-                      bg-gradient-to-r from-blue-500 to-blue-900
+                      bg-gradient-to-r from-blue-500 to-cyan-500
                       text-white py-2.5 rounded-lg
                       transition-all duration-300
                       font-medium shadow-lg
                       hover:shadow-xl hover:scale-101
-                      hover:from-blue-600 hover:to-blue-900
+                      hover:from-blue-600 hover:to-cyan-600
                       hover:shadow-blue-500/25
                     "
                   >
@@ -2685,7 +2685,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
       </div>
       
       {/* Subject Field - Enhanced */}
-      <div className="bg-gradient-to-br from-blue-50 to-blue-900 rounded-xl p-4 border border-blue-200">
+      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
         <label className=" text-md font-bold text-gray-800 mb-2 flex items-center gap-2">
           <span className="text-red-500">*</span> Email Subject
         </label>
@@ -3004,7 +3004,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
     <>
       {/* Enhanced Header */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-900"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/20"></div>
         <div className="relative p-5 text-white">
           <div className="flex items-center justify-between">
@@ -3033,10 +3033,10 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
       <div className="max-h-[calc(85vh-130px)] overflow-y-auto p-5 modern-scrollbar">
         <div className="space-y-5">
           {/* Campaign Info Card - Enhanced */}
-          <div className="bg-gradient-to-br from-blue-50 via-white to-blue-900 rounded-xl p-5 border border-blue-200 shadow-sm">
+          <div className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 rounded-xl p-5 border border-blue-200 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-900 rounded-lg">
+                <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
                   <Info className="w-4 h-4 text-white" />
                 </div>
                 Campaign Information
@@ -3053,7 +3053,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                  <div className="p-2 bg-gradient-to-r from-blue-100 to-blue-900 rounded-lg">
+                  <div className="p-2 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg">
                     <Users className="w-4 h-4 text-blue-600" />
                   </div>
                   <div>
@@ -3096,12 +3096,12 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
                 
                 {selectedCampaign.sentAt && (
                   <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="p-2 bg-gradient-to-r from-slate-950 to-blue-900 rounded-lg">
-                      <Send className="w-4 h-4 text-blue-900" />
+                    <div className="p-2 bg-gradient-to-r from-violet-100 to-indigo-100 rounded-lg">
+                      <Send className="w-4 h-4 text-violet-600" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Sent</p>
-                      <p className="text-sm font-bold text-blue-900">
+                      <p className="text-sm font-bold text-violet-700">
                         {new Date(selectedCampaign.sentAt).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -3158,7 +3158,7 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {selectedCampaign.attachments.slice(0, 3).map((attachment, index) => (
-                    <div key={index} className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-50 to-blue-900 rounded-lg border border-blue-200">
+                    <div key={index} className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
                       <FileText className="w-3.5 h-3.5 text-blue-500" />
                       <span className="text-xs font-medium text-blue-700">
                         {attachment.name}
@@ -3221,8 +3221,8 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
       <div className="p-5 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-900 px-3 py-1.5 rounded-full">
-              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-blue-900 rounded-full"></div>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-cyan-100 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full"></div>
               <span className="font-bold">Campaign ID: #{selectedCampaign.id?.slice(0, 8) || 'N/A'}</span>
             </div>
           </div>
@@ -3240,8 +3240,8 @@ const CampaignAttachmentsDisplay = ({ campaign }) => {
                   text-sm
                   font-bold
                   text-white
-                  bg-gradient-to-r from-blue-500 to-blue-900
-                  hover:from-blue-600 hover:to-blue-900
+                  bg-gradient-to-r from-blue-500 to-cyan-500
+                  hover:from-blue-600 hover:to-cyan-600
                   transition-all duration-200
                   shadow-lg
                   hover:shadow-xl

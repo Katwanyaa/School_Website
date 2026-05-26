@@ -61,10 +61,10 @@ function ResultsLoadingSpinner({ message = "Loading academic results...", size =
               className="text-purple-600"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-purple-500 to-blue-900 rounded-full" style={{ width: inner, height: inner }}></div>
+              <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full" style={{ width: inner, height: inner }}></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-purple-100 to-blue-900 rounded-full blur-xl opacity-30"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-full blur-xl opacity-30"></div>
         </div>
         
         <div className="mt-8 space-y-3">
@@ -159,7 +159,7 @@ function ResultsUploadStrategyModal({ open, onClose, onConfirm, loading, showNot
           overflowY: 'auto' // Ensure content can scroll
         }}
       >
-        <div className="bg-gradient-to-r from-purple-600 to-blue-900 p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 sm:p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-2 bg-white/20 rounded-xl">
@@ -1153,7 +1153,7 @@ function ResultEditModal({ result, student, onClose, onSave, loading }) {
         overflow: 'hidden',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
-        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-blue-900 p-6 text-white">
+        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-800 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-white bg-opacity-20 rounded-2xl">
@@ -1727,7 +1727,7 @@ function ResultDetailModal({ result, student, onClose, onEdit, onDelete, showNot
       background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
     }}
   >
-    <header className="flex items-center justify-between p-6 text-white bg-gradient-to-r from-purple-600 via-purple-700 to-blue-900">
+    <header className="flex items-center justify-between p-6 text-white bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-800">
       <div className="flex items-center gap-4">
         <div className="p-3 bg-white/20 rounded-2xl">
           <FiAward className="text-2xl" />
@@ -1746,7 +1746,7 @@ function ResultDetailModal({ result, student, onClose, onEdit, onDelete, showNot
 
     <main className="max-h-[calc(95vh-80px)] overflow-y-auto p-6 space-y-8">
       <section className="flex flex-col md:flex-row items-center gap-6">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-purple-700 to-blue-900 flex items-center justify-center ring-4 ring-purple-100">
+        <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-purple-700 to-indigo-500 flex items-center justify-center ring-4 ring-purple-100">
           <IoSchool className="text-3xl text-white" />
         </div>
 
@@ -1762,7 +1762,7 @@ function ResultDetailModal({ result, student, onClose, onEdit, onDelete, showNot
             {[result.form, result.term, result.academicYear].map((item, i) => (
               <span
                 key={i}
-                className="px-4 py-2 text-sm font-bold text-white rounded-xl bg-gradient-to-r from-purple-500 to-blue-900"
+                className="px-4 py-2 text-sm font-bold text-white rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600"
               >
                 {item}
               </span>
@@ -2273,12 +2273,12 @@ function ResultsChart({
 
   return (
     <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-2xl relative overflow-hidden">
-      <div className="absolute -top-10 -right-10 w-60 h-60 bg-gradient-to-br from-purple-50 to-blue-900 rounded-full blur-3xl opacity-60" />
+      <div className="absolute -top-10 -right-10 w-60 h-60 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-full blur-3xl opacity-60" />
       
       <div className="relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-700 via-purple-600 to-blue-900 flex items-center justify-center shadow-2xl ring-4 ring-purple-100">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-700 via-purple-600 to-indigo-500 flex items-center justify-center shadow-2xl ring-4 ring-purple-100">
               {type === 'pie' && <FiPieChart className="text-white text-xl" />}
               {type === 'bar' && <FiBarChart2 className="text-white text-xl" />}
               {type === 'radar' && <FiTarget className="text-white text-xl" />}
@@ -3438,7 +3438,7 @@ return (
         </MuiAlert>
       </Snackbar>
 
-      <div className="relative bg-gradient-to-r from-purple-600 via-blue-900 to-purple-800 rounded-2xl p-8 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-800 rounded-2xl p-8 text-white overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-white/20 rounded-2xl">
@@ -3572,7 +3572,7 @@ return (
         title="Unique Students"
         value={stats.totalStudents}  // This should be 30 from your logs
         icon={FiUsers}
-        color="from-slate-950 to-blue-900"
+        color="from-indigo-500 to-indigo-700"
         trend={0}
       />
     </div>
@@ -3726,7 +3726,7 @@ return (
         title="Unique Students"
         value={stats.totalStudents}
         icon={FiUsers}
-        color="from-slate-950 to-blue-900"
+        color="from-indigo-500 to-indigo-700"
         trend={5.2}
       />
     </div>
@@ -3775,7 +3775,7 @@ return (
                     <div className={`p-2 rounded-lg ${
                       uploadStrategy.uploadMode === 'create' 
                         ? 'bg-purple-100 text-purple-700' 
-                        : 'bg-blue-900 text-blue-900'
+                        : 'bg-indigo-100 text-indigo-700'
                     }`}>
                       {uploadStrategy.uploadMode === 'create' ? <FiPlus /> : <FiDatabase />}
                     </div>
@@ -3991,24 +3991,24 @@ return (
         </div>
 
         {/* Quick Stats */}
-        <div className="bg-gradient-to-br from-slate-950 to-blue-900 rounded-2xl border-2 border-blue-900 p-6 shadow-xl">
-          <h3 className="text-xl font-bold text-blue-900 mb-6">Quick Stats</h3>
+        <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl border-2 border-indigo-300 p-6 shadow-xl">
+          <h3 className="text-xl font-bold text-indigo-900 mb-6">Quick Stats</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-blue-900 font-bold">Total Forms</span>
-              <span className="text-2xl font-bold text-blue-900">4</span>
+              <span className="text-indigo-800 font-bold">Total Forms</span>
+              <span className="text-2xl font-bold text-indigo-700">4</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-blue-900 font-bold">Unique Identifier</span>
-              <span className="font-bold text-blue-900">Admission # + Term + Year</span>
+              <span className="text-indigo-800 font-bold">Unique Identifier</span>
+              <span className="font-bold text-indigo-700">Admission # + Term + Year</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-blue-900 font-bold">Max File Size</span>
-              <span className="font-bold text-blue-900">10 MB</span>
+              <span className="text-indigo-800 font-bold">Max File Size</span>
+              <span className="font-bold text-indigo-700">10 MB</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-blue-900 font-bold">Supported Formats</span>
-              <span className="font-bold text-blue-900">CSV, Excel</span>
+              <span className="text-indigo-800 font-bold">Supported Formats</span>
+              <span className="font-bold text-indigo-700">CSV, Excel</span>
             </div>
           </div>
         </div>
@@ -4142,7 +4142,7 @@ return (
                                 <tr key={result.id} className="hover:bg-gray-50 transition-colors">
                                   <td className="px-8 py-6">
                                     <div className="flex items-center gap-4">
-                                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-blue-900 flex items-center justify-center">
+                                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center">
                                         <FiUser className="text-white text-xl" />
                                       </div>
                                       <div>

@@ -367,7 +367,7 @@ const ApplicationDetailModal = ({ application, open, onClose }) => {
   return (
     <ModernModal open={open} onClose={onClose} maxWidth="1000px">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-900 to-purple-700 p-6 text-white">
+      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 p-6 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -396,7 +396,7 @@ const ApplicationDetailModal = ({ application, open, onClose }) => {
           {sections.map((section, sectionIndex) => (
             <div key={sectionIndex} className="bg-white/80 rounded-xl p-5 border border-gray-200">
               <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-                <div className="p-2 bg-gradient-to-r from-blue-100 to-blue-900 rounded-lg">
+                <div className="p-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg">
                   {section.icon}
                 </div>
                 <h3 className="text-lg font-bold text-gray-800">{section.title}</h3>
@@ -470,7 +470,7 @@ const ApplicationDetailModal = ({ application, open, onClose }) => {
                 // You can add print functionality here
                 window.print()
               }}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-900 text-white rounded-lg transition-all duration-200 font-medium hover:opacity-90"
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg transition-all duration-200 font-medium hover:opacity-90"
             >
               Print Application
             </button>
@@ -564,7 +564,7 @@ const [decisionData, setDecisionData] = useState({
   
   // Stream data
   const streams = [
-    { value: 'SCIENCE', label: 'Science', icon: '🔬', color: 'from-blue-500 to-blue-900' },
+    { value: 'SCIENCE', label: 'Science', icon: '🔬', color: 'from-blue-500 to-cyan-500' },
     { value: 'ARTS', label: 'Arts', icon: '🎨', color: 'from-purple-500 to-pink-500' },
     { value: 'BUSINESS', label: 'Business', icon: '💼', color: 'from-green-500 to-emerald-500' },
     { value: 'TECHNICAL', label: 'Technical', icon: '⚙️', color: 'from-orange-500 to-red-500' }
@@ -575,7 +575,7 @@ const [decisionData, setDecisionData] = useState({
     { value: 'all', label: 'All Status' },
     { value: 'PENDING', label: 'Pending', color: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Clock },
     { value: 'UNDER_REVIEW', label: 'Under Review', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: Eye },
-    { value: 'INTERVIEW_SCHEDULED', label: 'Interview Scheduled', color: 'bg-blue-900 text-blue-900 border-blue-900', icon: CalendarDays },
+    { value: 'INTERVIEW_SCHEDULED', label: 'Interview Scheduled', color: 'bg-indigo-100 text-indigo-800 border-indigo-200', icon: CalendarDays },
     { value: 'INTERVIEWED', label: 'Interviewed', color: 'bg-purple-100 text-purple-800 border-purple-200', icon: UserCheck },
     { value: 'ACCEPTED', label: 'Accepted', color: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: CheckCircle2 },
     { value: 'CONDITIONAL_ACCEPTANCE', label: 'Conditional', color: 'bg-teal-100 text-teal-800 border-teal-200', icon: ShieldCheck },
@@ -594,7 +594,7 @@ const [decisionData, setDecisionData] = useState({
     { 
       value: 'CONDITIONAL_ACCEPTANCE', 
       label: 'Conditional', 
-      color: 'bg-gradient-to-r from-teal-500 to-blue-900', 
+      color: 'bg-gradient-to-r from-teal-500 to-cyan-500', 
       icon: ShieldCheck 
     },
     { 
@@ -612,7 +612,7 @@ const [decisionData, setDecisionData] = useState({
     { 
       value: 'INTERVIEW_SCHEDULED', 
       label: 'Schedule Interview', 
-      color: 'bg-gradient-to-r from-slate-950 to-purple-500', 
+      color: 'bg-gradient-to-r from-indigo-500 to-purple-500', 
       icon: Calendar 
     }
   ]
@@ -914,7 +914,7 @@ const topPerformersStats = useMemo(() => {
   const getStreamBadge = (streamValue) => {
     const stream = streams.find(s => s.value === streamValue) || streams[0]
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-50 to-blue-900 text-blue-800 border border-blue-200">
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-800 border border-blue-200">
         <span>{stream.icon}</span>
         {stream.label}
       </span>
@@ -1389,7 +1389,7 @@ const EmptyState = () => (
       <p className="text-gray-500 mb-6">Try adjusting your filters or search terms</p>
       <button
         onClick={resetFilters}
-        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-900 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
       >
         Clear All Filters
       </button>
@@ -1405,21 +1405,21 @@ const EmptyState = () => (
 {/* Modern Applications Dashboard Header - Enhanced with Premium Design */}
 <div className="relative mb-6 sm:mb-8 overflow-hidden
                 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem]
-                bg-gradient-to-br from-blue-700 via-purple-700 to-blue-900
+                bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-700
                 p-4 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl">
 
   {/* Abstract Gradient Orbs - Purple/Blue Theme */}
   <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] 
-                  bg-gradient-to-br from-purple-500/30 via-blue-900 to-blue-500/30 
+                  bg-gradient-to-br from-purple-500/30 via-indigo-500/20 to-blue-500/30 
                   rounded-full blur-[100px] pointer-events-none animate-pulse" />
   
   <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] 
-                  bg-gradient-to-tr from-blue-500/20 via-blue-900 to-purple-500/20 
+                  bg-gradient-to-tr from-blue-500/20 via-indigo-500/10 to-purple-500/20 
                   rounded-full blur-[80px] pointer-events-none" />
   
   {/* Central Floating Orb */}
   <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] 
-                  bg-gradient-to-r from-slate-950 to-purple-500/20 
+                  bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
                   rounded-full blur-[70px] pointer-events-none animate-pulse" />
   
   {/* Subtle Grid Pattern */}
@@ -1443,10 +1443,10 @@ const EmptyState = () => (
         
         {/* Premium Institution Badge */}
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-purple-400 via-blue-900 to-blue-400 
+          <div className="h-7 w-1 bg-gradient-to-b from-purple-400 via-indigo-400 to-blue-400 
                           rounded-full shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-900">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-200">
               Katwanyaa Senior School            </h2>
             <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
               Student Support Services
@@ -1472,11 +1472,11 @@ const EmptyState = () => (
 
             {/* Security Badge */}
             <div className="hidden xs:inline-flex items-center gap-1.5 px-2.5 py-1 
-                            bg-gradient-to-r from-slate-950 to-purple-500/20 
+                            bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
                             backdrop-blur-sm rounded-full mb-2 sm:mb-3 max-w-max 
                             border border-white/10">
-              <ShieldCheck className="w-2.5 h-2.5 text-blue-900" />
-              <span className="text-[9px] font-bold text-blue-900 uppercase tracking-wider">
+              <ShieldCheck className="w-2.5 h-2.5 text-indigo-300" />
+              <span className="text-[9px] font-bold text-indigo-300 uppercase tracking-wider">
                 Secure Portal
               </span>
             </div>
@@ -1487,14 +1487,14 @@ const EmptyState = () => (
               Admissions
               <span className="block sm:inline"> </span>
               <span className="text-transparent bg-clip-text
-                               bg-gradient-to-r from-blue-900 to-purple-200">
+                               bg-gradient-to-r from-cyan-200 to-purple-200">
                 Dashboard
               </span>
             </h1>
 
             {/* Description */}
             <p className="mt-2 sm:mt-3 text-sm xs:text-base sm:text-lg
-                          text-blue-900 font-medium
+                          text-indigo-100/90 font-medium
                           max-w-2xl leading-relaxed">
               Manage and review student applications efficiently with real-time updates.
             </p>
@@ -1510,7 +1510,7 @@ const EmptyState = () => (
               </div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
                               bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <Users className="w-3 h-3 text-blue-900" />
+                <Users className="w-3 h-3 text-indigo-400" />
                 <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
                   {stats.total || 0} Applications
                 </span>
@@ -1561,8 +1561,8 @@ const EmptyState = () => (
             onClick={exportApplications}
             className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
                        px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-gradient-to-r from-slate-950 via-purple-500 to-pink-500
-                       hover:from-slate-950 hover:via-purple-600 hover:to-pink-600
+                       bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+                       hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600
                        text-white rounded-xl sm:rounded-2xl font-semibold
                        active:scale-95 transition-all
                        shadow-[0_8px_20px_rgba(99,102,241,0.3)] 
@@ -1588,7 +1588,7 @@ const EmptyState = () => (
 
         {/* Today's Stats - Desktop */}
         <div className="hidden lg:flex flex-col items-end">
-          <span className="text-[9px] font-bold text-blue-900 uppercase tracking-widest">
+          <span className="text-[9px] font-bold text-indigo-300/70 uppercase tracking-widest">
             Active Today
           </span>
           <span className="text-2xl font-black text-white">
@@ -1615,9 +1615,9 @@ const EmptyState = () => (
       
       {/* Security Badge */}
       <div className="flex items-center gap-2">
-        <ShieldCheck className="w-3 h-3 text-blue-900" />
+        <ShieldCheck className="w-3 h-3 text-indigo-400" />
         <span className="text-white/40">Security:</span>
-        <span className="text-blue-900">Encrypted</span>
+        <span className="text-indigo-400">Encrypted</span>
       </div>
       
       {/* Total Applications */}
@@ -1683,7 +1683,7 @@ const EmptyState = () => (
       { label: 'Accepted', value: stats.accepted, icon: <FcOk />, bg: 'hover:border-emerald-200' },
       { label: 'Rejected', value: stats.rejected, icon: <XCircle className="text-rose-500 text-3xl sm:text-4xl" />, bg: 'hover:border-rose-200' },
       { label: 'Interview', value: stats.interviewScheduled + stats.interviewed, icon: <FcConferenceCall />, bg: 'hover:border-purple-200' },
-      { label: 'Decision Rate', value: `${stats.decisionRate}%`, icon: <FcLineChart />, bg: 'hover:border-blue-900' }
+      { label: 'Decision Rate', value: `${stats.decisionRate}%`, icon: <FcLineChart />, bg: 'hover:border-indigo-200' }
     ].map((stat) => (
       <div
         key={stat.label}
@@ -1729,7 +1729,7 @@ const EmptyState = () => (
     <div className="flex items-center gap-6">
       {/* Selection Count */}
       <div className="flex items-center gap-2">
-        <div className="bg-blue-900 text-white flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold">
+        <div className="bg-indigo-600 text-white flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold">
           {selectedApplications.size}
         </div>
         <span className="text-sm font-semibold text-slate-700 underline-offset-4 decoration-indigo-200 decoration-2">
@@ -2039,10 +2039,10 @@ const EmptyState = () => (
           <th className="p-5 text-left border-b border-slate-200 w-16">
             <button 
               onClick={toggleSelectAll} 
-              className="w-6 h-6 rounded-md border-2 border-slate-300 flex items-center justify-center transition-colors hover:border-blue-900 bg-white"
+              className="w-6 h-6 rounded-md border-2 border-slate-300 flex items-center justify-center transition-colors hover:border-indigo-500 bg-white"
             >
               {selectedApplications.size === filteredApplications.length ? (
-                <CheckSquare className="w-5 h-5 text-blue-900" />
+                <CheckSquare className="w-5 h-5 text-indigo-600" />
               ) : (
                 <Square className="w-5 h-5 text-slate-300" />
               )}
@@ -2066,7 +2066,7 @@ const EmptyState = () => (
             <tr className="bg-slate-50/40">
               <td colSpan={columns.length} className="px-6 py-2 border-y border-slate-100">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-900" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     {group.label}
                   </span>
@@ -2081,7 +2081,7 @@ const EmptyState = () => (
                 <tr 
                   key={application.id} 
                   className={`group transition-all duration-200 hover:bg-slate-50/80 ${
-                    isSelected ? 'bg-blue-900' : ''
+                    isSelected ? 'bg-indigo-50/40' : ''
                   }`}
                   onClick={() => toggleSelectApplication(application.id)}
                   style={{ cursor: 'pointer' }}
@@ -2089,7 +2089,7 @@ const EmptyState = () => (
                   <td className="p-5" onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => toggleSelectApplication(application.id)}>
                       {isSelected ? (
-                        <CheckSquare className="w-6 h-6 text-blue-900" />
+                        <CheckSquare className="w-6 h-6 text-indigo-600" />
                       ) : (
                         <Square className="w-6 h-6 text-slate-200 group-hover:text-slate-400 transition-colors" />
                       )}
@@ -2135,7 +2135,7 @@ const EmptyState = () => (
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => openDecisionModal(application)}
-                        className="px-4 py-2 bg-slate-900 text-white text-[10px] font-black tracking-widest rounded-lg hover:bg-blue-900 transition-all active:scale-95"
+                        className="px-4 py-2 bg-slate-900 text-white text-[10px] font-black tracking-widest rounded-lg hover:bg-indigo-600 transition-all active:scale-95"
                       >
                         REVIEW
                       </button>
@@ -2169,7 +2169,7 @@ const EmptyState = () => (
           return (
             <div 
               key={application.id}
-              className={`p-5 space-y-4 active:bg-slate-50 transition-colors ${isSelected ? 'bg-blue-900' : 'bg-white'}`}
+              className={`p-5 space-y-4 active:bg-slate-50 transition-colors ${isSelected ? 'bg-indigo-50/50' : 'bg-white'}`}
               onClick={() => toggleSelectApplication(application.id)}
             >
               <div className="flex items-start justify-between">
@@ -2178,7 +2178,7 @@ const EmptyState = () => (
                     onClick={(e) => { e.stopPropagation(); toggleSelectApplication(application.id); }}
                     className="w-6 h-6 flex items-center justify-center"
                   >
-                    {isSelected ? <CheckSquare className="w-6 h-6 text-blue-900" /> : <Square className="w-6 h-6 text-slate-200" />}
+                    {isSelected ? <CheckSquare className="w-6 h-6 text-indigo-600" /> : <Square className="w-6 h-6 text-slate-200" />}
                   </button>
                   <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-700 border border-slate-200 shadow-sm">
                     {application.firstName[0]}{application.lastName[0]}
@@ -2228,11 +2228,11 @@ const EmptyState = () => (
   <div className="px-8 py-8 bg-slate-50/50 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
     <div className="flex items-center gap-6">
       <div className="text-sm font-bold text-slate-500">
-        Results Found: <span className="text-blue-900 font-black ml-1">{filteredApplications.length}</span>
+        Results Found: <span className="text-indigo-600 font-black ml-1">{filteredApplications.length}</span>
       </div>
       <div className="h-4 w-px bg-slate-200 hidden md:block" />
       <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-        <div className={`w-2 h-2 rounded-full ${selectedApplications.size > 0 ? 'bg-blue-900 animate-pulse' : 'bg-slate-300'}`} />
+        <div className={`w-2 h-2 rounded-full ${selectedApplications.size > 0 ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300'}`} />
         {selectedApplications.size} Selected
       </div>
     </div>
@@ -2267,17 +2267,17 @@ const EmptyState = () => (
   {/* Modern Header - Slate-900 Theme */}
   <div className="bg-slate-900 p-6 text-white relative overflow-hidden">
     {/* Decorative background element */}
-    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-blue-900 rounded-full blur-3xl" />
+    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl" />
     
     <div className="flex items-center justify-between relative z-10">
       <div className="flex items-center gap-4">
         <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
-          <Edit className="w-6 h-6 text-blue-900" />
+          <Edit className="w-6 h-6 text-indigo-300" />
         </div>
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Make Decision</h2>
           <p className="text-slate-400 text-sm font-medium mt-0.5">
-            Application for: <span className="text-blue-900 font-bold">
+            Application for: <span className="text-indigo-400 font-bold">
               {selectedApplication ? `${selectedApplication.firstName} ${selectedApplication.lastName}` : 'Select application'}
             </span>
           </p>
@@ -2310,17 +2310,17 @@ const EmptyState = () => (
                 onClick={() => setDecisionType(decision.value)}
                 className={`group flex items-start gap-4 p-5 rounded-2xl border-2 transition-all duration-300 text-left ${
                   isSelected 
-                    ? 'border-blue-900 bg-white shadow-md ring-4 ring-blue-900' 
+                    ? 'border-indigo-600 bg-white shadow-md ring-4 ring-indigo-50' 
                     : 'border-slate-200 bg-white hover:border-slate-300'
                 }`}
               >
                 <div className={`p-3 rounded-xl transition-all ${
-                  isSelected ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-500'
+                  isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
                 }`}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <p className={`font-bold text-base ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>
+                  <p className={`font-bold text-base ${isSelected ? 'text-indigo-900' : 'text-slate-700'}`}>
                     {decision.label}
                   </p>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -2353,7 +2353,7 @@ const EmptyState = () => (
                     value={decisionData.admissionClass}
                     onChange={(e) => setDecisionData({...decisionData, admissionClass: e.target.value})}
                     placeholder="e.g. Form 1A"
-                    className="w-full text-md font-semibold px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all"
+                    className="w-full text-md font-semibold px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                   />
                 </div>
                 <div>
@@ -2383,7 +2383,7 @@ const EmptyState = () => (
           type="time"
           value={decisionData.interviewTime}
           onChange={(e) => setDecisionData({...decisionData, interviewTime: e.target.value})}
-          className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all"
+          className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
         />
       </div>
     </div>
@@ -2394,7 +2394,7 @@ const EmptyState = () => (
         value={decisionData.interviewVenue}
         onChange={(e) => setDecisionData({...decisionData, interviewVenue: e.target.value})}
         placeholder="e.g. Room 101, Main Building"
-        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all"
+        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
       />
     </div>
     <div>
@@ -2403,7 +2403,7 @@ const EmptyState = () => (
         value={decisionData.interviewNotes}
         onChange={(e) => setDecisionData({...decisionData, interviewNotes: e.target.value})}
         placeholder="Any special instructions or notes for the interview..."
-        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all min-h-[100px]"
+        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all min-h-[100px]"
       />
     </div>
   </div>
@@ -2417,7 +2417,7 @@ const EmptyState = () => (
         value={decisionData.conditions}
         onChange={(e) => setDecisionData({...decisionData, conditions: e.target.value})}
         placeholder="Specify the conditions that must be met..."
-        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all min-h-[100px]"
+        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all min-h-[100px]"
       />
     </div>
     <div>
@@ -2439,7 +2439,7 @@ const EmptyState = () => (
         value={decisionData.waitlistPosition}
         onChange={(e) => setDecisionData({...decisionData, waitlistPosition: e.target.value})}
         placeholder="e.g. 5"
-        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all"
+        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
       />
     </div>
     <div>
@@ -2448,7 +2448,7 @@ const EmptyState = () => (
         value={decisionData.waitlistNotes}
         onChange={(e) => setDecisionData({...decisionData, waitlistNotes: e.target.value})}
         placeholder="Additional notes about waitlist..."
-        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all min-h-[100px]"
+        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all min-h-[100px]"
       />
     </div>
   </div>
@@ -2468,21 +2468,21 @@ const EmptyState = () => (
                     : setDecisionData({...decisionData, notes: val})
                 }}
                 placeholder="Briefly explain the decision or add internal context..."
-                className="w-full px-5 py-4 text-md font-semibold bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all min-h-[120px]"
+                className="w-full px-5 py-4 text-md font-semibold bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all min-h-[120px]"
                 rows={decisionType === 'REJECTED' ? 12 : 6}
               />
             </div>
 
             {/* Email Toggle - Synced with Bulk UI Style */}
-            <label className="flex items-center gap-4 p-5 bg-blue-900 border border-blue-900 rounded-2xl cursor-pointer hover:bg-blue-900 transition-all group">
-              <div className={`p-3 rounded-xl transition-all ${decisionData.sendEmail ? 'bg-blue-900 text-white shadow-lg shadow-blue-900' : 'bg-white text-slate-400 border border-slate-200'}`}>
+            <label className="flex items-center gap-4 p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl cursor-pointer hover:bg-indigo-50 transition-all group">
+              <div className={`p-3 rounded-xl transition-all ${decisionData.sendEmail ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-400 border border-slate-200'}`}>
                 <Mail className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="text-base font-bold text-slate-800 group-hover:text-blue-900">Send Notification</p>
+                <p className="text-base font-bold text-slate-800 group-hover:text-indigo-900">Send Notification</p>
                 <p className="text-sm text-slate-500">Notify the applicant via automated email</p>
               </div>
-              <div className={`w-12 h-6 rounded-full transition-colors relative ${decisionData.sendEmail ? 'bg-blue-900' : 'bg-slate-300'}`}>
+              <div className={`w-12 h-6 rounded-full transition-colors relative ${decisionData.sendEmail ? 'bg-indigo-600' : 'bg-slate-300'}`}>
                 <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${decisionData.sendEmail ? 'left-7' : 'left-1'}`} />
                 <input
                   type="checkbox"
@@ -2503,7 +2503,7 @@ const EmptyState = () => (
     <button
       onClick={updateApplicationStatus}
       disabled={!decisionType || loadingStates.decision}
-      className="flex-[2] bg-blue-900 text-white py-4 rounded-2xl transition-all font-bold text-base shadow-lg shadow-blue-900 hover:bg-blue-900 hover:shadow-blue-900 active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
+      className="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl transition-all font-bold text-base shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
     >
       {loadingStates.decision ? (
         <span className="flex items-center justify-center gap-3">
@@ -2531,17 +2531,17 @@ const EmptyState = () => (
   {/* Modern Header */}
   <div className="bg-slate-900 p-6 text-white relative overflow-hidden">
     {/* Decorative background element */}
-    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-blue-900 rounded-full blur-3xl" />
+    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl" />
     
     <div className="flex items-center justify-between relative z-10">
       <div className="flex items-center gap-4">
         <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
-          <Users className="w-6 h-6 text-blue-900" />
+          <Users className="w-6 h-6 text-indigo-300" />
         </div>
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Bulk Decision</h2>
           <p className="text-slate-400 text-sm font-medium mt-0.5">
-            Processing <span className="text-blue-900">{selectedApplications.size}</span> application records
+            Processing <span className="text-indigo-400">{selectedApplications.size}</span> application records
           </p>
         </div>
       </div>
@@ -2559,7 +2559,7 @@ const EmptyState = () => (
     {/* Primary Action Button */}
     <button
       onClick={() => {/* Add your primary action */}}
-      className="p-4 bg-blue-900 text-white rounded-full shadow-lg hover:bg-blue-900 hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
+      className="p-4 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
       title="Primary Action"
       aria-label="Primary Action"
     >
@@ -2605,17 +2605,17 @@ const EmptyState = () => (
                 onClick={() => setBulkDecisionType(decision.value)}
                 className={`group flex items-start gap-4 p-5 rounded-2xl border-2 transition-all duration-300 text-left ${
                   isSelected 
-                    ? 'border-blue-900 bg-white shadow-md ring-4 ring-blue-900' 
+                    ? 'border-indigo-600 bg-white shadow-md ring-4 ring-indigo-50' 
                     : 'border-slate-200 bg-white hover:border-slate-300'
                 }`}
               >
                 <div className={`p-3 rounded-xl transition-all ${
-                  isSelected ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-500'
+                  isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
                 }`}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <p className={`font-bold text-base ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>
+                  <p className={`font-bold text-base ${isSelected ? 'text-indigo-900' : 'text-slate-700'}`}>
                     {decision.label}
                   </p>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -2646,21 +2646,21 @@ const EmptyState = () => (
                 value={bulkDecisionData.notes}
                 onChange={(e) => setBulkDecisionData({...bulkDecisionData, notes: e.target.value})}
                 placeholder="Ex: Approved based on Q3 entrance exam results..."
-                className="w-full px-5 py-4 text-md font-semibold bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 text-base transition-all min-h-[120px]"
+                className="w-full px-5 py-4 text-md font-semibold bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base transition-all min-h-[120px]"
                 rows={12}
               />
             </div>
 
             {/* Email Toggle Card */}
-            <label className="flex items-center gap-4 p-5 bg-blue-900 border border-blue-900 rounded-2xl cursor-pointer hover:bg-blue-900 transition-all group">
-              <div className={`p-3 rounded-xl transition-all ${bulkDecisionData.sendEmail ? 'bg-blue-900 text-white shadow-lg shadow-blue-900' : 'bg-white text-slate-400 border border-slate-200'}`}>
+            <label className="flex items-center gap-4 p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl cursor-pointer hover:bg-indigo-50 transition-all group">
+              <div className={`p-3 rounded-xl transition-all ${bulkDecisionData.sendEmail ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-400 border border-slate-200'}`}>
                 <Mail className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="text-base font-bold text-slate-800 group-hover:text-blue-900">Send Notifications</p>
+                <p className="text-base font-bold text-slate-800 group-hover:text-indigo-900">Send Notifications</p>
                 <p className="text-sm text-slate-500">Broadcast updates to all selected email addresses</p>
               </div>
-              <div className={`w-12 h-6 rounded-full transition-colors relative ${bulkDecisionData.sendEmail ? 'bg-blue-900' : 'bg-slate-300'}`}>
+              <div className={`w-12 h-6 rounded-full transition-colors relative ${bulkDecisionData.sendEmail ? 'bg-indigo-600' : 'bg-slate-300'}`}>
                 <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${bulkDecisionData.sendEmail ? 'left-7' : 'left-1'}`} />
                 <input
                   type="checkbox"
@@ -2694,7 +2694,7 @@ const EmptyState = () => (
     <button
       onClick={updateBulkApplicationStatus}
       disabled={!bulkDecisionType || loadingStates.bulk}
-      className="flex-[2] bg-blue-900 text-white py-4 rounded-2xl transition-all font-bold text-base shadow-lg shadow-blue-900 hover:bg-blue-900 hover:shadow-blue-900 active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
+      className="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl transition-all font-bold text-base shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
     >
       {loadingStates.bulk ? (
         <span className="flex items-center justify-center gap-3">

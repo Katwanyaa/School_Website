@@ -88,7 +88,7 @@ const ConfirmationModal = ({ open, onClose, title, message, confirmText = "Delet
               className={`flex-1 px-4 py-2.5 text-white rounded-xl font-medium transition-all ${
                 isDanger
                   ? "bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700"
-                  : "bg-gradient-to-r from-blue-500 to-blue-900 hover:from-blue-600 hover:to-blue-900"
+                  : "bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
               }`}
               disabled={loading}
             >
@@ -462,7 +462,7 @@ const SmsCampaignCard = ({
                 {campaign.status === "draft" && (
                   <button
                     onClick={() => onEdit(campaign)}
-                    className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-blue-900 bg-blue-900 border-2 border-blue-900 rounded-xl hover:bg-blue-900 hover:border-blue-900 transition-all active:scale-95 shadow-sm"
+                    className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-indigo-700 bg-indigo-50 border-2 border-indigo-100 rounded-xl hover:bg-indigo-100 hover:border-indigo-200 transition-all active:scale-95 shadow-sm"
                   >
                     <Edit className="w-4 h-4" /> Edit
                   </button>
@@ -751,7 +751,7 @@ const recipientGroups = useMemo(() => {
       label: "All Recipients",
       shortLabel: "All",
       count: parentCount + staffCount,
-      color: "from-blue-500 to-blue-900",
+      color: "from-blue-500 to-cyan-500",
       icon: Users,
       description: "Parents + Staff with valid phone numbers"
     },
@@ -796,7 +796,7 @@ const recipientGroups = useMemo(() => {
       label: "Support Staff",
       shortLabel: "Support",
       count: supportCount,
-      color: "from-slate-950 to-blue-900",
+      color: "from-indigo-500 to-violet-500",
       icon: Users,
       description: "Support staff with valid phone numbers"
     },
@@ -805,7 +805,7 @@ const recipientGroups = useMemo(() => {
       label: "All School Staff",
       shortLabel: "Staff",
       count: staffCount,
-      color: "from-blue-900 to-blue-500",
+      color: "from-cyan-500 to-blue-500",
       icon: Users,
       description: "All staff with valid phone numbers"
     },
@@ -1511,11 +1511,11 @@ const handleSendCampaign = async () => {
 <div className="group relative bg-[#0F172A] rounded-xl md:rounded-[2.5rem] p-5 md:p-8 text-white overflow-hidden shadow-2xl border border-white/5 transition-all duration-500 mb-6 sm:mb-8">
   
   {/* Abstract Gradient Orbs - Cyan/Emerald Theme */}
-  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-blue-900 via-emerald-600/20 to-transparent rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-cyan-600/30 via-emerald-600/20 to-transparent rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
   <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-gradient-to-tr from-emerald-600/20 via-teal-600/10 to-transparent rounded-full blur-[80px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
   
   {/* Additional Floating Orb for Depth */}
-  <div className="absolute top-[40%] right-[15%] w-[150px] h-[150px] bg-gradient-to-r from-blue-600/20 to-blue-900 rounded-full blur-[60px] pointer-events-none animate-pulse" />
+  <div className="absolute top-[40%] right-[15%] w-[150px] h-[150px] bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-full blur-[60px] pointer-events-none animate-pulse" />
   
   {/* Subtle Grid Pattern Overlay */}
   <div className="absolute inset-0 opacity-[0.02]" style={{ 
@@ -1530,9 +1530,9 @@ const handleSendCampaign = async () => {
       <div className="flex-1 min-w-0">
         {/* Premium Institution Badge */}
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-blue-900 to-emerald-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
+          <div className="h-7 w-1 bg-gradient-to-b from-cyan-500 to-emerald-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-900">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">
               Katwanyaa Senior School
             </h2>
             <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
@@ -1545,9 +1545,9 @@ const handleSendCampaign = async () => {
         <div className="flex items-start gap-4 mb-3">
           <div className="relative shrink-0">
             {/* Icon with Multi-layer Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-emerald-500 rounded-xl md:rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-xl md:rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl md:rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative p-3 md:p-4 bg-gradient-to-br from-blue-900 to-emerald-600 rounded-xl md:rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
+            <div className="relative p-3 md:p-4 bg-gradient-to-br from-cyan-600 to-emerald-600 rounded-xl md:rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
               <Smartphone className="text-white w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>
@@ -1556,7 +1556,7 @@ const handleSendCampaign = async () => {
             <h1 className="text-xl md:text-2xl lg:text-3xl font-black tracking-tight leading-tight">
               <span className="text-white">SMS Campaign</span>
               <br className="sm:hidden" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-900 via-emerald-200 to-white ml-0 sm:ml-2">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-emerald-200 to-white ml-0 sm:ml-2">
                 Manager
               </span>
             </h1>
@@ -1564,9 +1564,9 @@ const handleSendCampaign = async () => {
         </div>
         
         {/* Description with Celcom Highlight */}
-        <p className="text-blue-900 text-sm md:text-[15px] font-medium leading-relaxed max-w-3xl">
+        <p className="text-cyan-100/70 text-sm md:text-[15px] font-medium leading-relaxed max-w-3xl">
           Streamline school communication with powerful bulk SMS campaigns powered by{' '}
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-blue-900 to-emerald-500/20 text-blue-900 border border-blue-900 font-bold">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 text-cyan-300 border border-cyan-500/20 font-bold">
             <Zap className="w-3 h-3" />
             Celcom
           </span>
@@ -1580,7 +1580,7 @@ const handleSendCampaign = async () => {
             <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">Service: Active</span>
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-            <Mail className="w-3 h-3 text-blue-900" />
+            <Mail className="w-3 h-3 text-cyan-400" />
             <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">Bulk SMS Ready</span>
           </div>
         </div>
@@ -1627,7 +1627,7 @@ const handleSendCampaign = async () => {
           {/* New Campaign Button - Gradient Primary */}
           <button
             onClick={openCreateModal}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5 px-6 py-3 bg-gradient-to-r from-blue-900 to-emerald-600 hover:from-blue-900 hover:to-emerald-700 text-white rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 shadow-[0_8px_20px_rgba(6,182,212,0.3)] hover:shadow-[0_12px_30px_rgba(6,182,212,0.4)] w-full xs:w-auto"
+            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5 px-6 py-3 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 shadow-[0_8px_20px_rgba(6,182,212,0.3)] hover:shadow-[0_12px_30px_rgba(6,182,212,0.4)] w-full xs:w-auto"
           >
             {/* Button Shine Effect */}
             <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -1657,9 +1657,9 @@ const handleSendCampaign = async () => {
       
       {/* Celcom Integration */}
       <div className="flex items-center gap-2">
-        <Zap className="w-3 h-3 text-blue-900" />
+        <Zap className="w-3 h-3 text-cyan-400" />
         <span className="text-white/40">Provider:</span>
-        <span className="text-blue-900">Celcom</span>
+        <span className="text-cyan-400">Celcom</span>
       </div>
       
       {/* FIXED: Balance Indicator - Now accessing balance.balance instead of balance object */}
@@ -1720,7 +1720,7 @@ const handleSendCampaign = async () => {
             { label: "Draft", value: stats.draft, icon: Clock, bg: "hover:border-amber-200" },
             { label: "Sent", value: stats.sent, icon: CheckCircle2, bg: "hover:border-emerald-200" },
             { label: "Recipients", value: stats.totalRecipients, icon: Users, bg: "hover:border-purple-200" },
-            { label: "Success", value: `${stats.successRate}%`, icon: BarChart3, bg: "hover:border-blue-900" },
+            { label: "Success", value: `${stats.successRate}%`, icon: BarChart3, bg: "hover:border-cyan-200" },
             { 
               label: "Low Credit", 
               value: stats.lowCreditDrafts, 
@@ -1755,7 +1755,7 @@ const handleSendCampaign = async () => {
 
       {/* Selection Bar */}
       {selectedCampaigns.size > 0 && (
-        <div className="bg-gradient-to-r from-blue-50/80 to-blue-900 backdrop-blur-sm border border-blue-200/50 rounded-xl p-4 mb-6 animate-in slide-in-from-top-2 duration-300">
+        <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border border-blue-200/50 rounded-xl p-4 mb-6 animate-in slide-in-from-top-2 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-blue-100/80 backdrop-blur-sm text-blue-700 px-3 py-1.5 rounded-lg font-medium flex items-center gap-2 shadow-xs">
@@ -1905,7 +1905,7 @@ const handleSendCampaign = async () => {
             </p>
             <button
               onClick={openCreateModal}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-900 text-white px-4 py-2.5 rounded-xl transition-all duration-300 font-medium hover:scale-101 hover:from-blue-600 hover:to-blue-900 hover:shadow-blue-500/25"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2.5 rounded-xl transition-all duration-300 font-medium hover:scale-101 hover:from-blue-600 hover:to-cyan-600 hover:shadow-blue-500/25"
             >
               <Plus className="w-4 h-4" />
               Create Your First SMS Campaign
@@ -2155,7 +2155,7 @@ const handleSendCampaign = async () => {
         {selectedCampaign && (
           <>
             <div className="relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-900" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700" />
               <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/20" />
               <div className="relative p-5 text-white">
                 <div className="flex items-center justify-between">
@@ -2181,10 +2181,10 @@ const handleSendCampaign = async () => {
             <div className="max-h-[calc(85vh-130px)] overflow-y-auto p-5 modern-scrollbar">
               <div className="space-y-5">
                 {/* Campaign Info */}
-                <div className="bg-gradient-to-br from-blue-50 via-white to-blue-900 rounded-xl p-5 border border-blue-200 shadow-sm">
+                <div className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 rounded-xl p-5 border border-blue-200 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
-                      <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-900 rounded-lg">
+                      <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
                         <Info className="w-4 h-4 text-white" />
                       </div>
                       Campaign Information
@@ -2203,7 +2203,7 @@ const handleSendCampaign = async () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                        <div className="p-2 bg-gradient-to-r from-blue-100 to-blue-900 rounded-lg">
+                        <div className="p-2 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg">
                           <Users className="w-4 h-4 text-blue-600" />
                         </div>
                         <div>
@@ -2243,12 +2243,12 @@ const handleSendCampaign = async () => {
                       </div>
                       {selectedCampaign.sentAt && (
                         <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                          <div className="p-2 bg-gradient-to-r from-slate-950 to-blue-900 rounded-lg">
-                            <Send className="w-4 h-4 text-blue-900" />
+                          <div className="p-2 bg-gradient-to-r from-violet-100 to-indigo-100 rounded-lg">
+                            <Send className="w-4 h-4 text-violet-600" />
                           </div>
                           <div>
                             <p className="text-xs text-gray-500">Sent</p>
-                            <p className="text-sm font-bold text-blue-900">
+                            <p className="text-sm font-bold text-violet-700">
                               {new Date(selectedCampaign.sentAt).toLocaleDateString("en-US", {
                                 month: "short",
                                 day: "numeric",
@@ -2328,8 +2328,8 @@ const handleSendCampaign = async () => {
             <div className="p-5 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-900 px-3 py-1.5 rounded-full">
-                    <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-blue-900 rounded-full" />
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-cyan-100 px-3 py-1.5 rounded-full">
+                    <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full" />
                     <span className="font-bold">Campaign ID: #{selectedCampaign.id?.slice(0, 8) || "N/A"}</span>
                   </div>
                 </div>
@@ -2340,7 +2340,7 @@ const handleSendCampaign = async () => {
                         setShowDetailModal(false);
                         setTimeout(() => openEditModal(selectedCampaign), 100);
                       }}
-                      className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-500 to-blue-900 hover:from-blue-600 hover:to-blue-900 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+                      className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
                     >
                       <Edit className="w-4 h-4" />
                       Edit Campaign

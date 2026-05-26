@@ -106,7 +106,7 @@ const ModernCounselingCard = ({ session, onView, onBookmark, viewMode = 'grid' }
   const getCategoryStyle = (category) => {
     const styles = {
       academic: { 
-        gradient: 'from-blue-500 to-blue-900', 
+        gradient: 'from-blue-500 to-cyan-500', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -122,12 +122,12 @@ const ModernCounselingCard = ({ session, onView, onBookmark, viewMode = 'grid' }
         iconColor: 'text-purple-600'
       },
       devotion: { 
-        gradient: 'from-slate-950 to-purple-500', 
-        bg: 'bg-blue-900', 
-        text: 'text-blue-900',
-        border: 'border-blue-900',
-        iconBg: 'bg-blue-900',
-        iconColor: 'text-blue-900'
+        gradient: 'from-indigo-500 to-purple-500', 
+        bg: 'bg-indigo-50', 
+        text: 'text-indigo-700',
+        border: 'border-indigo-200',
+        iconBg: 'bg-indigo-100',
+        iconColor: 'text-indigo-600'
       },
       worship: { 
         gradient: 'from-amber-500 to-orange-500', 
@@ -412,7 +412,7 @@ const ModernSupportTeamCard = ({ member, onView, onContact, viewMode = 'grid' })
   const getRoleStyle = (role) => {
     const styles = {
       'teacher': { 
-        gradient: 'from-blue-500 to-blue-900', 
+        gradient: 'from-blue-500 to-cyan-500', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -439,7 +439,7 @@ const ModernSupportTeamCard = ({ member, onView, onContact, viewMode = 'grid' })
         label: 'Patron'
       },
       'Guidance Teacher': { 
-        gradient: 'from-blue-500 to-blue-900', 
+        gradient: 'from-blue-500 to-cyan-500', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -448,7 +448,7 @@ const ModernSupportTeamCard = ({ member, onView, onContact, viewMode = 'grid' })
         label: 'Guidance Teacher'
       },
       'HOD Guidance and councelling teacher': { 
-        gradient: 'from-blue-500 to-blue-900', 
+        gradient: 'from-blue-500 to-cyan-500', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -618,7 +618,7 @@ const TeamMemberModal = ({ member, isOpen, onClose }) => {
 
   const getRoleStyle = (role) => {
     const styles = {
-      'teacher': { gradient: 'from-blue-600 to-blue-900', text: 'text-blue-700', label: 'Teacher' },
+      'teacher': { gradient: 'from-blue-600 to-cyan-500', text: 'text-blue-700', label: 'Teacher' },
       'matron': { gradient: 'from-purple-600 to-pink-500', text: 'text-purple-700', label: 'Matron' },
       'patron': { gradient: 'from-emerald-600 to-green-500', text: 'text-emerald-700', label: 'Patron' }
     };
@@ -755,9 +755,9 @@ const ModernDetailModal = ({ session, onClose, onContact }) => {
 
   const getCategoryStyle = (category) => {
     const styles = {
-      academic: { gradient: 'from-blue-500 to-blue-900', icon: FiTarget },
+      academic: { gradient: 'from-blue-500 to-cyan-500', icon: FiTarget },
       emotional: { gradient: 'from-purple-500 to-pink-500', icon: FiHeart },
-      devotion: { gradient: 'from-slate-950 to-purple-500', icon: FiHeart },
+      devotion: { gradient: 'from-indigo-500 to-purple-500', icon: FiHeart },
       worship: { gradient: 'from-amber-500 to-orange-500', icon: FiMusic },
       support: { gradient: 'from-emerald-500 to-green-500', icon: FiPhoneCall },
       drugs: { gradient: 'from-red-500 to-rose-500', icon: FiAlertTriangle }
@@ -1153,7 +1153,7 @@ export default function StudentCounseling() {
       number: '15+', 
       label: 'Active Sessions', 
       sublabel: 'This month',
-      gradient: 'from-blue-500 to-blue-900'
+      gradient: 'from-blue-500 to-cyan-500'
     },
     { 
       icon: FiPhoneCall, 
@@ -1181,9 +1181,9 @@ export default function StudentCounseling() {
   // Categories for filtering
   const categoryOptions = [
     { id: 'all', name: 'All Sessions', icon: FiBookOpen, gradient: 'from-slate-500 to-slate-600' },
-    { id: 'academic', name: 'Academic', icon: FiTarget, gradient: 'from-blue-500 to-blue-900' },
+    { id: 'academic', name: 'Academic', icon: FiTarget, gradient: 'from-blue-500 to-cyan-500' },
     { id: 'emotional', name: 'Emotional', icon: FiHeart, gradient: 'from-purple-500 to-pink-500' },
-    { id: 'devotion', name: 'Devotion', icon: FiHeart, gradient: 'from-slate-950 to-purple-500' },
+    { id: 'devotion', name: 'Devotion', icon: FiHeart, gradient: 'from-indigo-500 to-purple-500' },
     { id: 'worship', name: 'Worship', icon: FiMusic, gradient: 'from-amber-500 to-orange-500' },
     { id: 'support', name: '24/7 Support', icon: FiPhoneCall, gradient: 'from-emerald-500 to-green-500' },
     { id: 'drugs', name: 'Drug Awareness', icon: FiAlertTriangle, gradient: 'from-red-500 to-rose-500' }
@@ -1222,7 +1222,7 @@ export default function StudentCounseling() {
           number: allSessions.length.toString(), 
           label: 'Total Sessions', 
           sublabel: 'All categories',
-          gradient: 'from-blue-500 to-blue-900'
+          gradient: 'from-blue-500 to-cyan-500'
         },
         { 
           icon: FiPhoneCall, 
@@ -1373,7 +1373,7 @@ if (loading) {
           />
           {/* Center Icon */}
           <Box className="absolute">
-            <IoSparkles className="text-blue-900 text-lg animate-pulse" />
+            <IoSparkles className="text-indigo-500 text-lg animate-pulse" />
           </Box>
         </Box>
 
@@ -1701,7 +1701,7 @@ onClick={() => toast.info('Access schedule sessions via the Student Portal.')}  
               </div>
 
               {/* Session Info Banner */}
-              <div className="bg-gradient-to-r from-blue-50 to-blue-900 rounded-[32px] p-6 border border-blue-100">
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-[32px] p-6 border border-blue-100">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2.5 bg-blue-100 rounded-xl">
                     <FiBookOpen className="text-blue-600" />
@@ -1748,7 +1748,7 @@ onClick={() => toast.info('Access schedule sessions via the Student Portal.')}  
               </div>
 
               {/* Confidentiality Banner */}
-              <div className="bg-gradient-to-r from-purple-900 to-blue-900 rounded-[32px] p-6 text-white overflow-hidden relative">
+              <div className="bg-gradient-to-r from-purple-900 to-indigo-900 rounded-[32px] p-6 text-white overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-[50px]" />
                 <div className="relative z-10">
                   <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-4">
@@ -1779,7 +1779,7 @@ onClick={() => toast.info('Access schedule sessions via the Student Portal.')}  
         </div>
 
         {/* Feature Banner */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-purple-900 to-blue-900 rounded-3xl p-5 md:p-8 shadow-xl">
+        <div className="relative overflow-hidden bg-gradient-to-r from-purple-900 to-indigo-800 rounded-3xl p-5 md:p-8 shadow-xl">
           {/* Abstract Background */}
           <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 blur-[80px] rounded-full -mr-24 -mt-24" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 blur-[80px] rounded-full -ml-24 -mb-24" />

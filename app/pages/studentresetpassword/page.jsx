@@ -107,7 +107,7 @@ const ResetPasswordContent = () => {
 
   if (resetSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 text-white flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-indigo-900 text-white flex items-center justify-center p-4">
         <motion.div
           className="max-w-md w-full text-center"
           variants={containerVariants}
@@ -128,14 +128,14 @@ const ResetPasswordContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 text-white flex items-center justify-center p-3 sm:p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-indigo-900 text-white flex items-center justify-center p-3 sm:p-4">
       <motion.div
         className="max-w-sm sm:max-w-md md:max-w-xl w-full mx-auto p-6 sm:p-8 md:p-10 backdrop-blur-lg bg-white/10 rounded-2xl sm:rounded-3xl shadow-2xl relative overflow-hidden"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-blue-900 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
         <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
 
         <motion.div className="relative z-10 text-center mb-6 sm:mb-8" variants={itemVariants}>
@@ -163,7 +163,7 @@ const ResetPasswordContent = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Enter new password"
-                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-10 sm:pr-12 bg-white/20 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all duration-300 text-sm sm:text-base"
+                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-10 sm:pr-12 bg-white/20 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 text-sm sm:text-base"
               />
               <button
                 type="button"
@@ -184,7 +184,7 @@ const ResetPasswordContent = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm password"
-                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 bg-white/20 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all duration-300 text-sm sm:text-base"
+                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 bg-white/20 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 text-sm sm:text-base"
               />
             </div>
           </motion.div>
@@ -220,8 +220,8 @@ const ResetPasswordContent = () => {
             disabled={loading || !hasMinLength || !hasNumber || !hasLetter || !hasSpecialChar || !passwordsMatch}
             className={`w-full h-12 sm:h-14 rounded-xl text-white font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
               loading || !hasMinLength || !hasNumber || !hasLetter || !hasSpecialChar || !passwordsMatch
-                ? 'bg-blue-900 cursor-not-allowed'
-                : 'bg-gradient-to-r from-slate-950 to-blue-600 hover:from-slate-950 hover:to-blue-700'
+                ? 'bg-indigo-400/50 cursor-not-allowed'
+                : 'bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700'
             }`}
             variants={itemVariants}
           >
@@ -241,7 +241,7 @@ const ResetPasswordContent = () => {
             Back to{' '}
             <span
               onClick={() => window.location.href = '/pages/StudentPortal'}
-              className="text-blue-900 font-medium hover:underline cursor-pointer transition-colors duration-200"
+              className="text-indigo-400 font-medium hover:underline cursor-pointer transition-colors duration-200"
             >
               student login
             </span>
@@ -254,7 +254,7 @@ const ResetPasswordContent = () => {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 flex items-center justify-center"><LoaderCircle className="animate-spin w-8 h-8 text-white" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-900 to-indigo-900 flex items-center justify-center"><LoaderCircle className="animate-spin w-8 h-8 text-white" /></div>}>
       <ResetPasswordContent />
     </Suspense>
   );

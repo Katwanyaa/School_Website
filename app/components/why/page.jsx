@@ -87,7 +87,7 @@ const currentYear = new Date().getFullYear();
       impact: "40% Cost Reduction | Kitchen Modernization",
       stats: "KShs 1.2M | 2022",
       icon: <FiDollarSign className="w-5 h-5" />,
-      color: "from-blue-500 to-blue-900",
+      color: "from-blue-500 to-indigo-500",
       bg: "bg-blue-50",
       border: "border-blue-100",
       image: "/hero/env.jpeg",
@@ -147,7 +147,7 @@ const currentYear = new Date().getFullYear();
       impact: "Academic Growth | County Recognition",
       stats: "Top Improver 2024",
       icon: <FiTrendingUp className="w-5 h-5" />,
-      color: "from-teal-500 to-blue-900",
+      color: "from-teal-500 to-cyan-500",
       bg: "bg-teal-50",
       border: "border-teal-100",
       image: "/bg/9.jpeg",
@@ -166,14 +166,14 @@ const currentYear = new Date().getFullYear();
       description: "Consistently ranked among top schools in Matungulu Sub-county with students achieving university placement. Our academic programs focus on critical thinking and holistic learning.",
       details: ["A- Candidate", "University Placement", "Merit Awards", "Top Improver 2024"],
       icon: <FiBook className="w-5 h-5" />,
-      gradient: "from-slate-950 to-purple-500"
+      gradient: "from-indigo-500 to-purple-500"
     },
     {
       title: "800+ Students Enrolled",
       description: "Currently serving 800+ students as a mixed day and boarding school in Matungulu, Machakos County with consistent enrollment growth and diverse student body.",
       details: ["Mixed Day", "Boarding", "Co-curricular", "Guidance & Counseling"],
       icon: <FiUsers className="w-5 h-5" />,
-      gradient: "from-blue-500 to-blue-900"
+      gradient: "from-blue-500 to-cyan-500"
     },
     {
       title: "ICT Integration",
@@ -212,7 +212,7 @@ const pathways = [
     id: "stem",
     name: "STEM Pathway",
     icon: FiCpu,
-    color: "from-blue-600 to-blue-900",
+    color: "from-blue-600 to-cyan-500",
     description: "Science, Technology, Engineering & Mathematics",
     subjects: ["Mathematics", "Integrated Science", "Computer Science", "Pre-Technical", "Health Education"],
     careers: [
@@ -817,7 +817,7 @@ const pathways = [
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-tight tracking-tight">
           Excellence in <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-900">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
             Education, Character
           </span>
           <br />in Action.
@@ -851,7 +851,7 @@ const pathways = [
           </button>
           <button
             onClick={handleApplyNow}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-900 text-white rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-blue-200 hover:shadow-xl transition-all active:scale-95"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-blue-200 hover:shadow-xl transition-all active:scale-95"
           >
             Apply Now
           </button>
@@ -880,7 +880,7 @@ const pathways = [
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Vision Card */}
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-900 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
               <div className="relative bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-md transition-all">
                 <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
                   <FiEye className="w-6 h-6 text-blue-600" />
@@ -910,7 +910,7 @@ const pathways = [
           </div>
 
           {/* Motto Banner */}
-          <div className="mt-8 bg-gradient-to-r from-blue-50 to-blue-900 rounded-2xl p-6 text-center border border-blue-100">
+          <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 text-center border border-blue-100">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-700 mb-2">Our Motto</p>
             <p className="text-2xl md:text-3xl font-black text-slate-800">"Education is Light"</p>
           </div>
@@ -981,9 +981,9 @@ const pathways = [
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-900 rounded-full mb-4">
-              <FiShield className="w-4 h-4 text-blue-900" />
-              <span className="text-[10px] font-black text-blue-900 uppercase tracking-wider">Our Foundation</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 rounded-full mb-4">
+              <FiShield className="w-4 h-4 text-indigo-600" />
+              <span className="text-[10px] font-black text-indigo-700 uppercase tracking-wider">Our Foundation</span>
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900">
               Educational Pillars
@@ -1036,7 +1036,7 @@ const pathways = [
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* ICT Donation Card */}
             <div className="bg-white rounded-2xl border border-blue-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-900 px-6 py-4">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                     <FiMonitor className="w-5 h-5 text-white" />
@@ -1291,7 +1291,7 @@ const pathways = [
       </section>
 
       {/* ===== CALL TO ACTION ===== */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-blue-900">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-indigo-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-4">
             Ready to Join Katwanyaa Senior School?

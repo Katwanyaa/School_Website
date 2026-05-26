@@ -273,11 +273,11 @@ export default function ModernNavbar() {
       <nav
         ref={navRef}
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'shadow-xl shadow-blue-900' : 'shadow-lg shadow-blue-900'
+          isScrolled ? 'shadow-xl shadow-indigo-950/20' : 'shadow-lg shadow-indigo-950/10'
         }`}
       >
         {/* ---------- TOP UTILITY BAR (compact) ---------- */}
-        <div className="hidden border-b py-2 border-white/10 bg-gradient-to-r from-blue-950 via-blue-900 to-purple-950 text-white lg:block">
+        <div className="hidden border-b py-2 border-white/10 bg-gradient-to-r from-blue-950 via-indigo-950 to-purple-950 text-white lg:block">
           <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-6">
             <div className="flex items-center gap-5 text-[13px] font-black uppercase tracking-[0.2em] text-blue-100/80">
               <span>KATZ </span>
@@ -309,7 +309,7 @@ export default function ModernNavbar() {
           <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
             {/* Logo */}
             <a href="/" onClick={closeAll} className="flex min-w-0 items-center gap-3">
-              <div className="h-12 w-12 shrink-0 rounded-md bg-gradient-to-br from-blue-500 via-blue-900 to-purple-400 p-[1px] shadow-lg">
+              <div className="h-12 w-12 shrink-0 rounded-md bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-400 p-[1px] shadow-lg">
                 <div className="flex h-full w-full items-center justify-center rounded-2xl bg-white">
                   <Image
                     src="/katz.jpeg"
@@ -365,11 +365,11 @@ export default function ModernNavbar() {
 
                     {open && (
                       <div
-                        className="absolute left-1/2 top-full z-50 mt-3 w-[540px] -translate-x-1/2 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-blue-900"
+                        className="absolute left-1/2 top-full z-50 mt-3 w-[540px] -translate-x-1/2 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl shadow-indigo-950/15"
                         onMouseLeave={() => setActiveDropdown(null)}
                       >
                         {/* Dropdown header */}
-                        <div className="bg-gradient-to-br from-blue-800 via-blue-900 to-purple-900 px-5 py-4 text-white">
+                        <div className="bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 px-5 py-4 text-white">
                           <div className="flex items-center gap-3">
                             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10">
                               <Icon />
@@ -478,7 +478,7 @@ export default function ModernNavbar() {
               <MobileSection title="Academics" links={academicLinks} isActiveLink={isActiveLink} onClose={closeAll} />
               <MobileSection title="Resources" links={schoolHubLinks} isActiveLink={isActiveLink} onClose={closeAll} />
 
-              <div className="rounded-[24px]  bg-gradient-to-br from-blue-800 via-blue-900 to-purple-900 p-4 text-center text-white">
+              <div className="rounded-[24px]  bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4 text-center text-white">
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-100/80">
                   Katwanyaa Senior School
                 </p>

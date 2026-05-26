@@ -172,9 +172,9 @@ const jsonLd = {
     {
       title: "Academic Excellence",
       subtitle: "Redefined Through Innovation",
-      gradient: "from-blue-500 via-blue-900 to-purple-600",
+      gradient: "from-blue-500 via-cyan-400 to-purple-600",
       description: "At Katwanyaa Senior School, we're pioneering a new era of education. With a 94% KCSE success rate and state-of-the-art STEM facilities, we're not just teaching—we're inspiring the next generation of leaders and innovators.",
-      background: "bg-gradient-to-br from-blue-900/90 via-blue-900 to-purple-900/70",
+      background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
       image: "/student.jpg",
       stats: { 
         students: "400+ Active Learners", 
@@ -208,9 +208,9 @@ const jsonLd = {
     {
       title: "Future-Ready Education",
       subtitle: "Preparing for the Digital Age",
-      gradient: "from-blue-900 via-blue-400 to-blue-900",
+      gradient: "from-cyan-500 via-blue-400 to-indigo-600",
       description: "Experience cutting-edge education with our technology-enhanced smart classrooms, advanced computer labs, and comprehensive digital literacy programs. We prepare students for careers in an increasingly technological world.",
-      background: "bg-gradient-to-br from-blue-900 via-blue-900/80 to-blue-900",
+      background: "bg-gradient-to-br from-cyan-900/90 via-blue-900/80 to-indigo-900/70",
       image: "/im2.jpeg",
       stats: { 
         labs: "3 Modern Labs", 
@@ -447,7 +447,7 @@ const jsonLd = {
   }, [router, closeVideoModal, navigationBlocked]);
 
   const LoadingScreen = () => (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-blue-900 to-purple-900 z-50 flex flex-col items-center justify-center">
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 z-50 flex flex-col items-center justify-center">
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(15)].map((_, i) => (
           <div
@@ -470,7 +470,7 @@ const jsonLd = {
           <div className="absolute inset-6 md:inset-8 border-4 border-white/40 rounded-full animate-spin"></div>
           
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-900 rounded-2xl flex items-center justify-center overflow-hidden">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center overflow-hidden">
               <img 
                 src="/katz.jpeg" 
                 alt="Katwanyaa Senior School Logo" 
@@ -495,14 +495,14 @@ const jsonLd = {
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-3 h-3 bg-gradient-to-r from-blue-400 to-blue-900 rounded-full animate-bounce"
+                  className="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full animate-bounce"
                   style={{ animationDelay: `${i * 0.2}s` }}
                 />
               ))}
             </div>
             
             <div className="w-48 md:w-64 h-2 bg-white/10 rounded-full overflow-hidden mx-auto">
-              <div className="h-full bg-gradient-to-r from-blue-500 via-blue-900 to-blue-500 animate-gradient-loading"></div>
+              <div className="h-full bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-500 animate-gradient-loading"></div>
             </div>
             
             <p className="text-white/60 text-xs md:text-sm">Loading For school Website...</p>
@@ -546,7 +546,7 @@ const jsonLd = {
             {/* Modal Header */}
             <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-r from-black/80 to-transparent p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-blue-900 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
                   <FiPlay className="text-white" />
                 </div>
                 <div>

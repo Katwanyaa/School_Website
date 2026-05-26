@@ -21,9 +21,9 @@ const heroSlides = [
   {
     title: "Katwanyaa Senior School",
     subtitle: "Matungulu, Machakos County",
-    gradient: "from-blue-500 via-blue-900 to-purple-600",
+    gradient: "from-blue-500 via-cyan-400 to-purple-600",
     description: "A public secondary school in Matungulu sub-county serving the local community. Offers STEM, Social Sciences, and Arts & Sports pathways under the Competency Based Curriculum (CBC).",
-    background: "bg-gradient-to-br from-blue-900/90 via-blue-900 to-purple-900/70",
+    background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
     image: "/hero/katz8.jpeg",
     stats: { 
       students: "C3 Status", 
@@ -59,9 +59,9 @@ const heroSlides = [
   {
     title: "Community Focus",
     subtitle: "Eastern Region School",
-    gradient: "from-blue-500 via-blue-900 to-purple-600",
+    gradient: "from-blue-500 via-cyan-400 to-purple-600",
     description: "Located in Matungulu Sub-County, Machakos County. As a C3 public senior school, it plays a vital role in the Eastern Region's education sector, serving students from the local community.",
-    background: "bg-gradient-to-br from-blue-900/90 via-blue-900 to-purple-900/70",
+    background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
     image: "/bg/14.jpeg",
     stats: { 
       region: "Eastern", 

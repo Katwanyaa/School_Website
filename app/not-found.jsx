@@ -52,13 +52,13 @@ const Modern404 = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-blue-900 overflow-hidden relative font-sans text-slate-900 antialiased">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-indigo-50 overflow-hidden relative font-sans text-slate-900 antialiased">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.03]">
         <div className="absolute top-1/4 -left-8 text-rose-400 scale-[4] rotate-12"><FiGlobe /></div>
         <div className="absolute bottom-1/4 -right-8 text-purple-400 scale-[4] -rotate-12"><FiMapPin /></div>
         <div className="absolute top-1/2 left-1/4 text-slate-500 scale-[3] rotate-45"><FiSearch /></div>
-        <div className="absolute top-3/4 right-1/3 text-blue-900 scale-[3] -rotate-45"><FiAlertCircle /></div>
+        <div className="absolute top-3/4 right-1/3 text-indigo-400 scale-[3] -rotate-45"><FiAlertCircle /></div>
         <div className="absolute top-1/3 right-1/4 text-amber-300 scale-[2] rotate-90"><FiStar /></div>
       </div>
 
@@ -77,9 +77,9 @@ const Modern404 = () => {
                 <h1 className="text-7xl sm:text-8xl md:text-9xl font-black tracking-tighter text-slate-900 flex justify-center lg:justify-start items-baseline">
                   <span className="text-rose-600 drop-shadow-sm">4</span>
                   <span className="text-purple-500 mx-1 md:mx-2 drop-shadow-sm">0</span>
-                  <span className="text-blue-900 drop-shadow-sm">4</span>
+                  <span className="text-indigo-600 drop-shadow-sm">4</span>
                 </h1>
-                <div className="h-2 w-32 bg-gradient-to-r from-rose-400 via-purple-400 to-blue-900 mx-auto lg:mx-0 mt-2 md:mt-4 rounded-full shadow"></div>
+                <div className="h-2 w-32 bg-gradient-to-r from-rose-400 via-purple-400 to-indigo-400 mx-auto lg:mx-0 mt-2 md:mt-4 rounded-full shadow"></div>
               </div>
 
               <div className="space-y-4 md:space-y-6">
@@ -145,18 +145,18 @@ const Modern404 = () => {
 
 <div className="w-full lg:w-1/2">
   <div className="relative">
-    <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-tr from-rose-100 via-white to-blue-900 rounded-[2rem] sm:rounded-[3rem] blur-xl opacity-60 -z-10"></div>
+    <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-tr from-rose-100 via-white to-indigo-100 rounded-[2rem] sm:rounded-[3rem] blur-xl opacity-60 -z-10"></div>
     
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100/80 p-6 sm:p-8 md:p-10">
       <div className="flex items-center justify-between mb-6 md:mb-8">
-        <h3 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2 bg-gradient-to-r from-rose-700 to-blue-900 bg-clip-text text-transparent">
+        <h3 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2 bg-gradient-to-r from-rose-700 to-indigo-700 bg-clip-text text-transparent">
           <FiMapPin className="text-rose-600" />
           School Directory
         </h3>
         <div className="flex gap-1">
           <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-rose-400 animate-pulse"></div>
           <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-amber-400 animate-pulse delay-75"></div>
-          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-900 animate-pulse delay-150"></div>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-indigo-400 animate-pulse delay-150"></div>
         </div>
       </div>
       
@@ -217,7 +217,7 @@ const Modern404 = () => {
       </div>
 
       <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-slate-100">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-purple-900 to-blue-900 p-4 sm:p-6 text-white">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-purple-900 to-indigo-900 p-4 sm:p-6 text-white">
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
 
           <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 flex-nowrap">

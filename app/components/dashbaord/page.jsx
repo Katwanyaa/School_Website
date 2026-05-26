@@ -407,16 +407,16 @@ function ModernLoadingSpinner({ message = "Loading sessions from the database…
             <CircularProgress 
               size={outer} 
               thickness={5}
-              className="text-blue-900"
+              className="text-indigo-600"
             />
             {/* Pulsing inner circle */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-slate-950 to-blue-900 rounded-full animate-ping opacity-25"
+              <div className="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full animate-ping opacity-25"
                    style={{ width: inner, height: inner }}></div>
             </div>
           </div>
           {/* Outer glow effect */}
-          <div className="absolute -inset-6 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full blur-xl opacity-30 animate-pulse"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30 animate-pulse"></div>
         </div>
         
         {/* Text content */}
@@ -428,7 +428,7 @@ function ModernLoadingSpinner({ message = "Loading sessions from the database…
           {/* Bouncing dots */}
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-blue-900 rounded-full animate-bounce" 
+              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" 
                    style={{ animationDelay: `${i * 0.15}s` }}></div>
             ))}
           </div>
@@ -1354,12 +1354,12 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
       iconText: 'text-yellow-600'
     },
     indigo: {
-      gradient: 'from-slate-950 to-blue-900',
-      text: 'text-blue-900',
-      border: 'border-blue-900',
-      iconBg: 'bg-blue-900',
-      iconBorder: 'border-blue-900',
-      iconText: 'text-blue-900'
+      gradient: 'from-indigo-500/10 to-indigo-500/5',
+      text: 'text-indigo-600',
+      border: 'border-indigo-100',
+      iconBg: 'bg-indigo-50',
+      iconBorder: 'border-indigo-100',
+      iconText: 'text-indigo-600'
     },
     teal: {
       gradient: 'from-teal-500/10 to-teal-500/5',

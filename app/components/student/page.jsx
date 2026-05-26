@@ -447,7 +447,7 @@ function StudentDetailModal({ student, onClose, onEdit, onDelete }) {
           }}
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-6 text-white">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/20 rounded-xl">
@@ -473,7 +473,7 @@ function StudentDetailModal({ student, onClose, onEdit, onDelete }) {
           <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
             {/* Profile Section */}
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-900 flex items-center justify-center">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                 <FiUser className="text-white text-3xl" />
               </div>
               <div>
@@ -627,7 +627,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
         }}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-xl">
@@ -1067,12 +1067,12 @@ function StudentsChart({
 
   return (
     <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-2xl relative overflow-hidden">
-      <div className="absolute -top-10 -right-10 w-60 h-60 bg-gradient-to-br from-blue-50 to-blue-900 rounded-full blur-3xl opacity-60" />
+      <div className="absolute -top-10 -right-10 w-60 h-60 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-full blur-3xl opacity-60" />
       
       <div className="relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-blue-900 flex items-center justify-center shadow-2xl ring-4 ring-blue-100">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 flex items-center justify-center shadow-2xl ring-4 ring-blue-100">
               {type === 'pie' && <FiPieChart className="text-white text-xl" />}
               {type === 'bar' && <FiBarChart2 className="text-white text-xl" />}
               {type === 'radial' && <FiTrendingUp className="text-white text-xl" />}
@@ -1532,7 +1532,7 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
         }}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-2 bg-white/20 rounded-xl">
@@ -2811,8 +2811,8 @@ const downloadExcelTemplate = () => {
   const getFormBgColor = (form) => {
   const themes = {
     'Form 1': 'bg-gradient-to-b from-emerald-500 to-green-500',
-    'Form 2': 'bg-gradient-to-b from-blue-500 to-blue-900',
-    'Form 3': 'bg-gradient-to-b from-slate-950 to-purple-500',
+    'Form 2': 'bg-gradient-to-b from-blue-500 to-indigo-500',
+    'Form 3': 'bg-gradient-to-b from-indigo-500 to-purple-500',
     'Form 4': 'bg-gradient-to-b from-rose-500 to-pink-500',
   };
   return themes[form] || 'bg-gradient-to-b from-slate-500 to-gray-500';
@@ -2962,7 +2962,7 @@ const downloadExcelTemplate = () => {
                 value={demographics.gender?.length > 0 ? 
                   `${((demographics.gender.find(g => g.name === 'Male')?.value || 0) / stats.totalStudents * 100).toFixed(1)}%` : '0%'}
                 icon={FiPercent}
-                color="from-slate-950 to-blue-900"
+                color="from-indigo-500 to-indigo-700"
                 trend={2.1}
               />
             </div>
@@ -3432,7 +3432,7 @@ const downloadExcelTemplate = () => {
           <button
             onClick={() => loadStudents(pagination.page)}
             disabled={loading}
-            className="group px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-900 text-white rounded-2xl font-semibold flex items-center gap-3 text-sm shadow-lg hover:shadow-xl disabled:opacity-50 transition-all duration-300"
+            className="group px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-semibold flex items-center gap-3 text-sm shadow-lg hover:shadow-xl disabled:opacity-50 transition-all duration-300"
           >
             {loading ? (
               <CircularProgress size={16} className="text-white" />
@@ -3559,7 +3559,7 @@ const downloadExcelTemplate = () => {
               <td className="px-6 py-5">
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-900 flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
                       <FiUser className="w-5 h-5 text-white" />
                     </div>
                     <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${student.status === 'active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
@@ -3594,7 +3594,7 @@ const downloadExcelTemplate = () => {
               {/* Stream Cell */}
               <td className="px-6 py-5">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-900"></div>
+                  <div className="w-2 h-2 rounded-full bg-indigo-400"></div>
                   <span className="font-semibold text-gray-800">
                     {student.stream || <span className="text-gray-400">—</span>}
                   </span>
@@ -3643,7 +3643,7 @@ const downloadExcelTemplate = () => {
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-900 flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
                   <FiUser className="w-5 h-5 text-white" />
                 </div>
                 <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${student.status === 'active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />

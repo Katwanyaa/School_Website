@@ -152,14 +152,14 @@ function ModernLoadingSpinner({ message = "Loading school documents...", size = 
             <CircularProgress 
               size={outer} 
               thickness={5}
-              className="text-blue-900"
+              className="text-indigo-600"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-slate-950 to-blue-900 rounded-full animate-ping opacity-25"
+              <div className="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full animate-ping opacity-25"
                    style={{ width: inner, height: inner }}></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full blur-xl opacity-30 animate-pulse"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30 animate-pulse"></div>
         </div>
         
         <div className="mt-6 space-y-3">
@@ -169,7 +169,7 @@ function ModernLoadingSpinner({ message = "Loading school documents...", size = 
           
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-blue-900 rounded-full animate-bounce" 
+              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" 
                    style={{ animationDelay: `${i * 0.15}s` }}></div>
             ))}
           </div>
@@ -474,7 +474,7 @@ function FeeBreakdownModal({
         overflow: 'hidden',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
-        <div className={`bg-gradient-to-r ${type === 'boarding' ? 'from-blue-600 via-blue-700 to-blue-900' : 'from-green-600 via-green-700 to-emerald-700'} p-6 text-white`}>
+        <div className={`bg-gradient-to-r ${type === 'boarding' ? 'from-blue-600 via-blue-700 to-indigo-700' : 'from-green-600 via-green-700 to-emerald-700'} p-6 text-white`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -951,7 +951,7 @@ function AdmissionFeeBreakdownModal({
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-blue-900 p-6 text-white">
+        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -1025,7 +1025,7 @@ function AdmissionFeeBreakdownModal({
                 <button
                   type="button"
                   onClick={handleAddCategory}
-                  className="px-4 py-2 text-sm font-bold bg-gradient-to-r from-purple-600 to-blue-900 text-white rounded-xl hover:from-purple-700 hover:to-blue-900 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 text-sm font-bold bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-colors flex items-center gap-2"
                 >
                   <FaPlus /> Add Category
                 </button>
@@ -1054,7 +1054,7 @@ function AdmissionFeeBreakdownModal({
                   )}
                   <button
                     onClick={handleAddCategory}
-                    className="bg-gradient-to-r from-purple-600 to-blue-900 text-white px-6 py-3 rounded-xl hover:from-purple-700 hover:to-blue-900 transition-colors font-bold shadow-lg flex items-center justify-center gap-2"
+                    className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-colors font-bold shadow-lg flex items-center justify-center gap-2"
                   >
                     <FaPlus /> Add First Category
                   </button>
@@ -1252,7 +1252,7 @@ function AdmissionFeeBreakdownModal({
     type="button"
     onClick={handleSave}
     disabled={categories.length === 0}
-    className="px-5 py-2 bg-gradient-to-r from-purple-600 to-blue-900 text-white rounded-lg hover:from-purple-700 hover:to-blue-900 hover:shadow-md transition-all duration-200 font-medium text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+    className="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 hover:shadow-md transition-all duration-200 font-medium text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
   >
     {isEditMode ? 'Update Fees' : 'Save Fees'}
   </button>
@@ -1315,7 +1315,7 @@ function DocumentMetadataModal({
         overflow: 'hidden',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -2426,7 +2426,7 @@ function DocumentDetailsModal({
             <a
               href={pdfUrl}
               download={pdfName || `${title}.pdf`}
-              className="order-1 sm:order-3 flex-1 sm:flex-none bg-gradient-to-r from-blue-600 to-blue-900 
+              className="order-1 sm:order-3 flex-1 sm:flex-none bg-gradient-to-r from-blue-600 to-indigo-700 
                        text-white px-8 py-3 rounded-xl shadow-lg shadow-blue-200 
                        hover:shadow-blue-300 hover:scale-[1.02] active:scale-95 
                        transition-all duration-200 flex items-center justify-center gap-2 font-bold"
@@ -3000,7 +3000,7 @@ const getExistingPdfData = (field) => {
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
         {/* HEADER WITH TOTAL SIZE PROGRESS */}
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -3026,7 +3026,7 @@ const getExistingPdfData = (field) => {
             </div>
             <div className="w-full bg-white/20 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-green-400 to-blue-900 h-2 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-green-400 to-cyan-400 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${fileSizeManager.getPercentage()}%` }}
               ></div>
             </div>
@@ -3605,8 +3605,8 @@ const hasDocuments = documents && (
   {/* Action Button - Full width on mobile, auto width on desktop */}
   <button 
     onClick={() => setShowModal(true)} 
-    className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-900 text-white px-8 py-4 rounded-2xl 
-               hover:from-blue-700 hover:to-blue-900 hover:scale-[1.03] active:scale-95 
+    className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl 
+               hover:from-blue-700 hover:to-indigo-700 hover:scale-[1.03] active:scale-95 
                transition-all duration-200 font-bold shadow-blue-200 shadow-lg 
                flex items-center justify-center gap-3 mx-auto text-sm md:text-base"
   >

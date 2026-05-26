@@ -303,7 +303,7 @@ function Notification({
         };
       case 'info':
         return {
-          bg: 'from-blue-50 to-blue-900',
+          bg: 'from-blue-50 to-cyan-50',
           border: 'border-blue-200',
           icon: 'text-blue-600',
           iconBg: 'bg-blue-100',
@@ -369,7 +369,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
   const getFileTypeColor = (type) => {
     switch (type?.toLowerCase()) {
       case 'pdf': return { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-100', icon: 'bg-rose-500' };
-      case 'video': return { bg: 'bg-blue-900', text: 'text-blue-900', border: 'border-blue-900', icon: 'bg-blue-900' };
+      case 'video': return { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100', icon: 'bg-indigo-500' };
       default: return { bg: 'bg-slate-50', text: 'text-slate-600', border: 'border-slate-100', icon: 'bg-slate-500' };
     }
   };
@@ -411,7 +411,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
   
   {/* Decorative Gradient Orbs */}
   <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
-  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-emerald-200/30 to-blue-900 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-emerald-200/30 to-cyan-200/30 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
   
   {/* Floating Icon Elements */}
   <div className="absolute top-10 right-20 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -430,8 +430,8 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
         <div className="flex items-center gap-3">
           {/* Icon Container with Glow */}
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-900 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity" />
-            <div className="relative p-2.5 bg-gradient-to-br from-blue-600 to-blue-900 rounded-xl shadow-lg transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity" />
+            <div className="relative p-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl shadow-lg transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
               <FiFolder className="text-white" size={18} />
             </div>
           </div>
@@ -439,7 +439,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
           {/* Animated Badge */}
           <div className="relative">
             <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-md" />
-            <span className="relative text-[10px] font-black uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-900">
+            <span className="relative text-[10px] font-black uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
               Educational Resource
             </span>
           </div>
@@ -536,7 +536,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
       <div className="mt-6 flex items-center gap-4">
         <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-blue-500 to-blue-900 rounded-full transition-all duration-1000"
+            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000"
             style={{ width: `${resource.progress}%` }}
           />
         </div>
@@ -1012,7 +1012,7 @@ useEffect(() => {
         background: 'linear-gradient(135deg, #f8fafc 0%, #faf5ff 100%)'
       }}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 via-blue-900 to-emerald-600 p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-white bg-opacity-20 rounded-2xl">
@@ -1142,7 +1142,7 @@ useEffect(() => {
                 <select
                   value={formData.category}
                   onChange={(e) => handleChange('category', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-gray-50"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
                 >
                   {categoryOptions.map(category => (
                     <option key={category} value={category}>{category}</option>
@@ -1456,7 +1456,7 @@ useEffect(() => {
               <button 
                 type="submit"
                 disabled={isSubmitDisabled}
-                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-900 text-md  hover:from-blue-700 hover:to-blue-900 transition-all"
+                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-md  hover:from-blue-700 hover:to-cyan-700 transition-all"
               >
                 {loading ? (
                   <>
@@ -2056,7 +2056,7 @@ const handleSubmit = async (formData, id) => {
                 onClick={() => paginate(page)}
                 className={`px-3 py-2 rounded-xl font-bold ${
                   currentPage === page
-                    ? 'bg-gradient-to-r from-blue-500 to-blue-900 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
                     : 'text-gray-700'
                 }`}
               >
@@ -2080,7 +2080,7 @@ const handleSubmit = async (formData, id) => {
   // Loading state
   if (loading && resources.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-blue-50 to-blue-900">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50">
         <div className="text-center">
           <Spinner size={48} />
           <p className="text-gray-700 text-lg mt-4 font-medium">
@@ -2095,7 +2095,7 @@ const handleSubmit = async (formData, id) => {
   }
 
   return (
-    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-blue-900">
+    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50">
       {/* Custom Notification */}
       <Notification
         open={notification.open}
@@ -2121,21 +2121,21 @@ const handleSubmit = async (formData, id) => {
 {/* Modern Responsive Header with Bronze Gradient */}
 {/* Modern Responsive Header – Resources Theme */}
 <div className="relative mb-6 sm:mb-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem]
-                bg-gradient-to-br from-slate-950 via-purple-700 to-blue-900
+                bg-gradient-to-br from-indigo-700 via-purple-700 to-violet-700
                 p-4 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl">
 
   {/* Abstract Gradient Orbs - Purple/Indigo Theme */}
   <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] 
-                  bg-gradient-to-br from-slate-950 via-purple-500/20 to-blue-900 
+                  bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-violet-500/30 
                   rounded-full blur-[100px] pointer-events-none animate-pulse" />
   
   <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] 
-                  bg-gradient-to-tr from-purple-500/20 via-blue-900 to-blue-900 
+                  bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-violet-500/20 
                   rounded-full blur-[80px] pointer-events-none" />
   
   {/* Central Floating Orb */}
   <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] 
-                  bg-gradient-to-r from-slate-950 to-purple-500/20 
+                  bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
                   rounded-full blur-[70px] pointer-events-none animate-pulse" />
   
   {/* Subtle Grid Pattern */}
@@ -2159,10 +2159,10 @@ const handleSubmit = async (formData, id) => {
         
         {/* Premium Institution Badge */}
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-slate-950 via-purple-400 to-blue-900 
+          <div className="h-7 w-1 bg-gradient-to-b from-indigo-400 via-purple-400 to-violet-400 
                           rounded-full shadow-[0_0_15px_rgba(129,140,248,0.5)]" />
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-900">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-200">
               Katwanyaa Senior School
             </h2>
             <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
@@ -2175,9 +2175,9 @@ const handleSubmit = async (formData, id) => {
 
           {/* Icon with Multi-layer Glow */}
           <div className="relative shrink-0 self-start">
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 to-purple-500
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-500
                             rounded-xl sm:rounded-2xl blur-md sm:blur-lg opacity-70" />
-            <div className="relative p-3 sm:p-4 bg-gradient-to-br from-slate-950 to-purple-600
+            <div className="relative p-3 sm:p-4 bg-gradient-to-br from-indigo-600 to-purple-600
                             rounded-xl sm:rounded-2xl shadow-2xl transform group-hover:scale-105 
                             group-hover:rotate-3 transition-all duration-500">
               <FiFolder className="text-white w-5 h-5 sm:w-6 sm:h-6" />
@@ -2189,11 +2189,11 @@ const handleSubmit = async (formData, id) => {
 
             {/* Security Badge */}
             <div className="hidden xs:inline-flex items-center gap-1.5 px-2.5 py-1 
-                            bg-gradient-to-r from-slate-950 to-purple-500/20 
+                            bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
                             backdrop-blur-sm rounded-full mb-2 sm:mb-3 max-w-max 
                             border border-white/10">
-              <FiShield className="w-2.5 h-2.5 text-blue-900" />
-              <span className="text-[9px] font-bold text-blue-900 uppercase tracking-wider">
+              <FiShield className="w-2.5 h-2.5 text-indigo-300" />
+              <span className="text-[9px] font-bold text-indigo-300 uppercase tracking-wider">
                 Secure Portal
               </span>
             </div>
@@ -2203,14 +2203,14 @@ const handleSubmit = async (formData, id) => {
                            font-black text-white tracking-tight leading-tight">
               Resources <span className="block sm:inline">& </span>
               <span className="text-transparent bg-clip-text
-                               bg-gradient-to-r from-slate-950 to-purple-200">
+                               bg-gradient-to-r from-indigo-200 to-purple-200">
                 Manager
               </span>
             </h1>
 
             {/* Description */}
             <p className="mt-2 sm:mt-3 text-sm xs:text-base sm:text-lg
-                          text-blue-900 font-medium
+                          text-indigo-100/90 font-medium
                           max-w-2xl leading-relaxed
                           line-clamp-2 sm:line-clamp-none">
               Centralized hub for uploading, organizing, and securely managing learning resources and documents.
@@ -2227,7 +2227,7 @@ const handleSubmit = async (formData, id) => {
               </div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
                               bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <FiFolder className="w-3 h-3 text-blue-900" />
+                <FiFolder className="w-3 h-3 text-indigo-400" />
                 <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
                   {stats?.total || 0} Resources
                 </span>
@@ -2292,8 +2292,8 @@ const handleSubmit = async (formData, id) => {
             onClick={handleCreate}
             className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
                        px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-gradient-to-r from-slate-950 via-purple-500 to-blue-900
-                       hover:from-slate-950 hover:via-purple-600 hover:to-blue-900
+                       bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500
+                       hover:from-indigo-600 hover:via-purple-600 hover:to-violet-600
                        text-white rounded-xl sm:rounded-2xl font-semibold
                        active:scale-95 transition-all
                        shadow-[0_8px_20px_rgba(139,92,246,0.3)] 
@@ -2319,7 +2319,7 @@ const handleSubmit = async (formData, id) => {
 
         {/* Today's Stats - Desktop */}
         <div className="hidden lg:flex flex-col items-end">
-          <span className="text-[9px] font-bold text-blue-900 uppercase tracking-widest">
+          <span className="text-[9px] font-bold text-indigo-300/70 uppercase tracking-widest">
             Total Files
           </span>
           <span className="text-2xl font-black text-white">
@@ -2343,9 +2343,9 @@ const handleSubmit = async (formData, id) => {
       
       {/* Security Badge */}
       <div className="flex items-center gap-2">
-        <FiShield className="w-3 h-3 text-blue-900" />
+        <FiShield className="w-3 h-3 text-indigo-400" />
         <span className="text-white/40">Security:</span>
-        <span className="text-blue-900">Encrypted</span>
+        <span className="text-indigo-400">Encrypted</span>
       </div>
       
       {/* Total Resources */}
@@ -2443,7 +2443,7 @@ const handleSubmit = async (formData, id) => {
                 <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Form 4</p>
                 <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.form4 || 0}</p>
               </div>
-              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-blue-900 to-blue-900 text-blue-900 rounded-2xl">
+              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-cyan-50 to-cyan-100 text-cyan-600 rounded-2xl">
                 <FiUsers className="text-lg sm:text-xl" />
               </div>
             </div>
@@ -2551,7 +2551,7 @@ const handleSubmit = async (formData, id) => {
           <select
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-gray-50 cursor-pointer text-md "
+            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-gray-50 cursor-pointer text-md "
           >
             {classOptions.map(className => (
               <option key={className} value={className}>
@@ -2731,9 +2731,9 @@ const handleSubmit = async (formData, id) => {
                             resource.type?.toLowerCase() === 'pdf' 
                               ? 'bg-gradient-to-br from-red-50 to-pink-50 border border-red-100 shadow-sm shadow-red-500/10' 
                               : resource.type?.toLowerCase() === 'video' 
-                              ? 'bg-gradient-to-br from-blue-50 to-blue-900 border border-blue-100 shadow-sm shadow-blue-500/10'
+                              ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 shadow-sm shadow-blue-500/10'
                               : resource.type?.toLowerCase() === 'image' 
-                              ? 'bg-gradient-to-br from-purple-50 to-blue-900 border border-purple-100 shadow-sm shadow-purple-500/10'
+                              ? 'bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 shadow-sm shadow-purple-500/10'
                               : resource.type?.toLowerCase() === 'document' 
                               ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm shadow-emerald-500/10'
                               : 'bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-100 shadow-sm shadow-slate-500/10'
@@ -2779,7 +2779,7 @@ const handleSubmit = async (formData, id) => {
                       <td className="py-5 px-8">
                         <div className="space-y-3">
                           <div className="inline-flex flex-col gap-1.5">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-blue-900 text-blue-700 text-xs font-bold rounded-xl border border-blue-100">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 text-xs font-bold rounded-xl border border-blue-100">
                               <FiUsers className="w-3 h-3" />
                               {resource.className || 'All Classes'}
                             </span>
@@ -2802,8 +2802,8 @@ const handleSubmit = async (formData, id) => {
                             <div className="flex items-center gap-2">
                               <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${
                                 resource.type?.toLowerCase() === 'pdf' ? 'bg-gradient-to-r from-red-500 to-pink-500' :
-                                resource.type?.toLowerCase() === 'video' ? 'bg-gradient-to-r from-blue-500 to-blue-900' :
-                                resource.type?.toLowerCase() === 'image' ? 'bg-gradient-to-r from-purple-500 to-blue-900' :
+                                resource.type?.toLowerCase() === 'video' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
+                                resource.type?.toLowerCase() === 'image' ? 'bg-gradient-to-r from-purple-500 to-violet-500' :
                                 resource.type?.toLowerCase() === 'document' ? 'bg-gradient-to-r from-emerald-500 to-teal-500' :
                                 'bg-gradient-to-r from-slate-500 to-gray-500'
                               }`} />
@@ -2813,11 +2813,11 @@ const handleSubmit = async (formData, id) => {
                             </div>
                             <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${
                               resource.accessLevel === 'student' 
-                                ? 'bg-gradient-to-r from-blue-50 to-blue-900 text-blue-700 border-blue-100' 
+                                ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 border-blue-100' 
                                 : resource.accessLevel === 'teacher' 
                                 ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 border-emerald-100'
                                 : resource.accessLevel === 'admin' 
-                                ? 'bg-gradient-to-r from-purple-50 to-blue-900 text-purple-700 border-purple-100'
+                                ? 'bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border-purple-100'
                                 : 'bg-gradient-to-r from-slate-50 to-gray-50 text-slate-700 border-slate-100'
                             }`}>
                               {resource.accessLevel === 'admin' ? <FiLock className="w-3 h-3" /> : <FiUnlock className="w-3 h-3" />}
@@ -2966,7 +2966,7 @@ const handleSubmit = async (formData, id) => {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button 
                 onClick={handleCreate} 
-                className="group relative bg-gradient-to-r from-blue-600 to-blue-900 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
+                className="group relative bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
               >
                 <FiUpload className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Upload Resource
