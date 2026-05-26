@@ -1691,7 +1691,7 @@ function ModernPdfUpload({
           <div className="flex items-center gap-2">
             <FaExclamationTriangle className="text-yellow-600" />
             <p className="text-sm font-bold text-yellow-800">
-              Each file must not exceed 500kB. Allowed types: PDF, DOC, DOCX
+              Each file must not exceed 2 MB. Allowed types: PDF, DOC, DOCX
             </p>
           </div>
         </div>
@@ -1719,24 +1719,6 @@ function ModernPdfUpload({
             )}
           </label>
           
-          {(type === 'day' || type === 'boarding' || type === 'admission') && (
-            <button
-              type="button"
-              onClick={() => {
-                if (type === 'admission') {
-                  setShowAdmissionFeeModal(true);
-                } else {
-                  setShowFeeModal(true);
-                }
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition duration-200 font-bold text-sm shadow-lg"
-            >
-              <FaCalculator className="text-xs" />
-              {hasFeeBreakdown 
-                ? (isEditMode ? 'Edit Existing Breakdown' : 'Edit Breakdown') 
-                : 'Add Fee Breakdown'}
-            </button>
-          )}
         </div>
         
         {/* EXISTING METADATA DISPLAY IN EDIT MODE */}
@@ -1791,53 +1773,6 @@ function ModernPdfUpload({
           </div>
         </div>
 
-        {hasFeeBreakdown && (type === 'day' || type === 'boarding' || type === 'admission') && (
-          <div className={`mb-4 bg-gradient-to-br ${type === 'admission' ? 'from-purple-50 to-purple-100 border-purple-200' : type === 'boarding' ? 'from-blue-50 to-blue-100 border-blue-200' : 'from-green-50 to-green-100 border-green-200'} rounded-2xl p-4 border-2`}>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <FaMoneyBillWave className={type === 'admission' ? 'text-purple-600' : type === 'boarding' ? 'text-blue-600' : 'text-green-600'} />
-                <h4 className="text-sm font-bold text-gray-900">
-                  {type === 'admission' ? 'Admission Fees' : `${type.charAt(0).toUpperCase() + type.slice(1)} School Fees`}
-                  {isEditMode && <span className="text-blue-600 text-xs ml-2">(Editing Existing)</span>}
-                </h4>
-              </div>
-              <span className={`text-lg font-bold ${type === 'admission' ? 'text-purple-700' : type === 'boarding' ? 'text-blue-700' : 'text-green-700'}`}>
-                KES {totalAmount.toLocaleString()}
-              </span>
-            </div>
-            
-            <div className="space-y-2">
-              {localFeeBreakdown.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-100">
-                  <div className="flex-1">
-                    <span className="text-sm font-bold text-gray-800">{item.name}</span>
-                    {item.optional && (
-                      <span className="text-xs text-gray-500 ml-2 font-bold">(Optional)</span>
-                    )}
-                    {item.boardingOnly && (
-                      <span className="text-xs text-green-600 ml-2 font-bold">(Boarding)</span>
-                    )}
-                  </div>
-                  <span className="text-sm font-bold text-gray-700">
-                    KES {item.amount?.toLocaleString()}
-                  </span>
-                </div>
-              ))}
-              
-              {localFeeBreakdown.length > 3 && (
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    onClick={type === 'admission' ? () => setShowAdmissionFeeModal(true) : () => setShowFeeModal(true)}
-                    className={`text-sm font-bold ${type === 'admission' ? 'text-purple-600 hover:text-purple-700' : type === 'boarding' ? 'text-blue-600 hover:text-blue-700' : 'text-green-600 hover:text-green-700'}`}
-                  >
-                    + {localFeeBreakdown.length - 3} more categories
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* File Upload Section */}
@@ -1857,7 +1792,6 @@ function ModernPdfUpload({
                     <p className="text-xs text-gray-600 font-bold">
                       {fileSelected ? (isEditMode ? '✓ Editing Existing File' : '✓ File Selected') : 'No file selected'}
                       {hasNewPdf && pdfFile.size && ` • ${(pdfFile.size / 1024).toFixed(0)} KB`}
-                      {hasFeeBreakdown && ` • ${localFeeBreakdown.length} categories`}
                       {isEditMode && hasExistingPdf && ` • ${isEditMode ? 'Edit Mode' : ''}`}
                     </p>
                   </div>
@@ -2017,7 +1951,7 @@ function ModernPdfUpload({
               {dragOver ? '📄 Drop file here!' : isReplacing ? 'Select replacement file' : 'Click to upload file'}
             </p>
             <p className="text-xs text-gray-600 transition-colors duration-300 group-hover:text-gray-700 font-bold">
-              Max: 500KB • PDF, DOC, DOCX only
+              Max: 2 MB • PDF, DOC, DOCX only
             </p>
             <input 
               ref={fileInputRef}
@@ -2031,25 +1965,6 @@ function ModernPdfUpload({
       </div>
 
       {/* Modals */}
-      {(type === 'day' || type === 'boarding') && showFeeModal && (
-        <FeeBreakdownModal
-          open={showFeeModal}
-          onClose={() => setShowFeeModal(false)}
-          onSave={handleFeeBreakdownSave}
-          title={`${type === 'day' ? 'Day School' : 'Boarding School'} Fee Breakdown`}
-          existingBreakdown={localFeeBreakdown}
-          type={type}
-        />
-      )}
-
-      {type === 'admission' && showAdmissionFeeModal && (
-        <AdmissionFeeBreakdownModal
-          open={showAdmissionFeeModal}
-          onClose={() => setShowAdmissionFeeModal(false)}
-          onSave={handleAdmissionFeeSave}
-          existingBreakdown={localFeeBreakdown}
-        />
-      )}
 
       {type === 'results' && showMetadataModal && selectedFileForMetadata && (
         <DocumentMetadataModal
@@ -2589,12 +2504,6 @@ const [formData, setFormData] = useState(() => {
   return baseFormData;
 });
 
-  // COMPLETE FIX: Preload existing fee breakdowns
-  const [feeBreakdowns, setFeeBreakdowns] = useState({
-    feesDay: Array.isArray(documents?.feesDayDistributionJson) ? documents.feesDayDistributionJson : [],
-    feesBoarding: Array.isArray(documents?.feesBoardingDistributionJson) ? documents.feesBoardingDistributionJson : []
-  });
-
   // COMPLETE FIX: Preload existing exam metadata
   const [examMetadata, setExamMetadata] = useState({
     kcseYear: documents?.kcseYear?.toString() || '',
@@ -2606,12 +2515,6 @@ const [formData, setFormData] = useState(() => {
   const [confirmed, setConfirmed] = useState(false);
 
   const steps = [
-    { 
-      id: 'fees', 
-      label: 'Fee Structures', 
-      icon: FaMoneyBillWave, 
-      description: 'Day and boarding fee documents' 
-    },
     { 
       id: 'kcse', 
       label: 'KCSE Results', 
@@ -2697,17 +2600,6 @@ const handleSubmitAfterReview = async () => {
         }
       }
     });
-    
-    // IMPORTANT: Append fee breakdowns as JSON strings
-    if (feeBreakdowns.feesDay && feeBreakdowns.feesDay.length > 0) {
-      data.append('feesDayDistributionJson', JSON.stringify(feeBreakdowns.feesDay));
-      console.log('✅ Appending feesDayDistributionJson:', feeBreakdowns.feesDay);
-    }
-    
-    if (feeBreakdowns.feesBoarding && feeBreakdowns.feesBoarding.length > 0) {
-      data.append('feesBoardingDistributionJson', JSON.stringify(feeBreakdowns.feesBoarding));
-      console.log('✅ Appending feesBoardingDistributionJson:', feeBreakdowns.feesBoarding);
-    }
     
     // Append year/term/description for fee documents
     if (formData.feesDayDistributionPdf?.year) {
@@ -2895,10 +2787,6 @@ const handleSubmitAfterReview = async () => {
     toast.warning('File marked for deletion. Save to confirm.');
   };
 
-  const handleFeeBreakdownChange = (type, breakdown) => {
-    setFeeBreakdowns(prev => ({ ...prev, [type]: breakdown }));
-  };
-
   const handleExamMetadataChange = (field, value) => {
     setExamMetadata(prev => ({ ...prev, [field]: value }));
   };
@@ -2948,38 +2836,22 @@ const getExistingPdfData = (field) => {
     switch(currentStep) {
       case 0:
         return (
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="w-full max-w-2xl">
               <ModernPdfUpload
-                pdfFile={formData.feesDayDistributionPdf?.file || null}
-                onPdfChange={(file, year, description, term) => 
-                  handleFileChange('feesDayDistributionPdf', file, year, description, term)
-                }
-                onRemove={() => handleFileRemove('feesDayDistributionPdf')}
-                label="Day School Fees PDF"
-                existingPdf={getExistingPdfData('feesDayDistributionPdf')}
-                onCancelExisting={(existingFile) => handleCancelExisting('feesDayDistributionPdf', existingFile)}
-                onRemoveExisting={() => handleRemoveExisting('feesDayDistributionPdf')}
-                feeBreakdown={feeBreakdowns.feesDay}
-                onFeeBreakdownChange={(breakdown) => handleFeeBreakdownChange('feesDay', breakdown)}
-                type="day"
-              />
-            </div>
-            
-            <div className="w-full max-w-2xl">
-              <ModernPdfUpload
-                pdfFile={formData.feesBoardingDistributionPdf?.file || null}
-                onPdfChange={(file, year, description, term) => 
-                  handleFileChange('feesBoardingDistributionPdf', file, year, description, term)
-                }
-                onRemove={() => handleFileRemove('feesBoardingDistributionPdf')}
-                label="Boarding School Fees PDF"
-                existingPdf={getExistingPdfData('feesBoardingDistributionPdf')}
-                onCancelExisting={(existingFile) => handleCancelExisting('feesBoardingDistributionPdf', existingFile)}
-                onRemoveExisting={() => handleRemoveExisting('feesBoardingDistributionPdf')}
-                feeBreakdown={feeBreakdowns.feesBoarding}
-                onFeeBreakdownChange={(breakdown) => handleFeeBreakdownChange('feesBoarding', breakdown)}
-                type="boarding"
+                pdfFile={formData.kcseResultsPdf?.file || null}
+                onPdfChange={(file, year, description, term) => {
+                  handleFileChange('kcseResultsPdf', file, year, description, term);
+                  if (year) handleExamMetadataChange('kcseYear', year);
+                  if (term) handleExamMetadataChange('kcseTerm', term);
+                  if (description) handleExamMetadataChange('kcseDescription', description);
+                }}
+                onRemove={() => handleFileRemove('kcseResultsPdf')}
+                label="KCSE Results PDF"
+                existingPdf={getExistingPdfData('kcseResultsPdf')}
+                onCancelExisting={(existingFile) => handleCancelExisting('kcseResultsPdf', existingFile)}
+                onRemoveExisting={() => handleRemoveExisting('kcseResultsPdf')}
+                type="results"
               />
             </div>
           </div>
@@ -3051,9 +2923,7 @@ const getExistingPdfData = (field) => {
                     if (!fileData || fileData.markedForDeletion) return null;
                     
                     const labels = {
-                      feesDayDistributionPdf: 'Day School Fees',
-                      feesBoardingDistributionPdf: 'Boarding School Fees',
-                      kcseResultsPdf: 'KCSE Results'
+
                     };
                     
                     return (
