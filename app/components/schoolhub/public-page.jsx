@@ -551,70 +551,74 @@ const HubCard = ({ item, onView }) => {
   const theme = TYPE_THEMES[item.type] || TYPE_THEMES.DEPARTMENT;
   const detailCount = Array.isArray(item.details) ? item.details.length : 0;
 
-  return (
-    <button
-      onClick={onView}
-      className={`w-full bg-white text-left hover:bg-gray-50 transition-colors ${theme.bg} bg-opacity-30`}
-    >
-      {/* Image Section - Compact */}
-      <div className="relative h-48 w-full bg-gray-100">
-        {image ? (
-          <img src={image} alt={item.title} className="h-full w-full object-cover" />
-        ) : (
-          <div className={`flex h-full w-full items-center justify-center ${theme.bg}`}>
-            <Icon className="text-3xl text-gray-600" />
-          </div>
-        )}
-        
-        {/* Type Badge */}
-        <div className="absolute left-2 top-2">
-          <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium uppercase tracking-wider ${theme.bg} ${theme.text}`}>
-            <Icon className="text-xs" /> {getTypeLabel(item.type)}
-          </span>
+return (
+  <button
+    onClick={onView}
+    className={`w-full bg-white text-left transition-all duration-200 active:scale-[0.99] border border-gray-100 rounded-2xl overflow-hidden shadow-sm flex flex-col ${theme.bg} bg-opacity-10`}
+  >
+    {/* Image Section - Fluid and Responsive */}
+    <div className="relative h-44 sm:h-48 w-full bg-gray-50 overflow-hidden shrink-0">
+      {image ? (
+        <img src={image} alt={item.title} className="h-full w-full object-cover" />
+      ) : (
+        <div className={`flex h-full w-full items-center justify-center bg-gray-50`}>
+          <Icon className="text-3xl text-gray-400" />
         </div>
-        
-        {/* Image Count */}
-        <div className="absolute bottom-2 right-2 bg-gray-800 bg-opacity-80 px-1.5 py-0.5 text-xs font-medium text-white">
-          {images.length} 📷
-        </div>
+      )}
+      
+      {/* Type Badge - Modern Pill Tag */}
+      <div className="absolute left-3 top-3">
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-full shadow-sm backdrop-blur-md ${theme.bg} ${theme.text} bg-opacity-90`}>
+          <Icon className="text-xs" /> {getTypeLabel(item.type)}
+        </span>
       </div>
+      
+      {/* Image Count - Glassmorphism Badge */}
+      <div className="absolute bottom-3 right-3 bg-gray-900/70 backdrop-blur-md px-2 py-1 rounded-md text-[11px] font-medium text-white flex items-center gap-1 shadow-sm">
+        <span>{images.length}</span>
+        <span className="text-xs">📷</span>
+      </div>
+    </div>
 
-      {/* Content Section */}
-      <div className="p-3">
-        <h3 className="text-sm font-bold leading-tight text-gray-900 line-clamp-1">
+    {/* Content Section */}
+    <div className="p-4 flex flex-col flex-grow justify-between">
+      <div>
+        <h3 className="text-sm font-bold leading-snug text-gray-900 line-clamp-1">
           {item.title}
         </h3>
         
         {item.shortDescription && (
-          <p className="mt-1 text-xs font-medium leading-4 text-gray-500 line-clamp-2">
+          <p className="mt-1 text-xs font-normal leading-relaxed text-gray-500 line-clamp-2">
             {item.shortDescription}
           </p>
         )}
 
-        {/* Stats Row */}
-        <div className="mt-2 flex flex-wrap gap-1">
+        {/* Stats Row - Cleaner Rounded Tags */}
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {detailCount > 0 && (
-            <span className="flex items-center gap-0.5 bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
-              <FiLayers className="text-xs" /> {detailCount}
+            <span className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md text-[11px] font-medium text-gray-600">
+              <FiLayers className="text-xs text-gray-400" /> {detailCount}
             </span>
           )}
           {item.location && (
-            <span className="flex items-center gap-0.5 bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
-              <FiMapPin className="text-xs" /> {item.location.length > 20 ? item.location.slice(0, 20) + '...' : item.location}
+            <span className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md text-[11px] font-medium text-gray-600 max-w-[180px] sm:max-w-xs truncate">
+              <FiMapPin className="text-xs text-gray-400 shrink-0" /> 
+              <span className="truncate">{item.location}</span>
             </span>
           )}
         </div>
-
-        {/* View Action */}
-        <div className="mt-2 flex items-center justify-end pt-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-gray-400">Explore</span>
-          <span className="ml-2 flex h-5 w-5 items-center justify-center bg-gray-900 text-white">
-            <FiChevronRight className="text-xs" />
-          </span>
-        </div>
       </div>
-    </button>
-  );
+
+      {/* View Action - Sleek, Minimal Footer */}
+      <div className="mt-4 flex items-center justify-end pt-2 border-t border-gray-50">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Explore</span>
+        <span className="ml-2 flex h-6 w-6 items-center justify-center bg-gray-950 text-white rounded-full shadow-sm active:bg-gray-800 transition-colors">
+          <FiChevronRight className="text-xs" />
+        </span>
+      </div>
+    </div>
+  </button>
+);
 };
 
 // Main Component
