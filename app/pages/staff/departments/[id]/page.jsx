@@ -21,7 +21,7 @@ const CATEGORY_META = {
     label: "CBC Department",
     icon: FiBookOpen,
     badge: "bg-blue-50 text-blue-700 border-blue-200",
-    accent: "from-blue-600 to-cyan-600",
+    accent: "from-blue-600 to-blue-900",
   },
   EIGHT_FOUR_FOUR: {
     label: "8-4-4 Department",

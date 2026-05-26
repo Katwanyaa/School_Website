@@ -194,10 +194,10 @@ if (loading) {
         <div className="max-w-5xl mx-auto">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             {/* Header */}
-            <div className="bg-gradient-to-r from-slate-50 to-indigo-50 p-6 md:p-8 border-b border-slate-100">
+            <div className="bg-gradient-to-r from-slate-50 to-blue-900 p-6 md:p-8 border-b border-slate-100">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                  <CreditCard className="w-6 h-6 md:w-8 md:h-8 text-indigo-600" />
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-slate-950 to-purple-100 flex items-center justify-center">
+                  <CreditCard className="w-6 h-6 md:w-8 md:h-8 text-blue-900" />
                 </div>
                 <div>
                   <h1 className="text-lg md:text-xl font-bold text-slate-900">Fee Statement</h1>
@@ -214,8 +214,8 @@ if (loading) {
                 {/* Icon */}
                 <div className="relative mb-6">
                   <div className="w-20 h-20 md:w-24 md:h-24 mx-auto rounded-3xl bg-gradient-to-br from-slate-100 to-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center">
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 flex items-center justify-center">
-                      <Clock className="w-6 h-6 md:w-8 md:h-8 text-indigo-400" />
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-slate-950 to-blue-50 flex items-center justify-center">
+                      <Clock className="w-6 h-6 md:w-8 md:h-8 text-blue-900" />
                     </div>
                   </div>
                   {/* Decorative elements */}
@@ -223,7 +223,7 @@ if (loading) {
                     <div className="w-4 h-4 rounded-full bg-blue-100"></div>
                   </div>
                   <div className="absolute bottom-0 right-1/4 translate-x-1/2 translate-y-1/2">
-                    <div className="w-3 h-3 rounded-full bg-indigo-100"></div>
+                    <div className="w-3 h-3 rounded-full bg-blue-900"></div>
                   </div>
                 </div>
 
@@ -238,7 +238,7 @@ if (loading) {
                     The school bursar has not yet posted the fee records for this term.
                     Please check back later for your updated fee statement.
                   </p>
-                  <div className="bg-gradient-to-r from-slate-50 to-indigo-50 rounded-2xl p-4 md:p-6 border border-slate-100">
+                  <div className="bg-gradient-to-r from-slate-50 to-blue-900 rounded-2xl p-4 md:p-6 border border-slate-100">
                     <p className="text-sm md:text-base text-slate-700 font-medium">
                       <span className="font-bold">Note:</span> Fee statements are typically updated at the beginning of each term.
                       For any urgent inquiries, please contact the accounts office.
@@ -262,8 +262,8 @@ if (loading) {
                   
                   <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
-                        <User className="w-4 h-4 text-indigo-600" />
+                      <div className="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center">
+                        <User className="w-4 h-4 text-blue-900" />
                       </div>
                       <div className="text-left">
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Support Contact</p>
@@ -277,7 +277,7 @@ if (loading) {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={() => window.location.reload()}
-                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="px-6 py-3 bg-gradient-to-r from-slate-950 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Refresh Page
@@ -301,8 +301,8 @@ if (loading) {
                     </div>
                     <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200"></div>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
-                      <span className="text-xs font-semibold text-indigo-600">Fees Posted Soon</span>
+                      <div className="w-3 h-3 rounded-full bg-blue-900"></div>
+                      <span className="text-xs font-semibold text-blue-900">Fees Posted Soon</span>
                     </div>
                     <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200"></div>
                     <div className="flex items-center gap-2">
@@ -346,9 +346,9 @@ if (loading) {
         {/* Left Column: Summary & Progress */}
         <div className="lg:col-span-1 space-y-6">
           {/* Total Balance Card */}
-          <div className="bg-indigo-900 rounded-3xl p-6 text-white relative overflow-hidden shadow-xl shadow-indigo-200">
+          <div className="bg-blue-900 rounded-3xl p-6 text-white relative overflow-hidden shadow-xl shadow-blue-900">
             <div className="relative z-10">
-              <p className="text-indigo-200 text-sm font-medium mb-1">Total Outstanding Balance</p>
+              <p className="text-blue-900 text-sm font-medium mb-1">Total Outstanding Balance</p>
               <h2 className="text-3xl font-bold mb-6">
                 {summary?.totalBalance >= 0 
                   ? formatCurrency(summary.totalBalance)
@@ -357,36 +357,36 @@ if (loading) {
               
               <div className="space-y-4">
                 <div className="flex justify-between text-xs font-medium">
-                  <span className="text-indigo-200">Payment Progress</span>
+                  <span className="text-blue-900">Payment Progress</span>
                   <span>{paidPercentage.toFixed(1)}%</span>
                 </div>
-                <div className="w-full bg-indigo-800/50 rounded-full h-2">
+                <div className="w-full bg-blue-900 rounded-full h-2">
                   <div 
-                    className="bg-indigo-400 h-2 rounded-full transition-all duration-1000"
+                    className="bg-blue-900 h-2 rounded-full transition-all duration-1000"
                     style={{ width: `${Math.min(paidPercentage, 100)}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-indigo-800">
+                <div className="flex justify-between pt-2 border-t border-blue-900">
                   <div>
-                    <p className="text-[10px] text-indigo-300 uppercase tracking-wider">Total Billed</p>
+                    <p className="text-[10px] text-blue-900 uppercase tracking-wider">Total Billed</p>
                     <p className="text-sm font-semibold">{formatCurrency(summary.totalAmount)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] text-indigo-300 uppercase tracking-wider">Total Paid</p>
+                    <p className="text-[10px] text-blue-900 uppercase tracking-wider">Total Paid</p>
                     <p className="text-sm font-semibold">{formatCurrency(summary.totalPaid)}</p>
                   </div>
                 </div>
               </div>
             </div>
             {/* Decorative circles */}
-            <div className="absolute -right-8 -top-8 w-32 h-32 bg-indigo-800/30 rounded-full blur-2xl"></div>
-            <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl"></div>
+            <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-900 rounded-full blur-2xl"></div>
+            <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-blue-900 rounded-full blur-2xl"></div>
           </div>
 
           {/* Quick Info Card */}
           <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
             <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <Info size={16} className="text-indigo-500" />
+              <Info size={16} className="text-blue-900" />
               Student Information
             </h3>
             <div className="space-y-4">
@@ -430,7 +430,7 @@ if (loading) {
             return (
               <div 
                 key={fee.id || fee._id} 
-                className="bg-white rounded-2xl border border-slate-100 p-5 hover:shadow-md hover:border-indigo-100 transition-all group"
+                className="bg-white rounded-2xl border border-slate-100 p-5 hover:shadow-md hover:border-blue-900 transition-all group"
               >
                 <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
                   {/* Status Icon */}
@@ -538,7 +538,7 @@ if (loading) {
             </p>
             <button
               onClick={() => window.location.href = 'tel:+254700123456'}
-              className="mt-4 text-xs font-bold text-indigo-600 hover:underline"
+              className="mt-4 text-xs font-bold text-blue-900 hover:underline"
             >
               Contact Support
             </button>

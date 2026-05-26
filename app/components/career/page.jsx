@@ -77,7 +77,7 @@ function ModernJobCard({ job, onEdit, onDelete, onView }) {
   const getJobTypeColor = (type) => {
     switch(type) {
       case 'full-time': return 'from-emerald-500 to-green-600';
-      case 'part-time': return 'from-blue-500 to-cyan-600';
+      case 'part-time': return 'from-blue-500 to-blue-900';
       case 'contract': return 'from-purple-500 to-pink-600';
       case 'internship': return 'from-amber-500 to-orange-600';
       default: return 'from-gray-500 to-gray-700';
@@ -147,7 +147,7 @@ function ModernJobCard({ job, onEdit, onDelete, onView }) {
           <span className={`px-4 py-1.5 bg-gradient-to-r ${getJobTypeColor(job.jobType)} text-white rounded-full text-xs font-bold shadow-sm`}>
             {job.jobType.replace('-', ' ').toUpperCase()}
           </span>
-          <span className="px-4 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
+          <span className="px-4 py-1.5 bg-gradient-to-r from-blue-900 to-blue-600 text-white rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
             <FaUsers /> {job.positionsAvailable} position{job.positionsAvailable > 1 ? 's' : ''}
           </span>
           <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5 ${
@@ -232,7 +232,7 @@ function ModernJobModal({ open, onClose, onSave, job, loading }) {
 
   const jobTypes = [
     { value: 'full-time', label: 'Full Time', color: 'from-emerald-500 to-green-600' },
-    { value: 'part-time', label: 'Part Time', color: 'from-blue-500 to-cyan-600' },
+    { value: 'part-time', label: 'Part Time', color: 'from-blue-500 to-blue-900' },
     { value: 'contract', label: 'Contract', color: 'from-purple-500 to-pink-600' },
     { value: 'internship', label: 'Internship', color: 'from-amber-500 to-orange-600' }
   ];
@@ -606,7 +606,7 @@ function ModernJobDetailsModal({ open, onClose, job }) {
   const getJobTypeColor = (type) => {
     switch(type) {
       case 'full-time': return 'from-emerald-500 to-green-600';
-      case 'part-time': return 'from-blue-500 to-cyan-600';
+      case 'part-time': return 'from-blue-500 to-blue-900';
       case 'contract': return 'from-purple-500 to-pink-600';
       case 'internship': return 'from-amber-500 to-orange-600';
       default: return 'from-gray-500 to-gray-700';
@@ -654,7 +654,7 @@ function ModernJobDetailsModal({ open, onClose, job }) {
               <span className={`px-6 py-2.5 bg-gradient-to-r ${getJobTypeColor(job.jobType)} text-white rounded-full text-sm font-bold shadow-lg`}>
                 {job.jobType.replace('-', ' ').toUpperCase()}
               </span>
-              <span className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
+              <span className="px-6 py-2.5 bg-gradient-to-r from-blue-900 to-blue-600 text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
                 <FaUsers /> {job.positionsAvailable} position{job.positionsAvailable > 1 ? 's' : ''}
               </span>
               <span className={`px-6 py-2.5 rounded-full text-sm font-bold shadow-lg flex items-center gap-2 ${
@@ -772,20 +772,20 @@ function ModernJobDetailsModal({ open, onClose, job }) {
             {(job.contactEmail || job.contactPhone) && (
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg text-white">
+                  <div className="p-2 bg-gradient-to-r from-blue-900 to-blue-600 rounded-lg text-white">
                     <FaEnvelope />
                   </div>
                   Contact Information
                 </h3>
-                <div className="bg-gradient-to-br from-cyan-50 to-blue-100 rounded-2xl p-6 border border-cyan-200">
+                <div className="bg-gradient-to-br from-blue-900 to-blue-100 rounded-2xl p-6 border border-blue-900">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {job.contactEmail && (
                       <div className="bg-white rounded-xl p-4 border border-gray-200">
                         <div className="flex items-center gap-3 mb-2">
-                          <FaEnvelope className="text-cyan-600 text-xl" />
+                          <FaEnvelope className="text-blue-900 text-xl" />
                           <h4 className="font-bold text-gray-900">Email</h4>
                         </div>
-                        <a href={`mailto:${job.contactEmail}`} className="text-cyan-600 hover:text-cyan-800 font-medium">
+                        <a href={`mailto:${job.contactEmail}`} className="text-blue-900 hover:text-blue-900 font-medium">
                           {job.contactEmail}
                         </a>
                       </div>

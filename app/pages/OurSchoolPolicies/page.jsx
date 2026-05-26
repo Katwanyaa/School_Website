@@ -322,8 +322,8 @@ export default function TermsAndConditions() {
         <div className="mb-6 sm:mb-8 md:mb-12 lg:mb-16">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
             <div className="text-center lg:text-left w-full lg:w-auto">
-              <div className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl border border-blue-200 mb-3">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-900 rounded-2xl border border-blue-200 mb-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-600 to-blue-900 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xs sm:text-sm">KH</span>
                 </div>
                 <span className="text-xs sm:text-sm font-bold text-blue-900 uppercase tracking-wider">
@@ -354,7 +354,7 @@ export default function TermsAndConditions() {
           {/* Fee Structure Section - Improved Cards */}
           <div className="mb-8 bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 text-white">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-4 sm:p-6 text-white">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -409,7 +409,7 @@ export default function TermsAndConditions() {
                         <SummaryCard 
                           title="Term 2" 
                           amount={feeData.boarding.term2}
-                          bgColor="from-indigo-500 via-indigo-600 to-indigo-700"
+                          bgColor="from-slate-950 via-blue-900 to-blue-900"
                           icon="✏️"
                           description="Mid Year"
                         />
@@ -487,7 +487,7 @@ export default function TermsAndConditions() {
                         <SummaryCard 
                           title="Term 2" 
                           amount={feeData.day.term2}
-                          bgColor="from-indigo-500 via-indigo-600 to-indigo-700"
+                          bgColor="from-slate-950 via-blue-900 to-blue-900"
                           icon="☀️"
                           description="Mid Year"
                         />
@@ -565,7 +565,7 @@ export default function TermsAndConditions() {
                   )}
 
                   {/* Payment Instructions - Improved Layout */}
-                  <div className="mt-6 sm:mt-8 p-4 sm:p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                  <div className="mt-6 sm:mt-8 p-4 sm:p-5 bg-gradient-to-r from-blue-50 to-blue-900 rounded-xl border border-blue-100">
                     <h4 className="font-bold text-blue-900 mb-3 text-sm sm:text-base">💳 Payment Instructions</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -660,7 +660,7 @@ export default function TermsAndConditions() {
                 className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
                 {/* Term Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-5 md:p-6 text-white">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-4 sm:p-5 md:p-6 text-white">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -768,7 +768,7 @@ export default function TermsAndConditions() {
                           onClick={() => handlePageChange(pageNum)}
                           className={`w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-lg font-bold transition-all text-xs sm:text-sm ${
                             currentPage === pageNum
-                              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
+                              ? 'bg-gradient-to-r from-blue-600 to-blue-900 text-white shadow-lg'
                               : 'text-slate-700 hover:bg-slate-100'
                           }`}
                         >
@@ -809,7 +809,7 @@ export default function TermsAndConditions() {
         {/* Footer - Improved */}
         <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-200">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl sm:rounded-2xl p-4 border border-blue-100">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-900 rounded-xl sm:rounded-2xl p-4 border border-blue-100">
               <h4 className="font-bold text-blue-900 mb-2 text-sm sm:text-base">⚠️ Important Notice</h4>
               <p className="text-xs sm:text-sm text-slate-700">These rules are binding for all students. Parents/guardians must ensure students understand and comply.</p>
             </div>
@@ -817,7 +817,7 @@ export default function TermsAndConditions() {
               <h4 className="font-bold text-emerald-900 mb-2 text-sm sm:text-base">💰 Fee Payment</h4>
               <p className="text-xs sm:text-sm text-slate-700">Fees must be paid in full by the second week of each term. Late payment attracts a penalty of KES 500 per week.</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl sm:rounded-2xl p-4 border border-purple-100">
+            <div className="bg-gradient-to-br from-purple-50 to-blue-900 rounded-xl sm:rounded-2xl p-4 border border-purple-100">
               <h4 className="font-bold text-purple-900 mb-2 text-sm sm:text-base">⚖️ Enforcement</h4>
               <p className="text-xs sm:text-sm text-slate-700">Rules enforced by school administration. Appeals to be made in writing to Principal's office.</p>
             </div>

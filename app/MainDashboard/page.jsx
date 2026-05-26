@@ -372,7 +372,7 @@ export default function AdminDashboard() {
           <div className="absolute inset-6 md:inset-8 border-4 border-white/40 rounded-full animate-spin"></div>
           
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center overflow-hidden">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-900 rounded-2xl flex items-center justify-center overflow-hidden">
               <img 
                 src="/katz.jpeg" 
                 alt="Katwanyaa Senior School Logo" 
@@ -397,14 +397,14 @@ export default function AdminDashboard() {
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full animate-bounce"
+                  className="w-3 h-3 bg-gradient-to-r from-blue-400 to-blue-900 rounded-full animate-bounce"
                   style={{ animationDelay: `${i * 0.2}s` }}
                 />
               ))}
             </div>
             
             <div className="w-48 md:w-64 h-2 bg-white/10 rounded-full overflow-hidden mx-auto">
-              <div className="h-full bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-500 animate-gradient-loading"></div>
+              <div className="h-full bg-gradient-to-r from-blue-500 via-blue-900 to-blue-500 animate-gradient-loading"></div>
             </div>
             
             <p className="text-white/60 text-xs md:text-sm">Loading Admin Dashboard...</p>
@@ -1027,11 +1027,11 @@ const handleLogout = () => {
     return (
       <div className="group cursor-default py-4">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <div className="h-10 w-1 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full shadow-sm " />
+          <div className="h-10 w-1 bg-gradient-to-b from-blue-600 to-blue-900 rounded-full shadow-sm " />
 
           <div className="flex flex-col">
             <h1 className="text-lg md:text-xl font-black text-gray-900 tracking-tight leading-none uppercase italic">
-              Katwanyaa <span className="text-blue-600 group-hover:text-indigo-600 transition-colors">Senior</span>
+              Katwanyaa <span className="text-blue-600 group-hover:text-blue-900 transition-colors">Senior</span>
             </h1>
             
             <div className="flex items-center gap-2 mt-1">

@@ -96,10 +96,10 @@ function LoadingSpinner({ message = "Loading content..." }) {
               className="text-blue-600"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full w-8 h-8"></div>
+              <div className="bg-gradient-to-r from-blue-500 to-blue-900 rounded-full w-8 h-8"></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full blur-xl opacity-30"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-blue-100 to-blue-900 rounded-full blur-xl opacity-30"></div>
         </div>
         
         <div className="mt-8 space-y-3">
@@ -226,9 +226,9 @@ function ModernDetailModal({ session, onClose, onContact }) {
 
   const getCategoryStyle = (category) => {
     const styles = {
-      academic: { gradient: 'from-blue-500 to-cyan-500', icon: FiCalendar },
+      academic: { gradient: 'from-blue-500 to-blue-900', icon: FiCalendar },
       emotional: { gradient: 'from-purple-500 to-pink-500', icon: FiMessageSquare },
-      devotion: { gradient: 'from-indigo-500 to-purple-500', icon: FiStar },
+      devotion: { gradient: 'from-slate-950 to-purple-500', icon: FiStar },
       worship: { gradient: 'from-amber-500 to-orange-500', icon: FiStar },
       support: { gradient: 'from-emerald-500 to-green-500', icon: FiPhoneCall },
       drugs: { gradient: 'from-red-500 to-rose-500', icon: FiAlertTriangle }
@@ -828,26 +828,26 @@ function ModernGuidanceHeader({
     const char = name?.trim().charAt(0).toUpperCase() || 'S';
     const gradients = {
       A: "bg-gradient-to-r from-red-500 to-pink-600",
-      B: "bg-gradient-to-r from-blue-500 to-cyan-600",
+      B: "bg-gradient-to-r from-blue-500 to-blue-900",
       C: "bg-gradient-to-r from-green-500 to-emerald-600",
       D: "bg-gradient-to-r from-purple-500 to-pink-600",
       E: "bg-gradient-to-r from-emerald-500 to-teal-600",
       F: "bg-gradient-to-r from-pink-500 to-rose-600",
       G: "bg-gradient-to-r from-orange-500 to-amber-600",
-      H: "bg-gradient-to-r from-indigo-500 to-violet-600",
-      I: "bg-gradient-to-r from-cyan-500 to-blue-600",
+      H: "bg-gradient-to-r from-slate-950 to-blue-900",
+      I: "bg-gradient-to-r from-blue-900 to-blue-600",
       J: "bg-gradient-to-r from-rose-500 to-red-600",
       K: "bg-gradient-to-r from-amber-500 to-yellow-600",
-      L: "bg-gradient-to-r from-violet-500 to-purple-600",
+      L: "bg-gradient-to-r from-slate-950 to-purple-600",
       M: "bg-gradient-to-r from-lime-500 to-green-600",
       N: "bg-gradient-to-r from-sky-500 to-blue-600",
       O: "bg-gradient-to-r from-fuchsia-500 to-purple-600",
       P: "bg-gradient-to-r from-teal-500 to-emerald-600",
       Q: "bg-gradient-to-r from-slate-600 to-gray-700",
       R: "bg-gradient-to-r from-red-400 to-pink-500",
-      S: "bg-gradient-to-r from-blue-400 to-cyan-500",
+      S: "bg-gradient-to-r from-blue-400 to-blue-900",
       T: "bg-gradient-to-r from-emerald-400 to-green-500",
-      U: "bg-gradient-to-r from-indigo-400 to-purple-500",
+      U: "bg-gradient-to-r from-slate-950 to-purple-500",
       V: "bg-gradient-to-r from-purple-400 to-pink-500",
       W: "bg-gradient-to-r from-orange-400 to-amber-500",
       X: "bg-gradient-to-r from-gray-500 to-slate-600",
@@ -1044,13 +1044,13 @@ function StatisticsCards({ events, guidance, news, activeTab }) {
         return [
           { label: 'Total Events', value: stats.events.total, color: 'from-blue-500 to-blue-600', icon: <FiCalendar /> },
           { label: 'Upcoming', value: stats.events.upcoming, color: 'from-emerald-500 to-emerald-600', icon: <FaCalendarCheck /> },
-          { label: 'With Images', value: stats.events.withImages, color: 'from-cyan-500 to-cyan-600', icon: <FiFileText /> }
+          { label: 'With Images', value: stats.events.withImages, color: 'from-blue-900 to-blue-900', icon: <FiFileText /> }
         ];
       case 'guidance':
         return [
           { label: 'Total Sessions', value: stats.guidance.total, color: 'from-purple-500 to-purple-600', icon: <FiMessageSquare /> },
           { label: 'High Priority', value: stats.guidance.highPriority, color: 'from-red-500 to-red-600', icon: <FiAlertCircle /> },
-          { label: 'With Images', value: stats.guidance.withImages, color: 'from-indigo-500 to-indigo-600', icon: <FiFileText /> }
+          { label: 'With Images', value: stats.guidance.withImages, color: 'from-slate-950 to-blue-900', icon: <FiFileText /> }
         ];
       case 'news':
         return [
@@ -1104,7 +1104,7 @@ function StatisticsCards({ events, guidance, news, activeTab }) {
       
       {/* Decorative Element */}
       <div className={`absolute -bottom-2 -right-2 w-12 h-12 md:w-16 md:h-16 opacity-[0.03] rounded-full bg-gradient-to-br ${
-        index === 0 ? 'from-blue-500 to-cyan-500' :
+        index === 0 ? 'from-blue-500 to-blue-900' :
         index === 1 ? 'from-emerald-500 to-green-500' :
         'from-purple-500 to-pink-500'
       } hidden md:block`} />
@@ -1130,7 +1130,7 @@ function EventCard({ event, onViewDetails }) {
         iconColor: 'text-red-600'
       },
       academic: { 
-        gradient: 'from-blue-500 to-cyan-500', 
+        gradient: 'from-blue-500 to-blue-900', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -1275,7 +1275,7 @@ function GuidanceCard({ session, onViewDetails }) {
   const getCategoryStyle = (category) => {
     const styles = {
       Academics: { 
-        gradient: 'from-blue-500 to-cyan-500', 
+        gradient: 'from-blue-500 to-blue-900', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',
@@ -1361,7 +1361,7 @@ function GuidanceCard({ session, onViewDetails }) {
           <div className="absolute top-4 right-4">
             <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
               session.type === 'Counseling' ? 'bg-purple-50 border border-purple-200 text-purple-700' :
-              'bg-indigo-50 border border-indigo-200 text-indigo-700'
+              'bg-blue-900 border border-blue-900 text-blue-900'
             }`}>
               {session.type}
             </span>
@@ -1437,7 +1437,7 @@ function NewsCard({ newsItem, onViewDetails }) {
         iconColor: 'text-emerald-600'
       },
       academic: { 
-        gradient: 'from-blue-500 to-cyan-500', 
+        gradient: 'from-blue-500 to-blue-900', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200',

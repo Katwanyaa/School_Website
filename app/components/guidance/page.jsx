@@ -197,7 +197,7 @@ const ModernTeamDetailModal = ({ team, onClose, onEdit }) => {
 
         {/* 1. Header - Reduced height and font sizes */}
         <div className="relative h-32 sm:h-40 w-full shrink-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 to-blue-900" />
           <div className="relative h-full flex flex-col justify-end p-6">
             <div className="flex items-end justify-between">
               <div className="space-y-1">
@@ -330,7 +330,7 @@ const ModernSessionDetailModal = ({ event, onClose, onEdit }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/10" />
           
           <div className="absolute bottom-4 left-6 flex gap-1.5">
-            <span className="px-3 py-1 bg-white/90 backdrop-blur shadow-sm rounded-full text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+            <span className="px-3 py-1 bg-white/90 backdrop-blur shadow-sm rounded-full text-[10px] font-bold uppercase tracking-wider text-blue-900">
               {event.category || 'Guidance'}
             </span>
             <span className={`px-3 py-1 text-white rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${getPriorityColor(event.priority)}`}>
@@ -600,7 +600,7 @@ const ModernDropdown = ({
                 }}
                 className={`w-full text-left px-4 py-2 flex items-center gap-2 ${
                   value === option.value
-                    ? 'bg-gradient-to-r from-indigo-50 to-violet-50 text-indigo-700 font-medium'
+                    ? 'bg-gradient-to-r from-slate-950 to-blue-900 text-blue-900 font-medium'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -609,7 +609,7 @@ const ModernDropdown = ({
                 )}
                 <span className="truncate">{option.label}</span>
                 {value === option.value && (
-                  <FiCheck className="ml-auto text-indigo-600" />
+                  <FiCheck className="ml-auto text-blue-900" />
                 )}
               </button>
             ))}
@@ -665,7 +665,7 @@ const CounselingEventCard = ({ event, onEdit, onDelete, onView, index }) => {
           </div>
         </div>
       ) : (
-        <div className="relative h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10">
+        <div className="relative h-32 bg-gradient-to-br from-blue-500/10 to-blue-900">
           {/* Modern Gradient Fallback */}
           <div className="absolute top-4 right-4">
             <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-sm shadow-sm ${getPriorityColor(event?.priority)}`}>
@@ -1021,7 +1021,7 @@ const [memberDetailModal, setMemberDetailModal] = useState({
   return (
     <ModernModal open={true} onClose={onCancel}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-4 text-white">
+      <div className="bg-gradient-to-r from-slate-950 to-blue-900 p-4 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-white/20 rounded-xl">
@@ -1072,7 +1072,7 @@ const [memberDetailModal, setMemberDetailModal] = useState({
               ) : (
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-48 h-48 rounded-2xl border-3 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-gray-100 transition-colors"
+                  className="w-48 h-48 rounded-2xl border-3 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-blue-900 hover:bg-gray-100 transition-colors"
                 >
                   <FiUpload className="text-gray-400 text-4xl mb-3" />
                   <p className="text-sm font-medium text-gray-600">Click to upload</p>
@@ -1086,7 +1086,7 @@ const [memberDetailModal, setMemberDetailModal] = useState({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-2.5 rounded-xl font-medium hover:opacity-90"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-slate-950 to-blue-900 text-white px-5 py-2.5 rounded-xl font-medium hover:opacity-90"
                 disabled={isSaving}
               >
                 <FiUpload className="w-4 h-4" />
@@ -1118,7 +1118,7 @@ const [memberDetailModal, setMemberDetailModal] = useState({
                 required
                 value={formData.counselor}
                 onChange={(e) => updateField('counselor', e.target.value)}
-                className="w-full px-4 py-3.5 text-base border-2 border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-4 py-3.5 text-base border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900"
                 placeholder="Enter counselor's full name"
                 disabled={isSaving}
               />
@@ -1159,7 +1159,7 @@ const [memberDetailModal, setMemberDetailModal] = useState({
                           onClick={() => handleCategorySelect(option.value)}
                           className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm sm:text-base ${
                             formData.category === option.value
-                              ? 'bg-gradient-to-r from-indigo-50 to-violet-50 text-indigo-700 font-medium'
+                              ? 'bg-gradient-to-r from-slate-950 to-blue-900 text-blue-900 font-medium'
                               : 'text-gray-700 hover:bg-gray-50'
                           }`}
                         >
@@ -1168,7 +1168,7 @@ const [memberDetailModal, setMemberDetailModal] = useState({
                           )}
                           <span>{option.label}</span>
                           {formData.category === option.value && (
-                            <FiCheck className="ml-auto text-indigo-600" />
+                            <FiCheck className="ml-auto text-blue-900" />
                           )}
                         </button>
                       ))}
@@ -1289,7 +1289,7 @@ const [memberDetailModal, setMemberDetailModal] = useState({
             <button
               type="submit"
               disabled={isSaving}
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3.5 rounded-full font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 flex items-center justify-center gap-3"
+              className="flex-1 bg-gradient-to-r from-slate-950 to-blue-900 text-white py-3.5 rounded-full font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 flex items-center justify-center gap-3"
             >
               {isSaving ? (
                 <>
@@ -1360,7 +1360,7 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
         {/* Header */}
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <h3 className="text-sm font-semibold text-indigo-900 uppercase tracking-[0.15em]">
+            <h3 className="text-sm font-semibold text-blue-900 uppercase tracking-[0.15em]">
               Team Members
             </h3>
             <span className="h-1 w-1 rounded-full bg-gray-300" />
@@ -1377,7 +1377,7 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
           {/* --- 1. PATRON SECTION --- */}
           {team.patron && (
             <div className="relative w-full max-w-md mx-auto group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-[2rem] blur-xl opacity-50" />
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-slate-950 to-purple-500/10 rounded-[2rem] blur-xl opacity-50" />
               <div className="relative flex items-center gap-5 p-4 bg-white/80 backdrop-blur-xl rounded-[1.75rem] border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
                 <div className="relative shrink-0">
                   <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-slate-50/50 shadow-inner">
@@ -1396,11 +1396,11 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-500/80 mb-1">Official Patron</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-900 mb-1">Official Patron</span>
                     <h4 className="text-base font-bold text-slate-900 truncate tracking-tight">{team.patron.name}</h4>
                     <p className="text-[11px] font-medium text-slate-400 truncate mb-3">{team.patron.title || "Project Lead"}</p>
                     <div className="flex items-center gap-2">
-                      <a href={`tel:${team.patron.phone}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-sm shadow-indigo-200 active:scale-95 transition-all">
+                      <a href={`tel:${team.patron.phone}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-900 text-white shadow-sm shadow-blue-900 active:scale-95 transition-all">
                         <FiPhone size={11} /><span className="text-[10px] font-bold">{team.patron.phone}</span>
                       </a>
                       <a href={`mailto:${team.patron.email}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 active:bg-slate-50 transition-all">
@@ -1409,7 +1409,7 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
                     </div>
                   </div>
                 </div>
-                <div className="absolute top-0 right-0 p-2 opacity-10"><FiAward size={40} className="rotate-12 text-indigo-900" /></div>
+                <div className="absolute top-0 right-0 p-2 opacity-10"><FiAward size={40} className="rotate-12 text-blue-900" /></div>
               </div>
             </div>
           )}
@@ -1457,7 +1457,7 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
           {/* --- 3. TEACHER SECTION --- */}
           {team.teacher && (
             <div className="relative w-full max-w-md mx-auto group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-[2rem] blur-xl opacity-50" />
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/10 to-blue-900 rounded-[2rem] blur-xl opacity-50" />
               <div className="relative flex items-center gap-5 p-4 bg-white/80 backdrop-blur-xl rounded-[1.75rem] border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
                 <div className="relative shrink-0">
                   <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-slate-50/50 shadow-inner">
@@ -1537,13 +1537,13 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
         </div>
         
         {!team.patron && !team.matron && !team.teacher && (
-          <div className="relative group max-w-[300px] mx-auto rounded-[2.5rem] border-2 border-dashed border-slate-200 bg-slate-50/50 p-10 text-center transition-all duration-500 hover:border-indigo-200 hover:bg-white">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-indigo-100/40 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative group max-w-[300px] mx-auto rounded-[2.5rem] border-2 border-dashed border-slate-200 bg-slate-50/50 p-10 text-center transition-all duration-500 hover:border-blue-900 hover:bg-white">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-900 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             <div className="relative flex flex-col items-center">
               <div className="relative mb-6">
                 <div className="w-20 h-20 rounded-3xl bg-white shadow-sm border border-slate-100 flex items-center justify-center rotate-6 group-hover:rotate-0 transition-transform duration-500">
-                  <FiUsers className="text-slate-300 w-8 h-8 group-hover:text-indigo-400 transition-colors duration-500" />
+                  <FiUsers className="text-slate-300 w-8 h-8 group-hover:text-blue-900 transition-colors duration-500" />
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-200 border-2 border-white rounded-full" />
               </div>
@@ -1555,7 +1555,7 @@ const GuidanceTeamCard = ({ team, onView, onEdit, onDelete }) => {
                 Start building your team by adding a Patron, Matron, or Teacher to this project.
               </p>
 
-              <button className="px-6 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs font-bold uppercase tracking-widest text-slate-600 shadow-sm hover:shadow-md hover:border-indigo-100 hover:text-indigo-600 transition-all active:scale-95">
+              <button className="px-6 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs font-bold uppercase tracking-widest text-slate-600 shadow-sm hover:shadow-md hover:border-blue-900 hover:text-blue-900 transition-all active:scale-95">
                 + Add Member
               </button>
             </div>
@@ -1805,7 +1805,7 @@ const handleSubmit = async (e) => {
         </button>
         
         {/* Header - Modern Gradient */}
-        <div className="relative bg-gradient-to-r from-indigo-600 to-violet-600 p-5 md:p-7 text-white">
+        <div className="relative bg-gradient-to-r from-slate-950 to-blue-900 p-5 md:p-7 text-white">
           <div className="flex items-center gap-4">
             <div className={`p-3 md:p-4 rounded-2xl ${selectedRole.bgColor} ${selectedRole.color} shadow-lg`}>
               {selectedRole.icon}
@@ -1814,7 +1814,7 @@ const handleSubmit = async (e) => {
               <h2 className="text-xl md:text-3xl font-bold tracking-tight mb-1">
                 {isEditMode ? 'Edit Team Member' : 'Add Team Member'}
               </h2>
-              <p className="text-indigo-100 text-sm md:text-base opacity-90">
+              <p className="text-blue-900 text-sm md:text-base opacity-90">
                 {isEditMode ? 'Update member details and information' : 'Create a new guidance team member profile'}
               </p>
             </div>
@@ -1866,7 +1866,7 @@ const handleSubmit = async (e) => {
                   className={`inline-flex items-center gap-3 px-5 py-3 md:px-6 md:py-3.5 rounded-lg md:rounded-xl font-semibold transition-all cursor-pointer border-2 text-base md:text-lg shadow-sm ${
                     isLoading 
                       ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 hover:from-blue-100 hover:to-indigo-100 border-blue-200 hover:border-blue-300'
+                      : 'bg-gradient-to-r from-blue-50 to-blue-900 text-blue-700 hover:from-blue-100 hover:to-blue-900 border-blue-200 hover:border-blue-300'
                   }`}
                 >
                   <FiUpload className="w-5 h-5 md:w-6 md:h-6" />
@@ -2041,7 +2041,7 @@ const handleSubmit = async (e) => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 h-12 md:h-14 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl md:rounded-2xl font-bold hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 text-base md:text-lg shadow-lg hover:shadow-xl"
+                    className="flex-1 h-12 md:h-14 bg-gradient-to-r from-blue-600 to-blue-900 text-white rounded-xl md:rounded-2xl font-bold hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 text-base md:text-lg shadow-lg hover:shadow-xl"
                   >
                     {isLoading ? (
                       <>
@@ -2086,9 +2086,9 @@ const ModernTeamCard = ({ member, onEdit, onDelete, onClick }) => {
     const configs = {
       teacher: {
         icon: <FiBriefcase className="w-4 h-4" />,
-        gradient: 'from-blue-600 to-indigo-400',
+        gradient: 'from-blue-600 to-blue-900',
         textColor: 'text-blue-600',
-        bgColor: 'bg-gradient-to-br from-blue-600 to-indigo-400',
+        bgColor: 'bg-gradient-to-br from-blue-600 to-blue-900',
         label: 'Guidance Teacher'
       },
       patron: {
@@ -2388,7 +2388,7 @@ const handleSubmit = async (e) => {
       id: 'teacher',
       title: 'Guidance Teacher',
       icon: <FiBriefcase className="w-5 h-5" />,
-      gradient: 'from-blue-600 to-cyan-500',
+      gradient: 'from-blue-600 to-blue-900',
       bgColor: 'bg-blue-500/10',
       borderColor: 'border-blue-200',
       data: formData.teacher,
@@ -2404,7 +2404,7 @@ const handleSubmit = async (e) => {
       <div className="relative w-full max-w-6xl bg-white dark:bg-slate-900 rounded-[3.5rem] shadow-[0_0_80px_-12px_rgba(0,0,0,0.6)] overflow-hidden max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-500 border border-white/20 dark:border-slate-800">
         
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 p-8 text-white">
+        <div className="relative bg-gradient-to-r from-slate-950 via-purple-700 to-pink-700 p-8 text-white">
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-10">
             <svg width="100%" height="100%">
@@ -2608,7 +2608,7 @@ const handleSubmit = async (e) => {
                 
                 {/* Assistant Teacher Section (only for teacher role) */}
                 {currentSection.id === 'teacher' && currentSection.hasAssistant && (
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-3xl p-6 border border-blue-100 dark:border-blue-800/50">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-900 dark:from-blue-900/20 dark:to-blue-900 rounded-3xl p-6 border border-blue-100 dark:border-blue-800/50">
                     <div className="flex items-center gap-4 mb-6">
                       <div className="p-3 bg-blue-100 dark:bg-blue-500/20 rounded-xl">
                         <FiUserPlus className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -2699,7 +2699,7 @@ School Chaplain Title                        </label>
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="flex-1 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-bold hover:shadow-xl hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-3"
+                      className="flex-1 h-14 bg-gradient-to-r from-blue-600 to-blue-900 text-white rounded-2xl font-bold hover:shadow-xl hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-3"
                     >
                       {isLoading ? (
                         <>
@@ -2730,9 +2730,9 @@ School Chaplain Title                        </label>
     const configs = {
       teacher: {
         icon: <FiBriefcase className="w-6 h-6" />,
-        gradient: 'from-blue-600 to-indigo-400',
+        gradient: 'from-blue-600 to-blue-900',
         textColor: 'text-blue-600',
-        bgColor: 'bg-gradient-to-br from-blue-600 to-indigo-400',
+        bgColor: 'bg-gradient-to-br from-blue-600 to-blue-900',
         label: 'Guidance Teacher'
       },
       patron: {
@@ -3615,7 +3615,7 @@ const confirmDeleteTeam = async () => {
             </div>
 <button
   onClick={() => setMemberModal({ open: true, member: null })}
-  className="group relative inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl text-base font-bold tracking-tight shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-0.5"
+  className="group relative inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-blue-900 text-white rounded-2xl text-base font-bold tracking-tight shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-0.5"
 >
   <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
   <FiUserPlus className="w-5 h-5 transition-transform group--100 group-hover:-rotate-12" />
@@ -3626,7 +3626,7 @@ const confirmDeleteTeam = async () => {
           {membersLoading ? (
            <div className="relative bg-white/80 backdrop-blur rounded-3xl border border-gray-200 p-12 text-center shadow-sm">
   {/* Icon badge */}
-  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-2xl mb-6">
+  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500/10 to-blue-900 rounded-2xl mb-6">
     <FiUsers className="text-blue-600 w-8 h-8" />
   </div>
 
@@ -3659,7 +3659,7 @@ const confirmDeleteTeam = async () => {
               </p>
               <button
                 onClick={() => setMemberModal({ open: true, member: null })}
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold hover:opacity-90 transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-blue-900 text-white rounded-xl font-bold hover:opacity-90 transition-all"
               >
                 <FiUserPlus className="w-5 h-5" />
                 Add First Member
@@ -3888,7 +3888,7 @@ const confirmDeleteTeam = async () => {
               </p>
               <button
                 onClick={handleNewEvent}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-2.5 rounded-full font-medium"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-slate-950 to-blue-900 text-white px-4 py-2.5 rounded-full font-medium"
               >
                 <FiPlus className="w-4 h-4" />
                 Create First Session

@@ -1120,7 +1120,7 @@ export default function AdminLoginPage() {
             </button>
 
             <div className="relative overflow-hidden bg-slate-950 p-6 text-white sm:p-8">
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-blue-400 to-cyan-300" />
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-blue-400 to-blue-900" />
               <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full border border-white/10" />
               <div className="absolute bottom-6 right-6 h-20 w-20 rounded-full border border-blue-300/20" />
 

@@ -122,11 +122,11 @@ const ModernEventsNewsSection = () => {
         dark: 'bg-purple-600'
       },
       'science': { 
-        bg: 'bg-cyan-50', 
-        text: 'text-cyan-700', 
-        border: 'border-cyan-100',
-        accent: 'bg-cyan-500',
-        dark: 'bg-cyan-600'
+        bg: 'bg-blue-900', 
+        text: 'text-blue-900', 
+        border: 'border-blue-900',
+        accent: 'bg-blue-900',
+        dark: 'bg-blue-900'
       },
       'training': { 
         bg: 'bg-amber-50', 
@@ -263,7 +263,7 @@ const ModernEventsNewsSection = () => {
         <div className="w-full max-w-[90%] sm:max-w-[80%] min-h-[360px] sm:min-h-[480px] relative overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[3rem] bg-white border border-gray-100 shadow-lg sm:shadow-[0_40px_100px_-30px_rgba(0,0,0,0.08)] flex flex-col items-center justify-center p-6 sm:p-8 md:p-20 text-center">
           
           {/* Subtle Brand Accent */}
-          <div className="absolute top-0 left-0 w-full h-1 sm:h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+          <div className="absolute top-0 left-0 w-full h-1 sm:h-2 bg-gradient-to-r from-blue-500 via-blue-900 to-purple-500" />
 
           {/* Branding Title */}
           <div className="mb-4 sm:mb-6">

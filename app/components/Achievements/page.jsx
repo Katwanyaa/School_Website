@@ -811,7 +811,7 @@ export default function AchievementsPage() {
   };
 
   const categoryColors = {
-    Academic: 'from-blue-600 to-cyan-600',
+    Academic: 'from-blue-600 to-blue-900',
     Sports: 'from-green-600 to-emerald-600',
     Arts: 'from-purple-600 to-pink-600',
     Leadership: 'from-green-600 to-teal-600',

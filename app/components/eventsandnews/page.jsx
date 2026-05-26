@@ -261,7 +261,7 @@ function Notification({
         };
       case 'info':
         return {
-          bg: 'from-blue-50 to-cyan-50',
+          bg: 'from-blue-50 to-blue-900',
           border: 'border-blue-200',
           icon: 'text-blue-600',
           iconBg: 'bg-blue-100',
@@ -341,7 +341,7 @@ function ModernItemDetailModal({ item, type, onClose, onEdit }) {
 
   const themeGradient = type === 'news' 
     ? 'from-purple-700 via-pink-600 to-rose-600' 
-    : 'from-blue-700 via-cyan-600 to-teal-600';
+    : 'from-blue-700 via-blue-900 to-teal-600';
 
   return (
     <Modal open={true} onClose={onClose}>
@@ -1026,7 +1026,7 @@ function ModernItemModal({ onClose, onSave, item, type, loading }) {
 
   const themeGradient = type === 'news' 
     ? 'from-purple-700 via-pink-600 to-rose-600' 
-    : 'from-blue-700 via-cyan-600 to-teal-600';
+    : 'from-blue-700 via-blue-900 to-teal-600';
 
   return (
     <>
@@ -1618,7 +1618,7 @@ const getAuthHeaders = () => {
                   currentPage === page
                     ? activeSection === 'news'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                      : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                      : 'bg-gradient-to-r from-blue-500 to-blue-900 text-white shadow-lg'
                     : 'text-gray-700'
                 }`}
               >
@@ -1716,7 +1716,7 @@ const getAuthHeaders = () => {
             <div className={`relative p-3.5 rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500 ${
               activeSection === 'news' 
                 ? 'bg-gradient-to-br from-purple-600 to-pink-600' 
-                : 'bg-gradient-to-br from-blue-600 to-cyan-600'
+                : 'bg-gradient-to-br from-blue-600 to-blue-900'
             }`}>
               {activeSection === 'news' ? (
                 <FiFileText className="text-white text-2xl md:text-3xl" />
@@ -1785,7 +1785,7 @@ const getAuthHeaders = () => {
           className={`group/btn relative overflow-hidden flex items-center justify-center gap-2.5 px-8 py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 shadow-lg hover:shadow-xl w-full sm:w-auto ${
             activeSection === 'news' 
               ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-purple-600/30' 
-              : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-blue-600/30'
+              : 'bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-900 shadow-blue-600/30'
           }`}
         >
           {/* Button Shine Effect */}
@@ -1895,7 +1895,7 @@ const getAuthHeaders = () => {
                 <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Upcoming Events</p>
                 <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.upcomingEvents}</p>
               </div>
-              <div className="p-3 bg-cyan-100 text-cyan-600 rounded-2xl">
+              <div className="p-3 bg-blue-900 text-blue-900 rounded-2xl">
                 <FiCalendar className="text-lg" />
               </div>
             </div>
@@ -1920,7 +1920,7 @@ const getAuthHeaders = () => {
                   isActive
                     ? tab.id === 'news'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                      : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                      : 'bg-gradient-to-r from-blue-500 to-blue-900 text-white shadow-lg'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -2005,7 +2005,7 @@ const getAuthHeaders = () => {
             className={`text-white px-6 lg:px-8 py-3 lg:py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 mx-auto text-sm lg:text-base cursor-pointer ${
               activeSection === 'news' 
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600' 
-                : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                : 'bg-gradient-to-r from-blue-600 to-blue-900'
             }`}
           >
             <FiPlus /> Create {activeSection === 'news' ? 'News' : 'Event'}

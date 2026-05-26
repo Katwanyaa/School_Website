@@ -51,12 +51,12 @@ const MAX_BULK_UPLOAD = 20;
 
 const TYPE_OPTIONS = [
   { value: 'CLUB', label: 'Clubs', icon: FaUsers, description: 'Student-led extracurricular groups', color: 'purple', gradient: 'from-purple-600 to-pink-600' },
-  { value: 'SOCIETY', label: 'Societies', icon: FaGraduationCap, description: 'Academic and professional societies', color: 'indigo', gradient: 'from-indigo-600 to-blue-600' },
+  { value: 'SOCIETY', label: 'Societies', icon: FaGraduationCap, description: 'Academic and professional societies', color: 'indigo', gradient: 'from-slate-950 to-blue-600' },
   { value: 'STUDENT_COUNCIL', label: 'Student Council', icon: FiUserCheck, description: 'Student leadership and governance', color: 'fuchsia', gradient: 'from-fuchsia-600 to-rose-600' },
-  { value: 'COMPUTER_LAB', label: 'Computer Lab', icon: FiMonitor, description: 'ICT labs and digital learning spaces', color: 'sky', gradient: 'from-sky-600 to-cyan-600' },
+  { value: 'COMPUTER_LAB', label: 'Computer Lab', icon: FiMonitor, description: 'ICT labs and digital learning spaces', color: 'sky', gradient: 'from-sky-600 to-blue-900' },
   { value: 'BOARDING', label: 'Boarding', icon: FaHome, description: 'Boarding facilities and life', color: 'amber', gradient: 'from-amber-600 to-orange-600' },
   { value: 'SECURITY', label: 'Security', icon: FaShieldAlt, description: 'Campus security and safety', color: 'rose', gradient: 'from-rose-600 to-red-600' },
-  { value: 'DEPARTMENT', label: 'Departments', icon: FiLayers, description: 'School departments and offices', color: 'cyan', gradient: 'from-cyan-600 to-blue-600' },
+  { value: 'DEPARTMENT', label: 'Departments', icon: FiLayers, description: 'School departments and offices', color: 'cyan', gradient: 'from-blue-900 to-blue-600' },
 ];
 
 const TYPE_THEMES = {
@@ -72,15 +72,15 @@ const TYPE_THEMES = {
     hover: 'hover:border-purple-300 hover:shadow-purple-500/10'
   },
   SOCIETY: { 
-    gradient: 'from-indigo-600 via-blue-600 to-cyan-500', 
-    lightGradient: 'from-indigo-50 to-blue-50',
-    bg: 'bg-indigo-50', 
-    text: 'text-indigo-700', 
-    border: 'border-indigo-200', 
-    iconBg: 'bg-indigo-500',
-    badge: 'bg-indigo-100 text-indigo-800',
-    glow: 'shadow-indigo-500/20',
-    hover: 'hover:border-indigo-300 hover:shadow-indigo-500/10'
+    gradient: 'from-slate-950 via-blue-600 to-blue-900', 
+    lightGradient: 'from-slate-950 to-blue-50',
+    bg: 'bg-blue-900', 
+    text: 'text-blue-900', 
+    border: 'border-blue-900', 
+    iconBg: 'bg-blue-900',
+    badge: 'bg-blue-900 text-blue-900',
+    glow: 'shadow-blue-900',
+    hover: 'hover:border-blue-900 hover:shadow-blue-900'
   },
   STUDENT_COUNCIL: {
     gradient: 'from-fuchsia-600 via-rose-600 to-orange-500',
@@ -94,8 +94,8 @@ const TYPE_THEMES = {
     hover: 'hover:border-fuchsia-300 hover:shadow-fuchsia-500/10'
   },
   COMPUTER_LAB: {
-    gradient: 'from-sky-600 via-cyan-600 to-teal-500',
-    lightGradient: 'from-sky-50 to-cyan-50',
+    gradient: 'from-sky-600 via-blue-900 to-teal-500',
+    lightGradient: 'from-sky-50 to-blue-900',
     bg: 'bg-sky-50',
     text: 'text-sky-700',
     border: 'border-sky-200',
@@ -127,22 +127,22 @@ const TYPE_THEMES = {
     hover: 'hover:border-rose-300 hover:shadow-rose-500/10'
   },
   DEPARTMENT: { 
-    gradient: 'from-cyan-600 via-blue-600 to-indigo-500', 
-    lightGradient: 'from-cyan-50 to-blue-50',
-    bg: 'bg-cyan-50', 
-    text: 'text-cyan-700', 
-    border: 'border-cyan-200', 
-    iconBg: 'bg-cyan-500',
-    badge: 'bg-cyan-100 text-cyan-800',
-    glow: 'shadow-cyan-500/20',
-    hover: 'hover:border-cyan-300 hover:shadow-cyan-500/10'
+    gradient: 'from-blue-900 via-blue-600 to-blue-900', 
+    lightGradient: 'from-blue-900 to-blue-50',
+    bg: 'bg-blue-900', 
+    text: 'text-blue-900', 
+    border: 'border-blue-900', 
+    iconBg: 'bg-blue-900',
+    badge: 'bg-blue-900 text-blue-900',
+    glow: 'shadow-blue-900',
+    hover: 'hover:border-blue-900 hover:shadow-blue-900'
   },
 };
 
 const STATS_CONFIG = [
-  { key: 'total', label: 'Total Items', icon: FiLayers, color: 'from-indigo-500 to-violet-600', description: 'All managed records' },
+  { key: 'total', label: 'Total Items', icon: FiLayers, color: 'from-slate-950 to-blue-900', description: 'All managed records' },
   { key: 'active', label: 'Active Items', icon: FiCheckCircle, color: 'from-emerald-500 to-teal-600', description: 'Published content' },
-  { key: 'images', label: 'Total Images', icon: FiImage, color: 'from-blue-500 to-cyan-600', description: 'Media assets' },
+  { key: 'images', label: 'Total Images', icon: FiImage, color: 'from-blue-500 to-blue-900', description: 'Media assets' },
   { key: 'categories', label: 'Categories', icon: FiGrid, color: 'from-amber-500 to-orange-600', description: 'Content groups' },
 ];
 
@@ -206,22 +206,22 @@ const ModernLoadingSpinner = ({ message = "Loading school hub data...", size = "
   const { outer, inner } = sizes[size];
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-emerald-50/20 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-blue-900 to-emerald-50/20 flex items-center justify-center z-50">
       <div className="text-center">
         <div className="relative inline-block">
           <div className="relative">
-            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-blue-900 border-t-indigo-600 rounded-full animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full animate-ping opacity-25" />
+              <div className="w-8 h-8 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full animate-ping opacity-25" />
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30 animate-pulse" />
+          <div className="absolute -inset-6 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full blur-xl opacity-30 animate-pulse" />
         </div>
         <div className="mt-6 space-y-3">
           <span className="block text-lg font-bold text-slate-800">{message}</span>
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+              <div key={i} className="w-2 h-2 bg-blue-900 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
             ))}
           </div>
         </div>
@@ -324,7 +324,7 @@ const ImageUploadField = ({ existingImages = [], files = [], removedImages = [],
           </p>
         </div>
         <div className="flex gap-2">
-          <label className="cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg hover:opacity-90 transition-all">
+          <label className="cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-slate-950 to-blue-900 px-4 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg hover:opacity-90 transition-all">
             <FiPlus /> Bulk Upload
             <input type="file" accept="image/*" multiple className="hidden" onChange={handleBulkUpload} />
           </label>
@@ -344,7 +344,7 @@ const ImageUploadField = ({ existingImages = [], files = [], removedImages = [],
         }`}
       >
         <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => validateAndAddFiles(e.target.files)} />
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-emerald-100 text-slate-900 shadow-sm">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-950 to-emerald-100 text-slate-900 shadow-sm">
           <FiUploadCloud size={28} />
         </div>
         <p className="mt-4 text-sm font-black text-slate-900">{dragActive ? 'Drop images here' : 'Drag & drop images here'}</p>
@@ -432,7 +432,7 @@ const DetailsEditor = ({ value, onChange }) => {
             <div key={idx} className="rounded-[22px] border border-slate-200 bg-white overflow-hidden transition-all hover:shadow-md">
               <div className="flex items-center justify-between gap-3 p-4 bg-slate-50/50 cursor-pointer" onClick={() => toggleExpand(idx)}>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">{idx + 1}</div>
+                  <div className="w-8 h-8 rounded-xl bg-blue-900 flex items-center justify-center text-blue-900 font-bold text-sm">{idx + 1}</div>
                   <p className="text-sm font-bold text-slate-700">{d.title || `Section ${idx + 1}`}</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -444,8 +444,8 @@ const DetailsEditor = ({ value, onChange }) => {
               </div>
               {expandedSections[idx] && (
                 <div className="p-4 border-t border-slate-100 space-y-3">
-                  <input value={d.title || ''} onChange={(e) => update(idx, { title: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-500/20" placeholder="Section title" />
-                  <textarea value={d.content || ''} onChange={(e) => update(idx, { content: e.target.value })} rows={3} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 resize-none" placeholder="Section content" />
+                  <input value={d.title || ''} onChange={(e) => update(idx, { title: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-2 focus:ring-blue-900" placeholder="Section title" />
+                  <textarea value={d.content || ''} onChange={(e) => update(idx, { content: e.target.value })} rows={3} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-2 focus:ring-blue-900 resize-none" placeholder="Section content" />
                 </div>
               )}
             </div>
@@ -458,7 +458,7 @@ const DetailsEditor = ({ value, onChange }) => {
 
 // Form Panel Component
 const FormPanel = ({ title, subtitle, icon: Icon, children, theme }) => {
-  const themeGradient = theme?.lightGradient || 'from-indigo-50 to-emerald-50';
+  const themeGradient = theme?.lightGradient || 'from-slate-950 to-emerald-50';
   return (
     <section className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-all hover:shadow-md">
       <div className="mb-5 flex items-center gap-3">
@@ -630,7 +630,7 @@ const HubItemModal = ({ open, onClose, onSave, initial, defaultType }) => {
         {/* Tab Navigation */}
         <div className="flex border-b border-slate-200 bg-white px-6 gap-1 overflow-x-auto">
           {tabs.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-3 text-sm font-bold transition-all border-b-2 ${activeTab === tab.id ? `border-indigo-600 text-indigo-600` : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-3 text-sm font-bold transition-all border-b-2 ${activeTab === tab.id ? `border-blue-900 text-blue-900` : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
               <tab.icon className="text-sm" /> {tab.label}
             </button>
           ))}
@@ -645,23 +645,23 @@ const HubItemModal = ({ open, onClose, onSave, initial, defaultType }) => {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Type</label>
-                    <select value={form.type} onChange={(e) => setForm(p => ({ ...p, type: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10">
+                    <select value={form.type} onChange={(e) => setForm(p => ({ ...p, type: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900">
                       {TYPE_OPTIONS.map(opt => (<option key={opt.value} value={opt.value}>{opt.label} - {opt.description}</option>))}
                     </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Title</label>
-                    <input value={form.title} onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="e.g. Debate Club, Student Council, Computer Lab" />
+                    <input value={form.title} onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="e.g. Debate Club, Student Council, Computer Lab" />
                   </div>
                 </div>
                 <div className="mt-4 space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Short Description</label>
-                  <textarea value={form.shortDescription} onChange={(e) => setForm(p => ({ ...p, shortDescription: e.target.value }))} className="min-h-[92px] w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="Short overview shown on public cards (max 160 characters)" maxLength={200} />
+                  <textarea value={form.shortDescription} onChange={(e) => setForm(p => ({ ...p, shortDescription: e.target.value }))} className="min-h-[92px] w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="Short overview shown on public cards (max 160 characters)" maxLength={200} />
                   <p className="text-right text-[10px] text-slate-400">{form.shortDescription.length}/200 characters</p>
                 </div>
                 <div className="mt-4 space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Full Description</label>
-                  <textarea value={form.description} onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))} rows={5} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="Full details for the item modal/page view" />
+                  <textarea value={form.description} onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))} rows={5} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="Full details for the item modal/page view" />
                 </div>
               </FormPanel>
 
@@ -669,15 +669,15 @@ const HubItemModal = ({ open, onClose, onSave, initial, defaultType }) => {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Location</label>
-                    <input value={form.location} onChange={(e) => setForm(p => ({ ...p, location: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="e.g. Main Campus, Room 203" />
+                    <input value={form.location} onChange={(e) => setForm(p => ({ ...p, location: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="e.g. Main Campus, Room 203" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Established</label>
-                    <input value={form.established} onChange={(e) => setForm(p => ({ ...p, established: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="e.g. 2010, Founded in 2005" />
+                    <input value={form.established} onChange={(e) => setForm(p => ({ ...p, established: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="e.g. 2010, Founded in 2005" />
                   </div>
                   <div className="space-y-2 sm:col-span-2">
                     <label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Website</label>
-                    <input value={form.website} onChange={(e) => setForm(p => ({ ...p, website: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="https://..." />
+                    <input value={form.website} onChange={(e) => setForm(p => ({ ...p, website: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="https://..." />
                   </div>
                 </div>
               </FormPanel>
@@ -694,17 +694,17 @@ const HubItemModal = ({ open, onClose, onSave, initial, defaultType }) => {
             <div className="space-y-5">
               <FormPanel title="Contact Information" subtitle="Optional patron, leader or office details" icon={FaUsers} theme={typeTheme}>
                 <div className="space-y-4">
-                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Contact Name</label><div className="relative"><FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={form.contactName} onChange={(e) => setForm(p => ({ ...p, contactName: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="Patron / Leader / Director" /></div></div>
-                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Contact Phone</label><div className="relative"><FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={form.contactPhone} onChange={(e) => setForm(p => ({ ...p, contactPhone: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="+254 XXX XXX XXX" /></div></div>
-                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Contact Email</label><div className="relative"><FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={form.contactEmail} onChange={(e) => setForm(p => ({ ...p, contactEmail: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="contact@school.ac.ke" /></div></div>
+                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Contact Name</label><div className="relative"><FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={form.contactName} onChange={(e) => setForm(p => ({ ...p, contactName: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="Patron / Leader / Director" /></div></div>
+                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Contact Phone</label><div className="relative"><FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={form.contactPhone} onChange={(e) => setForm(p => ({ ...p, contactPhone: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="+254 XXX XXX XXX" /></div></div>
+                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Contact Email</label><div className="relative"><FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={form.contactEmail} onChange={(e) => setForm(p => ({ ...p, contactEmail: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="contact@school.ac.ke" /></div></div>
                 </div>
               </FormPanel>
 
               <FormPanel title="Social Media" subtitle="Connect with social platforms" icon={FiShare2} theme={typeTheme}>
                 <div className="space-y-4">
-                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Facebook</label><div className="relative"><FaFacebook className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600" /><input value={form.socialMedia?.facebook || ''} onChange={(e) => setForm(p => ({ ...p, socialMedia: { ...p.socialMedia, facebook: e.target.value } }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="Facebook URL" /></div></div>
-                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Twitter/X</label><div className="relative"><FaTwitter className="absolute left-4 top-1/2 -translate-y-1/2 text-sky-500" /><input value={form.socialMedia?.twitter || ''} onChange={(e) => setForm(p => ({ ...p, socialMedia: { ...p.socialMedia, twitter: e.target.value } }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="Twitter URL" /></div></div>
-                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Instagram</label><div className="relative"><FaInstagram className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-600" /><input value={form.socialMedia?.instagram || ''} onChange={(e) => setForm(p => ({ ...p, socialMedia: { ...p.socialMedia, instagram: e.target.value } }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" placeholder="Instagram URL" /></div></div>
+                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Facebook</label><div className="relative"><FaFacebook className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600" /><input value={form.socialMedia?.facebook || ''} onChange={(e) => setForm(p => ({ ...p, socialMedia: { ...p.socialMedia, facebook: e.target.value } }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="Facebook URL" /></div></div>
+                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Twitter/X</label><div className="relative"><FaTwitter className="absolute left-4 top-1/2 -translate-y-1/2 text-sky-500" /><input value={form.socialMedia?.twitter || ''} onChange={(e) => setForm(p => ({ ...p, socialMedia: { ...p.socialMedia, twitter: e.target.value } }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="Twitter URL" /></div></div>
+                  <div className="space-y-2"><label className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Instagram</label><div className="relative"><FaInstagram className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-600" /><input value={form.socialMedia?.instagram || ''} onChange={(e) => setForm(p => ({ ...p, socialMedia: { ...p.socialMedia, instagram: e.target.value } }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" placeholder="Instagram URL" /></div></div>
                 </div>
               </FormPanel>
             </div>
@@ -923,14 +923,14 @@ export default function SchoolHubManager() {
   if (loading && !items.length) return <ModernLoadingSpinner message="Loading School Hub data..." size="large" />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/20 to-emerald-50/20 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-900 to-emerald-50/20 p-4 md:p-6">
       <DeleteConfirmationModal open={deleteModal.open} onClose={() => setDeleteModal({ open: false, itemId: null, itemName: '', loading: false })} onConfirm={confirmDelete} itemName={deleteModal.itemName} loading={deleteModal.loading} />
       <HubItemModal open={modalOpen} onClose={() => { setModalOpen(false); setEditing(null); }} onSave={saveItem} initial={editing} defaultType={activeType !== 'ALL' ? activeType : 'CLUB'} />
 
       {/* Hero Header */}
       <div className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#0C4A6E] p-7 text-white shadow-2xl md:rounded-[2.5rem] md:p-10 mb-8">
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '42px 42px' }} />
-        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-indigo-300/20 blur-[90px]" />
+        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-900 blur-[90px]" />
         <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-emerald-300/10 blur-[90px]" />
         <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 rounded-full blur-[80px] animate-pulse" />
         
@@ -964,29 +964,29 @@ export default function SchoolHubManager() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard label="Total Items" value={totalItems} icon={FiLayers} color="bg-gradient-to-br from-indigo-500 to-violet-600" description="All managed records" trend={`+${Math.floor(totalItems * 0.12)}%`} />
+        <StatCard label="Total Items" value={totalItems} icon={FiLayers} color="bg-gradient-to-br from-slate-950 to-blue-900" description="All managed records" trend={`+${Math.floor(totalItems * 0.12)}%`} />
         <StatCard label="Active Items" value={activeCount} icon={FiCheckCircle} color="bg-gradient-to-br from-emerald-500 to-teal-600" description="Published content" trend={`${trendPercentage}%`} />
-        <StatCard label="Total Images" value={imageCount} icon={FiImage} color="bg-gradient-to-br from-blue-500 to-cyan-600" description="Media assets" trend={`+${Math.floor(imageCount * 0.08)}`} />
+        <StatCard label="Total Images" value={imageCount} icon={FiImage} color="bg-gradient-to-br from-blue-500 to-blue-900" description="Media assets" trend={`+${Math.floor(imageCount * 0.08)}`} />
         <StatCard label="Categories" value={TYPE_OPTIONS.length} icon={FiGrid} color="bg-gradient-to-br from-amber-500 to-orange-600" description="Content groups" />
       </div>
 
       {/* Filter Section */}
       <div className="relative overflow-hidden rounded-[2rem] border border-slate-100 bg-white/80 backdrop-blur-sm p-5 shadow-xl shadow-slate-200/40 mb-8">
-        <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl" />
+        <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-blue-900 blur-3xl" />
         <div className="relative z-10 space-y-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div><p className="text-[10px] font-black uppercase tracking-[0.26em] text-slate-400 flex items-center gap-2"><FiFilter className="text-emerald-500" /> Filter & Sort</p><h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">Browse Records</h3></div>
             <div className="flex gap-3">
-              <div className="relative w-full lg:w-64"><FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search..." className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10" /></div>
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:border-indigo-300 focus:bg-white"><option value="order">Sort by Order</option><option value="title">Sort by Title</option><option value="date">Sort by Date</option><option value="type">Sort by Type</option></select>
-              <div className="flex rounded-2xl border border-slate-200 overflow-hidden"><button onClick={() => setViewMode('grid')} className={`px-4 py-2.5 ${viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600'}`}><FiGrid /></button><button onClick={() => setViewMode('list')} className={`px-4 py-2.5 ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600'}`}><FiList /></button></div>
+              <div className="relative w-full lg:w-64"><FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search..." className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white focus:ring-4 focus:ring-blue-900" /></div>
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:border-blue-900 focus:bg-white"><option value="order">Sort by Order</option><option value="title">Sort by Title</option><option value="date">Sort by Date</option><option value="type">Sort by Type</option></select>
+              <div className="flex rounded-2xl border border-slate-200 overflow-hidden"><button onClick={() => setViewMode('grid')} className={`px-4 py-2.5 ${viewMode === 'grid' ? 'bg-blue-900 text-white' : 'bg-white text-slate-600'}`}><FiGrid /></button><button onClick={() => setViewMode('list')} className={`px-4 py-2.5 ${viewMode === 'list' ? 'bg-blue-900 text-white' : 'bg-white text-slate-600'}`}><FiList /></button></div>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <button onClick={() => setActiveType('ALL')} className={`rounded-2xl border px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${activeType === 'ALL' ? 'border-slate-950 bg-slate-950 text-white shadow-lg' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'}`}><FiLayers className="mr-2 inline-block" /> All ({totalItems})</button>
             {TYPE_OPTIONS.map(opt => { const Icon = opt.icon; const count = groupedCounts[opt.value] || 0; return (<button key={opt.value} onClick={() => setActiveType(opt.value)} className={`rounded-2xl border px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${activeType === opt.value ? 'border-slate-950 bg-slate-950 text-white shadow-lg' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'}`}><Icon className={`mr-2 inline-block text-[11px] ${activeType === opt.value ? 'text-white' : ''}`} />{opt.label} ({count})</button>); })}
           </div>
-          {(searchTerm || activeType !== 'ALL') && (<div className="flex items-center gap-2 pt-2 text-xs text-slate-500"><span className="font-bold">Active Filters:</span>{activeType !== 'ALL' && <span className="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-semibold">{TYPE_OPTIONS.find(o => o.value === activeType)?.label}</span>}{searchTerm && <span className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-semibold">Search: "{searchTerm}"</span>}<button onClick={() => { setSearchTerm(''); setActiveType('ALL'); }} className="ml-auto text-red-500 hover:text-red-600 font-bold">Clear All</button></div>)}
+          {(searchTerm || activeType !== 'ALL') && (<div className="flex items-center gap-2 pt-2 text-xs text-slate-500"><span className="font-bold">Active Filters:</span>{activeType !== 'ALL' && <span className="px-2 py-1 rounded-lg bg-blue-900 text-blue-900 font-semibold">{TYPE_OPTIONS.find(o => o.value === activeType)?.label}</span>}{searchTerm && <span className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-semibold">Search: "{searchTerm}"</span>}<button onClick={() => { setSearchTerm(''); setActiveType('ALL'); }} className="ml-auto text-red-500 hover:text-red-600 font-bold">Clear All</button></div>)}
         </div>
       </div>
 
@@ -997,7 +997,7 @@ export default function SchoolHubManager() {
           <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mb-5"><FiLayers className="text-3xl text-slate-400" /></div>
           <h3 className="text-xl font-black text-slate-800 mb-2">No Items Found</h3>
           <p className="text-slate-500 mb-6 max-w-md mx-auto">{searchTerm || activeType !== 'ALL' ? 'No items match your current filters.' : 'Your School Hub is empty. Click "Create New Item" to add your first record.'}</p>
-          <button onClick={() => { setEditing(null); setModalOpen(true); }} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold shadow-lg hover:shadow-xl transition-all"><FiPlus /> Create Your First Item</button>
+          <button onClick={() => { setEditing(null); setModalOpen(true); }} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-slate-950 to-blue-900 text-white font-bold shadow-lg hover:shadow-xl transition-all"><FiPlus /> Create Your First Item</button>
         </div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">

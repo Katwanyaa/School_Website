@@ -122,7 +122,7 @@ const StudentForgotPasswordPage = () => {
   const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-indigo-900 text-white flex items-center justify-center p-3 sm:p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 text-white flex items-center justify-center p-3 sm:p-4">
       <Toaster 
         position="top-right"
         richColors
@@ -168,7 +168,7 @@ const StudentForgotPasswordPage = () => {
         animate="visible"
       >
         <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 bg-blue-900 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
 
         <motion.div className="relative z-10 text-center" variants={itemVariants}>
           <div className="flex flex-col sm:flex-row items-center justify-center mb-3 sm:mb-4">
@@ -213,7 +213,7 @@ const StudentForgotPasswordPage = () => {
               disabled={loading}
               className={`w-full sm:flex-1 flex items-center justify-center gap-2 h-12 sm:h-14 rounded-xl text-white font-semibold transition-all duration-300 ${
                 loading ? 'bg-blue-400 cursor-not-allowed' :
-                'bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700'
+                'bg-gradient-to-r from-blue-500 to-blue-900 hover:from-blue-600 hover:to-blue-900'
               } text-sm sm:text-base`}
             >
               {loading ? (

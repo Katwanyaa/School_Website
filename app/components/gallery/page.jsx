@@ -64,14 +64,14 @@ function ModernLoadingSpinner({ message = "Loading gallery data...", size = "med
             <CircularProgress 
               size={outer} 
               thickness={5}
-              className="text-indigo-600"
+              className="text-blue-900"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full animate-ping opacity-25"
+              <div className="bg-gradient-to-r from-slate-950 to-blue-900 rounded-full animate-ping opacity-25"
                    style={{ width: inner, height: inner }}></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30 animate-pulse"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full blur-xl opacity-30 animate-pulse"></div>
         </div>
         
         <div className="mt-6 space-y-3">
@@ -81,7 +81,7 @@ function ModernLoadingSpinner({ message = "Loading gallery data...", size = "med
           
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" 
+              <div key={i} className="w-2 h-2 bg-blue-900 rounded-full animate-bounce" 
                    style={{ animationDelay: `${i * 0.15}s` }}></div>
             ))}
           </div>
@@ -989,10 +989,10 @@ const resetForm = useCallback(() => {
                 
               <div className="flex items-center gap-3 mb-2">
   <div className="p-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
-    <FiImage className="text-xl text-cyan-300" />
+    <FiImage className="text-xl text-blue-900" />
   </div>
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight leading-tight">
-    Media Gallery <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300">Manager</span>
+    Media Gallery <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-900 via-white to-purple-300">Manager</span>
   </h1>
 </div>
               </div>
@@ -1012,7 +1012,7 @@ const resetForm = useCallback(() => {
 <div className="mb-6">
   <p className="text-blue-100/80 text-sm font-medium leading-relaxed">
     Managing <span className="text-white font-bold underline decoration-cyan-500/50 underline-offset-4">{stats.total} galleries</span> with <span className="text-white font-bold underline decoration-purple-500/50 underline-offset-4">{stats.totalFiles} files</span>. 
-    You have <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-cyan-400/20 text-cyan-300 border border-cyan-400/20 mx-1">{stats.images} images</span> 
+    You have <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-blue-900 text-blue-900 border border-blue-900 mx-1">{stats.images} images</span> 
   </p>
 </div>
 
@@ -1020,7 +1020,7 @@ const resetForm = useCallback(() => {
 <div className="flex flex-col sm:flex-row items-center gap-3">
   <button
     onClick={() => setShowCreateModal(true)}
-    className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm uppercase tracking-widest shadow-lg transition-all w-full sm:w-auto"
+    className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-900 to-blue-600 hover:from-blue-900 hover:to-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm uppercase tracking-widest shadow-lg transition-all w-full sm:w-auto"
   >
     <FiUpload className="w-4 h-4" />
     Upload Gallery
@@ -1229,7 +1229,7 @@ const resetForm = useCallback(() => {
                 setSelectedCategory('all');
                 setShowCreateModal(true);
               }}
-              className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-full font-semibold shadow-lg text-xs sm:text-sm"
+              className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-900 to-blue-600 text-white rounded-full font-semibold shadow-lg text-xs sm:text-sm"
             >
               <FiUpload className="inline mr-2" />
               Upload Gallery
@@ -1278,7 +1278,7 @@ const resetForm = useCallback(() => {
                       onClick={() => setCurrentPage(page)}
                       className={`w-10 h-10 rounded-2xl font-semibold ${
                         currentPage === page
-                          ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg'
+                          ? 'bg-gradient-to-r from-blue-900 to-blue-600 text-white shadow-lg'
                           : 'bg-white text-slate-600 border border-slate-200'
                       }`}
                     >
@@ -1544,7 +1544,7 @@ return (
     <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl my-auto">
       {/* Modern Gradient Header */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-600"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-purple-500 to-blue-900"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/10"></div>
         <div className="relative p-5 text-white">
           <div className="flex items-start justify-between">
@@ -1705,7 +1705,7 @@ return (
           )}
 
 {/* File Upload Section - Enhanced with Vercel Size Control */}
-<div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border-2 border-dashed border-blue-300">
+<div className="bg-gradient-to-br from-blue-50 to-blue-900 rounded-xl p-5 border-2 border-dashed border-blue-300">
   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
     <div>
       <h3 className="text-md font-bold text-gray-800 flex items-center gap-2">
@@ -1719,7 +1719,7 @@ return (
       </p>
     </div>
     <div className="flex items-center gap-3">
-      <div className="text-xs font-bold px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700">
+      <div className="text-xs font-bold px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-100 to-blue-900 text-blue-700">
         {formData.files.length} SELECTED
       </div>
       <div className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all duration-200 ${
@@ -1798,7 +1798,7 @@ return (
     onClick={() => !isUploading && totalSizeMB <= 4.5 && fileInputRef.current?.click()}
   >
     <div className="max-w-sm mx-auto">
-      <div className="p-4 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl inline-block mb-4 shadow-sm">
+      <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-900 rounded-2xl inline-block mb-4 shadow-sm">
         <FiUploadCloud className="text-3xl sm:text-4xl text-blue-500" />
       </div>
       <p className="text-gray-700 mb-2 font-bold text-base sm:text-lg">
@@ -1823,7 +1823,7 @@ return (
       {!isUploading && totalSizeMB <= 4.5 && (
         <button
           onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-          className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-full font-bold text-sm sm:text-base hover:shadow-lg hover:from-indigo-700 hover:to-violet-700 transition-all duration-200"
+          className="px-6 py-3 bg-gradient-to-r from-slate-950 to-blue-900 text-white rounded-full font-bold text-sm sm:text-base hover:shadow-lg hover:from-slate-950 hover:to-blue-900 transition-all duration-200"
         >
           Browse Files
         </button>
@@ -1920,7 +1920,7 @@ return (
                 <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-bold ${
                   parseFloat(fileSizeMB) > 3 
                     ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' 
-                    : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
+                    : 'bg-gradient-to-r from-blue-500 to-blue-900 text-white'
                 }`}>
                   {fileSizeMB}MB
                 </div>
@@ -1938,7 +1938,7 @@ return (
                   <div className={`w-2 h-2 rounded-full ${
                     totalSizeMB > 4.5 
                       ? 'bg-gradient-to-r from-red-500 to-pink-500' 
-                      : 'bg-gradient-to-r from-indigo-500 to-purple-500'
+                      : 'bg-gradient-to-r from-slate-950 to-purple-500'
                   }`}></div>
                 </div>
               </div>
@@ -1954,10 +1954,10 @@ return (
           <div className="grid md:grid-cols-2 gap-5">
             {/* Title Field - Enhanced */}
             <div className="md:col-span-2">
-              <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl p-4 border border-indigo-200">
+              <div className="bg-gradient-to-br from-slate-950 to-blue-900 rounded-xl p-4 border border-blue-900">
                 <label className=" text-md font-bold text-gray-800 mb-2 flex items-center gap-2">
                   <span className="text-red-500">*</span>
-                  <FiTag className="text-indigo-500" />
+                  <FiTag className="text-blue-900" />
                   <span>Gallery Title</span>
                 </label>
                 <input
@@ -1967,10 +1967,10 @@ return (
                   className="
                     w-full px-4 py-3
                     bg-white
-                    border-2 border-indigo-200
+                    border-2 border-blue-900
                     rounded-xl focus:outline-none
-                    focus:ring-2 focus:ring-indigo-500/40
-                    focus:border-indigo-400 text-md
+                    focus:ring-2 focus:ring-blue-900
+                    focus:border-blue-900 text-md
                     font-bold
                     shadow-sm
                     transition-all duration-200
@@ -2088,8 +2088,8 @@ return (
       <div className="p-5 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <div className="flex items-center gap-2 bg-gradient-to-r from-indigo-50 to-violet-100 px-3 py-1.5 rounded-full">
-              <div className="w-2 h-2 bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full"></div>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-slate-950 to-blue-900 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full"></div>
               <span className="font-bold">
                 {mode === 'edit' ? (
                   <>
@@ -2137,8 +2137,8 @@ return (
                 font-bold
                 text-sm
                 text-white
-                bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600
-                hover:from-indigo-700 hover:via-purple-700 hover:to-violet-700
+                bg-gradient-to-r from-slate-950 via-purple-600 to-blue-900
+                hover:from-slate-950 hover:via-purple-700 hover:to-blue-900
                 disabled:opacity-60
                 disabled:cursor-not-allowed
                 shadow-lg
@@ -2221,7 +2221,7 @@ const ModernPreviewModal = ({
       <div className="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-2xl my-auto">
         {/* Modern Gradient Header */}
         <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-600"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-500 to-blue-900"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/10"></div>
           <div className="relative p-5 text-white">
             <div className="flex items-start justify-between">
@@ -2265,12 +2265,12 @@ const ModernPreviewModal = ({
             <div className="grid md:grid-cols-2 gap-5">
               {/* Title Field */}
               <div className="md:col-span-2">
-                <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl p-4 border border-indigo-200">
+                <div className="bg-gradient-to-br from-slate-950 to-blue-900 rounded-xl p-4 border border-blue-900">
                   <label className="text-md font-bold text-gray-800 mb-2 flex items-center gap-2">
-                    <FiTag className="text-indigo-500" />
+                    <FiTag className="text-blue-900" />
                     <span>Gallery Title</span>
                   </label>
-                  <div className="w-full px-4 py-3 bg-white border-2 border-indigo-200 rounded-xl text-md font-bold text-gray-800">
+                  <div className="w-full px-4 py-3 bg-white border-2 border-blue-900 rounded-xl text-md font-bold text-gray-800">
                     {item.title}
                   </div>
                 </div>
@@ -2325,7 +2325,7 @@ const ModernPreviewModal = ({
             </div>
 
             {/* Files Grid with Checkboxes */}
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 shadow-sm">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-900 rounded-xl p-5 border border-blue-200 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-md font-bold text-gray-800 flex items-center gap-2">
@@ -2337,7 +2337,7 @@ const ModernPreviewModal = ({
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="text-xs font-bold px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700">
+                  <div className="text-xs font-bold px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-100 to-blue-900 text-blue-700">
                     {selectedItems.size} SELECTED
                   </div>
                   <button
@@ -2368,7 +2368,7 @@ const ModernPreviewModal = ({
                             onClick={() => onSelect(index)}
                             className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
                               isSelected 
-                                ? 'bg-gradient-to-br from-blue-500 to-cyan-500 border-blue-500 text-white' 
+                                ? 'bg-gradient-to-br from-blue-500 to-blue-900 border-blue-500 text-white' 
                                 : 'bg-white/90 backdrop-blur-sm border-gray-300 hover:border-blue-400'
                             }`}
                           >
@@ -2436,7 +2436,7 @@ const ModernPreviewModal = ({
                 
                 <button
                   onClick={copyUrl}
-                  className="flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:from-indigo-700 hover:to-violet-700 transition-all duration-200"
+                  className="flex items-center justify-center gap-3 bg-gradient-to-r from-slate-950 to-blue-900 text-white px-6 py-3 rounded-xl font-bold text-sm hover:from-slate-950 hover:to-blue-900 transition-all duration-200"
                 >
                   <FiCopy className="text-lg" />
                   <span>Copy Gallery URL</span>
@@ -2450,8 +2450,8 @@ const ModernPreviewModal = ({
         <div className="p-5 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <div className="flex items-center gap-2 bg-gradient-to-r from-indigo-50 to-violet-100 px-3 py-1.5 rounded-full">
-                <div className="w-2 h-2 bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full"></div>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-slate-950 to-blue-900 px-3 py-1.5 rounded-full">
+                <div className="w-2 h-2 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full"></div>
                 <span className="font-bold">
                   Gallery {item.id ? `#${String(item.id).slice(0, 8)}` : 'Unknown'} • {item.files ? item.files.length : 0} files • Created {item.uploadDate ? new Date(item.uploadDate).toLocaleDateString() : 'Unknown'}
                 </span>

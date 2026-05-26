@@ -153,9 +153,9 @@ const TYPE_THEMES = {
     iconBg: 'bg-purple-600',
   },
   SOCIETY: { 
-    bg: 'bg-indigo-50', 
-    text: 'text-indigo-700', 
-    iconBg: 'bg-indigo-600',
+    bg: 'bg-blue-900', 
+    text: 'text-blue-900', 
+    iconBg: 'bg-blue-900',
   },
   STUDENT_COUNCIL: { 
     bg: 'bg-fuchsia-50', 
@@ -178,9 +178,9 @@ const TYPE_THEMES = {
     iconBg: 'bg-rose-600',
   },
   DEPARTMENT: { 
-    bg: 'bg-cyan-50', 
-    text: 'text-cyan-700', 
-    iconBg: 'bg-cyan-600',
+    bg: 'bg-blue-900', 
+    text: 'text-blue-900', 
+    iconBg: 'bg-blue-900',
   },
 };
 
@@ -258,7 +258,7 @@ const InfoPill = ({ icon: Icon, children, variant = "default" }) => {
   const variants = {
     default: "bg-gray-100 text-gray-700",
     primary: "bg-emerald-100 text-emerald-700",
-    secondary: "bg-indigo-100 text-indigo-700",
+    secondary: "bg-blue-900 text-blue-900",
   };
   return (
     <span className={`inline-flex items-center gap-2 px-3 py-2 text-xs font-medium ${variants[variant]}`}>
@@ -754,7 +754,7 @@ export default function PublicSchoolHubPage({
             
            <h1 className="text-2xl font-black tracking-tight sm:text-3xl md:text-5xl text-gray-900">
   Welcome to Our{' '}
-  <span className="text-cyan-800">
+  <span className="text-blue-900">
     {title}
   </span>{' '}
   at Katwanyaa Senior School
@@ -830,7 +830,7 @@ export default function PublicSchoolHubPage({
                     </div>
                     <div>
                       <h2 className="text-lg font-bold tracking-tight text-gray-900">{section.title}</h2>
-                      <p className="text-xs font-bold uppercase tracking-wider text-cyan-800">
+                      <p className="text-xs font-bold uppercase tracking-wider text-blue-900">
                         {section.items.length} {section.items.length === 1 ? 'item' : 'items'} available
                       </p>
                     </div>

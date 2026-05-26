@@ -125,7 +125,7 @@ function Notification({
         };
       case 'info':
         return {
-          bg: 'from-blue-50 to-cyan-50',
+          bg: 'from-blue-50 to-blue-900',
           border: 'border-blue-200',
           icon: 'text-blue-600',
           iconBg: 'bg-blue-100',
@@ -133,7 +133,7 @@ function Notification({
         };
       default:
         return {
-          bg: 'from-blue-50 to-cyan-50',
+          bg: 'from-blue-50 to-blue-900',
           border: 'border-blue-200',
           icon: 'text-blue-600',
           iconBg: 'bg-blue-100',
@@ -268,7 +268,7 @@ const [emailData, setEmailData] = useState({
       name: 'Admission Updates',
       subject: '🎓 Admissions Now Open for {schoolYear} - Katwanyaa Senior School',
       description: 'Send admission tips and deadlines with dynamic dates',
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-blue-500 to-blue-900',
       iconBg: 'bg-blue-100',
       icon: '🎓',
       fields: ['admissionDates']
@@ -722,7 +722,7 @@ const handleSendEmail = async (e) => {
 
   if (loading && subscribers.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-blue-50 to-blue-900">
         <div className="text-center">
           <Spinner size={48} />
           <p className="text-gray-800 text-lg mt-4 font-bold">Loading Subscribers</p>
@@ -733,7 +733,7 @@ const handleSendEmail = async (e) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50 p-4 lg:p-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-blue-900 p-4 lg:p-6 space-y-6">
       {/* Notification */}
       <Notification
         open={notification.open}
@@ -747,7 +747,7 @@ const handleSendEmail = async (e) => {
 <div className="group relative bg-[#0F172A] rounded-xl md:rounded-[2rem] p-5 md:p-8 text-white overflow-hidden shadow-2xl border border-white/5 transition-all duration-500">
   
   {/* Abstract Mesh Gradient Background - Floating Orbs */}
-  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-blue-600/30 via-cyan-600/20 to-transparent rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-blue-600/30 via-blue-900 to-transparent rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
   <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-gradient-to-tr from-purple-600/20 via-pink-600/10 to-transparent rounded-full blur-[80px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
   
   {/* Subtle Grid Pattern Overlay */}
@@ -763,7 +763,7 @@ const handleSendEmail = async (e) => {
       <div className="flex-1">
         {/* Institutional Badge - Compact & Premium */}
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+          <div className="h-7 w-1 bg-gradient-to-b from-blue-500 to-blue-900 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
           <div>
             <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400">
               Subscriber Management
@@ -778,8 +778,8 @@ const handleSendEmail = async (e) => {
         <div className="flex items-center gap-4 mb-2">
           <div className="relative">
             {/* Icon with Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl blur-lg opacity-50 group-hover:opacity-80 transition-opacity" />
-            <div className="relative p-3.5 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-900 rounded-2xl blur-lg opacity-50 group-hover:opacity-80 transition-opacity" />
+            <div className="relative p-3.5 bg-gradient-to-br from-blue-600 to-blue-900 rounded-2xl shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
               <IoMailOutline className="text-white text-2xl md:text-3xl" />
             </div>
           </div>
@@ -787,7 +787,7 @@ const handleSendEmail = async (e) => {
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight leading-tight">
             <span className="text-white">Subscriber</span>
             <br className="sm:hidden" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-cyan-200 to-white ml-1 sm:ml-2">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-900 to-white ml-1 sm:ml-2">
               Manager
             </span>
           </h1>
@@ -826,7 +826,7 @@ const handleSendEmail = async (e) => {
         <button
           onClick={() => setShowEmailModal(true)}
           disabled={subscribers.length === 0}
-          className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-cyan-600 shadow-[0_8px_20px_rgba(6,182,212,0.3)] hover:shadow-[0_12px_30px_rgba(6,182,212,0.4)] w-full sm:w-auto"
+          className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5 bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-blue-900 shadow-[0_8px_20px_rgba(6,182,212,0.3)] hover:shadow-[0_12px_30px_rgba(6,182,212,0.4)] w-full sm:w-auto"
         >
           {/* Button Shine Effect */}
           <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -868,7 +868,7 @@ const handleSendEmail = async (e) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <div className="bg-white rounded-2xl p-5 shadow-xl border border-gray-200">
           <div className="flex items-center justify-between">
-            <div className="p-3 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl">
+            <div className="p-3 bg-gradient-to-r from-blue-100 to-blue-900 rounded-xl">
               <IoPeopleOutline className="text-blue-600 text-2xl" />
             </div>
             <div className="text-right">
@@ -969,7 +969,7 @@ const handleSendEmail = async (e) => {
                     onClick={() => setSelectedDateRange(range)}
                     className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
                       selectedDateRange === range
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-900 text-white'
                         : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-500'
                     }`}
                   >
@@ -1021,7 +1021,7 @@ const handleSendEmail = async (e) => {
                       />
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <div className="p-2 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg">
+                          <div className="p-2 bg-gradient-to-r from-blue-100 to-blue-900 rounded-lg">
                             <FiUser className="text-blue-600 text-base" />
                           </div>
                           <div>
@@ -1064,7 +1064,7 @@ const handleSendEmail = async (e) => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => viewSubscriberDetails(subscriber)}
-                        className="p-2.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600 rounded-xl border-2 border-blue-200 hover:border-blue-500 transition-colors"
+                        className="p-2.5 bg-gradient-to-r from-blue-50 to-blue-900 text-blue-600 rounded-xl border-2 border-blue-200 hover:border-blue-500 transition-colors"
                         aria-label="View details"
                       >
                         <FiEye className="text-base" />
@@ -1123,7 +1123,7 @@ const handleSendEmail = async (e) => {
                     onClick={() => setCurrentPage(pageNum)}
                     className={`px-4 py-2.5 rounded-xl font-bold transition-all text-sm ${
                       currentPage === pageNum
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-900 text-white shadow-lg'
                         : 'bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 hover:border-blue-500'
                     }`}
                   >
@@ -1151,7 +1151,7 @@ const handleSendEmail = async (e) => {
   <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl border-2 border-gray-300">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 text-white">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-6 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30">
@@ -1214,7 +1214,7 @@ const handleSendEmail = async (e) => {
         
         {/* Admission Dates Section - Input Fields Only */}
         {emailTemplates[emailData.template].fields.includes('admissionDates') && (
-          <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200">
+          <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-900 rounded-2xl border-2 border-blue-200">
             <label className="block text-gray-900 font-bold mb-3 flex items-center gap-2">
               <FiBook className="text-blue-600" />
               Admission Information
@@ -1498,7 +1498,7 @@ const handleSendEmail = async (e) => {
         </div>
 
         {/* Recipient Info */}
-        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-4 border-2 border-blue-200">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-900 rounded-2xl p-4 border-2 border-blue-200">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <h3 className="text-gray-900 font-bold mb-1">Ready to Send</h3>
@@ -1533,7 +1533,7 @@ const handleSendEmail = async (e) => {
           <button
             type="submit"
             disabled={sendingEmail}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-6 py-3.5 rounded-2xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-3.5 rounded-2xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {sendingEmail ? (
               <>
@@ -1634,7 +1634,7 @@ const handleSendEmail = async (e) => {
       {showDetailModal && selectedSubscriber && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl w-full max-w-md border-2 border-gray-300 shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 text-white">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-900 p-6 text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30">
@@ -1656,7 +1656,7 @@ const handleSendEmail = async (e) => {
 
             <div className="p-6 space-y-4">
               <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                <div className="p-3 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg">
+                <div className="p-3 bg-gradient-to-r from-blue-100 to-blue-900 rounded-lg">
                   <FiMail className="text-blue-600 text-xl" />
                 </div>
                 <div>
@@ -1684,7 +1684,7 @@ const handleSendEmail = async (e) => {
                 </div>
               </div>
 
-              <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border-2 border-blue-200">
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-900 rounded-xl border-2 border-blue-200">
                 <p className="text-sm text-gray-600 font-bold mb-2">Subscription Info</p>
                 <div className="space-y-2">
                   <div className="flex justify-between">

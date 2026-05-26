@@ -80,7 +80,7 @@ const getFileIcon = (fileType, extension, size = 20) => {
   if (type.includes('word') || ['doc', 'docx'].includes(type)) return <IoDocument className="text-blue-500" size={size} />;
   if (type.includes('image') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(type)) return <IoImages className="text-pink-500" size={size} />;
   if (type.includes('video') || ['mp4', 'mov', 'avi', 'wmv', 'flv', 'webm', 'mkv'].includes(type)) return <IoVideocam className="text-purple-500" size={size} />;
-  if (type.includes('audio') || ['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(type)) return <IoMusicalNotes className="text-indigo-500" size={size} />;
+  if (type.includes('audio') || ['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(type)) return <IoMusicalNotes className="text-blue-900" size={size} />;
   if (type.includes('excel') || ['xls', 'xlsx', 'csv'].includes(type)) return <IoCalculator className="text-emerald-500" size={size} />;
   if (type.includes('powerpoint') || ['ppt', 'pptx'].includes(type)) return <IoColorPalette className="text-orange-500" size={size} />;
   if (type.includes('zip') || type.includes('rar') || type.includes('7z') || type.includes('tar')) return <IoFolderOpen className="text-amber-500" size={size} />;
@@ -186,12 +186,12 @@ function LoadingSpinner() {
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full w-12 h-12 flex items-center justify-center">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-900 rounded-full w-12 h-12 flex items-center justify-center">
                 <IoDocumentsOutline className="text-white text-xl" />
               </div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full blur-xl opacity-30"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-blue-100 to-blue-900 rounded-full blur-xl opacity-30"></div>
         </div>
         
         <div className="mt-8 space-y-3">
@@ -215,7 +215,7 @@ function LoadingSpinner() {
             initial={{ width: 0 }}
             animate={{ width: '100%' }}
             transition={{ delay: 0.6, duration: 1.5 }}
-            className="h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+            className="h-1 bg-gradient-to-r from-blue-500 to-blue-900 rounded-full"
           ></motion.div>
         </div>
       </div>
@@ -265,11 +265,11 @@ function StatusBadge({ status, size = "md" }) {
   const getStatusConfig = (status) => {
     const configs = {
       'completed': { bg: 'from-emerald-500 to-teal-400', text: 'Completed', icon: <IoCheckmarkCircle /> },
-      'assigned': { bg: 'from-blue-500 to-cyan-400', text: 'Assigned', icon: <IoTime /> },
+      'assigned': { bg: 'from-blue-500 to-blue-900', text: 'Assigned', icon: <IoTime /> },
       'pending': { bg: 'from-amber-500 to-orange-400', text: 'Pending', icon: <IoTime /> },
-      'reviewed': { bg: 'from-purple-500 to-violet-400', text: 'Reviewed', icon: <IoCheckmarkCircle /> },
+      'reviewed': { bg: 'from-purple-500 to-blue-900', text: 'Reviewed', icon: <IoCheckmarkCircle /> },
       'overdue': { bg: 'from-rose-500 to-pink-400', text: 'Overdue', icon: <IoWarning /> },
-      'submitted': { bg: 'from-indigo-500 to-blue-400', text: 'Submitted', icon: <IoDocument /> }
+      'submitted': { bg: 'from-slate-950 to-blue-400', text: 'Submitted', icon: <IoDocument /> }
     };
     return configs[status?.toLowerCase()] || configs.pending;
   };
@@ -350,10 +350,10 @@ function AssignmentResourceCard({ item, type, onView, onDownload, onBookmark, is
       {/* Card Header */}
       <div className={`p-4 sm:p-5 bg-gradient-to-r ${
         isResource 
-          ? 'from-blue-500 to-indigo-600' 
+          ? 'from-blue-500 to-blue-900' 
           : isOverdue
           ? 'from-rose-500 to-pink-600'
-          : 'from-purple-500 to-violet-600'
+          : 'from-purple-500 to-blue-900'
       } text-white`}>
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -486,10 +486,10 @@ function DetailModal({ item, type, onClose, onDownload }) {
         {/* Modal Header */}
         <div className={`p-4 sm:p-6 md:p-8 text-white ${
           isResource 
-            ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800' 
+            ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900' 
             : isOverdue
             ? 'bg-gradient-to-r from-rose-600 via-rose-700 to-pink-800'
-            : 'bg-gradient-to-r from-purple-600 via-purple-700 to-violet-800'
+            : 'bg-gradient-to-r from-purple-600 via-purple-700 to-blue-900'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -528,7 +528,7 @@ function DetailModal({ item, type, onClose, onDownload }) {
             <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-bold">
               {item.className || 'All Classes'}
             </span>
-            <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-100 text-indigo-800 rounded-full text-xs sm:text-sm font-bold">
+            <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-900 text-blue-900 rounded-full text-xs sm:text-sm font-bold">
               {item.subject || 'General'}
             </span>
             {isResource && item.category && (
@@ -1074,10 +1074,10 @@ export default function ModernResourcesAssignmentsView({
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-900 rounded-3xl p-4 sm:p-6 md:p-8 text-white overflow-hidden mb-4 sm:mb-6 md:mb-8"
+        className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 rounded-3xl p-4 sm:p-6 md:p-8 text-white overflow-hidden mb-4 sm:mb-6 md:mb-8"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/20 rounded-full -ml-24 -mb-24 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-900 rounded-full -ml-24 -mb-24 blur-3xl"></div>
         
         <div className="relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
@@ -1160,7 +1160,7 @@ export default function ModernResourcesAssignmentsView({
               onClick={() => setActiveTab('assignments')}
               className={`flex-1 py-3 sm:py-4 px-2 rounded-xl flex items-center justify-center gap-2 sm:gap-3 ${
                 activeTab === 'assignments'
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/20 text-white'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-900 shadow-lg shadow-blue-500/20 text-white'
                   : 'text-gray-600'
               }`}
             >
@@ -1176,7 +1176,7 @@ export default function ModernResourcesAssignmentsView({
               onClick={() => setActiveTab('resources')}
               className={`flex-1 py-3 sm:py-4 px-2 rounded-xl flex items-center justify-center gap-2 sm:gap-3 ${
                 activeTab === 'resources'
-                  ? 'bg-gradient-to-r from-purple-500 to-violet-600 shadow-lg shadow-purple-500/20 text-white'
+                  ? 'bg-gradient-to-r from-purple-500 to-blue-900 shadow-lg shadow-purple-500/20 text-white'
                   : 'text-gray-600'
               }`}
             >
@@ -1258,7 +1258,7 @@ export default function ModernResourcesAssignmentsView({
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                 className={`p-2.5 sm:p-3 rounded-2xl border ${
                   showAdvancedFilters
-                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50/50 border-blue-200 text-blue-600 shadow-lg shadow-blue-500/10'
+                    ? 'bg-gradient-to-r from-blue-50 to-blue-900 border-blue-200 text-blue-600 shadow-lg shadow-blue-500/10'
                     : 'bg-white border-gray-200 text-gray-600'
                 }`}
               >
@@ -1300,7 +1300,7 @@ export default function ModernResourcesAssignmentsView({
                     {/* Subject Filter */}
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                        <FiBookOpen className="text-indigo-500" />
+                        <FiBookOpen className="text-blue-900" />
                         Subject
                       </label>
                       <select
@@ -1388,10 +1388,10 @@ export default function ModernResourcesAssignmentsView({
                         </span>
                       )}
                       {selectedSubject !== 'all' && (
-                        <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-bold border border-indigo-100">
+                        <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-900 text-blue-900 rounded-full text-xs sm:text-sm font-bold border border-blue-900">
                           <FiBookOpen className="text-xs sm:text-sm" />
                           {selectedSubject}
-                          <button onClick={() => setSelectedSubject('all')} className="ml-1 text-indigo-500">
+                          <button onClick={() => setSelectedSubject('all')} className="ml-1 text-blue-900">
                             <IoClose className="text-xs sm:text-sm" />
                           </button>
                         </span>

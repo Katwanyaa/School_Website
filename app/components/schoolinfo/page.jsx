@@ -49,14 +49,14 @@ function ModernLoadingSpinner({ message = "Loading school information...", size 
             <CircularProgress 
               size={outer} 
               thickness={5}
-              className="text-indigo-600"
+              className="text-blue-900"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full animate-ping opacity-25"
+              <div className="bg-gradient-to-r from-slate-950 to-blue-900 rounded-full animate-ping opacity-25"
                    style={{ width: inner, height: inner }}></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30 animate-pulse"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-slate-950 to-blue-900 rounded-full blur-xl opacity-30 animate-pulse"></div>
         </div>
         
         <div className="mt-6 space-y-3">
@@ -66,7 +66,7 @@ function ModernLoadingSpinner({ message = "Loading school information...", size 
           
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" 
+              <div key={i} className="w-2 h-2 bg-blue-900 rounded-full animate-bounce" 
                    style={{ animationDelay: `${i * 0.15}s` }}></div>
             ))}
           </div>
@@ -1041,7 +1041,7 @@ const handleFormSubmit = async (e) => {
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
         {/* DYNAMIC HEADER - Green for CREATE, Blue for UPDATE */}
-        <div className={`p-4 text-white ${isUpdateMode ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700' : 'bg-gradient-to-r from-green-600 via-emerald-700 to-teal-700'}`}>
+        <div className={`p-4 text-white ${isUpdateMode ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900' : 'bg-gradient-to-r from-green-600 via-emerald-700 to-teal-700'}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -1174,16 +1174,16 @@ const handleFormSubmit = async (e) => {
                       />
                     </div>
                     
-                    <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-5 border border-indigo-200">
+                    <div className="bg-gradient-to-br from-slate-950 to-blue-900 rounded-2xl p-5 border border-blue-900">
                       <label className=" text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaEye className="text-indigo-600" /> Vision Statement
+                        <FaEye className="text-blue-900" /> Vision Statement
                       </label>
                       <TextareaAutosize
                         minRows={3}
                         value={formData.vision}
                         onChange={(e) => handleChange('vision', e.target.value)}
                         placeholder="Enter vision statement..."
-                        className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white text-base font-bold placeholder-gray-500"
+                        className="w-full px-4 py-3 border-2 border-blue-900 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 resize-none bg-white text-base font-bold placeholder-gray-500"
                       />
                     </div>
                     
@@ -1318,9 +1318,9 @@ const handleFormSubmit = async (e) => {
                       />
                     </div>
                     
-                    <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
+                    <div className="bg-gradient-to-br from-blue-900 to-blue-900 rounded-2xl p-5 border border-blue-900">
                       <label className=" text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaUsers className="text-cyan-600" /> Admission Capacity
+                        <FaUsers className="text-blue-900" /> Admission Capacity
                       </label>
                       <input
                         type="number"
@@ -1328,22 +1328,22 @@ const handleFormSubmit = async (e) => {
                         value={formData.admissionCapacity}
                         onChange={(e) => handleChange('admissionCapacity', e.target.value)}
                         placeholder="Number of available slots"
-                        className="w-full px-4 py-3 border-2 border-cyan-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white text-base font-bold placeholder-gray-500"
+                        className="w-full px-4 py-3 border-2 border-blue-900 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-white text-base font-bold placeholder-gray-500"
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-4">
-                    <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-5 border border-indigo-200">
+                    <div className="bg-gradient-to-br from-slate-950 to-blue-900 rounded-2xl p-5 border border-blue-900">
                       <label className=" text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaEnvelope className="text-indigo-600" /> Admission Contact Email
+                        <FaEnvelope className="text-blue-900" /> Admission Contact Email
                       </label>
                       <input
                         type="email"
                         value={formData.admissionContactEmail}
                         onChange={(e) => handleChange('admissionContactEmail', e.target.value)}
                         placeholder="admissions@school.edu"
-                        className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-base font-bold placeholder-gray-500"
+                        className="w-full px-4 py-3 border-2 border-blue-900 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-white text-base font-bold placeholder-gray-500"
                       />
                     </div>
                     
@@ -1579,7 +1579,7 @@ const handleFormSubmit = async (e) => {
                     disabled={actionLoading || !isStepValid()}
                     className={`px-8 py-3 rounded-xl transition duration-200 font-bold shadow disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 text-base w-full sm:w-auto ${
                       isUpdateMode 
-                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-900 text-white hover:from-blue-700 hover:to-blue-900'
                         : 'bg-gradient-to-r from-green-600 to-teal-600 text-white hover:from-green-700 hover:to-teal-700'
                     }`}
                   >
@@ -1616,7 +1616,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
     purple: 'from-purple-500/10 to-purple-500/5 text-purple-600 border-purple-100',
     orange: 'from-orange-500/10 to-orange-500/5 text-orange-600 border-orange-100',
     yellow: 'from-yellow-500/10 to-yellow-500/5 text-yellow-600 border-yellow-100',
-    indigo: 'from-indigo-500/10 to-indigo-500/5 text-indigo-600 border-indigo-100',
+    indigo: 'from-slate-950 to-blue-900 text-blue-900 border-blue-900',
     teal: 'from-teal-500/10 to-teal-500/5 text-teal-600 border-teal-100'
   };
   
@@ -2086,9 +2086,9 @@ const handleDeleteSchool = async () => {
 
           <button 
             onClick={() => setShowModal(true)} 
-            className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 
+            className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-blue-900 to-purple-600 
                      text-white px-10 py-4 rounded-2xl font-bold shadow-xl shadow-blue-200/50
-                     hover:shadow-indigo-300/50 hover:scale-[1.03] active:scale-95 
+                     hover:shadow-blue-900 hover:scale-[1.03] active:scale-95 
                      transition-all duration-300 flex items-center justify-center gap-3 mx-auto text-base"
           >
             <FaPlus className="text-xl" /> 
@@ -2163,9 +2163,9 @@ const handleDeleteSchool = async () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {schoolInfo.vision && (
-                      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-100">
+                      <div className="bg-gradient-to-br from-slate-950 to-purple-50 p-4 rounded-xl border border-blue-900">
                         <div className="flex items-center gap-2 mb-2">
-                          <FaEye className="text-indigo-600" />
+                          <FaEye className="text-blue-900" />
                           <h5 className="font-bold text-slate-700">Vision</h5>
                         </div>
                         <p className="text-sm text-slate-600">{schoolInfo.vision}</p>
@@ -2341,7 +2341,7 @@ const handleDeleteSchool = async () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-100">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-900 p-4 rounded-xl border border-blue-100">
                   <div className="flex items-center gap-2 mb-2">
                     <FaDoorOpen className="text-blue-600" />
                     <h5 className="font-bold text-slate-700">Term Opens</h5>
@@ -2397,14 +2397,14 @@ const handleDeleteSchool = async () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <div className="group relative bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
-                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br from-indigo-500/10 to-transparent blur-2xl opacity-50 group-hover:opacity-80 transition-opacity" />
+                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br from-slate-950 to-transparent blur-2xl opacity-50 group-hover:opacity-80 transition-opacity" />
 
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <div>
                     <h3 className="text-lg font-black text-slate-800 tracking-tight">Admission Requirements</h3>
                     <p className="text-xs text-slate-400 font-medium">Application criteria</p>
                   </div>
-                  <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 shadow-sm">
+                  <div className="p-3 rounded-2xl bg-blue-900 border border-blue-900 text-blue-900 shadow-sm">
                     <FaFileAlt className="text-xl" />
                   </div>
                 </div>
@@ -2429,8 +2429,8 @@ const handleDeleteSchool = async () => {
                             key={index}
                             className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 hover:shadow-sm transition-shadow"
                           >
-                            <div className="p-2 bg-indigo-50 rounded-lg">
-                              <Icon className="text-indigo-600 text-sm" />
+                            <div className="p-2 bg-blue-900 rounded-lg">
+                              <Icon className="text-blue-900 text-sm" />
                             </div>
                             <span className="text-sm font-bold text-slate-700">{doc}</span>
                           </div>
@@ -2450,14 +2450,14 @@ const handleDeleteSchool = async () => {
             {/* CONTACT INFORMATION */}
             <div>
               <div className="group relative bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
-                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br from-cyan-500/10 to-transparent blur-2xl opacity-50 group-hover:opacity-80 transition-opacity" />
+                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br from-blue-900 to-transparent blur-2xl opacity-50 group-hover:opacity-80 transition-opacity" />
 
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <div>
                     <h3 className="text-lg font-black text-slate-800 tracking-tight">Contact Information</h3>
                     <p className="text-xs text-slate-400 font-medium">Admission office</p>
                   </div>
-                  <div className="p-3 rounded-2xl bg-cyan-50 border border-cyan-100 text-cyan-600 shadow-sm">
+                  <div className="p-3 rounded-2xl bg-blue-900 border border-blue-900 text-blue-900 shadow-sm">
                     <FaPhone className="text-xl" />
                   </div>
                 </div>
@@ -2466,7 +2466,7 @@ const handleDeleteSchool = async () => {
                   {schoolInfo.admissionContactEmail ? (
                     <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
                       <div className="p-2 bg-white rounded-lg">
-                        <FaEnvelope className="text-cyan-600" />
+                        <FaEnvelope className="text-blue-900" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-400">Email</p>
@@ -2478,7 +2478,7 @@ const handleDeleteSchool = async () => {
                   {schoolInfo.admissionContactPhone ? (
                     <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
                       <div className="p-2 bg-white rounded-lg">
-                        <FaPhone className="text-cyan-600" />
+                        <FaPhone className="text-blue-900" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-400">Phone</p>
@@ -2490,7 +2490,7 @@ const handleDeleteSchool = async () => {
                   {schoolInfo.admissionWebsite ? (
                     <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
                       <div className="p-2 bg-white rounded-lg">
-                        <FaGlobe className="text-cyan-600" />
+                        <FaGlobe className="text-blue-900" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-400">Website</p>
@@ -2502,7 +2502,7 @@ const handleDeleteSchool = async () => {
                   {schoolInfo.admissionLocation ? (
                     <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
                       <div className="p-2 bg-white rounded-lg">
-                        <FaMapMarkerAlt className="text-cyan-600" />
+                        <FaMapMarkerAlt className="text-blue-900" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-400">Location</p>
@@ -2514,7 +2514,7 @@ const handleDeleteSchool = async () => {
                   {schoolInfo.admissionOfficeHours ? (
                     <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
                       <div className="p-2 bg-white rounded-lg">
-                        <FaClock className="text-cyan-600" />
+                        <FaClock className="text-blue-900" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-400">Office Hours</p>

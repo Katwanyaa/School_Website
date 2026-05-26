@@ -111,7 +111,7 @@ const ModernJobCard = ({ job, onView, onBookmark, onShare, viewMode = 'grid' }) 
         border: 'border-emerald-200'
       },
       'part-time': { 
-        gradient: 'from-blue-500 to-cyan-500', 
+        gradient: 'from-blue-500 to-blue-900', 
         bg: 'bg-blue-50', 
         text: 'text-blue-700',
         border: 'border-blue-200'
@@ -453,7 +453,7 @@ const ModernJobDetailModal = ({ job, onClose, onApply }) => {
   const getJobTypeStyle = (type) => {
     const styles = {
       'full-time': { gradient: 'from-emerald-500 to-green-500' },
-      'part-time': { gradient: 'from-blue-500 to-cyan-500' },
+      'part-time': { gradient: 'from-blue-500 to-blue-900' },
       'contract': { gradient: 'from-purple-500 to-pink-500' },
       'internship': { gradient: 'from-amber-500 to-orange-500' }
     };
@@ -608,7 +608,7 @@ return (
             )}
 
             {/* Application Instructions */}
-            <section className="bg-gradient-to-r from-blue-50 to-cyan-100 rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 border border-blue-200">
+            <section className="bg-gradient-to-r from-blue-50 to-blue-900 rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 border border-blue-200">
               <div className="flex items-start sm:items-center gap-3 mb-3 sm:mb-4">
                 <div className="p-2.5 sm:p-3 bg-blue-500 rounded-xl sm:rounded-2xl">
                   <FiSend className="text-white text-xl sm:text-2xl" />
@@ -752,7 +752,7 @@ export default function ModernCareersPage() {
       number: '0', 
       label: 'Open Positions', 
       sublabel: 'Currently available',
-      gradient: 'from-blue-500 to-cyan-500'
+      gradient: 'from-blue-500 to-blue-900'
     },
     { 
       icon: FiUsers, 
@@ -780,7 +780,7 @@ export default function ModernCareersPage() {
   // Categories for filtering
   const categories = [
     { id: 'all', name: 'All Positions', icon: FiBriefcase, gradient: 'from-slate-500 to-slate-600' },
-    { id: 'teaching', name: 'Teaching', icon: FaGraduationCap, gradient: 'from-blue-500 to-cyan-500' },
+    { id: 'teaching', name: 'Teaching', icon: FaGraduationCap, gradient: 'from-blue-500 to-blue-900' },
     { id: 'administrative', name: 'Administrative', icon: FiBriefcase, gradient: 'from-purple-500 to-pink-500' },
     { id: 'support', name: 'Support Staff', icon: FiUsers, gradient: 'from-emerald-500 to-green-500' },
     { id: 'technical', name: 'Technical', icon: FiZap, gradient: 'from-amber-500 to-orange-500' },
@@ -1098,7 +1098,7 @@ return (
             </div>
 
             {/* Quick Application Card - Removed CV submission button */}
-            <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl sm:rounded-3xl md:rounded-[32px] p-4 sm:p-5 md:p-6 text-white overflow-hidden relative">
+            <div className="bg-gradient-to-r from-blue-900 to-blue-900 rounded-2xl sm:rounded-3xl md:rounded-[32px] p-4 sm:p-5 md:p-6 text-white overflow-hidden relative">
               <div className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 bg-white/5 blur-[40px] sm:blur-[50px]" />
               <div className="relative z-10">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4">

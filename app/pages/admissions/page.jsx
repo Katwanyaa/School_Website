@@ -210,7 +210,7 @@ const CareerSearchPage = () => {
     {
       department: 'SCIENCES',
       icon: IoFlaskOutline,
-      color: 'from-blue-600 to-cyan-500',
+      color: 'from-blue-600 to-blue-900',
       description: 'Explore the world through scientific inquiry and discovery',
       subjects: ['Biology', 'Chemistry', 'Physics', 'Agriculture', 'Physical Education'],
       careerPaths: [
@@ -366,7 +366,7 @@ const CareerSearchPage = () => {
     {
       department: 'COMMERCIAL STUDIES',
       icon: IoBusinessOutline,
-      color: 'from-indigo-600 to-blue-500',
+      color: 'from-slate-950 to-blue-500',
       description: 'Master business principles and commercial operations',
       subjects: ['Commerce', 'Accounting', 'Economics', 'Entrepreneurship', 'Office Practice'],
       careerPaths: [
@@ -1152,7 +1152,7 @@ const SubjectCard = ({ subject, index }) => {
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/70 p-4 transition-all duration-300">
       <div className="flex items-center gap-3 mb-3">
-        <div className="p-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl shadow-sm">
+        <div className="p-2.5 bg-gradient-to-r from-blue-500 to-blue-900 rounded-xl shadow-sm">
           <SubjectIcon className="text-white text-lg" />
         </div>
         <div>
@@ -1296,7 +1296,7 @@ const VideoTourSection = ({ videoTour, videoType, videoThumbnail }) => {
     <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-2xl md:rounded-3xl border border-slate-100/80 shadow-2xl overflow-hidden transition-all duration-300">
       
       {/* Header Section */}
-      <div className="relative p-4 md:p-8 bg-gradient-to-r from-indigo-600 via-blue-500 to-cyan-500 text-white">
+      <div className="relative p-4 md:p-8 bg-gradient-to-r from-slate-950 via-blue-500 to-blue-900 text-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[80px] rounded-full -mr-32 -mt-32"></div>
         
         <div className="relative z-10 flex items-center justify-between">
@@ -1375,7 +1375,7 @@ const VideoTourSection = ({ videoTour, videoType, videoThumbnail }) => {
                 <span className="text-sm font-bold text-slate-700">3:45 Duration</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 bg-cyan-50 rounded-lg"><FiEye className="text-cyan-600 font-bold" /></div>
+                <div className="p-1.5 bg-blue-900 rounded-lg"><FiEye className="text-blue-900 font-bold" /></div>
                 <span className="text-sm font-bold text-slate-700">Premium Quality</span>
               </div>
             </div>
@@ -1396,9 +1396,9 @@ const VideoTourSection = ({ videoTour, videoType, videoThumbnail }) => {
       <div className="p-6 md:p-8 border-t border-slate-100 bg-white">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <p className="text-slate-600 font-medium text-center sm:text-left">
-            Want a more detailed view? <span className="font-extrabold text-indigo-600">Open the Interactive Map</span>
+            Want a more detailed view? <span className="font-extrabold text-blue-900">Open the Interactive Map</span>
           </p>
-          <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-3.5 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl text-sm font-bold transition-all shadow-lg active:scale-95">
+          <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-3.5 bg-slate-900 hover:bg-blue-900 text-white rounded-2xl text-sm font-bold transition-all shadow-lg active:scale-95">
             <FiMapPin className="text-lg" />
             <span>Launch School Map</span>
           </button>
@@ -1548,8 +1548,8 @@ const AcademicResultsSection = ({ documentData }) => {
       year: documentData?.kcseYear,
       term: documentData?.kcseTerm,
       icon: FiTrendingUp,
-      accent: 'text-indigo-400',
-      bg: 'bg-indigo-400/10'
+      accent: 'text-blue-900',
+      bg: 'bg-blue-900'
     }
   ];
 
@@ -1562,7 +1562,7 @@ const AcademicResultsSection = ({ documentData }) => {
       
       {/* Header Section - Edge-to-edge look */}
       <div className="relative p-6 md:p-12 bg-[#0F172A] text-white">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/20 blur-[80px] md:blur-[100px] rounded-full -mr-32 -mt-32" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-900 blur-[80px] md:blur-[100px] rounded-full -mr-32 -mt-32" />
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
@@ -1900,7 +1900,7 @@ export default function ComprehensiveAdmissions() {
         fullName: '8 Years Primary, 4 Years Secondary, 4 Years University'
       },
       icon: IoSchoolOutline,
-      color: 'from-indigo-600 to-purple-500',
+      color: 'from-slate-950 to-purple-500',
       description: 'The 8-4-4 system focuses on providing students with practical skills alongside academic knowledge. It emphasizes technical subjects and prepares students for both higher education and immediate employment opportunities.',
       structure: [
         { years: '8', name: 'Primary' },
@@ -2020,7 +2020,7 @@ export default function ComprehensiveAdmissions() {
       number: schoolData?.admissionCapacity ? schoolData.admissionCapacity.toString() : '300', 
       label: 'Admission Capacity', 
       sublabel: 'Annual Intake',
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-blue-500 to-blue-900'
     },
     { 
       icon: IoSparkles, 
@@ -2046,7 +2046,7 @@ export default function ComprehensiveAdmissions() {
       description: 'Join our Grade 10 program with comprehensive academic curriculum and extracurricular activities',
       features: ['Academic Excellence', 'Extra-curricular Activities', 'Digital Literacy', 'Talent Development'],
       deadline: schoolData?.admissionCloseDate ? new Date(schoolData.admissionCloseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'May 30, 2024',
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-blue-500 to-blue-900',
       type: 'grade7'
     },
     {
@@ -2068,7 +2068,7 @@ export default function ComprehensiveAdmissions() {
       description: 'Comprehensive curriculum with focus on core subjects and practical skills development',
       features: ['Quality Teaching', 'Regular Assessments', 'Exam Preparation', 'Academic Support'],
       badge: 'Advanced',
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-blue-500 to-blue-900',
       stats: { students: '500+', success: '95%' }
     },
     {
@@ -2415,7 +2415,7 @@ return (
       
       <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 mb-3 tracking-tight leading-[1.1] text-balance">
         Welcome to{" "}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-900">
           {schoolData?.name || "Our School"}
         </span>
       </h2>
@@ -2562,7 +2562,7 @@ return (
             <span className="text-[9px] md:text-[10px] text-white font-black uppercase tracking-[0.2em]">Academic Excellence</span>
           </div>
           <h2 className="text-xl md:text-3xl font-black text-slate-900 tracking-tighter leading-[1.1] mb-4">
-            Academic <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Programs</span>
+            Academic <span className="bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Programs</span>
           </h2>
        <p className="text-slate-600 text-md md:text-lg font-medium leading-relaxed ">
   Katwanyaa Senior School offers a future-ready, holistic curriculum 
@@ -2715,7 +2715,7 @@ return (
         <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Career Readiness</span>
       </div>
       <h2 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight mb-4 leading-tight">
-        Future <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Pathways</span>
+        Future <span className="bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Pathways</span>
       </h2>
       <p className="text-slate-500 text-sm md:text-lg max-w-2xl mx-auto leading-relaxed">
         Strategic academic planning for diverse career trajectories. Our curriculum integrates industry-relevant skills with traditional excellence.
@@ -2787,7 +2787,7 @@ return (
               
               {/* Hero Header */}
               <div className="text-center mb-8 md:mb-12 px-2 md:px-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-full mb-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-50 to-blue-900 border border-blue-200 rounded-full mb-6">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
@@ -2795,7 +2795,7 @@ return (
                   <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Admission Checklist</span>
                 </div>
                 <h2 className="text-lg sm:text-xl md:text-3xl font-black text-slate-900 tracking-tight mb-4 px-2">
-                  Application <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Requirements</span>
+                  Application <span className="bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Requirements</span>
                 </h2>
                 <p className="text-slate-500 text-base md:text-lg max-w-3xl mx-auto leading-relaxed px-2">
                   Everything you need to prepare for a successful application journey.
@@ -2952,7 +2952,7 @@ return (
           className="group relative bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 transition-all duration-500 hover:bg-white/[0.07]"
         >
           {/* Step Number Badge */}
-          <div className="absolute -top-3 -left-3 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-xl shadow-blue-900/40 z-20">
+          <div className="absolute -top-3 -left-3 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-900 flex items-center justify-center text-white font-black text-lg shadow-xl shadow-blue-900/40 z-20">
             {step.step}
           </div>
           
@@ -3048,7 +3048,7 @@ return (
     
     {/* Hero Header - Adjusted for Mobile */}
     <div className="text-center mb-6 md:mb-12 pt-4 md:pt-0">
-      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 rounded-full mb-4 md:mb-6">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-blue-900 border border-blue-100 rounded-full mb-4 md:mb-6">
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
@@ -3057,7 +3057,7 @@ return (
       </div>
       
       <h2 className="text-xl md:text-3xl font-black text-slate-900 tracking-tighter mb-4 px-4 leading-tight">
-        Examination <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Results</span>
+        Examination <span className="bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Results</span>
       </h2>
       
       <p className="text-slate-500 text-sm md:text-lg max-w-2xl mx-auto leading-relaxed px-6">
@@ -3071,7 +3071,7 @@ return (
     </div>
 
     {/* Results Archive Notice - Full bleed on mobile */}
-    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-y md:border border-blue-200/60 rounded-none md:rounded-3xl p-6 md:p-8 -mx-4 md:mx-0">
+    <div className="bg-gradient-to-br from-blue-50 to-blue-900 border-y md:border border-blue-200/60 rounded-none md:rounded-3xl p-6 md:p-8 -mx-4 md:mx-0">
       <div className="flex flex-col md:flex-row items-start gap-4 md:gap-6">
         <div className="p-3 bg-white rounded-2xl shadow-sm shadow-blue-200/50">
           <FiInfo className="text-blue-500 text-xl md:text-2xl" />
@@ -3097,7 +3097,7 @@ return (
               
               {/* Hero Header */}
               <div className="text-center mb-8 md:mb-10 px-2 md:px-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-full mb-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-50 to-blue-900 border border-blue-200 rounded-full mb-6">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
@@ -3105,7 +3105,7 @@ return (
                   <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Quick Answers</span>
                 </div>
                 <h2 className="text-xl sm:text-xl md:text-2xl font-black text-slate-900 tracking-tight mb-4 px-2">
-                  Frequently Asked <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Questions</span>
+                  Frequently Asked <span className="bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Questions</span>
                 </h2>
                 <p className="text-slate-500 text-base md:text-lg max-w-3xl mx-auto leading-relaxed px-2">
                   Clear answers to common queries about admissions, curriculum, fees, and school policies.

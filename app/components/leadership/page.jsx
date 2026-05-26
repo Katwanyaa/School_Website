@@ -205,16 +205,16 @@ const ModernStaffLeadership = () => {
 
   // Get role color
   const getRoleColor = (role) => {
-    if (!role) return 'bg-gradient-to-r from-indigo-500 to-purple-500';
+    if (!role) return 'bg-gradient-to-r from-slate-950 to-purple-500';
     
     const roleLower = role.toLowerCase();
-    if (roleLower.includes('principal')) return 'bg-gradient-to-br from-slate-800 via-indigo-900 to-purple-900 bg-fixed text-white';
+    if (roleLower.includes('principal')) return 'bg-gradient-to-br from-slate-800 via-blue-900 to-purple-900 bg-fixed text-white';
     if (roleLower.includes('deputy')) return 'bg-gradient-to-r from-purple-500 to-pink-500';
     if (roleLower.includes('teacher') || roleLower.includes('teaching')) return 'bg-gradient-to-r from-green-500 to-emerald-500';
     if (roleLower.includes('bom')) return 'bg-gradient-to-r from-amber-500 to-orange-500';
     if (roleLower.includes('support')) return 'bg-gradient-to-r from-gray-500 to-gray-700';
     if (roleLower.includes('administration')) return 'bg-gradient-to-r from-blue-500 to-purple-500';
-    return 'bg-gradient-to-r from-indigo-500 to-purple-500';
+    return 'bg-gradient-to-r from-slate-950 to-purple-500';
   };
 
   // Get role title for display
@@ -332,7 +332,7 @@ const ModernStaffLeadership = () => {
                   }}
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center">
                   <div className="text-white text-center p-4 sm:p-6 md:p-8">
                     <GiGraduateCap className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl mx-auto opacity-40" />
                     <p className="mt-3 sm:mt-4 text-lg sm:text-xl md:text-2xl font-black tracking-tight">{featuredStaff?.name || 'School Leadership'}</p>
@@ -353,7 +353,7 @@ const ModernStaffLeadership = () => {
                   
                   <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-black text-white leading-tight tracking-tighter">
                     {featuredStaff?.name?.split(' ')[0] || 'School'} 
-                    <span className="block bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                    <span className="block bg-gradient-to-r from-blue-400 to-blue-900 bg-clip-text text-transparent">
                       {featuredStaff?.name?.split(' ').slice(1).join(' ') || 'Leadership'}
                     </span>
                   </h2>
@@ -500,14 +500,14 @@ const ModernStaffLeadership = () => {
                         }}
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-indigo-900 to-purple-900 bg-fixed text-white flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-blue-900 to-purple-900 bg-fixed text-white flex items-center justify-center">
                         <FiUser className="text-white text-sm sm:text-lg md:text-2xl" />
                       </div>
                     )}
                   </div>
                   <div className="flex-grow min-w-0">
                     <div className="flex items-center justify-between mb-1 sm:mb-2">
-                      <span className="px-2 sm:px-2.5 md:px-3 py-1 bg-gradient-to-br from-slate-800 via-indigo-900 to-purple-900 bg-fixed text-white text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest rounded-full">
+                      <span className="px-2 sm:px-2.5 md:px-3 py-1 bg-gradient-to-br from-slate-800 via-blue-900 to-purple-900 bg-fixed text-white text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest rounded-full">
                         Principal
                       </span>
                     </div>

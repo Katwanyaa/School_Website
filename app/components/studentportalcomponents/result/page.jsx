@@ -47,10 +47,10 @@ function ResultsLoadingSpinner({ message = "Loading academic results...", size =
               className="text-purple-600"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full" style={{ width: inner, height: inner }}></div>
+              <div className="bg-gradient-to-r from-purple-500 to-blue-900 rounded-full" style={{ width: inner, height: inner }}></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-full blur-xl opacity-30"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-purple-100 to-blue-900 rounded-full blur-xl opacity-30"></div>
         </div>
         
         <div className="mt-8 space-y-3">
@@ -112,12 +112,12 @@ const getGradeStatus = (grade) => {
     iconColor: 'text-blue-500'
   };
   if (['B'].includes(g)) return { 
-    color: 'text-cyan-600',
-    bgColor: 'from-cyan-500 to-cyan-700',
-    lightBg: 'bg-cyan-50',
+    color: 'text-blue-900',
+    bgColor: 'from-blue-900 to-blue-900',
+    lightBg: 'bg-blue-900',
     remark: 'Satisfactory. Good effort shown.',
-    badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-    iconColor: 'text-cyan-500'
+    badgeColor: 'bg-blue-900 text-blue-900 border-blue-900',
+    iconColor: 'text-blue-900'
   };
   if (['B-'].includes(g)) return { 
     color: 'text-amber-600',
@@ -181,7 +181,7 @@ function SubjectDetailsModal({ result, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden border-2 border-gray-300 shadow-2xl">
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 p-3 sm:p-4 md:p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 p-3 sm:p-4 md:p-6 text-white">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
               <div className="p-2 md:p-3 bg-white/20 rounded-2xl flex-shrink-0 mt-1">
@@ -765,7 +765,7 @@ export default function ModernResultsView({
   return (
     <div className="space-y-3 sm:space-y-4 md:space-y-6 p-2 sm:p-3 md:p-6">
       {/* Header */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-800 rounded-2xl p-3 sm:p-4 md:p-6 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-r from-purple-600 via-blue-900 to-purple-800 rounded-2xl p-3 sm:p-4 md:p-6 text-white overflow-hidden">
         <div className="relative z-10">
           <div className="flex flex-col gap-2 sm:gap-3 md:gap-0 md:flex-row md:items-center justify-between">
             <div className="flex items-start sm:items-center gap-2 sm:gap-3">
@@ -805,10 +805,10 @@ export default function ModernResultsView({
       </div>
 
       {/* NEW ZERAKI SECTION */}
-      <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border-2 border-indigo-200 p-4 sm:p-6 md:p-8 shadow-lg">
+      <div className="bg-gradient-to-r from-blue-50 via-blue-900 to-purple-50 rounded-2xl border-2 border-blue-900 p-4 sm:p-6 md:p-8 shadow-lg">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
           {/* Icon/Illustration */}
-          <div className="flex-shrink-0 bg-gradient-to-br from-blue-600 to-indigo-700 p-4 rounded-2xl shadow-xl">
+          <div className="flex-shrink-0 bg-gradient-to-br from-blue-600 to-blue-900 p-4 rounded-2xl shadow-xl">
             <IoSchool className="text-white text-4xl md:text-5xl" />
           </div>
           
@@ -825,7 +825,7 @@ export default function ModernResultsView({
             {/* Instructions */}
             <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 mb-4 inline-block">
               <p className="text-xs sm:text-sm font-medium text-gray-800">
-                <span className="font-bold text-indigo-700">How to log in:</span> Use your school credentials 
+                <span className="font-bold text-blue-900">How to log in:</span> Use your school credentials 
                 (admission number and default password). First-time users, click "Forgot Password" to set up your account.
               </p>
             </div>
@@ -855,7 +855,7 @@ export default function ModernResultsView({
       <div className="mt-6 pt-6 border-t-2 border-gray-300">
         <div className="mb-2 sm:mb-3 md:mb-4">
           <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-            <IoDocumentText className="text-indigo-600 text-lg sm:text-xl" />
+            <IoDocumentText className="text-blue-900 text-lg sm:text-xl" />
             <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">
               School Exam Results Documents
             </h3>

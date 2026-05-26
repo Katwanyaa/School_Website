@@ -106,8 +106,8 @@ const FeeBreakdownCard = ({ item, onInfo }) => {
       'Books': <FiFileText className="text-amber-600" />,
       'Medical': <IoMedkitOutline className="text-rose-600" />,
       'Activity': <FiHeart className="text-pink-600" />,
-      'Application': <FiCreditCard className="text-indigo-600" />,
-      'Registration': <FiUser className="text-cyan-600" />,
+      'Application': <FiCreditCard className="text-blue-900" />,
+      'Registration': <FiUser className="text-blue-900" />,
       'Acceptance': <FiCheckCircle className="text-green-600" />,
       'Development': <FiHome className="text-orange-600" />,
       'Deposit': <FiDollarSign className="text-teal-600" />
@@ -180,7 +180,7 @@ const PDFCard = ({ title, pdfUrl, fileName, fileSize, uploadDate, description, o
   return (
     <div className="bg-white rounded-2xl border border-slate-100 p-5 hover:shadow-lg transition-all">
       <div className="flex items-start gap-4">
-        <div className="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+        <div className="p-3 bg-gradient-to-br from-blue-50 to-blue-900 rounded-xl border border-blue-100">
           <IoDocumentTextOutline className="text-blue-600 text-2xl" />
         </div>
         

@@ -396,7 +396,7 @@ function Notification({
         };
       case 'info':
         return {
-          bg: 'from-blue-50 to-cyan-50',
+          bg: 'from-blue-50 to-blue-900',
           border: 'border-blue-200',
           icon: 'text-blue-600',
           iconBg: 'bg-blue-100',
@@ -874,7 +874,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
     { value: 'Principal', label: 'Principal', icon: FaCrown, color: 'text-purple-600' },
     { value: 'Deputy Principal', label: 'Deputy Principal', icon: FaShieldAlt, color: 'text-emerald-600' },
     { value: 'Senior Teacher', label: 'Senior Teacher', icon: FaChalkboardTeacher, color: 'text-blue-600' },
-    { value: 'Head of Department', label: 'HOD', icon: FaBook, color: 'text-indigo-600' },
+    { value: 'Head of Department', label: 'HOD', icon: FaBook, color: 'text-blue-900' },
   ];
 
   const DEPUTY_PRINCIPAL_TYPES = [
@@ -1120,7 +1120,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
         {/* DYNAMIC HEADER - Green for CREATE, Blue for UPDATE */}
-        <div className={`p-4 text-white ${isUpdateMode ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700' : 'bg-gradient-to-r from-green-600 via-emerald-700 to-teal-700'}`}>
+        <div className={`p-4 text-white ${isUpdateMode ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900' : 'bg-gradient-to-r from-green-600 via-emerald-700 to-teal-700'}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -1210,7 +1210,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                       label: 'Teacher Record',
                       description: 'Name, department, subject offered, and image only.',
                       icon: FaChalkboardTeacher,
-                      styles: 'from-emerald-600 via-teal-600 to-cyan-600'
+                      styles: 'from-emerald-600 via-teal-600 to-blue-900'
                     }
                   ].map((type) => {
                     const active = formData.staffType === type.value;
@@ -1281,16 +1281,16 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                           </p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-cyan-50 to-blue-100 rounded-2xl p-5 border border-cyan-200">
+                        <div className="bg-gradient-to-br from-blue-900 to-blue-100 rounded-2xl p-5 border border-blue-900">
                           <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            <FaBook className="text-cyan-700" /> Subject Offered <span className="text-red-500">*</span>
+                            <FaBook className="text-blue-900" /> Subject Offered <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
                             value={formData.subjectOffered}
                             onChange={(e) => handleChange('subjectOffered', e.target.value)}
                             placeholder="e.g. Mathematics, English, Physics"
-                            className="w-full px-4 py-3 border-2 border-cyan-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white text-base font-bold"
+                            className="w-full px-4 py-3 border-2 border-blue-900 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-white text-base font-bold"
                             required
                           />
                         </div>
@@ -1433,14 +1433,14 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                     )}
 
                     {!isTeacherForm && formData.role !== 'Deputy Principal' && (
-                      <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
+                      <div className="bg-gradient-to-br from-blue-900 to-blue-900 rounded-2xl p-5 border border-blue-900">
                         <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                          <FaBriefcase className="text-cyan-600" /> Position
+                          <FaBriefcase className="text-blue-900" /> Position
                         </label>
                         <select
                           value={formData.position}
                           onChange={(e) => handleChange('position', e.target.value)}
-                          className="w-full px-4 py-3 border-2 border-cyan-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white text-base font-bold"
+                          className="w-full px-4 py-3 border-2 border-blue-900 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-white text-base font-bold"
                         >
                           <option value="">Select a position...</option>
                           <optgroup label="Administration">
@@ -1469,14 +1469,14 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
             {currentStep === 1 && (
               isTeacherForm ? (
                 <div className="space-y-6">
-                  <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
+                  <div className="bg-gradient-to-br from-blue-900 to-blue-900 rounded-2xl p-5 border border-blue-900">
                     <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <FaUpload className="text-cyan-600" /> Teacher Image <span className="text-red-500">*</span>
+                      <FaUpload className="text-blue-900" /> Teacher Image <span className="text-red-500">*</span>
                     </label>
                     <div className="flex flex-col sm:flex-row items-start gap-4">
                       {imagePreview && (
                         <div className="relative">
-                          <img src={imagePreview} alt="Preview" className="w-24 h-24 rounded-2xl object-cover border-2 border-cyan-300" />
+                          <img src={imagePreview} alt="Preview" className="w-24 h-24 rounded-2xl object-cover border-2 border-blue-900" />
                           <button
                             type="button"
                             onClick={handleImageRemove}
@@ -1491,7 +1491,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                           type="file"
                           accept="image/*"
                           onChange={(e) => handleImageChange(e.target.files[0])}
-                          className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-cyan-100 file:text-cyan-700 hover:file:bg-cyan-200"
+                          className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-900 file:text-blue-900 hover:file:bg-blue-900"
                         />
                         {imageError && <p className="text-sm text-red-600 mt-2">{imageError}</p>}
                         <p className="text-xs text-gray-500 mt-2">Max size: 5MB. JPG, PNG, WEBP</p>
@@ -1639,14 +1639,14 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
+                  <div className="bg-gradient-to-br from-blue-900 to-blue-900 rounded-2xl p-5 border border-blue-900">
                     <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <FaUpload className="text-cyan-600" /> Profile Image <span className="text-red-500">*</span>
+                      <FaUpload className="text-blue-900" /> Profile Image <span className="text-red-500">*</span>
                     </label>
                     <div className="flex flex-col sm:flex-row items-start gap-4">
                       {imagePreview && (
                         <div className="relative">
-                          <img src={imagePreview} alt="Preview" className="w-20 h-20 rounded-xl object-cover border-2 border-cyan-300" />
+                          <img src={imagePreview} alt="Preview" className="w-20 h-20 rounded-xl object-cover border-2 border-blue-900" />
                           <button
                             type="button"
                             onClick={handleImageRemove}
@@ -1661,7 +1661,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                           type="file"
                           accept="image/*"
                           onChange={(e) => handleImageChange(e.target.files[0])}
-                          className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-cyan-100 file:text-cyan-700 hover:file:bg-cyan-200"
+                          className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-900 file:text-blue-900 hover:file:bg-blue-900"
                         />
                         {imageError && <p className="text-sm text-red-600 mt-2">{imageError}</p>}
                         <p className="text-xs text-gray-500 mt-2">Max size: 5MB. JPG, PNG, WEBP</p>
@@ -1669,16 +1669,16 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-5 border border-indigo-200">
+                  <div className="bg-gradient-to-br from-slate-950 to-blue-900 rounded-2xl p-5 border border-blue-900">
                     <label className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <FaQuoteLeft className="text-indigo-600" /> Biography
+                      <FaQuoteLeft className="text-blue-900" /> Biography
                     </label>
                     <textarea
                       value={formData.bio}
                       onChange={(e) => handleChange('bio', e.target.value)}
                       placeholder="Professional background..."
                       rows="4"
-                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white text-base font-bold"
+                      className="w-full px-4 py-3 border-2 border-blue-900 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 resize-none bg-white text-base font-bold"
                     />
                   </div>
 
@@ -1798,7 +1798,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                     disabled={actionLoading || !isStepValid()}
                     className={`px-8 py-3 rounded-xl transition duration-200 font-bold shadow disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 text-base w-full sm:w-auto ${
                       isUpdateMode 
-                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-900 text-white hover:from-blue-700 hover:to-blue-900'
                         : 'bg-gradient-to-r from-green-600 to-teal-600 text-white hover:from-green-700 hover:to-teal-700'
                     }`}
                   >
@@ -1905,7 +1905,7 @@ function StyledTagInput({ label, value, onChange, placeholder, disabled, color =
 }
 
 const STAFF_DEPARTMENT_CATEGORIES = [
-  { value: 'CBC', label: 'CBC Department', icon: FiBook, color: 'from-blue-500 to-cyan-600' },
+  { value: 'CBC', label: 'CBC Department', icon: FiBook, color: 'from-blue-500 to-blue-900' },
   { value: 'EIGHT_FOUR_FOUR', label: '8-4-4 Department', icon: FiAward, color: 'from-amber-500 to-orange-600' },
   { value: 'TEACHING', label: 'Teaching Department', icon: FiBriefcase, color: 'from-emerald-500 to-teal-600' },
   { value: 'SUPPORT', label: 'Support / Non-Teaching', icon: FiShield, color: 'from-slate-700 to-slate-900' }
@@ -3120,7 +3120,7 @@ const handleSubmit = async (formData, id) => {
 <div className="relative bg-gradient-to-br from-[#0F172A] via-[#111827] to-[#0F172A] rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 text-white overflow-hidden shadow-2xl border border-white/10 backdrop-blur-sm transition-all duration-500 mb-8">
   
   {/* Animated Gradient Orbs */}
-  <div className="absolute top-[-30%] right-[-10%] w-[500px] h-[500px] md:w-[700px] md:h-[700px] bg-gradient-to-br from-blue-600/30 via-cyan-500/20 to-transparent rounded-full blur-[130px] animate-pulse pointer-events-none" />
+  <div className="absolute top-[-30%] right-[-10%] w-[500px] h-[500px] md:w-[700px] md:h-[700px] bg-gradient-to-br from-blue-600/30 via-blue-900 to-transparent rounded-full blur-[130px] animate-pulse pointer-events-none" />
   <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-gradient-to-tr from-orange-500/20 via-amber-500/10 to-transparent rounded-full blur-[110px] animate-pulse delay-1000 pointer-events-none" />
   <div className="absolute top-[40%] left-[20%] w-[200px] h-[200px] bg-purple-600/10 rounded-full blur-[80px] animate-pulse delay-700 pointer-events-none" />
 

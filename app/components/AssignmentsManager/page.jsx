@@ -297,7 +297,7 @@ function Notification({
         };
       case 'info':
         return {
-          bg: 'from-blue-50 to-cyan-50',
+          bg: 'from-blue-50 to-blue-900',
           border: 'border-blue-200',
           icon: 'text-blue-600',
           iconBg: 'bg-blue-100',
@@ -366,7 +366,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
       case 'in progress': return { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', icon: 'bg-blue-500' };
       case 'pending': return { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200', icon: 'bg-yellow-500' };
       case 'overdue': return { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', icon: 'bg-red-500' };
-      case 'assigned': return { bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200', icon: 'bg-indigo-500' };
+      case 'assigned': return { bg: 'bg-blue-900', text: 'text-blue-900', border: 'border-blue-900', icon: 'bg-blue-900' };
       default: return { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200', icon: 'bg-gray-500' };
     }
   };
@@ -415,10 +415,10 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="bg-indigo-600 text-white p-1.5 rounded-lg">
+                <span className="bg-blue-900 text-white p-1.5 rounded-lg">
                   <FiClipboard size={16} />
                 </span>
-                <span className="text-xs font-black uppercase tracking-widest text-indigo-600/70">Academic Assignment</span>
+                <span className="text-xs font-black uppercase tracking-widest text-blue-900">Academic Assignment</span>
               </div>
               <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                 {assignment.title}
@@ -466,7 +466,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
               {/* Description Section */}
               <section className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                  <div className="w-8 h-8 rounded-xl bg-blue-900 flex items-center justify-center text-blue-900">
                     <IoDocumentTextOutline />
                   </div>
                   <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Assignment Description</h3>
@@ -512,8 +512,8 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
                       const fileExt = fileName.split('.').pop()?.toLowerCase();
                       
                       return (
-                        <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 group">
-                          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 hover:border-blue-900 hover:shadow-xl hover:shadow-blue-900 transition-all duration-300 group">
+                          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 group-hover:bg-blue-900 group-hover:text-white transition-colors">
                             {getFileIcon(fileExt)}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -635,7 +635,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
           </button>
           <button 
             onClick={() => onEdit(assignment)}
-            className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black transition-all duration-300 shadow-lg shadow-slate-200"
+            className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-blue-900 text-white px-10 py-4 rounded-2xl font-black transition-all duration-300 shadow-lg shadow-slate-200"
           >
             <FiEdit size={18} /> Edit Assignment
           </button>
@@ -1001,7 +1001,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
         background: 'linear-gradient(135deg, #f8fafc 0%, #faf5ff 100%)'
       }}>
    {/* Modern Assignment Modal Header */}
-<div className="group relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-6 text-white overflow-hidden">
+<div className="group relative bg-gradient-to-br from-slate-950 via-purple-600 to-pink-600 p-6 text-white overflow-hidden">
   
   {/* Animated Gradient Orbs */}
   <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-3xl animate-pulse" />
@@ -1125,7 +1125,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
             <div>
               <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="text-red-500">*</span>
-                <FiTag className="text-indigo-500" />
+                <FiTag className="text-blue-900" />
                 Assignment Title
               </label>
               <input
@@ -1221,7 +1221,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
               <div>
                 <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
                   <span className="text-red-500">*</span>
-                  <FiCalendar className="text-indigo-500" />
+                  <FiCalendar className="text-blue-900" />
                   Due Date
                 </label>
                 <input
@@ -1229,21 +1229,21 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                   required
                   value={formData.dueDate}
                   onChange={(e) => handleChange('dueDate', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-gray-50"
                   disabled={loading}
                 />
               </div>
               
               <div>
                 <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <FiCalendar className="text-indigo-500" />
+                  <FiCalendar className="text-blue-900" />
                   Date Assigned
                 </label>
                 <input
                   type="date"
                   value={formData.dateAssigned}
                   onChange={(e) => handleChange('dateAssigned', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 bg-gray-50"
                   disabled={loading}
                 />
               </div>
@@ -1403,7 +1403,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
             </div>
 
             {/* File Upload Section */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-900 rounded-2xl p-6 border-2 border-blue-200">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
@@ -1474,7 +1474,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                 <div className="relative w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div 
                     className={`absolute top-0 left-0 h-full transition-all duration-500 ease-out ${
-                      totalSizeMB > 4.5 ? 'bg-red-500' : totalSizeMB > 3.5 ? 'bg-amber-500' : 'bg-indigo-600'
+                      totalSizeMB > 4.5 ? 'bg-red-500' : totalSizeMB > 3.5 ? 'bg-amber-500' : 'bg-blue-900'
                     }`}
                     style={{ width: `${Math.min((totalSizeMB / 4.5) * 100, 100)}%` }}
                   />
@@ -1495,13 +1495,13 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                     className={`cursor-pointer w-full py-12 border-2 border-dashed rounded-[32px] flex flex-col items-center justify-center text-center px-6 transition-all duration-300 ${
                       totalSizeMB > 4.5
                         ? 'border-slate-200 bg-slate-50/50 opacity-50 cursor-not-allowed'
-                        : 'border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/30'
+                        : 'border-slate-200 bg-white hover:border-blue-900 hover:bg-blue-900'
                     }`}
                   >
                     <div className={`p-5 rounded-3xl mb-4 transition-all duration-300 ${
                       totalSizeMB > 4.5 
                         ? 'bg-slate-100 text-slate-400' 
-                        : 'bg-slate-50 text-indigo-600 group-hover:scale-110 group-hover:bg-white group-hover:shadow-xl group-hover:shadow-indigo-100'
+                        : 'bg-slate-50 text-blue-900 group-hover:scale-110 group-hover:bg-white group-hover:shadow-xl group-hover:shadow-blue-900'
                     }`}>
                       <FiUpload size={32} />
                     </div>
@@ -1532,11 +1532,11 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                         return (
                           <div 
                             key={file.id || idx} 
-                            className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-200"
+                            className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-blue-900 hover:shadow-md hover:shadow-blue-900 transition-all duration-200"
                           >
                             <div className="flex items-center gap-4 min-w-0">
                               <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                file.isExisting ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'
+                                file.isExisting ? 'bg-blue-900 text-blue-900' : 'bg-emerald-50 text-emerald-600'
                               }`}>
                                 <FiFileText size={20} />
                               </div>
@@ -1546,7 +1546,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                                 </p>
                                 <div className="flex items-center gap-2 mt-1">
                                   <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                                    file.isExisting ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'
+                                    file.isExisting ? 'bg-blue-900 text-blue-900' : 'bg-emerald-100 text-emerald-700'
                                   }`}>
                                     {file.isExisting ? 'Cloud' : 'New'}
                                   </span>
@@ -1629,7 +1629,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
               <button 
                 type="submit"
                 disabled={loading || totalSizeMB > 4.5 || !formData.title.trim() || !formData.subject || !formData.className || !formData.dueDate}
-                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-sm hover:from-indigo-700 hover:to-purple-700 transition-all"
+                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-slate-950 to-purple-600 text-sm hover:from-slate-950 hover:to-purple-700 transition-all"
               >
                 {loading ? (
                   <>
@@ -2301,7 +2301,7 @@ export default function AssignmentsManager() {
                 onClick={() => paginate(page)}
                 className={`px-3 py-2 rounded-xl font-bold ${
                   currentPage === page
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-slate-950 to-purple-500 text-white shadow-lg'
                     : 'text-gray-700'
                 }`}
               >
@@ -2325,7 +2325,7 @@ export default function AssignmentsManager() {
   // Loading state
   if (loading && assignments.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-blue-900 to-purple-50">
         <div className="text-center">
           <Spinner size={48} />
           <p className="text-gray-700 text-lg mt-4 font-medium">
@@ -2340,7 +2340,7 @@ export default function AssignmentsManager() {
   }
 
   return (
-    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50">
+    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-blue-900 to-purple-50">
       {/* Custom Notification */}
       <Notification
         open={notification.open}
@@ -2364,21 +2364,21 @@ export default function AssignmentsManager() {
 
  {/* Modern Responsive Header – Assignments Theme */}
 <div className="relative mb-6 sm:mb-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem]
-                bg-gradient-to-br from-indigo-700 via-purple-700 to-violet-700
+                bg-gradient-to-br from-slate-950 via-purple-700 to-blue-900
                 p-4 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl">
 
   {/* Abstract Gradient Orbs - Purple/Blue Theme */}
   <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] 
-                  bg-gradient-to-br from-purple-500/30 via-indigo-500/20 to-violet-500/30 
+                  bg-gradient-to-br from-purple-500/30 via-blue-900 to-blue-900 
                   rounded-full blur-[100px] pointer-events-none animate-pulse" />
   
   <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] 
-                  bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-violet-500/20 
+                  bg-gradient-to-tr from-slate-950 via-purple-500/10 to-blue-900 
                   rounded-full blur-[80px] pointer-events-none" />
   
   {/* Central Floating Orb */}
   <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] 
-                  bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
+                  bg-gradient-to-r from-slate-950 to-purple-500/20 
                   rounded-full blur-[70px] pointer-events-none animate-pulse" />
   
   {/* Subtle Grid Pattern */}
@@ -2402,10 +2402,10 @@ export default function AssignmentsManager() {
         
         {/* Premium Institution Badge */}
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-purple-400 via-indigo-400 to-violet-400 
+          <div className="h-7 w-1 bg-gradient-to-b from-purple-400 via-blue-900 to-blue-900 
                           rounded-full shadow-[0_0_15px_rgba(139,92,246,0.5)]" />
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-200">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-900">
               Katwanyaa Senior School
             </h2>
             <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
@@ -2418,9 +2418,9 @@ export default function AssignmentsManager() {
 
           {/* Icon with Multi-layer Glow */}
           <div className="relative shrink-0 self-start">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-500
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 to-purple-500
                             rounded-xl sm:rounded-2xl blur-md sm:blur-lg opacity-70" />
-            <div className="relative p-3 sm:p-4 bg-gradient-to-br from-indigo-600 to-purple-600
+            <div className="relative p-3 sm:p-4 bg-gradient-to-br from-slate-950 to-purple-600
                             rounded-xl sm:rounded-2xl shadow-2xl transform group-hover:scale-105 
                             group-hover:rotate-3 transition-all duration-500">
               <FiClipboard className="text-white w-5 h-5 sm:w-6 sm:h-6" />
@@ -2432,11 +2432,11 @@ export default function AssignmentsManager() {
 
             {/* Security Badge */}
             <div className="hidden xs:inline-flex items-center gap-1.5 px-2.5 py-1 
-                            bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
+                            bg-gradient-to-r from-slate-950 to-purple-500/20 
                             backdrop-blur-sm rounded-full mb-2 sm:mb-3 max-w-max 
                             border border-white/10">
-              <FiShield className="w-2.5 h-2.5 text-indigo-300" />
-              <span className="text-[9px] font-bold text-indigo-300 uppercase tracking-wider">
+              <FiShield className="w-2.5 h-2.5 text-blue-900" />
+              <span className="text-[9px] font-bold text-blue-900 uppercase tracking-wider">
                 Academic Portal
               </span>
             </div>
@@ -2446,14 +2446,14 @@ export default function AssignmentsManager() {
                            font-black text-white tracking-tight leading-tight">
               Assignments <span className="block sm:inline">& </span>
               <span className="text-transparent bg-clip-text
-                               bg-gradient-to-r from-purple-200 to-indigo-200">
+                               bg-gradient-to-r from-purple-200 to-blue-900">
                 Manager
               </span>
             </h1>
 
             {/* Description */}
             <p className="mt-2 sm:mt-3 text-sm xs:text-base sm:text-lg
-                          text-indigo-100/90 font-medium
+                          text-blue-900 font-medium
                           max-w-2xl leading-relaxed
                           line-clamp-2 sm:line-clamp-none">
               Create, organize, distribute, and track student assignments across classes and subjects.
@@ -2470,7 +2470,7 @@ export default function AssignmentsManager() {
               </div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
                               bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <FiClipboard className="w-3 h-3 text-indigo-400" />
+                <FiClipboard className="w-3 h-3 text-blue-900" />
                 <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
                   {stats?.total || 0} Assignments
                 </span>
@@ -2537,8 +2537,8 @@ export default function AssignmentsManager() {
             onClick={handleCreate}
             className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
                        px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500
-                       hover:from-indigo-600 hover:via-purple-600 hover:to-violet-600
+                       bg-gradient-to-r from-slate-950 via-purple-500 to-blue-900
+                       hover:from-slate-950 hover:via-purple-600 hover:to-blue-900
                        text-white rounded-xl sm:rounded-2xl font-semibold
                        active:scale-95 transition-all
                        shadow-[0_8px_20px_rgba(139,92,246,0.3)] 
@@ -2564,7 +2564,7 @@ export default function AssignmentsManager() {
 
         {/* Today's Stats - Desktop */}
         <div className="hidden lg:flex flex-col items-end">
-          <span className="text-[9px] font-bold text-indigo-300/70 uppercase tracking-widest">
+          <span className="text-[9px] font-bold text-blue-900 uppercase tracking-widest">
             Due This Week
           </span>
           <span className="text-2xl font-black text-white">
@@ -2588,9 +2588,9 @@ export default function AssignmentsManager() {
       
       {/* Security Badge */}
       <div className="flex items-center gap-2">
-        <FiShield className="w-3 h-3 text-indigo-400" />
+        <FiShield className="w-3 h-3 text-blue-900" />
         <span className="text-white/40">Security:</span>
-        <span className="text-indigo-400">Encrypted</span>
+        <span className="text-blue-900">Encrypted</span>
       </div>
       
       {/* Total Assignments */}
@@ -2666,7 +2666,7 @@ export default function AssignmentsManager() {
                 <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Total</p>
                 <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl">
+              <div className="p-3 bg-blue-900 text-blue-900 rounded-2xl">
                 <IoDocumentTextOutline className="text-lg" />
               </div>
             </div>
@@ -2678,7 +2678,7 @@ export default function AssignmentsManager() {
                 <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">This Week</p>
                 <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.thisWeek}</p>
               </div>
-              <div className="p-3 bg-cyan-100 text-cyan-600 rounded-2xl">
+              <div className="p-3 bg-blue-900 text-blue-900 rounded-2xl">
                 <IoCalendarOutline className="text-lg" />
               </div>
             </div>
@@ -2744,7 +2744,7 @@ export default function AssignmentsManager() {
               placeholder="Search assignments by title, description, or subject..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-gray-50"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-900 focus:border-blue-900 text-sm bg-gray-50"
             />
           </div>
 
@@ -2806,9 +2806,9 @@ export default function AssignmentsManager() {
       {/* Modern Assignments Table - Using ResourcesManager Style */}
       {filteredAssignments.length > 0 ? (
         <>
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-indigo-500/5 border border-slate-200/50 overflow-hidden relative">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-900 border border-slate-200/50 overflow-hidden relative">
             {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 to-transparent pointer-events-none"></div>
             
             {/* Enhanced Table Header */}
             <div className="border-b border-slate-200/50">
@@ -2829,13 +2829,13 @@ export default function AssignmentsManager() {
                           setSelectedAssignments(newSelection);
                         }
                       }}
-                      className="w-5 h-5 rounded-xl border-2 border-slate-300 bg-white checked:bg-gradient-to-r checked:from-indigo-500 checked:to-purple-600 checked:border-0 focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all duration-200"
+                      className="w-5 h-5 rounded-xl border-2 border-slate-300 bg-white checked:bg-gradient-to-r checked:from-slate-950 checked:to-purple-600 checked:border-0 focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all duration-200"
                     />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-900">
                       Academic Assignments
-                      <span className="ml-2 px-2.5 py-0.5 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 text-xs font-semibold rounded-full">
+                      <span className="ml-2 px-2.5 py-0.5 bg-gradient-to-r from-slate-950 to-purple-100 text-blue-900 text-xs font-semibold rounded-full">
                         {filteredAssignments.length} items
                       </span>
                     </h3>
@@ -2857,7 +2857,7 @@ export default function AssignmentsManager() {
                     </th>
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800 uppercase tracking-[0.2em] min-w-[300px]">
                       <div className="flex items-center gap-2">
-                        <HiOutlineSparkles className="w-4 h-4 text-indigo-500" />
+                        <HiOutlineSparkles className="w-4 h-4 text-blue-900" />
                         Assignment
                       </div>
                     </th>
@@ -2904,7 +2904,7 @@ export default function AssignmentsManager() {
                         case 'in progress': return 'bg-blue-100 text-blue-800';
                         case 'pending': return 'bg-yellow-100 text-yellow-800';
                         case 'overdue': return 'bg-red-100 text-red-800';
-                        case 'assigned': return 'bg-indigo-100 text-indigo-800';
+                        case 'assigned': return 'bg-blue-900 text-blue-900';
                         default: return 'bg-gray-100 text-gray-800';
                       }
                     };
@@ -2922,8 +2922,8 @@ export default function AssignmentsManager() {
                     return (
                       <tr 
                         key={assignment.id} 
-                        className={`group hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-purple-50/20 transition-all duration-300  ${
-                          selectedAssignments.has(assignment.id) ? 'bg-gradient-to-r from-indigo-50/50 to-purple-50/30' : ''
+                        className={`group hover:bg-gradient-to-r hover:from-slate-950 hover:to-purple-50/20 transition-all duration-300  ${
+                          selectedAssignments.has(assignment.id) ? 'bg-gradient-to-r from-slate-950 to-purple-50/30' : ''
                         }`}
                       >
                         {/* Checkbox Column */}
@@ -2933,7 +2933,7 @@ export default function AssignmentsManager() {
                               type="checkbox"
                               checked={selectedAssignments.has(assignment.id)}
                               onChange={(e) => handleAssignmentSelect(assignment.id, e.target.checked)}
-                              className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-colors"
+                              className="w-5 h-5 rounded border-gray-300 text-blue-900 focus:ring-blue-900 cursor-pointer transition-colors"
                             />
                           </div>
                         </td>
@@ -2947,7 +2947,7 @@ export default function AssignmentsManager() {
                                 : assignment.priority === 'medium' 
                                 ? 'bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 shadow-sm shadow-orange-500/10'
                                 : assignment.priority === 'low' 
-                                ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 shadow-sm shadow-blue-500/10'
+                                ? 'bg-gradient-to-br from-blue-50 to-blue-900 border border-blue-100 shadow-sm shadow-blue-500/10'
                                 : 'bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-100 shadow-sm shadow-slate-500/10'
                             }`}>
                               <IoDocumentTextOutline className={`text-xl ${
@@ -2964,7 +2964,7 @@ export default function AssignmentsManager() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2 mb-2">
-                                <h4 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-indigo-600 transition-colors">
+                                <h4 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-blue-900 transition-colors">
                                   {assignment.title || 'Untitled Assignment'}
                                 </h4>
                               </div>
@@ -2989,7 +2989,7 @@ export default function AssignmentsManager() {
                                 <FiBookOpen className="w-3 h-3" />
                                 {assignment.subject || 'General Studies'}
                               </span>
-                              <span className="inline-block px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 text-xs font-bold rounded-xl border border-blue-100">
+                              <span className="inline-block px-3 py-1.5 bg-gradient-to-r from-blue-50 to-blue-900 text-blue-700 text-xs font-bold rounded-xl border border-blue-100">
                                 <FiUsers className="w-3 h-3" />
                                 {assignment.className || 'All Classes'}
                               </span>
@@ -3001,7 +3001,7 @@ export default function AssignmentsManager() {
                         <td className="py-5 px-8">
                           <div className="space-y-3">
                             <div className="flex items-center gap-2">
-                              <FiCalendar className="text-indigo-500" />
+                              <FiCalendar className="text-blue-900" />
                               <span className="text-sm font-medium text-slate-900">
                                 {new Date(assignment.dueDate).toLocaleDateString('en-GB', {
                                   day: 'numeric',
@@ -3017,7 +3017,7 @@ export default function AssignmentsManager() {
                                   assignment.status === 'in progress' ? 'bg-blue-500' :
                                   assignment.status === 'pending' ? 'bg-yellow-500' :
                                   assignment.status === 'overdue' ? 'bg-red-500' :
-                                  assignment.status === 'assigned' ? 'bg-indigo-500' :
+                                  assignment.status === 'assigned' ? 'bg-blue-900' :
                                   'bg-gray-500'
                                 }`}></div>
                                 {assignment.status?.charAt(0).toUpperCase() + assignment.status?.slice(1) || 'Pending'}
@@ -3042,7 +3042,7 @@ export default function AssignmentsManager() {
                                 {assignment.teacher?.split(' ').map(n => n[0]).join('') || 'A'}
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-900 group-hover/author:text-indigo-600 transition-colors">
+                                <span className="text-xs font-bold text-slate-900 group-hover/author:text-blue-900 transition-colors">
                                   {assignment.teacher || 'System Admin'}
                                 </span>
                                 <span className="text-xs text-slate-800 font-medium">
@@ -3088,7 +3088,7 @@ export default function AssignmentsManager() {
                           <div className="flex items-center justify-end gap-4">
                             <button
                               onClick={() => handleView(assignment)}
-                              className="flex items-center gap-1.5 text-indigo-600 font-bold text-sm cursor-pointer"
+                              className="flex items-center gap-1.5 text-blue-900 font-bold text-sm cursor-pointer"
                             >
                               <FiEye className="w-4 h-4" />
                               <span>View</span>
@@ -3121,9 +3121,9 @@ export default function AssignmentsManager() {
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-blue-900 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
                   >
-                    <FiChevronLeft className="w-5 h-5 text-slate-800 group-hover:text-indigo-600" />
+                    <FiChevronLeft className="w-5 h-5 text-slate-800 group-hover:text-blue-900" />
                   </button>
                   
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -3137,7 +3137,7 @@ export default function AssignmentsManager() {
                           onClick={() => paginate(page)}
                           className={`px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 ${
                             currentPage === page 
-                              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25' 
+                              ? 'bg-gradient-to-r from-slate-950 to-purple-600 text-white shadow-lg shadow-blue-900' 
                               : 'text-slate-700 hover:bg-slate-100'
                           }`}
                         >
@@ -3149,9 +3149,9 @@ export default function AssignmentsManager() {
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-blue-900 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
                   >
-                    <FiChevronRight className="w-5 h-5 text-slate-800 group-hover:text-indigo-600" />
+                    <FiChevronRight className="w-5 h-5 text-slate-800 group-hover:text-blue-900" />
                   </button>
                 </div>
               </div>
@@ -3160,15 +3160,15 @@ export default function AssignmentsManager() {
         </>
       ) : (
         /* Modern Empty State */
-        <div className="relative bg-gradient-to-br from-white/90 to-indigo-50/50 backdrop-blur-xl rounded-3xl shadow-2xl shadow-indigo-500/5 border border-indigo-100/50 text-center py-16 px-8 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-white/90 to-blue-900 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-900 border border-blue-900 text-center py-16 px-8 overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-400"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 to-purple-400"></div>
           </div>
           
           <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/10">
-              <IoDocumentTextOutline className="text-4xl text-gradient-to-r from-indigo-500 to-purple-500" />
+            <div className="w-24 h-24 bg-gradient-to-r from-slate-950 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-900">
+              <IoDocumentTextOutline className="text-4xl text-gradient-to-r from-slate-950 to-purple-500" />
             </div>
             
             <h3 className="text-2xl font-bold text-slate-900 mb-3">
@@ -3186,7 +3186,7 @@ export default function AssignmentsManager() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button 
                 onClick={handleCreate} 
-                className="group relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-indigo-500/25 hover:shadow-2xl hover:shadow-indigo-500/30 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
+                className="group relative bg-gradient-to-r from-slate-950 to-purple-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-blue-900 hover:shadow-2xl hover:shadow-blue-900 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
               >
                 <FiPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Create Assignment
@@ -3199,7 +3199,7 @@ export default function AssignmentsManager() {
                   setSelectedSubject('all');
                   setSelectedClass('all');
                 }}
-                className="px-6 py-3.5 rounded-2xl font-semibold border-2 border-slate-200 text-slate-700 hover:border-indigo-300 hover:text-indigo-600 hover:bg-white transition-all duration-300"
+                className="px-6 py-3.5 rounded-2xl font-semibold border-2 border-slate-200 text-slate-700 hover:border-blue-900 hover:text-blue-900 hover:bg-white transition-all duration-300"
               >
                 Clear Filters
               </button>

@@ -97,7 +97,7 @@ const ModernModal = ({ children, open, onClose, maxWidth = '800px', blur = true 
               onClose();
             }}
             type="button"
-            className="p-1.5 sm:p-2 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full hover:shadow-lg cursor-pointer border-0 shadow-md transition-all active:scale-95"
+            className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-900 via-blue-500 to-purple-600 rounded-full hover:shadow-lg cursor-pointer border-0 shadow-md transition-all active:scale-95"
           >
             <FiX className="text-white w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -421,7 +421,7 @@ const AchievementDetailModal = ({ achievement, onClose, onShare }) => {
                 e.stopPropagation();
                 onClose();
               }} 
-              className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm hover:shadow-lg transition-all active:scale-95"
+              className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-blue-900 via-blue-500 to-purple-600 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm hover:shadow-lg transition-all active:scale-95"
             >
               Close
             </button>
@@ -487,13 +487,13 @@ const ShareModal = ({ achievement, onClose }) => {
               onClose();
             }}
             type="button"
-            className="p-1.5 sm:p-2 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full hover:shadow-lg cursor-pointer border-0 shadow-md transition-all active:scale-95"
+            className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-900 via-blue-500 to-purple-600 rounded-full hover:shadow-lg cursor-pointer border-0 shadow-md transition-all active:scale-95"
           >
             <FiX className="text-white w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
-        <div className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 p-3 sm:p-6 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-900 via-blue-500 to-purple-600 p-3 sm:p-6 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full" />
           <div className="relative z-10 flex flex-col items-center text-center">
             <div className="w-10 sm:w-12 h-10 sm:h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mb-2 sm:mb-3">
@@ -534,7 +534,7 @@ const ShareModal = ({ achievement, onClose }) => {
                 e.stopPropagation();
                 copyToClipboard();
               }} 
-              className={`absolute right-1 sm:right-1.5 top-1 sm:top-1.5 bottom-1 sm:bottom-1.5 px-2 sm:px-4 rounded-lg font-bold text-[9px] sm:text-[10px] transition-all ${copied ? 'bg-green-600 text-white' : 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white'}`}
+              className={`absolute right-1 sm:right-1.5 top-1 sm:top-1.5 bottom-1 sm:bottom-1.5 px-2 sm:px-4 rounded-lg font-bold text-[9px] sm:text-[10px] transition-all ${copied ? 'bg-green-600 text-white' : 'bg-gradient-to-r from-blue-900 via-blue-500 to-purple-600 text-white'}`}
             >
               {copied ? 'Copied!' : 'Copy'}
             </button>
@@ -738,16 +738,16 @@ export default function KatwanyaaAchievementsPage() {
                 <button
                   onClick={() => fetchAchievements(true)}
                   disabled={refreshing}
-                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-xl border-0 text-white font-bold text-[10px] uppercase tracking-wider hover:shadow-lg transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-900 via-blue-500 to-purple-600 rounded-xl border-0 text-white font-bold text-[10px] uppercase tracking-wider hover:shadow-lg transition-all disabled:opacity-50"
                 >
                   {refreshing ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <FiRotateCw size={12} />}
                   REFRESH
                 </button>
                 <div className="flex bg-white/10 backdrop-blur rounded-xl p-1">
-                  <button onClick={() => setViewMode('grid')} className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white' : 'text-white/60'}`}>
+                  <button onClick={() => setViewMode('grid')} className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-gradient-to-r from-blue-900 via-blue-500 to-purple-600 text-white' : 'text-white/60'}`}>
                     <FiGrid size={14} />
                   </button>
-                  <button onClick={() => setViewMode('list')} className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white' : 'text-white/60'}`}>
+                  <button onClick={() => setViewMode('list')} className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-gradient-to-r from-blue-900 via-blue-500 to-purple-600 text-white' : 'text-white/60'}`}>
                     <FiList size={14} />
                   </button>
                 </div>

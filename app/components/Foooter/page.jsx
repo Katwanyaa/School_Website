@@ -89,7 +89,7 @@ export default function ModernFooter() {
       href: '/pages/staff',
       icon: FiUsers,
       description: 'Leadership profiles and department groupings',
-      accent: 'bg-indigo-500'
+      accent: 'bg-blue-900'
     }
   ];
 

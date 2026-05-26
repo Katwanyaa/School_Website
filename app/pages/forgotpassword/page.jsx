@@ -126,7 +126,7 @@ const ForgotPasswordPage = () => {
   const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-indigo-900 text-white flex items-center justify-center p-3 sm:p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 text-white flex items-center justify-center p-3 sm:p-4">
       {/* Add Toaster component */}
       <Toaster 
         position="top-right"
@@ -172,7 +172,7 @@ const ForgotPasswordPage = () => {
         initial="hidden"
         animate="visible"
       >
-        <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-blue-900 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
         <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
 
         <motion.div className="relative z-10 text-center" variants={itemVariants}>
@@ -203,7 +203,7 @@ const ForgotPasswordPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 bg-white/20 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 text-sm sm:text-base"
+                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 bg-white/20 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-900 transition-all duration-300 text-sm sm:text-base"
                 required
               />
             </div>
@@ -214,8 +214,8 @@ const ForgotPasswordPage = () => {
               type="submit"
               disabled={loading}
               className={`w-full sm:flex-1 flex items-center justify-center gap-2 h-12 sm:h-14 rounded-xl text-white font-semibold transition-all duration-300 ${
-                loading ? 'bg-indigo-400 cursor-not-allowed' :
-                'bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700'
+                loading ? 'bg-blue-900 cursor-not-allowed' :
+                'bg-gradient-to-r from-slate-950 to-blue-600 hover:from-slate-950 hover:to-blue-700'
               } text-sm sm:text-base`}
             >
               {loading ? (
@@ -248,7 +248,7 @@ const ForgotPasswordPage = () => {
             Remembered your password?{' '}
             <span
               onClick={() => window.history.back()}
-              className="text-indigo-400 font-medium hover:underline cursor-pointer transition-colors duration-200"
+              className="text-blue-900 font-medium hover:underline cursor-pointer transition-colors duration-200"
             >
               Log in
             </span>
