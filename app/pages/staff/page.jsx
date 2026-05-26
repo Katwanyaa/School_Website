@@ -96,24 +96,32 @@ const isHodValue = (value = "") => {
   );
 };
 
-// ✅ FIX 1: Added null check for staff
 const isLeadershipProfile = (staff) => {
   if (!staff) return false;
   
   const role = normalizeText(staff?.role);
   const position = normalizeText(staff?.position);
+  const combined = `${role} ${position}`;
 
-  return (
+  // Check for leadership keywords
+  if (
     role.includes("principal") ||
     position.includes("principal") ||
+    role.includes("deputy principal") ||
+    position.includes("deputy principal") ||
     role.includes("senior teacher") ||
     position.includes("senior teacher") ||
+    role.includes("hod") ||
+    position.includes("hod") ||
     isHodValue(role) ||
     isHodValue(position)
-  );
+  ) {
+    return true;
+  }
+  
+  return false;
 };
 
-// ✅ FIX 2: Added null check for staff
 const leadershipRank = (staff) => {
   if (!staff) return 10;
   
@@ -121,22 +129,24 @@ const leadershipRank = (staff) => {
   const position = normalizeText(staff?.position);
   const combined = `${role || ''} ${position || ''}`;
 
-  if (role === "principal" || (position && position.includes("chief principal"))) return 1;
-  if (combined.includes("deputy") && combined.includes("academic")) return 2;
-  if (combined.includes("deputy") && combined.includes("admin")) return 3;
+  if (role === "principal" || (position && position.includes("principal"))) return 1;
+  if (combined.includes("deputy principal") && combined.includes("academic")) return 2;
+  if (combined.includes("deputy principal") && combined.includes("admin")) return 3;
   if (combined.includes("senior teacher")) return 4;
   if (isHodValue(combined)) return 5;
   return 10;
 };
 
-// ✅ FIX 3: Added null check for staff
 const getLeadershipImage = (staff) => {
   if (!staff) return "/male.png";
-  if (staff?.image) return staff.image;
+  if (staff?.image && staff.image !== "/images/avata/male.png" && staff.image !== "/images/avata/female.png") {
+    return staff.image;
+  }
   return staff?.gender === "female" ? "/female.png" : "/male.png";
 };
 
 const getDepartmentImage = (department) => {
+  if (!department) return "/teachers.png";
   return department?.image || department?.images?.[0]?.url || "/teachers.png";
 };
 
@@ -145,6 +155,8 @@ const getCategoryMeta = (category) => {
 };
 
 const getDepartmentSearchText = (department) => {
+  if (!department) return "";
+  
   const extra =
     department?.extra && typeof department.extra === "object"
       ? Object.values(department.extra).flat().join(" ")
@@ -167,7 +179,6 @@ const getDepartmentSearchText = (department) => {
     .toLowerCase();
 };
 
-// ✅ FIX 4: Added null check for staff
 const getLeadershipSearchText = (staff) => {
   if (!staff) return "";
   
@@ -178,6 +189,7 @@ const getLeadershipSearchText = (staff) => {
     staff?.department,
     staff?.bio,
     ...(Array.isArray(staff?.expertise) ? staff.expertise : []),
+    ...(Array.isArray(staff?.achievements) ? staff.achievements : []),
   ]
     .filter(Boolean)
     .join(" ")
@@ -199,7 +211,7 @@ const StatPill = ({ icon: Icon, value, label, tone }) => {
       </div>
       <div className="min-w-0 flex flex-col">
         <span className="text-lg font-black leading-none tracking-tight truncate">
-          {value}
+          {value ?? 0}
         </span>
         <span className="text-[9px] font-bold uppercase tracking-widest opacity-70 truncate">
           {label}
@@ -223,7 +235,8 @@ const SectionHeader = ({ icon: Icon, title, subtitle }) => (
 );
 
 const DepartmentIntro = ({ departments, totalStaff }) => {
-  const previewDepartments = departments.slice(0, 4);
+  const safeDepartments = Array.isArray(departments) ? departments : [];
+  const previewDepartments = safeDepartments.slice(0, 4);
 
   return (
     <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 shadow-2xl ring-1 ring-slate-900/10 backdrop-blur-sm">
@@ -240,7 +253,7 @@ const DepartmentIntro = ({ departments, totalStaff }) => {
             The school admin manages each department with its own image, public description, HOD, AHOD where needed, and staff count. This keeps the Staff page useful while avoiding public exposure of every individual teacher or support staff member.
           </p>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatPill icon={FiLayers} value={departments.length} label="Departments" tone="blue" />
+            <StatPill icon={FiLayers} value={safeDepartments.length} label="Departments" tone="blue" />
             <StatPill icon={FiUsers} value={totalStaff} label="Grouped Staff" tone="emerald" />
             <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
             <StatPill icon={FiBookOpen} value="Custom" label="Descriptions" tone="amber" />
@@ -250,15 +263,15 @@ const DepartmentIntro = ({ departments, totalStaff }) => {
         <div className="grid min-h-[260px] grid-cols-2 gap-2 bg-slate-950 p-3">
           {previewDepartments.length > 0 ? (
             previewDepartments.map((department, index) => (
-              <div key={department.id || index} className="relative overflow-hidden rounded-xl bg-slate-800">
+              <div key={department?.id || index} className="relative overflow-hidden rounded-xl bg-slate-800">
                 <img
                   src={getDepartmentImage(department)}
-                  alt={department.name}
+                  alt={department?.name || "Department"}
                   className="h-full min-h-[118px] w-full object-cover opacity-80"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                 <p className="absolute bottom-3 left-3 right-3 line-clamp-2 text-xs font-black leading-tight text-white">
-                  {department.name}
+                  {department?.name || "Department"}
                 </p>
               </div>
             ))
@@ -422,7 +435,9 @@ const DepartmentCard = ({ department, viewMode }) => {
 };
 
 const getTeacherImage = (teacher) => {
-  if (teacher?.image) return teacher.image;
+  if (teacher?.image && teacher.image !== "/images/avata/male.png" && teacher.image !== "/images/avata/female.png") {
+    return teacher.image;
+  }
   return teacher?.gender === "female" ? "/female.png" : "/male.png";
 };
 
@@ -459,10 +474,10 @@ const DepartmentTeacherCarousel = ({ department, viewMode }) => {
   const scrollRef = useRef(null);
   const autoScrollRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
-  const teachers = Array.isArray(department.staff) ? department.staff : [];
-  const meta = getCategoryMeta(department.category);
+  const teachers = Array.isArray(department?.staff) ? department.staff : [];
+  const meta = getCategoryMeta(department?.category);
   const Icon = meta.icon;
-  const href = `/pages/staff/departments/${department.id}`;
+  const href = `/pages/staff/departments/${department?.id}`;
 
   const scrollBy = (direction) => {
     if (!scrollRef.current) return;
@@ -488,6 +503,8 @@ const DepartmentTeacherCarousel = ({ department, viewMode }) => {
 
     return () => window.clearInterval(autoScrollRef.current);
   }, [teachers.length, isHovered]);
+
+  if (!department) return null;
 
   if (viewMode === "list") {
     return (
@@ -640,24 +657,50 @@ export default function StaffDirectory() {
       else setLoading(true);
       setError(null);
 
-      const [staffResponse, departmentsResponse] = await Promise.all([
-        fetch("/api/staff", { cache: "no-store" }),
-        fetch("/api/staff/departments?grouped=1&includeStaff=1", { cache: "no-store" }),
-      ]);
+      // Fetch staff data
+      const staffResponse = await fetch("/api/staff", { cache: "no-store" });
+      
+      let staffData = { staff: [] };
+      let departmentData = { departments: [] };
 
-      if (!staffResponse.ok) {
-        throw new Error(`Failed to fetch leadership profiles (${staffResponse.status})`);
+      // Parse staff data
+      if (staffResponse.ok) {
+        const staffJson = await staffResponse.json();
+        if (staffJson && staffJson.success && Array.isArray(staffJson.staff)) {
+          staffData = staffJson;
+        } else if (Array.isArray(staffJson)) {
+          staffData = { staff: staffJson };
+        } else if (staffJson && Array.isArray(staffJson.staff)) {
+          staffData = staffJson;
+        } else {
+          staffData = { staff: [] };
+        }
+      } else {
+        console.error(`Staff API returned ${staffResponse.status}`);
+        staffData = { staff: [] };
       }
 
-      if (!departmentsResponse.ok) {
-        throw new Error(`Failed to fetch departments (${departmentsResponse.status})`);
+      // Try to fetch departments, but don't fail if it doesn't work
+      try {
+        const departmentsResponse = await fetch("/api/staff/departments?grouped=1&includeStaff=1", { cache: "no-store" });
+        if (departmentsResponse.ok) {
+          const departmentsJson = await departmentsResponse.json();
+          if (departmentsJson && departmentsJson.success && Array.isArray(departmentsJson.departments)) {
+            departmentData = departmentsJson;
+          } else if (Array.isArray(departmentsJson)) {
+            departmentData = { departments: departmentsJson };
+          } else if (departmentsJson && Array.isArray(departmentsJson.departments)) {
+            departmentData = departmentsJson;
+          }
+        }
+      } catch (deptError) {
+        console.warn("Could not fetch departments:", deptError);
+        // Continue without departments
       }
 
-      const staffData = await staffResponse.json();
-      const departmentData = await departmentsResponse.json();
-
-      // ✅ FIX 5: Added null check for staff before filtering
-      const publicLeadership = (staffData.staff || [])
+      // Filter leadership profiles
+      const allStaff = staffData.staff || [];
+      const publicLeadership = allStaff
         .filter(staff => staff && isLeadershipProfile(staff))
         .sort((a, b) => {
           const rankA = leadershipRank(a);
@@ -666,7 +709,9 @@ export default function StaffDirectory() {
           return (a?.name || "").localeCompare(b?.name || "");
         });
 
-      const publicDepartments = (departmentData.departments || [])
+      // Process departments
+      const allDepartments = departmentData.departments || [];
+      const publicDepartments = allDepartments
         .filter((department) => department && department.isActive !== false)
         .sort((a, b) => {
           const categoryA = CATEGORY_ORDER.indexOf(a?.category);
@@ -677,9 +722,13 @@ export default function StaffDirectory() {
 
       setLeadership(publicLeadership);
       setDepartments(publicDepartments);
+      
+      if (publicLeadership.length === 0 && publicDepartments.length === 0) {
+        setError("No staff or department data available. Please check your API endpoints.");
+      }
     } catch (err) {
       console.error("Error loading staff page:", err);
-      setError(err.message || "Unable to load staff information");
+      setError(err.message || "Unable to load staff information. Please try again later.");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -690,7 +739,6 @@ export default function StaffDirectory() {
     fetchStaffPageData();
   }, []);
 
-  // ✅ FIX 6: Added null check in filteredLeadership
   const filteredLeadership = useMemo(() => {
     if (!["all", "leadership"].includes(selectedFilter)) return [];
     const query = searchQuery.trim().toLowerCase();
@@ -994,10 +1042,11 @@ export default function StaffDirectory() {
                   onClick={() => {
                     setSearchQuery("");
                     setSelectedFilter("all");
+                    fetchStaffPageData();
                   }}
                   className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-xs font-black uppercase tracking-widest text-white"
                 >
-                  Clear Filters
+                  Refresh Data
                 </button>
               </div>
             )}
