@@ -211,7 +211,7 @@ const DepartmentIntro = ({ departments, totalStaff }) => {
   const previewDepartments = departments.slice(0, 4);
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 shadow-2xl ring-1 ring-slate-900/10 backdrop-blur-sm">
       <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
         <div className="p-6 sm:p-8">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">
@@ -408,7 +408,7 @@ const getTeacherImage = (teacher) => {
 };
 
 const TeacherCard = ({ teacher }) => (
-  <article className="snap-start shrink-0 w-[230px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <article className="snap-start shrink-0 w-[240px] overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
     <div className="relative aspect-[4/3] bg-slate-100">
       <img
         src={getTeacherImage(teacher)}
@@ -466,9 +466,9 @@ const DepartmentTeacherCarousel = ({ department, viewMode }) => {
   }
 
   return (
-    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="grid gap-0 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <div className={`relative min-h-[320px] bg-gradient-to-br ${meta.panel}`}>
+    <article className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 shadow-2xl ring-1 ring-slate-900/10 backdrop-blur-sm">
+      <div className="grid gap-0 lg:grid-cols-[340px_minmax(0,1fr)]">
+        <div className={`relative min-h-[340px] overflow-hidden rounded-t-[2rem] bg-gradient-to-br ${meta.panel} lg:rounded-bl-[2rem] lg:rounded-tr-none`}>
           <img
             src={getDepartmentImage(department)}
             alt={department.name}
@@ -535,7 +535,7 @@ const DepartmentTeacherCarousel = ({ department, viewMode }) => {
           {teachers.length > 0 ? (
             <div
               ref={scrollRef}
-              className="flex snap-x gap-4 overflow-x-auto scroll-smooth pb-3"
+              className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-3 touch-pan-x scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300/80"
             >
               {teachers.map((teacher) => (
                 <TeacherCard key={teacher.id} teacher={teacher} />
@@ -686,7 +686,7 @@ export default function StaffDirectory() {
       )}
 
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
+        <div className="mx-auto flex h-16 w-full max-w-[90%] lg:max-w-[80%] items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
@@ -754,8 +754,8 @@ export default function StaffDirectory() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-6">
-        <section className="mb-6 overflow-hidden rounded-2xl bg-slate-950 p-6 text-white shadow-xl sm:p-8">
+      <main className="mx-auto w-full px-4 py-6 md:max-w-[90%] lg:max-w-[80%]">
+        <section className="mb-6 overflow-hidden rounded-[2rem] bg-slate-950 p-6 text-white shadow-2xl ring-1 ring-slate-950/10 sm:p-8">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <p className="text-[11px] font-black uppercase tracking-[0.3em] text-blue-300">Staff Privacy Directory</p>
