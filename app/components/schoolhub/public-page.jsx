@@ -649,7 +649,8 @@ export default function PublicSchoolHubPage({
         const res = await fetch('/api/staff/departments?grouped=1');
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.error || `Failed to load departments (${res.status})`);
-        setItems((data.departments || []).map(buildDepartmentItem));
+        const deptList = Array.isArray(data.departments) ? data.departments : (data.departments ? [data.departments] : []);
+        setItems(deptList.map(buildDepartmentItem));
       } else if (Array.isArray(sections) && sections.length > 0) {
         const responses = await Promise.all(sections.map((section) => fetch(`/api/schoolhub?type=${section.type}`)));
         const payloads = await Promise.all(responses.map((res) => res.json()));
@@ -677,6 +678,7 @@ export default function PublicSchoolHubPage({
   useEffect(() => { load(false); }, []);
 
   const visibleItems = useMemo(() => {
+    if (!Array.isArray(items)) return [];
     const q = search.trim().toLowerCase();
     if (!q) return items;
     return items.filter((item) =>
@@ -687,24 +689,25 @@ export default function PublicSchoolHubPage({
   }, [items, search]);
 
   const renderedSections = useMemo(() => {
+    const safeItems = Array.isArray(visibleItems) ? visibleItems : [];
     if (Array.isArray(sections) && sections.length > 0) {
       return sections.map((section) => ({
         ...section,
-        items: visibleItems.filter((item) => item.type === section.type),
+        items: safeItems.filter((item) => item.type === section.type),
       }));
     }
     if (departments) {
       return [
-        { title: '📚 CBC Departments', type: 'DEPARTMENT', icon: FiLayers, items: visibleItems.filter((item) => item.category === 'CBC') },
-        { title: '📖 8-4-4 Departments', type: 'DEPARTMENT', icon: FiBookOpen, items: visibleItems.filter((item) => item.category === 'EIGHT_FOUR_FOUR') },
-        { title: '👨‍🏫 Teaching Departments', type: 'DEPARTMENT', icon: FiBookOpen, items: visibleItems.filter((item) => item.category === 'TEACHING') },
-        { title: '🤝 Support Departments', type: 'DEPARTMENT', icon: FiShield, items: visibleItems.filter((item) => item.category === 'SUPPORT') },
+        { title: '📚 CBC Departments', type: 'DEPARTMENT', icon: FiLayers, items: safeItems.filter((item) => item.category === 'CBC') },
+        { title: '📖 8-4-4 Departments', type: 'DEPARTMENT', icon: FiBookOpen, items: safeItems.filter((item) => item.category === 'EIGHT_FOUR_FOUR') },
+        { title: '👨‍🏫 Teaching Departments', type: 'DEPARTMENT', icon: FiBookOpen, items: safeItems.filter((item) => item.category === 'TEACHING') },
+        { title: '🤝 Support Departments', type: 'DEPARTMENT', icon: FiShield, items: safeItems.filter((item) => item.category === 'SUPPORT') },
       ];
     }
-    return [{ title, type: singleType || 'CLUB', items: visibleItems }];
+    return [{ title, type: singleType || 'CLUB', items: safeItems }];
   }, [departments, sections, singleType, title, visibleItems]);
 
-  const totalImages = items.reduce((sum, item) => sum + normalizeSchoolImages(item).length, 0);
+  const totalImages = Array.isArray(items) ? items.reduce((sum, item) => sum + normalizeSchoolImages(item).length, 0) : 0;
   const heroType = singleType || sections?.[0]?.type || 'DEPARTMENT';
   const HeroIcon = ICONS[heroType] || FiGrid;
 
