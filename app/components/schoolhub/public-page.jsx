@@ -795,58 +795,63 @@ export default function PublicSchoolHubPage({
 </div>
         </div>
 
-        {/* Error Display */}
-        {error && (
-          <div className="mb-6 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 flex items-center justify-between">
-            <span className="flex items-center gap-2"><FiAlertTriangle /> {error}</span>
-            <button onClick={() => setError('')} className="text-red-600 hover:text-red-800">
-              <FiX />
-            </button>
-          </div>
-        )}
+     {/* Error Display */}
+{error && (
+  <div className="mb-6 bg-red-50 border border-red-100 rounded-xl px-4 py-3.5 text-sm font-medium text-red-800 flex items-start sm:items-center justify-between gap-3 shadow-sm">
+    <span className="flex items-center gap-2.5 min-w-0">
+      <FiAlertTriangle className="text-red-500 shrink-0 text-base" /> 
+      <span className="truncate">{error}</span>
+    </span>
+    <button onClick={() => setError('')} className="text-red-500 p-1 rounded-md active:bg-red-100 transition-colors shrink-0">
+      <FiX className="text-base" />
+    </button>
+  </div>
+)}
 
-        {/* Loading State */}
-        {loading ? (
-          <ModernLoadingSpinner message={`Loading amazing ${title.toLowerCase()} content...`} />
-        ) : visibleItems.length === 0 ? (
-          <div className="bg-gray-50 p-12 text-center">
-            <div className="inline-flex p-4 bg-gray-100 mb-4">
-              <FiLayers className="text-4xl text-gray-400" />
+{/* Loading State */}
+{loading ? (
+  <ModernLoadingSpinner message={`Loading amazing ${title.toLowerCase()} content...`} />
+) : visibleItems.length === 0 ? (
+  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 sm:p-16 text-center shadow-sm max-w-xl mx-auto">
+    <div className="inline-flex p-4 bg-gray-100 rounded-full mb-4 text-gray-400">
+      <FiLayers className="text-3xl sm:text-4xl" />
+    </div>
+    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 tracking-tight">{emptyText}</h2>
+    <p className="text-xs sm:text-sm text-gray-500 mt-2">Check back soon for updates!</p>
+  </div>
+) : (
+  <div className="space-y-12 sm:space-y-16">
+    {renderedSections.map((section) => {
+      if (!section.items.length) return null;
+      const SectionIcon = section.icon || ICONS[section.type] || FiLayers;
+      return (
+        <section key={section.title} className="space-y-6">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-800 text-white shadow-md shadow-blue-800/10">
+                <SectionIcon className="text-lg" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">{section.title}</h2>
+                <p className="text-xs font-semibold uppercase tracking-wider text-cyan-800 mt-0.5">
+                  {section.items.length} {section.items.length === 1 ? 'item' : 'items'} available
+                </p>
+              </div>
             </div>
-            <h2 className="text-xl font-bold text-gray-700">{emptyText}</h2>
-            <p className="text-sm text-gray-500 mt-2">Check back soon for updates!</p>
           </div>
-        ) : (
-          <div className="space-y-10">
-            {renderedSections.map((section) => {
-              if (!section.items.length) return null;
-              const SectionIcon = section.icon || ICONS[section.type] || FiLayers;
-              return (
-                <section key={section.title}>
-                  {/* Section Header */}
-                  <div className="mb-5 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center bg-blue-800 text-white">
-                      <SectionIcon className="text-base" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-bold tracking-tight text-gray-900">{section.title}</h2>
-                      <p className="text-xs font-bold uppercase tracking-wider text-cyan-800">
-                        {section.items.length} {section.items.length === 1 ? 'item' : 'items'} available
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Items Grid - Wider cards for better readability */}
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
-                    {section.items.map((item) => (
-                      <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => setActive(item)} />
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
+          {/* Items Grid - Fluid & Mobile First */}
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            {section.items.map((item) => (
+              <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => setActive(item)} />
+            ))}
           </div>
-        )}
+        </section>
+      );
+    })}
+  </div>
+)}
         
       </main>
       
