@@ -1878,9 +1878,8 @@ const fetchAllData = useCallback(async () => {
         )}
 
         {/* Content Grid */}
-        {
-          <div className="mb-8 md:mb-12">
-            <div className="flex items-center justify-between mb-4 md:mb-6">
+        <div className="mb-8 md:mb-12">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
               <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 truncate">
                 {activeTab === 'events' && 'Upcoming Events'}
                 {activeTab === 'guidance' && 'Available Sessions'}
@@ -1923,9 +1922,7 @@ const fetchAllData = useCallback(async () => {
               </div>
             )}
           </div>
-        )}
 
-        {/* Quick Links/Resources */}
         <div className="mt-8 md:mt-12">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl md:rounded-2xl p-4 md:p-6 lg:p-8 text-white shadow-lg md:shadow-2xl mobile-scroll-hide">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6 md:mb-8">
