@@ -194,7 +194,7 @@ const KATWANYAA_INFO = {
   location: 'Kitui County, Kenya',
   email: 'info@katwanyaa.ac.ke',
   phone: '+254 712 345 678',
-  website: 'www.katwanyaa.ac.ke',
+  website: 'https://katwanyaasenior.school',
   colors: ['Emerald Green', 'Royal Blue', 'Gold'],
   mascot: 'The Mighty Eagle',
   achievements: [
@@ -327,6 +327,37 @@ const GalleryModal = ({ item, onClose }) => {
   const theme = TYPE_THEMES[item.type] || TYPE_THEMES.DEPARTMENT;
   const socialLinks = getSocialLinks(item);
 
+  const shareUrl = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.href;
+    }
+    return item.website || 'https://katwanyaasenior.school';
+  }, [item.website]);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: item.title,
+      text: item.shortDescription || item.description || `Explore ${item.title} at Katwanyaa Senior School`,
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('School link copied to clipboard.');
+        return;
+      }
+      window.prompt('Copy this link to share:', shareUrl);
+    } catch (error) {
+      console.error('Share failed', error);
+      alert('Unable to share at this time.');
+    }
+  };
+
   const handlePrev = () => {
     setIsAnimating(true);
     setSelectedIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
@@ -388,7 +419,7 @@ const GalleryModal = ({ item, onClose }) => {
                 <span className={`inline-flex items-center gap-2 px-3 py-1 text-xs font-medium uppercase tracking-wider ${theme.bg} ${theme.text}`}>
                   <Icon className="text-xs" /> {getTypeLabel(item.type)}
                 </span>
-                <button className="text-gray-400 hover:text-gray-600">
+                <button onClick={handleShare} className="text-gray-400 hover:text-gray-600" type="button">
                   <FiShare2 />
                 </button>
               </div>
@@ -499,7 +530,7 @@ const GalleryModal = ({ item, onClose }) => {
               <button onClick={onClose} className="flex-1 bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800">
                 Close
               </button>
-              <button className="bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100">
+              <button onClick={handleShare} type="button" className="bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100">
                 <FiExternalLink /> Share
               </button>
             </div>
@@ -796,7 +827,7 @@ export default function PublicSchoolHubPage({
                   </div>
 
                   {/* Items Grid - Wider cards for better readability */}
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
                     {section.items.map((item) => (
                       <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => setActive(item)} />
                     ))}

@@ -21,7 +21,7 @@ const HUB_ITEMS = [
     image: PUBLIC_IMAGE('/hero/katz1.jpeg'),
     location: 'Katwanyaa Campus',
     established: '2017',
-    website: 'https://www.facebook.com/groups/414008468611340/',
+    website: 'https://katwanyaasenior.school',
     socialMedia: {
       facebook: 'https://www.facebook.com/groups/414008468611340/',
       instagram: 'https://www.instagram.com/katwanyaahigh',
@@ -39,6 +39,8 @@ const HUB_ITEMS = [
     images: [
       { url: PUBLIC_IMAGE('/hero/katz1.jpeg'), altText: 'Chess Club practice', caption: 'Students learning strategy in the chess club' },
       { url: PUBLIC_IMAGE('/hero/katz2.jpeg'), altText: 'Chess board', caption: 'Competitive chess environment' },
+      { url: PUBLIC_IMAGE('/hero/katz5.jpeg'), altText: 'Student chess session', caption: 'Learners engaging in club activities' },
+      { url: PUBLIC_IMAGE('/hero/student.jpeg'), altText: 'Chess competition', caption: 'Students competing in a chess round' },
     ],
   },
   {
@@ -49,7 +51,7 @@ const HUB_ITEMS = [
     image: PUBLIC_IMAGE('/hero/katz3.jpeg'),
     location: 'Drama Studio',
     established: '2019',
-    website: 'https://www.facebook.com/groups/414008468611340/',
+    website: 'https://katwanyaasenior.school',
     socialMedia: {
       facebook: 'https://www.facebook.com/groups/414008468611340/',
       instagram: 'https://www.instagram.com/katwanyaahigh',
@@ -66,6 +68,8 @@ const HUB_ITEMS = [
     displayOrder: 2,
     images: [
       { url: PUBLIC_IMAGE('/hero/katz4.jpeg'), altText: 'Drama rehearsal', caption: 'Students rehearsing a school production' },
+      { url: PUBLIC_IMAGE('/hero/katz3.jpeg'), altText: 'Drama cast on stage', caption: 'School drama society performance' },
+      { url: PUBLIC_IMAGE('/hero/katz5.jpeg'), altText: 'Drama award night', caption: 'Cultural performance and student recognition' },
     ],
   },
   {
@@ -76,7 +80,7 @@ const HUB_ITEMS = [
     image: PUBLIC_IMAGE('/hero/student.jpeg'),
     location: 'Main Hall',
     established: '2015',
-    website: 'https://www.facebook.com/groups/414008468611340/',
+    website: 'https://katwanyaasenior.school',
     socialMedia: {
       facebook: 'https://www.facebook.com/groups/414008468611340/',
       instagram: 'https://www.instagram.com/katwanyaahigh',
@@ -94,6 +98,8 @@ const HUB_ITEMS = [
     displayOrder: 3,
     images: [
       { url: PUBLIC_IMAGE('/hero/katz5.jpeg'), altText: 'Student Council meeting', caption: 'Student leaders collaborating on school initiatives' },
+      { url: PUBLIC_IMAGE('/hero/student.jpeg'), altText: 'Students in council', caption: 'Learners planning school activities' },
+      { url: PUBLIC_IMAGE('/hero/katz7.jpeg'), altText: 'Leadership event', caption: 'Student council hosting a leadership forum' },
     ],
   },
   {
@@ -104,7 +110,7 @@ const HUB_ITEMS = [
     image: PUBLIC_IMAGE('/hero/katz6.jpeg'),
     location: 'Technology Block',
     established: '2018',
-    website: 'https://www.facebook.com/groups/414008468611340/',
+    website: 'https://katwanyaasenior.school',
     socialMedia: {
       facebook: 'https://www.facebook.com/groups/414008468611340/',
       instagram: 'https://www.instagram.com/katwanyaahigh',
@@ -121,6 +127,8 @@ const HUB_ITEMS = [
     displayOrder: 4,
     images: [
       { url: PUBLIC_IMAGE('/hero/katz7.jpeg'), altText: 'Computer lab', caption: 'Students learning digital skills in the computer lab' },
+      { url: PUBLIC_IMAGE('/hero/env.jpeg'), altText: 'Digital learning', caption: 'Students using modern ICT resources' },
+      { url: PUBLIC_IMAGE('/hero/image.png'), altText: 'Computer study', caption: 'Interactive technology classroom' },
     ],
   },
   {
@@ -131,7 +139,7 @@ const HUB_ITEMS = [
     image: PUBLIC_IMAGE('/hero/katz8.jpeg'),
     location: 'Boarding Complex',
     established: '2016',
-    website: 'https://www.facebook.com/groups/414008468611340/',
+    website: 'https://katwanyaasenior.school',
     socialMedia: {
       facebook: 'https://www.facebook.com/groups/414008468611340/',
       instagram: 'https://www.instagram.com/katwanyaahigh',
@@ -148,6 +156,8 @@ const HUB_ITEMS = [
     displayOrder: 5,
     images: [
       { url: PUBLIC_IMAGE('/hero/katz9.jpeg'), altText: 'Boarding facilities', caption: 'Comfortable boarding and student support' },
+      { url: PUBLIC_IMAGE('/hero/katz8.jpeg'), altText: 'Boarding dormitory', caption: 'Student rooms and campus boarding life' },
+      { url: PUBLIC_IMAGE('/hero/katz10.jpeg'), altText: 'Boarding evening study', caption: 'Students studying safely after hours' },
     ],
   },
   {
@@ -158,7 +168,7 @@ const HUB_ITEMS = [
     image: PUBLIC_IMAGE('/hero/sports.jpeg'),
     location: 'Security Office',
     established: '2014',
-    website: 'https://www.facebook.com/groups/414008468611340/',
+    website: 'https://katwanyaasenior.school',
     socialMedia: {
       facebook: 'https://www.facebook.com/groups/414008468611340/',
       instagram: 'https://www.instagram.com/katwanyaahigh',
@@ -175,6 +185,8 @@ const HUB_ITEMS = [
     displayOrder: 6,
     images: [
       { url: PUBLIC_IMAGE('/hero/katz10.jpeg'), altText: 'Security team', caption: 'Safe and secure school community' },
+      { url: PUBLIC_IMAGE('/hero/sports.jpeg'), altText: 'Campus patrol', caption: 'Security staff maintaining campus safety' },
+      { url: PUBLIC_IMAGE('/hero/env.jpeg'), altText: 'Secure campus', caption: 'Well-lit campus grounds and visitor access control' },
     ],
   },
 ];
