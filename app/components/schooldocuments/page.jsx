@@ -24,7 +24,7 @@ import {
 } from 'react-icons/fa';
 
 
-import {FiInfo, FiBook, FiDollarSign, FiFileText, FiBarChart2   } from 'react-icons/fi';
+import {FiInfo, FiBook, FiDollarSign, FiFileText, FiBarChart2, FiAward } from 'react-icons/fi';
 import { MdOutlineBoardingSchool } from 'react-icons/md';
 
 import { 
