@@ -723,7 +723,7 @@ export default function StaffDirectory() {
       )}
 
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-[90%] lg:max-w-[80%] items-center justify-between gap-4 px-4">
+        <div className="mx-auto flex h-16 w-full max-w-[80%] items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
@@ -791,16 +791,15 @@ export default function StaffDirectory() {
         </div>
       </header>
 
-      <main className="mx-auto w-full px-4 py-6 md:max-w-[90%] lg:max-w-[80%]">
+      <main className="mx-auto w-full px-4 py-6 md:max-w-[80%] lg:max-w-[80%]">
         <section className="mb-6 overflow-hidden rounded-[2rem] bg-slate-950 p-6 text-white shadow-2xl ring-1 ring-slate-950/10 sm:p-8">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.3em] text-blue-300">Staff Privacy Directory</p>
-              <h1 className="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
-                School leadership profiles and department-based staff groups
+              <h1 className="text-3xl font-black tracking-tight sm:text-4xl">
+                Department Staff Directory
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-                Individual public profiles are limited to leadership roles. Teaching and support teams are shown as department groups to protect staff privacy.
+                Teaching and support staff are shown by department for privacy.
               </p>
             </div>
      {/* Updated StatPill Container */}
