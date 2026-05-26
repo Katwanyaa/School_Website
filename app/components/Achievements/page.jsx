@@ -1,15 +1,13 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Toaster, toast } from 'sonner';
-import { 
+import {
   FaTrophy, FaEdit, FaTrash, FaPlus, FaTimes, FaSave,
-  FaImage, FaCalendar, FaUsers, FaStar, FaMedal,
+  FaImage, FaStar, FaMedal,
   FaGraduationCap, FaFutbol, FaPalette, FaUsersCog,
   FaChartLine, FaBullseye, FaQuoteRight, FaSync,
-  FaChevronDown, FaChevronUp, FaEye, FaEyeSlash
+  FaEyeSlash, FaSearch
 } from 'react-icons/fa';
-import {FiAward } from "react-icons/fi"
-import { FiUpload, FiX, FiCheck } from 'react-icons/fi';
 import { CircularProgress, Modal, Box, TextareaAutosize } from '@mui/material';
 
 // ==================== LOADING SPINNER ====================
@@ -202,7 +200,7 @@ function ImageUpload({ images, onImagesChange, maxImages = 5 }) {
               <img
                 src={image.preview || image.url}
                 alt={image.caption || 'Achievement image'}
-                className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                className="w-full h-32 object-contain rounded-lg border border-gray-200 bg-slate-100 p-1"
               />
               <button
                 type="button"
@@ -236,7 +234,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
     year: achievement?.year?.toString() || new Date().getFullYear().toString(),
     awardingBody: achievement?.awardingBody || '',
     recipients: achievement?.recipients || [],
-    featuteal: achievement?.featuteal || false,
+    featured: achievement?.featured ?? achievement?.featuteal ?? false,
     isActive: achievement?.isActive !== false,
     displayOrder: achievement?.displayOrder?.toString() || '0',
     achievedDate: achievement?.achievedDate ? new Date(achievement.achievedDate).toISOString().split('T')[0] : ''
@@ -255,7 +253,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [actionLoading, setActionLoading] = useState(false);
 
-  const categories = ['Academic', 'Sports', 'Arts', 'Leadership', 'Other'];
+  const categories = ['Academic', 'Sports', 'Arts', 'Leadership', 'Environment', 'Other'];
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -291,7 +289,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
       formDataObj.append('year', formData.year);
       formDataObj.append('awardingBody', formData.awardingBody);
       formDataObj.append('recipients', JSON.stringify(formData.recipients));
-      formDataObj.append('featuteal', formData.featuteal);
+      formDataObj.append('featured', formData.featured);
       formDataObj.append('isActive', formData.isActive);
       formDataObj.append('displayOrder', formData.displayOrder);
       formDataObj.append('achievedDate', formData.achievedDate);
@@ -476,11 +474,11 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={formData.featuteal}
-                      onChange={(e) => handleChange('featuteal', e.target.checked)}
+                      checked={formData.featured}
+                      onChange={(e) => handleChange('featured', e.target.checked)}
                       className="w-4 h-4 text-green-600 rounded"
                     />
-                    <span className="text-sm font-bold text-gray-700">Featuteal</span>
+                    <span className="text-sm font-bold text-gray-700">Featured</span>
                   </label>
                   
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -789,7 +787,7 @@ function DeleteConfirmationModal({ onClose, onConfirm, title, loading }) {
 // ==================== MAIN COMPONENT ====================
 export default function AchievementsPage() {
   const [achievements, setAchievements] = useState({
-    Academic: [], Sports: [], Arts: [], Leadership: [], Other: []
+    Academic: [], Sports: [], Arts: [], Leadership: [], Environment: [], Other: []
   });
   const [schoolStats, setSchoolStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -799,9 +797,8 @@ export default function AchievementsPage() {
   const [selectedAchievement, setSelectedAchievement] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [deleteTitle, setDeleteTitle] = useState('');
-  const [expandedCategories, setExpandedCategories] = useState({
-    Academic: true, Sports: true, Arts: true, Leadership: true, Other: true
-  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
 
   const categoryIcons = {
@@ -809,6 +806,7 @@ export default function AchievementsPage() {
     Sports: FaFutbol,
     Arts: FaPalette,
     Leadership: FaUsersCog,
+    Environment: FaMedal,
     Other: FaMedal
   };
 
@@ -817,8 +815,85 @@ export default function AchievementsPage() {
     Sports: 'from-green-600 to-emerald-600',
     Arts: 'from-purple-600 to-pink-600',
     Leadership: 'from-green-600 to-teal-600',
+    Environment: 'from-lime-600 to-emerald-600',
     Other: 'from-gray-600 to-slate-600'
   };
+
+  const getAchievementTime = (achievement) => {
+    const fallbackYear = achievement?.year ? `${achievement.year}-01-01` : '';
+    const value = achievement?.achievedDate || achievement?.createdAt || fallbackYear;
+    const parsed = value ? new Date(value).getTime() : 0;
+    return Number.isNaN(parsed) ? 0 : parsed;
+  };
+
+  const getAchievementImage = (achievement) => {
+    const firstImage = Array.isArray(achievement?.images) ? achievement.images[0] : null;
+    return firstImage?.url || firstImage?.preview || '/MatG.jpg';
+  };
+
+  const getAchievementDate = (achievement) => {
+    if (achievement?.achievedDate) {
+      return new Date(achievement.achievedDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+    return achievement?.year || 'Not set';
+  };
+
+  const getCategoryStyle = (category) => {
+    const styles = {
+      Academic: 'bg-blue-50 text-blue-700 border-blue-100',
+      Sports: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+      Arts: 'bg-purple-50 text-purple-700 border-purple-100',
+      Leadership: 'bg-teal-50 text-teal-700 border-teal-100',
+      Environment: 'bg-lime-50 text-lime-700 border-lime-100',
+      Other: 'bg-slate-50 text-slate-700 border-slate-100'
+    };
+    return styles[category] || styles.Other;
+  };
+
+  const allAchievements = useMemo(() => {
+    return Object.values(achievements || {})
+      .flat()
+      .filter(Boolean)
+      .sort((a, b) => {
+        const orderA = Number(a.displayOrder ?? 999);
+        const orderB = Number(b.displayOrder ?? 999);
+        if (orderA !== orderB) return orderA - orderB;
+        return getAchievementTime(b) - getAchievementTime(a);
+      });
+  }, [achievements]);
+
+  const categoryOptions = useMemo(() => {
+    return ['all', ...new Set(allAchievements.map(item => item.category || 'Other'))];
+  }, [allAchievements]);
+
+  const filteredAchievements = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    return allAchievements.filter((item) => {
+      const matchesCategory = selectedCategory === 'all' || (item.category || 'Other') === selectedCategory;
+      const matchesSearch = !query || [
+        item.title,
+        item.description,
+        item.awardingBody,
+        item.category,
+        item.year,
+        ...(Array.isArray(item.recipients) ? item.recipients : [])
+      ].filter(Boolean).join(' ').toLowerCase().includes(query);
+      return matchesCategory && matchesSearch;
+    });
+  }, [allAchievements, searchTerm, selectedCategory]);
+
+  const categorySummaries = useMemo(() => {
+    return categoryOptions
+      .filter(category => category !== 'all')
+      .map(category => ({
+        category,
+        count: allAchievements.filter(item => (item.category || 'Other') === category).length
+      }));
+  }, [allAchievements, categoryOptions]);
 
   useEffect(() => {
     loadData();
@@ -907,40 +982,55 @@ export default function AchievementsPage() {
     }
   };
 
-  const toggleCategory = (category) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
-
-  if (loading && Object.values(achievements).every(arr => arr.length === 0)) {
+  if (loading && allAchievements.length === 0) {
     return <ModernLoadingSpinner message="Loading achievements..." />;
   }
 
-  const totalAchievements = Object.values(achievements).reduce((sum, arr) => sum + arr.length, 0);
+  const totalAchievements = allAchievements.length;
+  const featuredCount = allAchievements.filter(item => item.featured).length;
+  const activeCount = allAchievements.filter(item => item.isActive !== false).length;
+  const latestAchievement = allAchievements[0];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50 p-4 md:p-6">
       <Toaster position="top-right" richColors />
       
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 via-teal-600 to-yellow-600 rounded-3xl shadow-xl p-6 md:p-8 mb-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="group relative mb-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-teal-800 via-emerald-800 to-green-800 p-6 md:p-8 shadow-xl sm:shadow-2xl">
+        {/* Abstract Gradient Orbs */}
+        <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-emerald-500/30 via-teal-500/20 to-green-500/30 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-gradient-to-tr from-teal-500/20 via-emerald-500/10 to-green-500/20 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] bg-gradient-to-r from-teal-500/20 to-emerald-500/20 rounded-full blur-[70px] pointer-events-none animate-pulse" />
+
+        {/* Subtle Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+            backgroundSize: '40px 40px',
+          }}
+        />
+
+        {/* Shine Effect Overlay */}
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full pointer-events-none"
+          style={{ transform: 'skewX(-20deg)' }}
+        />
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <FaTrophy className="text-white text-3xl" />
               <h1 className="text-3xl md:text-4xl font-black text-white">Achievements</h1>
             </div>
-            <p className="text-green-100">Celebrating our school's excellence and success stories</p>
+            <p className="text-emerald-100/90">Celebrating our school's excellence and success stories</p>
             
             {/* School Slogan */}
             {schoolStats?.slogan && (
               <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 inline-block">
-                <FaQuoteRight className="text-green-200 mb-2" />
+                <FaQuoteRight className="text-emerald-200 mb-2" />
                 <p className="text-white text-lg font-bold italic">"{schoolStats.slogan}"</p>
                 {schoolStats.sloganAuthor && (
-                  <p className="text-green-200 text-sm mt-1">— {schoolStats.sloganAuthor}</p>
+                  <p className="text-emerald-200 text-sm mt-1">— {schoolStats.sloganAuthor}</p>
                 )}
               </div>
             )}
@@ -969,7 +1059,7 @@ export default function AchievementsPage() {
                 setSelectedAchievement(null);
                 setShowAchievementModal(true);
               }}
-              className="bg-white text-green-700 px-6 py-3 rounded-xl hover:bg-green-50 transition font-bold flex items-center gap-2 shadow-lg"
+              className="bg-white text-teal-800 px-6 py-3 rounded-xl hover:bg-teal-50 transition font-bold flex items-center gap-2 shadow-lg"
             >
               <FaPlus />
               Add Achievement
@@ -977,73 +1067,7 @@ export default function AchievementsPage() {
           </div>
         </div>
         
-     {/* --- MODERN GLASS-BENTO STATS --- */}
-<div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
-  
-  {/* Achievements Card */}
-  <div className="relative group bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 border border-white/10 overflow-hidden shadow-2xl">
-    {/* Decorative Soft Glow */}
-    <div className="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/20 blur-[40px] pointer-events-none" />
-    
-    <div className="relative z-10 flex flex-col gap-6">
-      <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-        <FiAward className="text-emerald-400 text-xl" />
-      </div>
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-200/60 mb-1">
-          Total Achievements
-        </p>
-        <p className="text-4xl font-serif font-bold text-white italic leading-none">
-          {totalAchievements}
-        </p>
-      </div>
-    </div>
-  </div>
 
-  {/* Mean Score Card */}
-  {schoolStats?.meanScore && (
-    <div className="relative bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 border border-white/10 overflow-hidden shadow-2xl">
-      <div className="absolute -top-10 -right-10 w-24 h-24 bg-blue-500/20 blur-[40px] pointer-events-none" />
-      
-      <div className="relative z-10 flex flex-col gap-6">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-          <FiTrendingUp className="text-blue-400 text-xl" />
-        </div>
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200/60 mb-1">
-            Current Mean Score
-          </p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-4xl font-serif font-bold text-white italic leading-none">
-              {schoolStats.meanScore}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
-
-  {/* Target Mean Card */}
-  {schoolStats?.targetMean && (
-    <div className="relative bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 border border-white/10 overflow-hidden shadow-2xl">
-      <div className="absolute -top-10 -right-10 w-24 h-24 bg-amber-500/20 blur-[40px] pointer-events-none" />
-      
-      <div className="relative z-10 flex flex-col gap-6">
-        <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-          <FiTarget className="text-amber-400 text-xl" />
-        </div>
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200/60 mb-1">
-            School Target
-          </p>
-          <p className="text-4xl font-serif font-bold text-white italic leading-none">
-            {schoolStats.targetMean}
-          </p>
-        </div>
-      </div>
-    </div>
-  )}
-</div>
       </div>
       
 {/* --- MODERN PERFORMANCE METRICS BENTO --- */}
@@ -1057,7 +1081,7 @@ export default function AchievementsPage() {
           <FaChartLine className="text-xl" />
           <span className="text-[10px] font-black uppercase tracking-[0.3em]">Academic Analytics</span>
         </div>
-        <h2 className="text-3xl font-serif font-medium text-slate-900">
+        <h2 className="text-3xl font-serif font-bold text-black">
           Performance <span className="italic text-slate-400">Tracking</span>
         </h2>
       </div>
@@ -1074,10 +1098,10 @@ export default function AchievementsPage() {
       {/* 1. Last Year Mean (Compact) */}
       {schoolStats.lastYearMean && (
         <div className="md:col-span-3 p-6 bg-slate-50 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prev. Cycle</p>
+          <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Prev. Cycle</p>
           <div>
-            <p className="text-4xl font-serif font-bold text-slate-400 italic">{schoolStats.lastYearMean}</p>
-            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">2025 Mean Score</p>
+            <p className="text-4xl font-serif font-bold text-slate-800 italic">{schoolStats.lastYearMean}</p>
+            <p className="text-[10px] font-bold text-slate-900 mt-1 uppercase">Last Year's Mean Score</p>
           </div>
         </div>
       )}
@@ -1105,7 +1129,7 @@ export default function AchievementsPage() {
               <p className="text-6xl font-serif font-bold tracking-tighter italic">
                 {schoolStats.meanScore}
               </p>
-              <p className="text-xs font-medium text-slate-400 mt-2">Current Institutional Mean</p>
+              <p className="text-xs font-medium text-slate-800 mt-2">Current Institutional Mean</p>
             </div>
           </div>
         </div>
@@ -1140,110 +1164,237 @@ export default function AchievementsPage() {
     </div>
   </section>
 )}
-      {/* Achievements by Category */}
-      <div className="space-y-4">
-        {Object.entries(achievements).map(([category, items]) => {
-          const Icon = categoryIcons[category];
-          const gradientClass = categoryColors[category];
-          
-          if (items.length === 0) return null;
-          
-          return (
-            <div key={category} className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <button
-                onClick={() => toggleCategory(category)}
-                className={`w-full bg-gradient-to-r ${gradientClass} p-4 flex items-center justify-between text-white`}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="text-xl" />
-                  <h2 className="text-lg font-bold">{category} Achievements</h2>
-                  <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
-                    {items.length}
-                  </span>
+      {/* Achievement Records */}
+      {totalAchievements > 0 && (
+        <section className="space-y-6">
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-5 shadow-[0_18px_45px_rgba(15,23,42,0.06)] sm:p-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-600">Achievement Records</p>
+                <h2 className="mt-2 text-2xl font-black text-slate-950">School milestones</h2>
+                <p className="mt-1 max-w-2xl text-sm font-medium text-slate-500">
+                  Latest records, featured highlights, status, images, and category information in one cleaner dashboard view.
+                </p>
+              </div>
+
+              <div className="grid w-full gap-3 sm:grid-cols-[minmax(0,1fr)_180px] lg:w-[520px]">
+                <div className="relative">
+                  <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search achievements..."
+                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm font-bold text-slate-800 outline-none transition focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                  />
                 </div>
-                {expandedCategories[category] ? <FaChevronUp /> : <FaChevronDown />}
-              </button>
-              
-              {expandedCategories[category] && (
-                <div className="p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {items.map((achievement) => (
-                      <div
-                        key={achievement.id}
-                        className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition group"
-                      >
-                        {achievement.images && achievement.images.length > 0 && (
-                          <div className="mb-3 h-40 overflow-hidden rounded-lg">
-                            <img
-                              src={achievement.images[0].url}
-                              alt={achievement.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                            />
-                          </div>
-                        )}
-                        
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="font-bold text-gray-800 mb-1">{achievement.title}</h3>
-                            <p className="text-sm text-gray-500 mb-2">
-                              {achievement.year}
-                              {achievement.awardingBody && ` • ${achievement.awardingBody}`}
-                            </p>
-                            {achievement.description && (
-                              <p className="text-sm text-gray-600 line-clamp-2">{achievement.description}</p>
-                            )}
-                            {achievement.recipients && achievement.recipients.length > 0 && (
-                              <div className="mt-2 flex flex-wrap gap-1">
-                                {achievement.recipients.slice(0, 3).map((recipient, i) => (
-                                  <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                    {recipient}
-                                  </span>
-                                ))}
-                                {achievement.recipients.length > 3 && (
-                                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                    +{achievement.recipients.length - 3} more
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          
-                          <div className="flex gap-1 ml-2">
-                            {achievement.featuteal && (
-                              <FaStar className="text-yellow-500" title="Featuteal" />
-                            )}
-                            {!achievement.isActive && (
-                              <FaEyeSlash className="text-gray-400" title="Inactive" />
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
-                          <button
-                            onClick={() => {
-                              setSelectedAchievement(achievement);
-                              setShowAchievementModal(true);
-                            }}
-                            className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition text-sm font-bold"
-                          >
-                            <FaEdit className="text-xs" /> Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(achievement.id, achievement.title)}
-                            className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition text-sm font-bold"
-                          >
-                            <FaTrash className="text-xs" /> Delete
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-black text-slate-700 outline-none transition focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                >
+                  {categoryOptions.map(category => (
+                    <option key={category} value={category}>
+                      {category === 'all' ? 'All categories' : category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total</p>
+                <p className="mt-1 text-3xl font-black text-slate-950">{totalAchievements}</p>
+              </div>
+              <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-amber-600">Featured</p>
+                <p className="mt-1 text-3xl font-black text-amber-700">{featuredCount}</p>
+              </div>
+              <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Active</p>
+                <p className="mt-1 text-3xl font-black text-emerald-700">{activeCount}</p>
+              </div>
+              <div className="rounded-2xl border border-teal-100 bg-teal-50 p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-teal-600">Categories</p>
+                <p className="mt-1 text-3xl font-black text-teal-700">{categorySummaries.length}</p>
+              </div>
+            </div>
+
+            {categorySummaries.length > 0 && (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {categorySummaries.map(({ category, count }) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-black transition ${getCategoryStyle(category)} ${selectedCategory === category ? 'ring-2 ring-emerald-200' : ''}`}
+                  >
+                    {category}
+                    <span className="rounded-full bg-white/80 px-2 py-0.5">{count}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {latestAchievement && (
+            <div className="grid overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)] lg:grid-cols-12">
+              <div className="relative min-h-[340px] bg-slate-100 lg:col-span-7 lg:min-h-[460px]">
+                <img
+                  src={getAchievementImage(latestAchievement)}
+                  alt={latestAchievement.title}
+                  className="h-full w-full object-contain p-4"
+                />
+                <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                  <span className="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">Latest</span>
+                  {latestAchievement.featured && (
+                    <span className="rounded-full bg-amber-500 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">Featured</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between p-6 lg:col-span-5 lg:p-8">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${getCategoryStyle(latestAchievement.category)}`}>
+                      {latestAchievement.category || 'Other'}
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-600">
+                      {getAchievementDate(latestAchievement)}
+                    </span>
+                  </div>
+                  <h3 className="mt-5 text-2xl font-black leading-tight text-slate-950 sm:text-3xl">
+                    {latestAchievement.title}
+                  </h3>
+                  <p className="mt-4 text-sm font-medium leading-6 text-slate-500 line-clamp-5">
+                    {latestAchievement.description || 'No description has been added for this achievement yet.'}
+                  </p>
+                </div>
+
+                <div className="mt-6 grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Awarding Body</p>
+                    <p className="mt-1 truncate text-sm font-black text-slate-800">{latestAchievement.awardingBody || 'School Award'}</p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Recipients</p>
+                    <p className="mt-1 text-sm font-black text-slate-800">{latestAchievement.recipients?.length || 0}</p>
                   </div>
                 </div>
-              )}
+
+                <div className="mt-6 flex gap-3 border-t border-slate-100 pt-5">
+                  <button
+                    onClick={() => {
+                      setSelectedAchievement(latestAchievement);
+                      setShowAchievementModal(true);
+                    }}
+                    className="flex-1 rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black uppercase tracking-widest text-white transition active:scale-[0.98]"
+                  >
+                    <FaEdit className="mr-2 inline text-xs" /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteClick(latestAchievement.id, latestAchievement.title)}
+                    className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-red-600 transition active:scale-[0.98]"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
             </div>
-          );
-        })}
-      </div>
+          )}
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {filteredAchievements.map((achievement) => {
+              const Icon = categoryIcons[achievement.category] || FaMedal;
+              return (
+                <article
+                  key={achievement.id}
+                  className="flex min-h-[560px] flex-col overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-[0_14px_35px_rgba(15,23,42,0.06)]"
+                >
+                  <div className="relative h-[390px] bg-slate-100 sm:h-[410px]">
+                    <img
+                      src={getAchievementImage(achievement)}
+                      alt={achievement.title}
+                      className="h-full w-full object-contain p-3"
+                    />
+                    <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-2">
+                      <span className={`rounded-full border bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-wider backdrop-blur ${getCategoryStyle(achievement.category)}`}>
+                        {achievement.category || 'Other'}
+                      </span>
+                      <div className="flex gap-2">
+                        {achievement.featured && (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg">
+                            <FaStar className="text-xs" />
+                          </span>
+                        )}
+                        {achievement.isActive === false && (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg">
+                            <FaEyeSlash className="text-xs" />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-1 flex-col p-5">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-r ${categoryColors[achievement.category] || categoryColors.Other} text-white shadow-lg`}>
+                        <Icon />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{achievement.year || 'Year not set'}</p>
+                        <p className="truncate text-xs font-bold text-slate-500">{getAchievementDate(achievement)}</p>
+                      </div>
+                    </div>
+
+                    <h3 className="text-lg font-black leading-snug text-slate-950 line-clamp-2">{achievement.title}</h3>
+                    <p className="mt-2 text-sm font-medium leading-5 text-slate-500 line-clamp-2">
+                      {achievement.description || 'No description has been added for this achievement yet.'}
+                    </p>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <div className="rounded-2xl bg-slate-50 p-3">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Award</p>
+                        <p className="mt-1 truncate text-xs font-black text-slate-800">{achievement.awardingBody || 'School Award'}</p>
+                      </div>
+                      <div className="rounded-2xl bg-slate-50 p-3">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">People</p>
+                        <p className="mt-1 text-xs font-black text-slate-800">{achievement.recipients?.length || 0} listed</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto flex gap-3 border-t border-slate-100 pt-4">
+                      <button
+                        onClick={() => {
+                          setSelectedAchievement(achievement);
+                          setShowAchievementModal(true);
+                        }}
+                        className="flex-1 rounded-2xl bg-slate-950 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white transition active:scale-[0.98]"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(achievement.id, achievement.title)}
+                        className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-red-600 transition active:scale-[0.98]"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {filteredAchievements.length === 0 && (
+            <div className="rounded-[2rem] border border-dashed border-slate-200 bg-white p-10 text-center">
+              <FaSearch className="mx-auto mb-3 text-3xl text-slate-300" />
+              <h3 className="text-lg font-black text-slate-900">No matching achievements</h3>
+              <p className="mt-1 text-sm font-medium text-slate-500">Try another search term or category filter.</p>
+            </div>
+          )}
+        </section>
+      )}
       
       {totalAchievements === 0 && (
         <div className="bg-white rounded-3xl shadow-xl p-12 text-center">

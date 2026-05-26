@@ -632,13 +632,20 @@ export default function PublicSchoolHubPage({
   const [search, setSearch] = useState('');
   const [active, setActive] = useState(null);
 
+  const isDepartmentView = useMemo(() => {
+    if (departments) return true;
+    if (singleType === 'DEPARTMENT') return true;
+    if (Array.isArray(sections) && sections.some((section) => section.type === 'DEPARTMENT')) return true;
+    return false;
+  }, [departments, sections, singleType]);
+
   const load = async (isRefresh = false) => {
     try {
       setError('');
       if (isRefresh) setRefreshing(true);
       else setLoading(true);
 
-      if (departments) {
+      if (isDepartmentView) {
         const res = await fetch('/api/staff/departments?grouped=1');
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.error || `Failed to load departments (${res.status})`);
