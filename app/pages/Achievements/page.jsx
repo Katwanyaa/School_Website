@@ -629,8 +629,10 @@ export default function KatwanyaaAchievementsPage() {
     try {
       const response = await fetch('/api/achievements');
       const data = await response.json();
-      if (data.success && data.achievements) {
-        const allAchievements = Object.values(data.achievements).flat();
+      if (data.success) {
+        const allAchievements = Array.isArray(data.allAchievements)
+          ? data.allAchievements
+          : Object.values(data.achievements || {}).flat();
         setAchievementsData(allAchievements.length > 0 ? allAchievements : []);
       } else {
         setAchievementsData([]);
