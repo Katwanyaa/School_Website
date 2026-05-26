@@ -117,289 +117,6 @@ function LoadingSpinner({ message = "Loading content..." }) {
   );
 }
 
-// ==================== TEAMS SECTION ====================
-function TeamsSection({ teamMembers = [] }) {
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [showTeamModal, setShowTeamModal] = useState(false);
-
-  const getRoleGradient = (role) => {
-    switch(role?.toLowerCase()) {
-      case 'teacher':
-        return 'from-blue-500 to-cyan-600';
-      case 'matron':
-        return 'from-purple-500 to-pink-600';
-      case 'patron':
-        return 'from-emerald-500 to-green-600';
-      default:
-        return 'from-gray-500 to-gray-600';
-    }
-  };
-
-  const getRoleLabel = (role) => {
-    switch(role?.toLowerCase()) {
-      case 'teacher':
-        return 'Guidance Teacher';
-      case 'matron':
-        return 'Matron';
-      case 'patron':
-        return 'Patron';
-      default:
-        return 'Team Member';
-    }
-  };
-
-  const handleViewMember = (member) => {
-    setSelectedMember(member);
-    setShowTeamModal(true);
-  };
-
-  return (
-    <>
-      <div className="mb-8 md:mb-12">
-        <div className="flex items-center justify-between mb-4 md:mb-6">
-          <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">
-            Guidance & Counseling Team
-          </h2>
-          <span className="px-2 md:px-3 py-1 md:py-1.5 bg-gradient-to-r from-purple-100 to-pink-200 text-purple-800 text-xs md:text-sm font-bold rounded-full">
-            {teamMembers.length} Members
-          </span>
-        </div>
-
-        {teamMembers.length === 0 ? (
-          <div className="bg-white rounded-xl md:rounded-2xl border border-gray-200 md:border-2 p-6 md:p-8 lg:p-12 text-center">
-            <div className="text-gray-300 text-4xl md:text-5xl mx-auto mb-3 md:mb-4">
-              <FiUsers />
-            </div>
-            <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-1 md:mb-2">No Team Members</h3>
-            <p className="text-gray-600 text-sm md:text-base">
-              Team information will be available soon.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {teamMembers.map((member) => (
-              <div key={member.id} className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl md:rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                <div className="relative bg-white rounded-xl md:rounded-2xl border border-gray-200 md:border-2 overflow-hidden shadow-sm md:shadow-lg hover:shadow-md md:hover:shadow-xl transition-all duration-300 mobile-scroll-hide">
-                  {/* Team Member Image */}
-                  <div className="relative h-48 md:h-56 overflow-hidden">
-                    {member.image ? (
-                      <img 
-                        src={member.image} 
-                        alt={member.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-100"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.parentElement.innerHTML = `
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-r ${getRoleGradient(member.role)}">
-                              <div class="text-white text-center p-4">
-                                <FiUser class="text-4xl mx-auto mb-2" />
-                                <p class="text-sm font-medium">${member.name?.split(' ')[0] || 'Member'}</p>
-                              </div>
-                            </div>
-                          `;
-                        }}
-                      />
-                    ) : (
-                      <div className={`w-full h-full flex items-center justify-center bg-gradient-to-r ${getRoleGradient(member.role)}`}>
-                        <div className="text-white text-center p-4">
-                          <FiUser className="text-4xl mx-auto mb-2" />
-                          <p className="text-sm font-medium">{member.name?.split(' ')[0] || 'Member'}</p>
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute top-2 right-2">
-                      <span className={`px-2 py-1 bg-gradient-to-r ${getRoleGradient(member.role)} text-white text-xs font-bold rounded-full`}>
-                        {getRoleLabel(member.role)}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 md:p-6 mobile-card-spacing">
-                    {/* Team Member Info */}
-                    <div className="mb-4 md:mb-5">
-                      <h4 className="text-base md:text-lg font-bold text-gray-900 mb-1 md:mb-2 line-clamp-1 mobile-text-ellipsis">
-                        {member.name}
-                      </h4>
-                      <p className="text-sm md:text-base text-gray-600 font-medium mb-2 line-clamp-2 mobile-text-ellipsis">
-                        {member.title || getRoleLabel(member.role)}
-                      </p>
-                      <p className="text-xs text-gray-500 line-clamp-3 mobile-text-ellipsis">
-                        {member.bio || 'Dedicated professional providing guidance and support to students.'}
-                      </p>
-                    </div>
-                    
-                    {/* Contact Info */}
-                    <div className="space-y-2 mb-4 md:mb-6">
-                      {member.phone && (
-                        <div className="flex items-center gap-2 md:gap-3">
-                          <div className="p-1.5 md:p-2 bg-blue-50 rounded-lg flex-shrink-0">
-                            <FiPhone className="text-blue-500 text-sm md:text-base" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-xs md:text-sm font-medium text-gray-900 truncate">
-                              {member.phone}
-                            </div>
-                            <div className="text-xs text-gray-500">Phone</div>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {member.email && (
-                        <div className="flex items-center gap-2 md:gap-3">
-                          <div className="p-1.5 md:p-2 bg-purple-50 rounded-lg flex-shrink-0">
-                            <FiMail className="text-purple-500 text-sm md:text-base" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-xs md:text-sm font-medium text-gray-900 truncate">
-                              {member.email}
-                            </div>
-                            <div className="text-xs text-gray-500">Email</div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* View Button */}
-                    <button
-                      onClick={() => handleViewMember(member)}
-                      className="w-full px-3 md:px-4 py-2 md:py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white text-xs md:text-sm font-bold rounded-lg md:rounded-xl hover:shadow-md md:hover:shadow-lg transition-all transform hover:-translate-y-0.5 mobile-touch-target"
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Team Member Modal */}
-      {showTeamModal && selectedMember && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 border-gray-300 shadow-2xl mobile-full-width">
-            {/* Header */}
-            <div className={`p-4 md:p-6 text-white bg-gradient-to-r ${getRoleGradient(selectedMember.role)}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
-                  <div className="p-2 md:p-3 bg-white/20 rounded-2xl flex-shrink-0">
-                    <FiUser className="text-xl md:text-2xl" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h2 className="text-lg md:text-2xl font-bold truncate">
-                      {selectedMember.name}
-                    </h2>
-                    <p className="opacity-90 text-sm md:text-base mt-1 truncate">
-                      {selectedMember.title || getRoleLabel(selectedMember.role)}
-                    </p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setShowTeamModal(false)}
-                  className="p-2 bg-white/20 rounded-2xl hover:bg-white/30 transition-colors ml-2 mobile-touch-target"
-                >
-                  <FaTimes className="text-lg md:text-xl" />
-                </button>
-              </div>
-            </div>
-
-            <div className="max-h-[calc(90vh-80px)] overflow-y-auto mobile-scroll-hide p-4 md:p-6 space-y-4 md:space-y-6">
-              {/* Profile Image */}
-              <div className="flex flex-col items-center">
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
-                  {selectedMember.image ? (
-                    <img 
-                      src={selectedMember.image} 
-                      alt={selectedMember.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `
-                          <div class="w-full h-full flex items-center justify-center bg-gradient-to-r ${getRoleGradient(selectedMember.role)}">
-                            <div class="text-white text-center">
-                              <FiUser class="text-3xl mx-auto mb-1" />
-                              <p class="text-xs">${selectedMember.name?.split(' ')[0] || 'M'}</p>
-                            </div>
-                          </div>
-                        `;
-                      }}
-                    />
-                  ) : (
-                    <div className={`w-full h-full flex items-center justify-center bg-gradient-to-r ${getRoleGradient(selectedMember.role)}`}>
-                      <div className="text-white text-center">
-                        <FiUser className="text-3xl mx-auto mb-1" />
-                        <p className="text-xs">{selectedMember.name?.split(' ')[0] || 'M'}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="text-center">
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900">{selectedMember.name}</h3>
-                  <p className={`inline-block px-4 py-1.5 bg-gradient-to-r ${getRoleGradient(selectedMember.role)} text-white rounded-full text-sm font-bold mt-2`}>
-                    {getRoleLabel(selectedMember.role)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Contact Information */}
-              <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 md:p-6 border border-gray-300">
-                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">Contact Information</h3>
-                <div className="space-y-3 md:space-y-4">
-                  {selectedMember.phone && (
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <div className="p-2 md:p-3 bg-blue-100 rounded-xl flex-shrink-0">
-                        <FiPhone className="text-blue-600 text-lg md:text-xl" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-700">Phone Number</p>
-                        <p className="text-base md:text-lg font-bold text-gray-900 truncate">{selectedMember.phone}</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {selectedMember.email && (
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <div className="p-2 md:p-3 bg-purple-100 rounded-xl flex-shrink-0">
-                        <FiMail className="text-purple-600 text-lg md:text-xl" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-700">Email Address</p>
-                        <p className="text-base md:text-lg font-bold text-gray-900 truncate">{selectedMember.email}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Bio */}
-              {selectedMember.bio && (
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 md:p-6 border border-blue-300">
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">About</h3>
-                  <div className="text-gray-700 whitespace-pre-line text-sm md:text-base leading-relaxed">
-                    {selectedMember.bio}
-                  </div>
-                </div>
-              )}
-
-              {/* Action Button */}
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setShowTeamModal(false)}
-                  className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl font-bold text-sm md:text-base hover:from-gray-200 hover:to-gray-300 transition-all mobile-touch-target"
-                >
-                  <FaTimes className="inline mr-2" />
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
 // Custom CSS for mobile scrollbar hiding and responsive improvements
 const mobileStyles = `
   @media (max-width: 768px) {
@@ -1145,7 +862,6 @@ function ModernGuidanceHeader({
       case 'events': return <FiCalendar className="text-blue-500" />;
       case 'guidance': return <FiMessageSquare className="text-purple-500" />;
       case 'news': return <FiBookOpen className="text-amber-500" />;
-      case 'teams': return <FiUsers className="text-green-500" />;
       default: return <FiCalendar className="text-blue-500" />;
     }
   };
@@ -1155,7 +871,6 @@ function ModernGuidanceHeader({
       case 'events': return 'bg-gradient-to-r from-blue-500 to-blue-600';
       case 'guidance': return 'bg-gradient-to-r from-purple-500 to-purple-600';
       case 'news': return 'bg-gradient-to-r from-amber-500 to-amber-600';
-      case 'teams': return 'bg-gradient-to-r from-green-500 to-emerald-600';
       default: return 'bg-gradient-to-r from-blue-500 to-blue-600';
     }
   };
@@ -1184,7 +899,6 @@ function ModernGuidanceHeader({
                     {activeTab === 'events' && 'School Events'}
                     {activeTab === 'guidance' && 'Guidance'}
                     {activeTab === 'news' && 'School News'}
-                    {activeTab === 'teams' && 'Teams'}
                   </h1>
                   <p className="text-xs text-gray-500 hidden md:block">Stay Updated</p>
                 </div>
@@ -1205,7 +919,7 @@ function ModernGuidanceHeader({
             {/* Tab Navigation (Desktop) */}
             <div className="hidden lg:flex flex-1 justify-center">
               <div className="flex items-center gap-2 bg-gray-100 rounded-2xl p-1.5">
-                {['events', 'guidance', 'news', 'teams'].map((tab) => (
+                {['events', 'guidance', 'news'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -1219,7 +933,6 @@ function ModernGuidanceHeader({
                     {tab === 'events' && 'School Events'}
                     {tab === 'guidance' && 'Guidance'}
                     {tab === 'news' && 'News'}
-                    {tab === 'teams' && 'Teams'}
                   </button>
                 ))}
               </div>
@@ -1269,7 +982,7 @@ function ModernGuidanceHeader({
         <div className="lg:hidden border-t border-gray-200/50">
           <div className="container mx-auto px-2 md:px-4 py-2 md:py-3">
             <div className="flex items-center justify-between">
-              {['events', 'guidance', 'news', 'teams'].map((tab) => (
+              {['events', 'guidance', 'news'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -1286,7 +999,6 @@ function ModernGuidanceHeader({
                     {tab === 'events' && 'Events'}
                     {tab === 'guidance' && 'Guidance'}
                     {tab === 'news' && 'News'}
-                    {tab === 'teams' && 'Teams'}
                   </span>
                 </button>
               ))}
@@ -1299,7 +1011,7 @@ function ModernGuidanceHeader({
 }
 
 // ==================== STATISTICS CARDS ====================
-function StatisticsCards({ events, guidance, news, teams, activeTab }) {
+function StatisticsCards({ events, guidance, news, activeTab }) {
   const stats = {
     events: {
       total: events.length,
@@ -1324,12 +1036,6 @@ function StatisticsCards({ events, guidance, news, teams, activeTab }) {
       }).length,
       withImages: news.filter(n => n.image).length
     },
-    teams: {
-      total: teams.length,
-      teachers: teams.filter(t => t.role === 'teacher').length,
-      matrons: teams.filter(t => t.role === 'matron').length,
-      patrons: teams.filter(t => t.role === 'patron').length
-    }
   };
 
   const getActiveStats = () => {
@@ -1351,12 +1057,6 @@ function StatisticsCards({ events, guidance, news, teams, activeTab }) {
           { label: 'Total News', value: stats.news.total, color: 'from-amber-500 to-amber-600', icon: <FiBookOpen /> },
           { label: 'Featured', value: stats.news.featured, color: 'from-rose-500 to-rose-600', icon: <FiStar /> },
           { label: 'With Images', value: stats.news.withImages, color: 'from-pink-500 to-pink-600', icon: <FiFileText /> }
-        ];
-      case 'teams':
-        return [
-          { label: 'Total Members', value: stats.teams.total, color: 'from-green-500 to-emerald-600', icon: <FiUsers /> },
-          { label: 'Teachers', value: stats.teams.teachers, color: 'from-blue-500 to-cyan-600', icon: <FiUser /> },
-          { label: 'Matrons & Patrons', value: stats.teams.matrons + stats.teams.patrons, color: 'from-purple-500 to-pink-600', icon: <FaUserFriends /> }
         ];
       default:
         return [];
@@ -1885,7 +1585,6 @@ export default function GuidanceEventsView() {
   const [events, setEvents] = useState([]);
   const [guidance, setGuidance] = useState([]);
   const [news, setNews] = useState([]);
-  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [error, setError] = useState(null);
@@ -1999,34 +1698,6 @@ const fetchAllData = useCallback(async () => {
       throw new Error('Failed to fetch news');
     }
 
-    // Fetch teams
-    try {
-      const teamsRes = await fetch('/api/guidanceteam');
-      const teamsData = await teamsRes.json();
-      if (teamsData.success) {
-        const processedTeams = (teamsData.members || []).map(member => {
-          const imageSource = 
-            member.image || 
-            member.photo || 
-            member.avatar || 
-            member.profile_picture;
-          
-          return {
-            ...member,
-            image: imageSource ? 
-              (imageSource.startsWith('http') ? imageSource : 
-               imageSource.startsWith('/') ? imageSource : 
-               `/${imageSource}`) : null
-          };
-        });
-        setTeams(processedTeams);
-      } else {
-        setTeams([]);
-      }
-    } catch (teamsError) {
-      console.warn('Error fetching team members:', teamsError);
-      setTeams([]);
-    }
 
     // Get student data
     const savedStudent = localStorage.getItem('student_data');
@@ -2069,8 +1740,6 @@ const fetchAllData = useCallback(async () => {
         image: "/images/news/library-announcement.jpg"
       }
     ]);
-    
-    setTeams([]);
   } finally {
     setLoading(false);
   }
@@ -2143,20 +1812,17 @@ const fetchAllData = useCallback(async () => {
                   {activeTab === 'events' && <FiCalendar className="text-xl md:text-2xl" />}
                   {activeTab === 'guidance' && <FiMessageSquare className="text-xl md:text-2xl" />}
                   {activeTab === 'news' && <FiBookOpen className="text-xl md:text-2xl" />}
-                  {activeTab === 'teams' && <FiUsers className="text-xl md:text-2xl" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h1 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-1 md:mb-2">
                     {activeTab === 'events' && 'School Events & Activities'}
                     {activeTab === 'guidance' && 'Guidance & Counseling'}
                     {activeTab === 'news' && 'School News & Updates'}
-                    {activeTab === 'teams' && 'Guidance & Counseling Team'}
                   </h1>
                   <p className="text-blue-100 text-sm md:text-base lg:text-lg mobile-text-ellipsis">
                     {activeTab === 'events' && 'Stay informed about upcoming events, competitions, and school activities'}
                     {activeTab === 'guidance' && 'Access counseling sessions, career guidance, and support services'}
                     {activeTab === 'news' && 'Latest announcements, achievements, and important updates from school'}
-                    {activeTab === 'teams' && 'Meet our dedicated team of guidance teachers, matrons, and patrons'}
                   </p>
                 </div>
               </div>
@@ -2167,7 +1833,6 @@ const fetchAllData = useCallback(async () => {
                   {activeTab === 'events' && `Active Events: ${events.length}`}
                   {activeTab === 'guidance' && `Available Sessions: ${guidance.length}`}
                   {activeTab === 'news' && `Recent Updates: ${news.length}`}
-                  {activeTab === 'teams' && `Team Members: ${teams.length}`}
                 </span>
                 {student && (
                   <span className="inline-flex items-center gap-1 md:gap-2 bg-white/20 px-3 md:px-4 py-1.5 md:py-2 rounded-full backdrop-blur-sm text-xs md:text-sm font-bold">
@@ -2185,7 +1850,6 @@ const fetchAllData = useCallback(async () => {
           events={events} 
           guidance={guidance} 
           news={news} 
-          teams={teams}
           activeTab={activeTab} 
         />
 
@@ -2214,9 +1878,7 @@ const fetchAllData = useCallback(async () => {
         )}
 
         {/* Content Grid */}
-        {activeTab === 'teams' ? (
-          <TeamsSection teamMembers={teams} />
-        ) : (
+        {
           <div className="mb-8 md:mb-12">
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 truncate">
@@ -2312,7 +1974,7 @@ const fetchAllData = useCallback(async () => {
       </footer>
 
       {/* Detail Modal */}
-      {selectedItem && selectedItemType !== 'teams' && (
+      {selectedItem && (
         <ModernDetailModal
           session={selectedItem}
           onClose={handleCloseModal}

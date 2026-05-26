@@ -1072,36 +1072,7 @@ const fetchGuidanceSessions = async () => {
   }
 };
 
-// In your fetchTeamMembers function, add URL transformation:
-const fetchTeamMembers = async () => {
-  try {
-    const response = await fetch('/api/guidanceteam');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    
-    if (data.success && data.members) {
-      // Process team members to ensure image paths are complete
-      return data.members.map(member => ({
-        ...member,
-        // Fix Cloudinary URL
-        image: member.image ? 
-          member.image.replace(
-            /https:\/\/res\.cloudinary\.com\/dftzsfiqc\/image\/upload\/v\d+\/school_team\/\d+-images__\d+_\d+\.jpg/,
-            'https://res.cloudinary.com/dftzsfiqc/image/upload/w_400,h_400,c_fill,g_face/school_team/' + 
-            member.image.split('/').pop()
-          ) : null,
-        isSupport: member.role === 'teacher' || member.role === 'matron' || member.role === 'patron'
-      }));
-    }
-    return [];
-  } catch (error) {
-    console.error('Error fetching team members:', error);
-    toast.error('Failed to load team members');
-    return [];
-  }
-};
+// Team members functionality has been removed
 // Transform API data to match session format
 const transformApiDataToSessions = (apiEvents) => {
   return apiEvents.map(event => ({
@@ -1170,12 +1141,9 @@ export default function StudentCounseling() {
   const [refreshing, setRefreshing] = useState(false);
   const [counselingSessions, setCounselingSessions] = useState([]);
   const [guidanceSessions, setGuidanceSessions] = useState([]);
-  const [teamMembers, setTeamMembers] = useState([]);
   const [categories, setCategories] = useState([]);
   const [viewMode, setViewMode] = useState('grid');
   const [bookmarkedSessions, setBookmarkedSessions] = useState(new Set());
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
 
   // Dynamic stats based on team data
@@ -1240,9 +1208,7 @@ export default function StudentCounseling() {
       const uniqueCategories = [...new Set(allSessions.map(s => s.category))];
       setCategories(uniqueCategories);
       
-      // Load team members from API
-      const teamData = await fetchTeamMembers();
-      setTeamMembers(teamData);
+      // Team members functionality has been removed
       
       // Update stats with dynamic data from team
       const teacherCount = teamData.filter(m => m.role === 'teacher').length;
@@ -1272,13 +1238,7 @@ export default function StudentCounseling() {
           sublabel: 'Guidance Counselors',
           gradient: 'from-purple-500 to-pink-500'
         },
-        { 
-          icon: FiUsers, 
-          number: teamData.length.toString(), 
-          label: 'Team Members', 
-          sublabel: 'Total support team',
-          gradient: 'from-amber-500 to-orange-500'
-        }
+
       ]);
       
     } catch (error) {
@@ -1287,7 +1247,6 @@ export default function StudentCounseling() {
       const allSessions = [...DEFAULT_SESSIONS];
       setCounselingSessions(allSessions);
       setGuidanceSessions([]);
-      setTeamMembers([]);
     }
   };
 
@@ -1330,10 +1289,7 @@ export default function StudentCounseling() {
     setBookmarkedSessions(newBookmarked);
   };
 
-  const handleContactSupport = (member) => {
-    toast.success(`viewing ${member.name} profile`);
-    // Implement actual contact logic here
-  };
+
 
   const refreshData = async () => {
     setRefreshing(true);
@@ -1531,53 +1487,6 @@ if (loading) {
           {stats.map((stat, index) => (
             <ModernStatCard key={index} stat={stat} />
           ))}
-        </div>
-
-        {/* 24/7 Support Team Section - Dynamic from API */}
-        <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-3xl p-6 md:p-8 border border-emerald-100 shadow-sm mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
-            <div className="flex items-center gap-4 mb-4 lg:mb-0">
-              <div className="p-3 bg-emerald-500 rounded-2xl shadow-lg">
-                <FiPhoneCall className="text-white text-2xl" />
-              </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Guidance & Counseling Team</h2>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  {teamMembers.length} Dedicated Professionals
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  • Fetched from /api/guidanceteam • Dynamic statistics above
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          {teamMembers.length === 0 ? (
-            <div className="bg-white rounded-2xl p-8 text-center border border-emerald-100">
-              <div className="text-emerald-300 text-4xl mb-4">
-                <FiUsers />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">No Team Members Available</h3>
-              <p className="text-slate-500 text-sm">Team information will be loaded soon.</p>
-            </div>
-          ) : (
-        // In your main component, update the team members section:
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {teamMembers.map((member) => (
-    <ModernSupportTeamCard
-      key={member.id}
-      member={member}
-      onView={() => {
-        setSelectedMember(member);
-        setIsTeamModalOpen(true);
-      }}
-      onContact={handleContactSupport}
-    />
-  ))}
-</div>
-
-
-          )}
         </div>
 
         {/* Main Content Layout */}
@@ -1931,17 +1840,6 @@ onClick={() => toast.info('Access schedule sessions via the Student Portal.')}  
       )}
 
 
-         {selectedMember && (
-        <TeamMemberModal
-          member={selectedMember}
-          isOpen={isTeamModalOpen}
-          onClose={() => {
-            setIsTeamModalOpen(false);
-            setSelectedMember(null);
-          }}
-          onContact={handleContactSupport}
-        />
-      )}
     </div>
   );
 }

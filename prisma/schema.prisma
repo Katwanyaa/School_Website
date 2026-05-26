@@ -981,35 +981,4 @@ model BatchDeletionLog {
   @@map("batch_deletion_logs")
 }
 
-// Add this to your existing schema.prisma
-// ===================== Guidance & Counselling Teams (MySQL) =====================
-// SIMPLE Schema - Just one table for all team members
-model TeamMember {
-  id        Int      @id @default(autoincrement())
-  name      String
-  role      String // "patron", "matron", "teacher", "assistant"
-  title     String?
-  phone     String?
-  email     String?
-  bio       String?  @db.Text
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Optional: if you want to group members into teams
-  teamId Int?
-  team   Team? @relation(fields: [teamId], references: [id])
-
-  @@map("team_members")
-}
-
-// Optional team grouping
-model Team {
-  id        Int          @id @default(autoincrement())
-  name      String
-  members   TeamMember[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-
-  @@map("teams")
-}
+// Guidance & Counselling team models removed — feature deprecated.

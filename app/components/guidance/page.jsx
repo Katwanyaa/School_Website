@@ -1748,46 +1748,14 @@ const handleSubmit = async (e) => {
       submitData.append('removeImage', 'true');
     }
     
-    let url = '/api/guidanceteam';
-    let method = 'POST';
-    
-    if (isEditMode && member?.id) {
-      url = `/api/guidanceteam/${member.id}`;
-      method = 'PUT';
-    }
-    
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Authorization': `Bearer ${adminToken}`,
-        'x-device-token': deviceToken
-      },
-      body: submitData,
-    });
-    
-    const result = await response.json();
-    
+    // Guidance team feature has been removed; backend endpoints deleted.
     toast.dismiss(loadingToast);
-    
-    if (result.success) {
-      toast.success(isEditMode ? 'Member updated successfully!' : 'Member created successfully!');
-      onSave();
-      onClose();
-    } else {
-      // Handle 401 Unauthorized (token expired)
-      if (response.status === 401) {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
-        throw new Error('Session expired. Please login again.');
-      }
-      
-      // Handle 403 Forbidden (no permission)
-      if (response.status === 403) {
-        throw new Error('You do not have permission to manage team members.');
-      }
-      
-      throw new Error(result.error || 'An error occurred');
-    }
+    toast.info('Guidance team management has been removed from the system.');
+    setIsLoading(false);
+    // Callbacks for UI update where applicable
+    onSave && onSave();
+    onClose && onClose();
+    return;
   } catch (error) {
     toast.dismiss(loadingToast);
     
@@ -2341,45 +2309,12 @@ const handleSubmit = async (e) => {
       teacher: formData.teacher
     };
 
-    let url = '/api/guidanceteam';
-    let method = 'POST';
-
-    if (mode === 'edit' && team?.id) {
-      url = `/api/guidanceteam/${team.id}`;
-      method = 'PUT';
-    }
-
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${adminToken}`,
-        'x-device-token': deviceToken
-      },
-      body: JSON.stringify(submitData),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      toast.success(mode === 'edit' ? 'Team updated successfully!' : 'Team created successfully!');
-      onSave();
-      onClose();
-    } else {
-      // Handle 401 Unauthorized (token expired)
-      if (response.status === 401) {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
-        throw new Error('Session expired. Please login again.');
-      }
-      
-      // Handle 403 Forbidden (no permission)
-      if (response.status === 403) {
-        throw new Error('You do not have permission to manage guidance teams.');
-      }
-      
-      throw new Error(result.error || 'An error occurred');
-    }
+    // Guidance teams no longer supported — skip network call.
+    toast.info('Guidance teams are no longer managed. This action is disabled.');
+    setIsLoading(false);
+    onClose && onClose();
+    onSave && onSave();
+    return;
   } catch (error) {
     // Redirect to login if authentication failed
     if (error.message.includes('login') || 
@@ -2968,10 +2903,7 @@ School Chaplain Title                        </label>
 // Main Component
 export default function GuidanceCounselingTab() {
   const [events, setEvents] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [membersLoading, setMembersLoading] = useState(true);
-  const [teamLoading, setTeamLoading] = useState(true);
+  // Team management removed: teams and teamMembers no longer used
   // Add this state near the other states
 const [memberDetailModal, setMemberDetailModal] = useState({
   open: false,
@@ -3051,47 +2983,7 @@ const handleViewMember = (member) => {
     }
   };
 
-  // Fetch teams from API
-  const fetchTeams = async () => {
-    setTeamLoading(true);
-    try {
-      const response = await fetch('/api/guidanceteam');
-      const result = await response.json();
-      
-      if (result.success) {
-        setTeams(result.teams || []);
-      } else {
-        throw new Error(result.error || 'Failed to fetch teams');
-      }
-    } catch (error) {
-      console.error('Error fetching teams:', error);
-      toast.error('Failed to load guidance teams');
-      setTeams([]);
-    } finally {
-      setTeamLoading(false);
-    }
-  };
-
-  // Fetch team members
-  const fetchTeamMembers = async () => {
-    setMembersLoading(true);
-    try {
-      const response = await fetch('/api/guidanceteam');
-      const result = await response.json();
-      
-      if (result.success) {
-        setTeamMembers(result.members || []);
-      } else {
-        throw new Error(result.error || 'Failed to fetch team members');
-      }
-    } catch (error) {
-      console.error('Error fetching team members:', error);
-      toast.error('Failed to load team members');
-      setTeamMembers([]);
-    } finally {
-      setMembersLoading(false);
-    }
-  };
+  // Team API removed; no fetchTeams/fetchTeamMembers
 
   // Delete member handler
   const handleDeleteMember = (member) => {
@@ -3120,36 +3012,10 @@ const confirmDeleteMember = async () => {
       throw new Error('Device verification required. Please login with verification.');
     }
 
-    const response = await fetch(`/api/guidanceteam/${deleteMemberModal.memberId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${adminToken}`,
-        'x-device-token': deviceToken
-      }
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      await fetchTeamMembers();
-      toast.success('Team member deleted successfully!');
-      setDeleteMemberModal({ open: false, memberId: null, memberName: '', loading: false });
-    } else {
-      // Handle 401 Unauthorized (token expired)
-      if (response.status === 401) {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
-        throw new Error('Session expired. Please login again.');
-      }
-      
-      // Handle 403 Forbidden (no permission)
-      if (response.status === 403) {
-        throw new Error('You do not have permission to delete team members.');
-      }
-      
-      throw new Error(result.error || 'Error deleting member');
-    }
+    // Team management removed: skip calling API
+    toast.info('Team member management has been removed from this application.');
+    setDeleteMemberModal({ open: false, memberId: null, memberName: '', loading: false });
+    return;
   } catch (error) {
     // Redirect to login if authentication failed
     if (error.message.includes('login') || 
@@ -3170,8 +3036,6 @@ const confirmDeleteMember = async () => {
 
   useEffect(() => {
     fetchEvents();
-    fetchTeams();
-    fetchTeamMembers();
   }, []);
 
   const handleNewEvent = () => {
@@ -3314,36 +3178,10 @@ const confirmDeleteTeam = async () => {
       throw new Error('Device verification required. Please login with verification.');
     }
 
-    const response = await fetch(`/api/guidanceteam/${teamDeleteModal.teamId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${adminToken}`,
-        'x-device-token': deviceToken
-      },
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      await fetchTeams();
-      toast.success('Guidance team deleted successfully!');
-      setTeamDeleteModal({ open: false, teamId: null, loading: false });
-    } else {
-      // Handle 401 Unauthorized (token expired)
-      if (response.status === 401) {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
-        throw new Error('Session expired. Please login again.');
-      }
-      
-      // Handle 403 Forbidden (no permission)
-      if (response.status === 403) {
-        throw new Error('You do not have permission to delete guidance teams.');
-      }
-      
-      throw new Error(result.error || 'Error deleting team');
-    }
+    // Team management removed: skip calling API
+    toast.info('Guidance team management has been removed from this application.');
+    setTeamDeleteModal({ open: false, teamId: null, loading: false });
+    return;
   } catch (error) {
     // Redirect to login if authentication failed
     if (error.message.includes('login') || 
@@ -3554,8 +3392,6 @@ const confirmDeleteTeam = async () => {
           <button
             onClick={() => {
               fetchEvents(true);
-              fetchTeams();
-              fetchTeamMembers();
             }}
             disabled={refreshing}
             className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5 bg-white/10 backdrop-blur-xl border border-white/20 px-5 py-3 rounded-xl font-bold text-sm tracking-wide transition-all hover:bg-white/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed w-full xs:w-auto min-w-[120px]"
