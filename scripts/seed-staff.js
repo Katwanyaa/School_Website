@@ -37,7 +37,7 @@ const TEACHERS = [
   ['Evelyn M. Nzwili', 'English / Literature'],
   ['Madan Kawira', 'Mathematics / Physics'],
   ['Mr. Kyengo', 'Mathematics / Physics'],
-  ["Hillary Mung'asia", 'English / Literature'],
+  ['Hillary Booker', 'English / Literature'],
   ['Eunice M. Musau', 'Biology / Agriculture'],
   ['Francis Ngovi', 'Biology / Agriculture'],
   ['Boniface Mutisya', 'Chemistry / Mathematics'],
@@ -60,7 +60,7 @@ const TEACHERS = [
 // Note: Guidance & Counselling set to Evelyn M. Nzwili per user correction
 const HODS = {
   'Sports': 'Frazier K. Kioko',
-  'Humanities': "Hillary Mung'asia",
+  'Humanities': 'Hillary Booker',
   'Mathematics & Sciences': 'Boniface Mutisya',
   'Applied Sciences': 'Francis Ngovi',
   'Languages': 'Mr. Mutie',
@@ -112,6 +112,13 @@ async function main() {
       image: FEMALE_NAMES.has(name.split(' ')[1]) || /Madam/i.test(name) ? DEFAULT_FEMALE : DEFAULT_MALE,
       joinDate: new Date().toISOString().split('T')[0],
     };
+
+    if (name === 'Mr Hillary Booker') {
+      staffData.email = 'hillary.booker@katwanyaa.ac.ke';
+      staffData.phone = '+254 700 111 222';
+      staffData.bio = 'Head of Department for Humanities with a strong commitment to student excellence, literacy development, and mentorship.';
+      staffData.quote = 'Education is the gateway to confident young leaders.';
+    }
 
     // Link department id if found
     if (department) {
