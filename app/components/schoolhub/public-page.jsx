@@ -323,16 +323,16 @@ const GalleryModal = ({ item, onClose }) => {
 
   const images = normalizeSchoolImages(item);
   const selectedImage = images[selectedIndex]?.url;
-  const Icon = ICONS[item.type] || FiLayers;
-  const theme = TYPE_THEMES[item.type] || TYPE_THEMES.DEPARTMENT;
+  const Icon = ICONS[item?.type] || FiLayers;
+  const theme = TYPE_THEMES[item?.type] || TYPE_THEMES.DEPARTMENT;
   const socialLinks = getSocialLinks(item);
 
   const shareUrl = useMemo(() => {
     if (typeof window !== 'undefined') {
       return window.location.href;
     }
-    return item.website || 'https://katwanyaasenior.school';
-  }, [item.website]);
+    return item?.website || 'https://katwanyaasenior.school';
+  }, [item?.website]);
 
   const handleShare = async () => {
     const shareData = {
@@ -359,12 +359,14 @@ const GalleryModal = ({ item, onClose }) => {
   };
 
   const handlePrev = () => {
+    if (images.length === 0) return;
     setIsAnimating(true);
     setSelectedIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
     setTimeout(() => setIsAnimating(false), 300);
   };
 
   const handleNext = () => {
+    if (images.length === 0) return;
     setIsAnimating(true);
     setSelectedIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
     setTimeout(() => setIsAnimating(false), 300);
