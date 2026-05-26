@@ -313,12 +313,17 @@ const RefreshButton = ({ refreshing, onClick }) => (
   </button>
 );
 
-// Gallery Modal Component (simplified, no borders/shadows)
+// Gallery Modal Component - FIXED: Hooks called before conditional return
 const GalleryModal = ({ item, onClose }) => {
+  // ✅ ALL HOOKS MUST BE CALLED UNCONDITIONALLY AT THE TOP
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   
-  useEffect(() => { setSelectedIndex(0); }, [item?.id, item?.type]);
+  useEffect(() => { 
+    setSelectedIndex(0); 
+  }, [item?.id, item?.type]);
+  
+  // ✅ Now we can do conditional returns after all hooks
   if (!item) return null;
 
   const images = normalizeSchoolImages(item);
@@ -551,74 +556,74 @@ const HubCard = ({ item, onView }) => {
   const theme = TYPE_THEMES[item.type] || TYPE_THEMES.DEPARTMENT;
   const detailCount = Array.isArray(item.details) ? item.details.length : 0;
 
-return (
-  <button
-    onClick={onView}
-    className={`w-full bg-white text-left transition-all duration-200 active:scale-[0.99] border border-gray-100 rounded-2xl overflow-hidden shadow-sm flex flex-col ${theme.bg} bg-opacity-10`}
-  >
-    {/* Image Section - Fluid and Responsive */}
-    <div className="relative h-44 sm:h-48 w-full bg-gray-50 overflow-hidden shrink-0">
-      {image ? (
-        <img src={image} alt={item.title} className="h-full w-full object-cover" />
-      ) : (
-        <div className={`flex h-full w-full items-center justify-center bg-gray-50`}>
-          <Icon className="text-3xl text-gray-400" />
-        </div>
-      )}
-      
-      {/* Type Badge - Modern Pill Tag */}
-      <div className="absolute left-3 top-3">
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-full shadow-sm backdrop-blur-md ${theme.bg} ${theme.text} bg-opacity-90`}>
-          <Icon className="text-xs" /> {getTypeLabel(item.type)}
-        </span>
-      </div>
-      
-      {/* Image Count - Glassmorphism Badge */}
-      <div className="absolute bottom-3 right-3 bg-gray-900/70 backdrop-blur-md px-2 py-1 rounded-md text-[11px] font-medium text-white flex items-center gap-1 shadow-sm">
-        <span>{images.length}</span>
-        <span className="text-xs">📷</span>
-      </div>
-    </div>
-
-    {/* Content Section */}
-    <div className="p-4 flex flex-col flex-grow justify-between">
-      <div>
-        <h3 className="text-sm font-bold leading-snug text-gray-900 line-clamp-1">
-          {item.title}
-        </h3>
-        
-        {item.shortDescription && (
-          <p className="mt-1 text-xs font-normal leading-relaxed text-gray-500 line-clamp-2">
-            {item.shortDescription}
-          </p>
+  return (
+    <button
+      onClick={onView}
+      className={`w-full bg-white text-left transition-all duration-200 active:scale-[0.99] border border-gray-100 rounded-2xl overflow-hidden shadow-sm flex flex-col ${theme.bg} bg-opacity-10`}
+    >
+      {/* Image Section - Fluid and Responsive */}
+      <div className="relative h-44 sm:h-48 w-full bg-gray-50 overflow-hidden shrink-0">
+        {image ? (
+          <img src={image} alt={item.title} className="h-full w-full object-cover" />
+        ) : (
+          <div className={`flex h-full w-full items-center justify-center bg-gray-50`}>
+            <Icon className="text-3xl text-gray-400" />
+          </div>
         )}
-
-        {/* Stats Row - Cleaner Rounded Tags */}
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {detailCount > 0 && (
-            <span className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md text-[11px] font-medium text-gray-600">
-              <FiLayers className="text-xs text-gray-400" /> {detailCount}
-            </span>
-          )}
-          {item.location && (
-            <span className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md text-[11px] font-medium text-gray-600 max-w-[180px] sm:max-w-xs truncate">
-              <FiMapPin className="text-xs text-gray-400 shrink-0" /> 
-              <span className="truncate">{item.location}</span>
-            </span>
-          )}
+        
+        {/* Type Badge - Modern Pill Tag */}
+        <div className="absolute left-3 top-3">
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-full shadow-sm backdrop-blur-md ${theme.bg} ${theme.text} bg-opacity-90`}>
+            <Icon className="text-xs" /> {getTypeLabel(item.type)}
+          </span>
+        </div>
+        
+        {/* Image Count - Glassmorphism Badge */}
+        <div className="absolute bottom-3 right-3 bg-gray-900/70 backdrop-blur-md px-2 py-1 rounded-md text-[11px] font-medium text-white flex items-center gap-1 shadow-sm">
+          <span>{images.length}</span>
+          <span className="text-xs">📷</span>
         </div>
       </div>
 
-      {/* View Action - Sleek, Minimal Footer */}
-      <div className="mt-4 flex items-center justify-end pt-2 border-t border-gray-50">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Explore</span>
-        <span className="ml-2 flex h-6 w-6 items-center justify-center bg-gray-950 text-white rounded-full shadow-sm active:bg-gray-800 transition-colors">
-          <FiChevronRight className="text-xs" />
-        </span>
+      {/* Content Section */}
+      <div className="p-4 flex flex-col flex-grow justify-between">
+        <div>
+          <h3 className="text-sm font-bold leading-snug text-gray-900 line-clamp-1">
+            {item.title}
+          </h3>
+          
+          {item.shortDescription && (
+            <p className="mt-1 text-xs font-normal leading-relaxed text-gray-500 line-clamp-2">
+              {item.shortDescription}
+            </p>
+          )}
+
+          {/* Stats Row - Cleaner Rounded Tags */}
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {detailCount > 0 && (
+              <span className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md text-[11px] font-medium text-gray-600">
+                <FiLayers className="text-xs text-gray-400" /> {detailCount}
+              </span>
+            )}
+            {item.location && (
+              <span className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md text-[11px] font-medium text-gray-600 max-w-[180px] sm:max-w-xs truncate">
+                <FiMapPin className="text-xs text-gray-400 shrink-0" /> 
+                <span className="truncate">{item.location}</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* View Action - Sleek, Minimal Footer */}
+        <div className="mt-4 flex items-center justify-end pt-2 border-t border-gray-50">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Explore</span>
+          <span className="ml-2 flex h-6 w-6 items-center justify-center bg-gray-950 text-white rounded-full shadow-sm active:bg-gray-800 transition-colors">
+            <FiChevronRight className="text-xs" />
+          </span>
+        </div>
       </div>
-    </div>
-  </button>
-);
+    </button>
+  );
 };
 
 // Main Component
@@ -758,13 +763,13 @@ export default function PublicSchoolHubPage({
               </div>
             </div>
             
-           <h1 className="text-2xl font-black tracking-tight sm:text-3xl md:text-5xl text-gray-900">
-  Welcome to Our{' '}
-  <span className="text-cyan-800">
-    {title}
-  </span>{' '}
-  at Katwanyaa Senior School
-</h1>
+            <h1 className="text-2xl font-black tracking-tight sm:text-3xl md:text-5xl text-gray-900">
+              Welcome to Our{' '}
+              <span className="text-cyan-800">
+                {title}
+              </span>{' '}
+              at Katwanyaa Senior School
+            </h1>
             
             <div className="my-3 flex gap-2">
               <div className="h-1 w-12 bg-blue-800" />
@@ -777,88 +782,85 @@ export default function PublicSchoolHubPage({
             </p>
           </div>
 
-    {/* Action Bar */}
-<div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
-  
-  {/* Refresh Button - Now centered on mobile */}
-  <div className="shrink-0">
-    <RefreshButton refreshing={refreshing} onClick={() => load(true)} />
-  </div>
+          {/* Action Bar */}
+          <div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
+            {/* Refresh Button - Now centered on mobile */}
+            <div className="shrink-0">
+              <RefreshButton refreshing={refreshing} onClick={() => load(true)} />
+            </div>
 
-  {/* Search Bar - Modernized & Width-Constrained */}
-  <div className="relative w-full max-w-md group">
-    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-      <FiSearch className="text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-    </div>
-    <input
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      placeholder={`Search ${title.toLowerCase()}...`}
-      className="w-full bg-white border border-slate-200 py-3 pl-11 pr-4 rounded-2xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal outline-none shadow-sm transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5"
-    />
-  </div>
-  
-</div>
-        </div>
-
-     {/* Error Display */}
-{error && (
-  <div className="mb-6 bg-red-50 border border-red-100 rounded-xl px-4 py-3.5 text-sm font-medium text-red-800 flex items-start sm:items-center justify-between gap-3 shadow-sm">
-    <span className="flex items-center gap-2.5 min-w-0">
-      <FiAlertTriangle className="text-red-500 shrink-0 text-base" /> 
-      <span className="truncate">{error}</span>
-    </span>
-    <button onClick={() => setError('')} className="text-red-500 p-1 rounded-md active:bg-red-100 transition-colors shrink-0">
-      <FiX className="text-base" />
-    </button>
-  </div>
-)}
-
-{/* Loading State */}
-{loading ? (
-  <ModernLoadingSpinner message={`Loading amazing ${title.toLowerCase()} content...`} />
-) : visibleItems.length === 0 ? (
-  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 sm:p-16 text-center shadow-sm max-w-xl mx-auto">
-    <div className="inline-flex p-4 bg-gray-100 rounded-full mb-4 text-gray-400">
-      <FiLayers className="text-3xl sm:text-4xl" />
-    </div>
-    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 tracking-tight">{emptyText}</h2>
-    <p className="text-xs sm:text-sm text-gray-500 mt-2">Check back soon for updates!</p>
-  </div>
-) : (
-  <div className="space-y-12 sm:space-y-16">
-    {renderedSections.map((section) => {
-      if (!section.items.length) return null;
-      const SectionIcon = section.icon || ICONS[section.type] || FiLayers;
-      return (
-        <section key={section.title} className="space-y-6">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
-            <div className="flex items-center gap-3.5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-800 text-white shadow-md shadow-blue-800/10">
-                <SectionIcon className="text-lg" />
+            {/* Search Bar - Modernized & Width-Constrained */}
+            <div className="relative w-full max-w-md group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <FiSearch className="text-slate-400 group-focus-within:text-blue-500 transition-colors" />
               </div>
-              <div>
-                <h2 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">{section.title}</h2>
-                <p className="text-xs font-semibold uppercase tracking-wider text-cyan-800 mt-0.5">
-                  {section.items.length} {section.items.length === 1 ? 'item' : 'items'} available
-                </p>
-              </div>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Search ${title.toLowerCase()}...`}
+                className="w-full bg-white border border-slate-200 py-3 pl-11 pr-4 rounded-2xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal outline-none shadow-sm transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5"
+              />
             </div>
           </div>
+        </div>
 
-          {/* Items Grid - Fluid & Mobile First */}
-          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-            {section.items.map((item) => (
-              <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => setActive(item)} />
-            ))}
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-100 rounded-xl px-4 py-3.5 text-sm font-medium text-red-800 flex items-start sm:items-center justify-between gap-3 shadow-sm">
+            <span className="flex items-center gap-2.5 min-w-0">
+              <FiAlertTriangle className="text-red-500 shrink-0 text-base" /> 
+              <span className="truncate">{error}</span>
+            </span>
+            <button onClick={() => setError('')} className="text-red-500 p-1 rounded-md active:bg-red-100 transition-colors shrink-0">
+              <FiX className="text-base" />
+            </button>
           </div>
-        </section>
-      );
-    })}
-  </div>
-)}
-        
+        )}
+
+        {/* Loading State */}
+        {loading ? (
+          <ModernLoadingSpinner message={`Loading amazing ${title.toLowerCase()} content...`} />
+        ) : visibleItems.length === 0 ? (
+          <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 sm:p-16 text-center shadow-sm max-w-xl mx-auto">
+            <div className="inline-flex p-4 bg-gray-100 rounded-full mb-4 text-gray-400">
+              <FiLayers className="text-3xl sm:text-4xl" />
+            </div>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-800 tracking-tight">{emptyText}</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-2">Check back soon for updates!</p>
+          </div>
+        ) : (
+          <div className="space-y-12 sm:space-y-16">
+            {renderedSections.map((section) => {
+              if (!section.items.length) return null;
+              const SectionIcon = section.icon || ICONS[section.type] || FiLayers;
+              return (
+                <section key={section.title} className="space-y-6">
+                  {/* Section Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-800 text-white shadow-md shadow-blue-800/10">
+                        <SectionIcon className="text-lg" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">{section.title}</h2>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-cyan-800 mt-0.5">
+                          {section.items.length} {section.items.length === 1 ? 'item' : 'items'} available
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Items Grid - Fluid & Mobile First */}
+                  <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                    {section.items.map((item) => (
+                      <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => setActive(item)} />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        )}
       </main>
       
       {/* Custom Animation Styles */}

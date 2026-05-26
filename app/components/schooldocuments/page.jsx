@@ -320,26 +320,46 @@ function FeeBreakdownModal({
   type = 'day'
 }) {
   // FIXED: Better initialization with proper check for existing data
-  const [categories, setCategories] = useState(() => {
-    console.log('FeeBreakdownModal initializing with existingBreakdown:', existingBreakdown);
+const [categories, setCategories] = useState([]);
+const [totalAmount, setTotalAmount] = useState(0);
+const [errors, setErrors] = useState([]);
+const [isEditMode, setIsEditMode] = useState(false);
+
+// ✅ ADD THIS: Sync existingBreakdown when modal opens
+useEffect(() => {
+  if (!open) return;
+  
+  if (Array.isArray(existingBreakdown) && existingBreakdown.length > 0) {
+    const hasAdmissionKeywords = existingBreakdown.some(cat => 
+      cat.name && (
+        cat.name.toLowerCase().includes('application') ||
+        cat.name.toLowerCase().includes('admission') ||
+        cat.name.toLowerCase().includes('registration')
+      )
+    );
     
-    // Check if we have valid existing data
-    if (existingBreakdown && Array.isArray(existingBreakdown) && existingBreakdown.length > 0) {
-      console.log('Edit Mode: Loading existing fee breakdown data');
-      return existingBreakdown.map((cat, index) => ({
-        id: cat.id || `category_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    if (hasAdmissionKeywords) {
+      setIsEditMode(true);
+      const mappedCategories = existingBreakdown.map((cat, index) => ({
+        id: cat.id || `admission_cat_${Date.now()}_${index}`,
         name: cat.name || '',
-        amount: typeof cat.amount === 'number' ? cat.amount : parseFloat(cat.amount) || 0,
+        amount: parseFloat(cat.amount) || 0,
         description: cat.description || '',
-        optional: Boolean(cat.optional),
-        boardingOnly: Boolean(cat.boardingOnly) && type === 'boarding',
-        order: typeof cat.order === 'number' ? cat.order : index
+        optional: Boolean(cat.optional || false),
+        boardingOnly: false,
+        order: cat.order || index,
+        admissionOnly: true
       }));
+      setCategories(mappedCategories);
+    } else {
+      setIsEditMode(false);
+      setCategories([]);
     }
-    
-    console.log('Add Mode: Starting with empty categories');
-    return [];
-  });
+  } else {
+    setIsEditMode(false);
+    setCategories([]);
+  }
+}, [open, existingBreakdown]);
 
   const [totalAmount, setTotalAmount] = useState(0);
   const [errors, setErrors] = useState([]);
@@ -690,50 +710,28 @@ function AdmissionFeeBreakdownModal({
   existingBreakdown = []
 }) {
   // COMPLETE FIX: Completely separate initialization logic for admission fees
-  const [categories, setCategories] = useState(() => {
-    console.log('AdmissionFeeBreakdownModal initializing with:', existingBreakdown);
-    
-    // Only use existingBreakdown if it's specifically for admission
-    if (Array.isArray(existingBreakdown) && existingBreakdown.length > 0) {
-      // Validate that this is indeed admission data and not boarding data
-      const hasBoardingOnlyCategories = existingBreakdown.some(cat => cat.boardingOnly === true);
-      const hasAdmissionKeywords = existingBreakdown.some(cat => 
-        cat.name && (
-          cat.name.toLowerCase().includes('application') ||
-          cat.name.toLowerCase().includes('admission') ||
-          cat.name.toLowerCase().includes('registration') ||
-          cat.name.toLowerCase().includes('acceptance')
-        )
-      );
-      
-      // If it looks like boarding data, don't use it for admission
-      if (hasBoardingOnlyCategories && !hasAdmissionKeywords) {
-        console.log('⚠️ WARNING: Found boarding data in admission breakdown. Starting fresh.');
-        return [];
-      }
-      
-      console.log('✅ Edit Mode: Loading existing admission fee breakdown', existingBreakdown);
-      // Clean and transform existing data to ensure admission-specific structure
-      return existingBreakdown.map((cat, index) => ({
-        id: cat.id || `admission_cat_${Date.now()}_${index}`,
-        name: cat.name || '',
-        amount: parseFloat(cat.amount) || 0,
-        description: cat.description || '',
-        optional: Boolean(cat.optional || false),
-        boardingOnly: false, // Force false for ALL admission categories
-        order: cat.order || index,
-        // Add admission-specific flag
-        admissionOnly: true
-      }));
-    }
-    
-    console.log('➕ Add Mode: Starting with empty admission categories');
-    return [];
-  });
-  
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [errors, setErrors] = useState([]);
-  const [isEditMode, setIsEditMode] = useState(false);
+const [categories, setCategories] = useState([]);
+const [totalAmount, setTotalAmount] = useState(0);
+const [errors, setErrors] = useState([]);
+const [isEditMode, setIsEditMode] = useState(false);
+
+// ✅ ADD THIS: Sync existingBreakdown when modal opens
+useEffect(() => {
+  if (open && existingBreakdown && Array.isArray(existingBreakdown) && existingBreakdown.length > 0) {
+    const mappedCategories = existingBreakdown.map((cat, index) => ({
+      id: cat.id || `category_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name: cat.name || '',
+      amount: typeof cat.amount === 'number' ? cat.amount : parseFloat(cat.amount) || 0,
+      description: cat.description || '',
+      optional: Boolean(cat.optional),
+      boardingOnly: Boolean(cat.boardingOnly) && type === 'boarding',
+      order: typeof cat.order === 'number' ? cat.order : index
+    }));
+    setCategories(mappedCategories);
+  } else if (open) {
+    setCategories([]);
+  }
+}, [open, existingBreakdown, type]);
 
   useEffect(() => {
     const total = Array.isArray(categories) 

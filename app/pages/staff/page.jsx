@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -96,7 +96,10 @@ const isHodValue = (value = "") => {
   );
 };
 
+// ✅ FIX 1: Added null check for staff
 const isLeadershipProfile = (staff) => {
+  if (!staff) return false;
+  
   const role = normalizeText(staff?.role);
   const position = normalizeText(staff?.position);
 
@@ -110,12 +113,15 @@ const isLeadershipProfile = (staff) => {
   );
 };
 
+// ✅ FIX 2: Added null check for staff
 const leadershipRank = (staff) => {
+  if (!staff) return 10;
+  
   const role = normalizeText(staff?.role);
   const position = normalizeText(staff?.position);
-  const combined = `${role} ${position}`;
+  const combined = `${role || ''} ${position || ''}`;
 
-  if (role === "principal" || position.includes("chief principal")) return 1;
+  if (role === "principal" || (position && position.includes("chief principal"))) return 1;
   if (combined.includes("deputy") && combined.includes("academic")) return 2;
   if (combined.includes("deputy") && combined.includes("admin")) return 3;
   if (combined.includes("senior teacher")) return 4;
@@ -123,7 +129,9 @@ const leadershipRank = (staff) => {
   return 10;
 };
 
+// ✅ FIX 3: Added null check for staff
 const getLeadershipImage = (staff) => {
+  if (!staff) return "/male.png";
   if (staff?.image) return staff.image;
   return staff?.gender === "female" ? "/female.png" : "/male.png";
 };
@@ -159,7 +167,10 @@ const getDepartmentSearchText = (department) => {
     .toLowerCase();
 };
 
+// ✅ FIX 4: Added null check for staff
 const getLeadershipSearchText = (staff) => {
+  if (!staff) return "";
+  
   return [
     staff?.name,
     staff?.role,
@@ -265,6 +276,8 @@ const DepartmentIntro = ({ departments, totalStaff }) => {
 };
 
 const LeadershipCard = ({ staff, viewMode }) => {
+  if (!staff) return null;
+  
   const title = staff.position || staff.role || "School Leadership";
   const profileHref = `/pages/staff/${staff.id}/${generateSlug(staff.name, staff.id)}`;
 
@@ -325,6 +338,8 @@ const LeadershipCard = ({ staff, viewMode }) => {
 };
 
 const DepartmentCard = ({ department, viewMode }) => {
+  if (!department) return null;
+  
   const meta = getCategoryMeta(department.category);
   const Icon = meta.icon;
   const href = `/pages/staff/departments/${department.id}`;
@@ -641,17 +656,23 @@ export default function StaffDirectory() {
       const staffData = await staffResponse.json();
       const departmentData = await departmentsResponse.json();
 
+      // ✅ FIX 5: Added null check for staff before filtering
       const publicLeadership = (staffData.staff || [])
-        .filter(isLeadershipProfile)
-        .sort((a, b) => leadershipRank(a) - leadershipRank(b) || (a.name || "").localeCompare(b.name || ""));
+        .filter(staff => staff && isLeadershipProfile(staff))
+        .sort((a, b) => {
+          const rankA = leadershipRank(a);
+          const rankB = leadershipRank(b);
+          if (rankA !== rankB) return rankA - rankB;
+          return (a?.name || "").localeCompare(b?.name || "");
+        });
 
       const publicDepartments = (departmentData.departments || [])
-        .filter((department) => department.isActive !== false)
+        .filter((department) => department && department.isActive !== false)
         .sort((a, b) => {
-          const categoryA = CATEGORY_ORDER.indexOf(a.category);
-          const categoryB = CATEGORY_ORDER.indexOf(b.category);
+          const categoryA = CATEGORY_ORDER.indexOf(a?.category);
+          const categoryB = CATEGORY_ORDER.indexOf(b?.category);
           if (categoryA !== categoryB) return categoryA - categoryB;
-          return (a.displayOrder || 0) - (b.displayOrder || 0) || (a.name || "").localeCompare(b.name || "");
+          return (a?.displayOrder || 0) - (b?.displayOrder || 0) || (a?.name || "").localeCompare(b?.name || "");
         });
 
       setLeadership(publicLeadership);
@@ -669,17 +690,19 @@ export default function StaffDirectory() {
     fetchStaffPageData();
   }, []);
 
+  // ✅ FIX 6: Added null check in filteredLeadership
   const filteredLeadership = useMemo(() => {
     if (!["all", "leadership"].includes(selectedFilter)) return [];
     const query = searchQuery.trim().toLowerCase();
     if (!query) return leadership;
-    return leadership.filter((staff) => getLeadershipSearchText(staff).includes(query));
+    return leadership.filter((staff) => staff && getLeadershipSearchText(staff).includes(query));
   }, [leadership, searchQuery, selectedFilter]);
 
   const filteredDepartments = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
     return departments.filter((department) => {
+      if (!department) return false;
       const matchesFilter = selectedFilter === "all" || department.category === selectedFilter;
       const matchesSearch = !query || getDepartmentSearchText(department).includes(query);
       return matchesFilter && matchesSearch;
@@ -688,7 +711,7 @@ export default function StaffDirectory() {
 
   const departmentsByCategory = useMemo(() => {
     return CATEGORY_ORDER.reduce((acc, category) => {
-      const items = filteredDepartments.filter((department) => department.category === category);
+      const items = filteredDepartments.filter((department) => department && department.category === category);
       if (items.length) acc[category] = items;
       return acc;
     }, {});
@@ -700,17 +723,17 @@ export default function StaffDirectory() {
       leadership: leadership.length,
     };
     CATEGORY_ORDER.forEach((category) => {
-      counts[category] = departments.filter((department) => department.category === category).length;
+      counts[category] = departments.filter((department) => department && department.category === category).length;
     });
     return counts;
   }, [departments, leadership]);
 
   const totalDepartmentStaff = departments.reduce(
-    (sum, department) => sum + (Number(department.staffCount) || 0),
+    (sum, department) => sum + (Number(department?.staffCount) || 0),
     0
   );
   const filteredDepartmentStaff = filteredDepartments.reduce(
-    (sum, department) => sum + (Number(department.staffCount) || 0),
+    (sum, department) => sum + (Number(department?.staffCount) || 0),
     0
   );
 
@@ -806,13 +829,12 @@ export default function StaffDirectory() {
                 Teaching and support staff are shown by department for privacy.
               </p>
             </div>
-     {/* Updated StatPill Container */}
-<div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end lg:gap-4">
-  <StatPill icon={FiUser} value={leadership.length} label="Leaders" tone="blue" />
-  <StatPill icon={FiLayers} value={departments.length} label="Depts" tone="emerald" />
-  <StatPill icon={FiUsers} value={totalDepartmentStaff} label="Staff" tone="amber" />
-  <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
-</div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end lg:gap-4">
+              <StatPill icon={FiUser} value={leadership.length} label="Leaders" tone="blue" />
+              <StatPill icon={FiLayers} value={departments.length} label="Depts" tone="emerald" />
+              <StatPill icon={FiUsers} value={totalDepartmentStaff} label="Staff" tone="amber" />
+              <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
+            </div>
           </div>
         </section>
 
