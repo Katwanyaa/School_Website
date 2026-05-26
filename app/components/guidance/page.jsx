@@ -2903,6 +2903,9 @@ School Chaplain Title                        </label>
 // Main Component
 export default function GuidanceCounselingTab() {
   const [events, setEvents] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [membersLoading, setMembersLoading] = useState(false);
+  const teams = [];
   // Team management removed: teams and teamMembers no longer used
   // Add this state near the other states
 const [memberDetailModal, setMemberDetailModal] = useState({
@@ -2993,6 +2996,16 @@ const handleViewMember = (member) => {
       memberName: member.name,
       loading: false,
     });
+  };
+
+  const fetchTeamMembers = async () => {
+    // Team APIs have been removed; no-op placeholder for legacy modal callbacks.
+    return [];
+  };
+
+  const fetchTeams = async () => {
+    // Team APIs have been removed; no-op placeholder for legacy modal callbacks.
+    return [];
   };
 
 const confirmDeleteMember = async () => {
