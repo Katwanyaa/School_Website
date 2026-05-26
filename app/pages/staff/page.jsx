@@ -438,17 +438,37 @@ const TeacherCard = ({ teacher }) => (
 
 const DepartmentTeacherCarousel = ({ department, viewMode }) => {
   const scrollRef = useRef(null);
+  const autoScrollRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
   const teachers = Array.isArray(department.staff) ? department.staff : [];
   const meta = getCategoryMeta(department.category);
   const Icon = meta.icon;
   const href = `/pages/staff/departments/${department.id}`;
 
   const scrollBy = (direction) => {
-    scrollRef.current?.scrollBy({
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({
       left: direction * 280,
       behavior: "smooth",
     });
   };
+
+  useEffect(() => {
+    if (!teachers.length || isHovered) return;
+
+    autoScrollRef.current = window.setInterval(() => {
+      if (!scrollRef.current) return;
+      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+      const nextPosition = scrollLeft + clientWidth * 0.9;
+      if (nextPosition + clientWidth >= scrollWidth - 2) {
+        scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        scrollRef.current.scrollTo({ left: nextPosition, behavior: "smooth" });
+      }
+    }, 4200);
+
+    return () => window.clearInterval(autoScrollRef.current);
+  }, [teachers.length, isHovered]);
 
   if (viewMode === "list") {
     return (
@@ -467,55 +487,72 @@ const DepartmentTeacherCarousel = ({ department, viewMode }) => {
 
   return (
     <article className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 shadow-2xl ring-1 ring-slate-900/10 backdrop-blur-sm">
-      <div className="grid gap-0 lg:grid-cols-[340px_minmax(0,1fr)]">
-        <div className={`relative min-h-[340px] overflow-hidden rounded-t-[2rem] bg-gradient-to-br ${meta.panel} lg:rounded-bl-[2rem] lg:rounded-tr-none`}>
+      <div className="overflow-hidden rounded-t-[2rem]">
+        <div className="relative aspect-[16/9] bg-slate-100">
           <img
             src={getDepartmentImage(department)}
             alt={department.name}
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-transparent" />
-          <div className="relative z-10 flex h-full flex-col justify-end p-5 text-white">
-            <span className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-900">
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+          <div className="relative z-10 flex h-full flex-col justify-end p-6 text-white">
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-900">
               <Icon size={12} /> {meta.shortLabel}
             </span>
-            <h3 className="text-2xl font-black leading-tight tracking-tight">{department.name}</h3>
-            <p className="mt-3 line-clamp-3 text-sm font-medium leading-relaxed text-slate-200">
+            <h3 className="text-3xl font-black tracking-tight sm:text-4xl">{department.name}</h3>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base">
               {department.description || "Department profile maintained by the school administration."}
             </p>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold">
-              <div className="rounded-xl bg-white/10 p-3 backdrop-blur">
-                <p className="text-[9px] uppercase tracking-widest text-slate-300">HOD</p>
-                <p className="mt-1 truncate">{department.headName || "Not listed"}</p>
-              </div>
-              <div className="rounded-xl bg-white/10 p-3 backdrop-blur">
-                <p className="text-[9px] uppercase tracking-widest text-slate-300">Teachers</p>
-                <p className="mt-1">{teachers.length}</p>
-              </div>
-            </div>
-            <Link
-              href={href}
-              className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-950"
-            >
-              Department <FiArrowRight size={14} />
-            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-5 sm:p-6">
+        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Assigned Staff</p>
+            <h4 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
+              {teachers.length ? `${teachers.length} teacher${teachers.length === 1 ? "" : "s"}` : "No teachers assigned yet"}
+            </h4>
+            <p className="mt-2 max-w-2xl text-sm text-slate-500">
+              Swipe or use the controls to preview the current department team in a smooth carousel.
+            </p>
+          </div>
+          <Link
+            href={href}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800"
+          >
+            View Department <FiArrowRight size={14} />
+          </Link>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="rounded-[1.5rem] bg-slate-50 p-4 text-sm shadow-sm ring-1 ring-slate-200">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-slate-500">HOD</p>
+            <p className="mt-2 font-black text-slate-900">{department.headName || "Not listed"}</p>
+          </div>
+          <div className="rounded-[1.5rem] bg-slate-50 p-4 text-sm shadow-sm ring-1 ring-slate-200">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-slate-500">Teachers</p>
+            <p className="mt-2 font-black text-slate-900">{teachers.length}</p>
+          </div>
+          <div className="rounded-[1.5rem] bg-slate-50 p-4 text-sm shadow-sm ring-1 ring-slate-200">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-slate-500">Department</p>
+            <p className="mt-2 font-black text-slate-900">{meta.label}</p>
           </div>
         </div>
 
-        <div className="min-w-0 p-5">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Assigned Teachers</p>
-              <h4 className="text-lg font-black tracking-tight text-slate-900">
-                {teachers.length ? `${teachers.length} teacher${teachers.length === 1 ? "" : "s"}` : "No teachers assigned yet"}
-              </h4>
-            </div>
-            {teachers.length > 0 && (
+        {teachers.length > 0 ? (
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center justify-between gap-3 rounded-[1.75rem] bg-slate-100 px-4 py-3 shadow-sm ring-1 ring-slate-200">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">Teacher Carousel</p>
+                <p className="mt-1 text-xs text-slate-500">Auto-scrolls every few seconds. Hover to pause.</p>
+              </div>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => scrollBy(-1)}
-                  className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
                   aria-label={`Previous ${department.name} teachers`}
                 >
                   <FiChevronLeft size={18} />
@@ -523,32 +560,32 @@ const DepartmentTeacherCarousel = ({ department, viewMode }) => {
                 <button
                   type="button"
                   onClick={() => scrollBy(1)}
-                  className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
                   aria-label={`Next ${department.name} teachers`}
                 >
                   <FiChevronRight size={18} />
                 </button>
               </div>
-            )}
-          </div>
+            </div>
 
-          {teachers.length > 0 ? (
             <div
               ref={scrollRef}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
               className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-3 touch-pan-x scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300/80"
             >
               {teachers.map((teacher) => (
                 <TeacherCard key={teacher.id} teacher={teacher} />
               ))}
             </div>
-          ) : (
-            <div className="flex min-h-[250px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-              <p className="max-w-sm text-sm font-semibold leading-relaxed text-slate-500">
-                Teachers uploaded from the dashboard will appear here after they are linked to this department.
-              </p>
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="mt-6 flex min-h-[250px] items-center justify-center rounded-[1.75rem] border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+            <p className="max-w-sm text-sm font-semibold leading-relaxed text-slate-500">
+              Teachers uploaded from the dashboard will appear here after they are linked to this department.
+            </p>
+          </div>
+        )}
       </div>
     </article>
   );
