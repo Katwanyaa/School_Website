@@ -142,6 +142,51 @@ const authenticateRequest = (req) => {
   };
 };
 
+const fullNameFromStudent = (student) => (
+  [student?.firstName, student?.middleName, student?.lastName]
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+);
+
+const syncPortalAccountAfterStudentUpdate = async (previousStudent, updatedStudent) => {
+  if (!updatedStudent?.admissionNumber) return;
+
+  const profileData = {
+    admissionNumber: updatedStudent.admissionNumber,
+    firstName: updatedStudent.firstName,
+    middleName: updatedStudent.middleName || null,
+    lastName: updatedStudent.lastName,
+    fullName: fullNameFromStudent(updatedStudent),
+    form: updatedStudent.form,
+    stream: updatedStudent.stream || null,
+    email: updatedStudent.email || null,
+    parentPhone: updatedStudent.parentPhone || null,
+    status: updatedStudent.status || 'active'
+  };
+
+  if (previousStudent?.admissionNumber && previousStudent.admissionNumber !== updatedStudent.admissionNumber) {
+    const [oldAccount, newAccount] = await Promise.all([
+      prisma.studentPortalAccount.findUnique({ where: { admissionNumber: previousStudent.admissionNumber } }),
+      prisma.studentPortalAccount.findUnique({ where: { admissionNumber: updatedStudent.admissionNumber } })
+    ]);
+
+    if (oldAccount && !newAccount) {
+      await prisma.studentPortalAccount.update({
+        where: { admissionNumber: previousStudent.admissionNumber },
+        data: profileData
+      });
+      return;
+    }
+  }
+
+  await prisma.studentPortalAccount.updateMany({
+    where: { admissionNumber: updatedStudent.admissionNumber },
+    data: profileData
+  });
+};
+
 // GET single student by ID (PUBLIC - no authentication required)
 export async function GET(request, { params }) {
   try {
@@ -240,6 +285,11 @@ export async function PUT(request, { params }) {
       }
     }
 
+    const oldStudent = await prisma.databaseStudent.findUnique({
+      where: { id },
+      select: { admissionNumber: true, form: true }
+    });
+
     const updatedStudent = await prisma.databaseStudent.update({
       where: { id },
       data: {
@@ -262,12 +312,9 @@ export async function PUT(request, { params }) {
       }
     });
 
-    // Update stats if form changed
-    const oldStudent = await prisma.databaseStudent.findUnique({
-      where: { id },
-      select: { form: true }
-    });
+    await syncPortalAccountAfterStudentUpdate(oldStudent, updatedStudent);
 
+    // Update stats if form changed
     if (oldStudent && oldStudent.form !== data.form) {
       // Decrement old form count
       await prisma.studentStats.update({

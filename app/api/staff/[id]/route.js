@@ -265,6 +265,52 @@ const sanitizePublicStaff = (staff) => {
   return publicStaff;
 };
 
+const getFormString = (formData, key, fallback = "") => {
+  const value = formData.get(key);
+  if (value === null || value === undefined || typeof value !== "string") return fallback;
+  return value.trim();
+};
+
+const parseDepartmentId = (formData) => {
+  const raw = getFormString(formData, "staffDepartmentId") || getFormString(formData, "departmentId");
+  if (!raw) return null;
+  const id = Number(raw);
+  return Number.isFinite(id) && id > 0 ? id : null;
+};
+
+const isTeacherRecord = (role = "", staffType = "") => (
+  role?.toString().trim() === "Teacher" || staffType?.toString().trim() === "Teacher"
+);
+
+const formatStaffRecord = (staff) => {
+  if (!staff) return staff;
+  const departmentName = staff.department || staff.staffDepartment?.name || "";
+
+  return {
+    ...staff,
+    department: departmentName,
+    departmentId: staff.staffDepartmentId || null,
+    staffType: staff.staffType || (staff.role === "Teacher" ? "Teacher" : "Leadership"),
+  };
+};
+
+const syncDepartmentStaffCount = async (departmentId) => {
+  if (!departmentId) return;
+
+  const count = await prisma.staff.count({
+    where: {
+      staffDepartmentId: departmentId,
+      role: "Teacher",
+      status: "active",
+    },
+  });
+
+  await prisma.staffDepartment.update({
+    where: { id: departmentId },
+    data: { staffCount: count },
+  });
+};
+
 // 🔹 Check principal/deputy principal limits
 async function checkRoleLimits(role, staffId = null, position = null) {
   if (role === "Principal") {
@@ -345,6 +391,15 @@ export async function GET(req, { params }) {
 
     const staff = await prisma.staff.findUnique({
       where: { id: Number(params.id) },
+      include: {
+        staffDepartment: {
+          select: {
+            id: true,
+            name: true,
+            category: true,
+          },
+        },
+      },
     });
 
     if (!staff) {
@@ -361,7 +416,8 @@ export async function GET(req, { params }) {
       );
     }
 
-    return NextResponse.json({ success: true, staff: isAdmin ? staff : sanitizePublicStaff(staff) });
+    const formattedStaff = formatStaffRecord(staff);
+    return NextResponse.json({ success: true, staff: isAdmin ? formattedStaff : sanitizePublicStaff(formattedStaff) });
   } catch (error) {
     console.error("❌ GET Staff Error:", error);
     return NextResponse.json(
@@ -403,13 +459,50 @@ export async function PUT(req, { params }) {
     }
 
     // Check if role or position is being changed
-    const newRole = formData.get("role");
-    const newPosition = formData.get("position");
+    const newRole = getFormString(formData, "role", existingStaff.role);
+    const newPosition = getFormString(formData, "position", existingStaff.position || "");
+    const newStaffType = getFormString(formData, "staffType", existingStaff.staffType || "Leadership");
+    const subjectOffered = getFormString(formData, "subjectOffered", existingStaff.subjectOffered || "");
+    const parsedDepartmentId = parseDepartmentId(formData);
+    const hasDepartmentField = formData.has("staffDepartmentId") || formData.has("departmentId");
+    const nextDepartmentId = hasDepartmentField ? parsedDepartmentId : existingStaff.staffDepartmentId;
+    const nextIsTeacher = isTeacherRecord(newRole, newStaffType);
+
+    let linkedDepartment = null;
+    if (nextDepartmentId) {
+      linkedDepartment = await prisma.staffDepartment.findUnique({
+        where: { id: nextDepartmentId },
+      });
+    }
+
+    if (nextIsTeacher) {
+      if (!nextDepartmentId || !linkedDepartment || linkedDepartment.isActive === false) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Teachers must be linked to an existing active department.",
+            authenticated: true,
+          },
+          { status: 400 }
+        );
+      }
+
+      if (!subjectOffered) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Subject offered is required for teacher records.",
+            authenticated: true,
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // 🔹 Restrict updates to leadership profiles only
-    const effectiveRole = newRole || existingStaff.role;
-    const effectivePosition = newPosition || existingStaff.position;
-    if ((newRole || newPosition) && !isAllowedLeadershipRole(effectiveRole, effectivePosition)) {
+    const effectiveRole = nextIsTeacher ? "Teacher" : newRole;
+    const effectivePosition = nextIsTeacher ? "Teacher" : newPosition;
+    if (!nextIsTeacher && (formData.has("role") || formData.has("position")) && !isAllowedLeadershipRole(effectiveRole, effectivePosition)) {
       return NextResponse.json(
         {
           success: false,
@@ -421,7 +514,7 @@ export async function PUT(req, { params }) {
     }
     
     // Validate Deputy Principal has position when role is Deputy Principal
-    if (newRole === "Deputy Principal" && !newPosition) {
+    if (!nextIsTeacher && newRole === "Deputy Principal" && !newPosition) {
       return NextResponse.json(
         { 
           success: false, 
@@ -433,7 +526,7 @@ export async function PUT(req, { params }) {
     }
 
     // Enforce Deputy Principal type (Academics/Admin)
-    if (newRole === "Deputy Principal" && newPosition && !DEPUTY_POSITIONS.has(newPosition)) {
+    if (!nextIsTeacher && newRole === "Deputy Principal" && newPosition && !DEPUTY_POSITIONS.has(newPosition)) {
       return NextResponse.json(
         {
           success: false,
@@ -446,7 +539,7 @@ export async function PUT(req, { params }) {
     }
 
     // If role isn't provided but we're updating a Deputy Principal, still validate the position
-    if (!newRole && existingStaff.role === "Deputy Principal" && newPosition && !DEPUTY_POSITIONS.has(newPosition)) {
+    if (!nextIsTeacher && !formData.has("role") && existingStaff.role === "Deputy Principal" && newPosition && !DEPUTY_POSITIONS.has(newPosition)) {
       return NextResponse.json(
         {
           success: false,
@@ -459,7 +552,7 @@ export async function PUT(req, { params }) {
     }
 
     // Check role limits if role is being changed OR if position is being updated for Deputy Principal
-    if (newRole && newRole !== existingStaff.role) {
+    if (!nextIsTeacher && formData.has("role") && newRole !== existingStaff.role) {
       try {
         await checkRoleLimits(newRole, id, newPosition);
       } catch (error) {
@@ -474,7 +567,7 @@ export async function PUT(req, { params }) {
       }
     } 
     // Special case: Updating Deputy Principal position (e.g., from Academics to Administration)
-    else if (existingStaff.role === "Deputy Principal" && 
+    else if (!nextIsTeacher && existingStaff.role === "Deputy Principal" && 
              newPosition && 
              newPosition !== existingStaff.position) {
       
@@ -512,19 +605,31 @@ export async function PUT(req, { params }) {
     }
 
     // Include ALL fields from your Prisma schema
-    if (formData.get("name")) data.name = formData.get("name");
-    if (formData.get("role")) data.role = formData.get("role");
-    if (formData.get("position")) data.position = formData.get("position");
-    if (formData.get("department")) data.department = formData.get("department");
-    if (formData.get("email")) data.email = formData.get("email");
-    if (formData.get("phone")) data.phone = formData.get("phone");
-    if (formData.get("bio")) data.bio = formData.get("bio");
-    if (formData.get("quote")) data.quote = formData.get("quote");
-    if (formData.get("education")) data.education = formData.get("education");
-    if (formData.get("experience")) data.experience = formData.get("experience");
-    if (formData.get("gender")) data.gender = formData.get("gender");
-    if (formData.get("status")) data.status = formData.get("status");
-    if (formData.get("joinDate")) data.joinDate = formData.get("joinDate");
+    if (formData.has("name")) data.name = getFormString(formData, "name");
+    if (nextIsTeacher) {
+      data.role = "Teacher";
+      data.position = "Teacher";
+      data.staffType = "Teacher";
+      data.staffDepartmentId = nextDepartmentId;
+      data.department = linkedDepartment?.name || getFormString(formData, "department", existingStaff.department || null);
+      data.subjectOffered = subjectOffered;
+    } else {
+      if (formData.has("role")) data.role = newRole;
+      if (formData.has("position")) data.position = newPosition || null;
+      if (formData.has("staffType")) data.staffType = "Leadership";
+      if (hasDepartmentField) data.staffDepartmentId = nextDepartmentId || null;
+      if (formData.has("department")) data.department = getFormString(formData, "department") || linkedDepartment?.name || null;
+      if (formData.has("subjectOffered")) data.subjectOffered = null;
+    }
+    if (formData.has("email")) data.email = getFormString(formData, "email") || null;
+    if (formData.has("phone")) data.phone = getFormString(formData, "phone") || null;
+    if (formData.has("bio")) data.bio = getFormString(formData, "bio") || null;
+    if (formData.has("quote")) data.quote = getFormString(formData, "quote") || null;
+    if (formData.has("education")) data.education = getFormString(formData, "education") || null;
+    if (formData.has("experience")) data.experience = getFormString(formData, "experience") || null;
+    if (formData.has("gender")) data.gender = getFormString(formData, "gender") || "male";
+    if (formData.has("status")) data.status = getFormString(formData, "status") || "active";
+    if (formData.has("joinDate")) data.joinDate = getFormString(formData, "joinDate") || null;
 
     // JSON fields (safe parsing)
     if (formData.get("responsibilities")) {
@@ -609,13 +714,27 @@ export async function PUT(req, { params }) {
     const updatedStaff = await prisma.staff.update({
       where: { id },
       data,
+      include: {
+        staffDepartment: {
+          select: {
+            id: true,
+            name: true,
+            category: true,
+          },
+        },
+      },
     });
+
+    await syncDepartmentStaffCount(existingStaff.staffDepartmentId);
+    if (updatedStaff.staffDepartmentId !== existingStaff.staffDepartmentId) {
+      await syncDepartmentStaffCount(updatedStaff.staffDepartmentId);
+    }
 
     console.log(`✅ Staff member updated by ${auth.user.name}: ${updatedStaff.name} (${updatedStaff.role}${updatedStaff.position ? ' - ' + updatedStaff.position : ''})`);
 
     return NextResponse.json({ 
       success: true, 
-      staff: updatedStaff,
+      staff: formatStaffRecord(updatedStaff),
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -695,6 +814,8 @@ export async function DELETE(req, { params }) {
     await prisma.staff.delete({
       where: { id },
     });
+
+    await syncDepartmentStaffCount(staff.staffDepartmentId);
 
     console.log(`✅ Staff member deleted by ${auth.user.name}: ${staff.name}`);
 

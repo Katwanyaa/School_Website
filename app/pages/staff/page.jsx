@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   FiArrowRight,
@@ -8,6 +8,8 @@ import {
   FiBookOpen,
   FiBriefcase,
   FiChevronDown,
+  FiChevronLeft,
+  FiChevronRight,
   FiFilter,
   FiGrid,
   FiLayers,
@@ -135,6 +137,9 @@ const getDepartmentSearchText = (department) => {
     department?.extra && typeof department.extra === "object"
       ? Object.values(department.extra).flat().join(" ")
       : "";
+  const teacherText = Array.isArray(department?.staff)
+    ? department.staff.map((teacher) => [teacher.name, teacher.subjectOffered, teacher.bio].filter(Boolean).join(" ")).join(" ")
+    : "";
 
   return [
     department?.name,
@@ -142,6 +147,7 @@ const getDepartmentSearchText = (department) => {
     department?.description,
     department?.headName,
     department?.assistantHeadName,
+    teacherText,
     extra,
   ]
     .filter(Boolean)
@@ -396,6 +402,158 @@ const DepartmentCard = ({ department, viewMode }) => {
   );
 };
 
+const getTeacherImage = (teacher) => {
+  if (teacher?.image) return teacher.image;
+  return teacher?.gender === "female" ? "/female.png" : "/male.png";
+};
+
+const TeacherCard = ({ teacher }) => (
+  <article className="snap-start shrink-0 w-[230px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="relative aspect-[4/3] bg-slate-100">
+      <img
+        src={getTeacherImage(teacher)}
+        alt={teacher.name}
+        className="h-full w-full object-cover object-top"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+      {teacher.subjectOffered && (
+        <span className="absolute bottom-3 left-3 right-3 rounded-full bg-white/95 px-3 py-1 text-center text-[10px] font-black uppercase tracking-widest text-emerald-700 shadow">
+          {teacher.subjectOffered}
+        </span>
+      )}
+    </div>
+    <div className="p-4">
+      <h4 className="truncate text-base font-black text-slate-900">{teacher.name}</h4>
+      <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+        Teacher
+      </p>
+      {teacher.bio && (
+        <p className="mt-3 line-clamp-2 text-xs font-medium leading-relaxed text-slate-500">
+          {teacher.bio}
+        </p>
+      )}
+    </div>
+  </article>
+);
+
+const DepartmentTeacherCarousel = ({ department, viewMode }) => {
+  const scrollRef = useRef(null);
+  const teachers = Array.isArray(department.staff) ? department.staff : [];
+  const meta = getCategoryMeta(department.category);
+  const Icon = meta.icon;
+  const href = `/pages/staff/departments/${department.id}`;
+
+  const scrollBy = (direction) => {
+    scrollRef.current?.scrollBy({
+      left: direction * 280,
+      behavior: "smooth",
+    });
+  };
+
+  if (viewMode === "list") {
+    return (
+      <div className="space-y-3">
+        <DepartmentCard department={department} viewMode={viewMode} />
+        {teachers.length > 0 && (
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {teachers.map((teacher) => (
+              <TeacherCard key={teacher.id} teacher={teacher} />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="grid gap-0 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <div className={`relative min-h-[320px] bg-gradient-to-br ${meta.panel}`}>
+          <img
+            src={getDepartmentImage(department)}
+            alt={department.name}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-transparent" />
+          <div className="relative z-10 flex h-full flex-col justify-end p-5 text-white">
+            <span className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-900">
+              <Icon size={12} /> {meta.shortLabel}
+            </span>
+            <h3 className="text-2xl font-black leading-tight tracking-tight">{department.name}</h3>
+            <p className="mt-3 line-clamp-3 text-sm font-medium leading-relaxed text-slate-200">
+              {department.description || "Department profile maintained by the school administration."}
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold">
+              <div className="rounded-xl bg-white/10 p-3 backdrop-blur">
+                <p className="text-[9px] uppercase tracking-widest text-slate-300">HOD</p>
+                <p className="mt-1 truncate">{department.headName || "Not listed"}</p>
+              </div>
+              <div className="rounded-xl bg-white/10 p-3 backdrop-blur">
+                <p className="text-[9px] uppercase tracking-widest text-slate-300">Teachers</p>
+                <p className="mt-1">{teachers.length}</p>
+              </div>
+            </div>
+            <Link
+              href={href}
+              className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-950"
+            >
+              Department <FiArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+
+        <div className="min-w-0 p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Assigned Teachers</p>
+              <h4 className="text-lg font-black tracking-tight text-slate-900">
+                {teachers.length ? `${teachers.length} teacher${teachers.length === 1 ? "" : "s"}` : "No teachers assigned yet"}
+              </h4>
+            </div>
+            {teachers.length > 0 && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => scrollBy(-1)}
+                  className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm"
+                  aria-label={`Previous ${department.name} teachers`}
+                >
+                  <FiChevronLeft size={18} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollBy(1)}
+                  className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm"
+                  aria-label={`Next ${department.name} teachers`}
+                >
+                  <FiChevronRight size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {teachers.length > 0 ? (
+            <div
+              ref={scrollRef}
+              className="flex snap-x gap-4 overflow-x-auto scroll-smooth pb-3"
+            >
+              {teachers.map((teacher) => (
+                <TeacherCard key={teacher.id} teacher={teacher} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex min-h-[250px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+              <p className="max-w-sm text-sm font-semibold leading-relaxed text-slate-500">
+                Teachers uploaded from the dashboard will appear here after they are linked to this department.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+};
+
 const SkeletonGrid = ({ viewMode }) => (
   <div className={viewMode === "grid" ? "grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3" : "space-y-4"}>
     {Array.from({ length: 6 }).map((_, index) => (
@@ -428,7 +586,7 @@ export default function StaffDirectory() {
 
       const [staffResponse, departmentsResponse] = await Promise.all([
         fetch("/api/staff", { cache: "no-store" }),
-        fetch("/api/staff/departments?grouped=1", { cache: "no-store" }),
+        fetch("/api/staff/departments?grouped=1&includeStaff=1", { cache: "no-store" }),
       ]);
 
       if (!staffResponse.ok) {
@@ -754,9 +912,9 @@ export default function StaffDirectory() {
                         title={meta.label}
                         subtitle={`${items.length} department group${items.length === 1 ? "" : "s"}`}
                       />
-                      <div className={viewMode === "grid" ? "grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3" : "space-y-4"}>
+                      <div className="space-y-5">
                         {items.map((department) => (
-                          <DepartmentCard key={department.id} department={department} viewMode={viewMode} />
+                          <DepartmentTeacherCarousel key={department.id} department={department} viewMode={viewMode} />
                         ))}
                       </div>
                     </section>

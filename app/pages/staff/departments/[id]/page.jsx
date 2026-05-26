@@ -49,6 +49,11 @@ const getDepartmentImage = (department) => {
   return department?.image || department?.images?.[0]?.url || "/teachers.png";
 };
 
+const getTeacherImage = (teacher) => {
+  if (teacher?.image) return teacher.image;
+  return teacher?.gender === "female" ? "/female.png" : "/male.png";
+};
+
 const parseExtra = (extra) => {
   if (!extra) return {};
   if (typeof extra === "object") return extra;
@@ -87,6 +92,33 @@ const DetailStat = ({ icon: Icon, label, value }) => (
       </div>
     </div>
   </div>
+);
+
+const TeacherCard = ({ teacher }) => (
+  <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="relative aspect-[4/3] bg-slate-100">
+      <img
+        src={getTeacherImage(teacher)}
+        alt={teacher.name}
+        className="h-full w-full object-cover object-top"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+      {teacher.subjectOffered && (
+        <span className="absolute bottom-3 left-3 right-3 rounded-full bg-white/95 px-3 py-1 text-center text-[10px] font-black uppercase tracking-widest text-emerald-700 shadow">
+          {teacher.subjectOffered}
+        </span>
+      )}
+    </div>
+    <div className="p-4">
+      <h3 className="truncate text-base font-black text-slate-900">{teacher.name}</h3>
+      <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Teacher</p>
+      {teacher.bio && (
+        <p className="mt-3 line-clamp-2 text-xs font-medium leading-relaxed text-slate-500">
+          {teacher.bio}
+        </p>
+      )}
+    </div>
+  </article>
 );
 
 export default function StaffDepartmentDetailPage() {
@@ -160,6 +192,7 @@ export default function StaffDepartmentDetailPage() {
 
   const meta = getCategoryMeta(department.category);
   const Icon = meta.icon;
+  const teachers = Array.isArray(department.staff) ? department.staff : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 text-slate-900">
@@ -231,6 +264,25 @@ export default function StaffDepartmentDetailPage() {
                 </div>
               </section>
             )}
+
+            <section className="mt-8">
+              <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-900">
+                <FiUsers className="text-emerald-600" /> Department Teachers
+              </h2>
+              {teachers.length > 0 ? (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {teachers.map((teacher) => (
+                    <TeacherCard key={teacher.id} teacher={teacher} />
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                  <p className="text-sm font-semibold text-slate-500">
+                    Teachers assigned to this department will appear here after upload.
+                  </p>
+                </div>
+              )}
+            </section>
           </div>
         </article>
       </div>

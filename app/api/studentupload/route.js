@@ -1253,6 +1253,38 @@ const syncPortalAccountSnapshots = async (tx, students) => {
   }
 };
 
+const syncPortalAccountAfterStudentMutation = async (tx, previousStudent, updatedStudent) => {
+  if (!updatedStudent?.admissionNumber) return;
+
+  if (previousStudent?.admissionNumber && previousStudent.admissionNumber !== updatedStudent.admissionNumber) {
+    const [oldAccount, newAccount] = await Promise.all([
+      tx.studentPortalAccount.findUnique({ where: { admissionNumber: previousStudent.admissionNumber } }),
+      tx.studentPortalAccount.findUnique({ where: { admissionNumber: updatedStudent.admissionNumber } })
+    ]);
+
+    if (oldAccount && !newAccount) {
+      await tx.studentPortalAccount.update({
+        where: { admissionNumber: previousStudent.admissionNumber },
+        data: {
+          admissionNumber: updatedStudent.admissionNumber,
+          firstName: updatedStudent.firstName,
+          middleName: updatedStudent.middleName || null,
+          lastName: updatedStudent.lastName,
+          fullName: [updatedStudent.firstName, updatedStudent.middleName, updatedStudent.lastName].filter(Boolean).join(' '),
+          form: updatedStudent.form,
+          stream: updatedStudent.stream || null,
+          email: updatedStudent.email || null,
+          parentPhone: updatedStudent.parentPhone || null,
+          status: 'active',
+        }
+      });
+      return;
+    }
+  }
+
+  await syncPortalAccountSnapshots(tx, [updatedStudent]);
+};
+
 // Additional utility: Find orphaned StudentPortalAccounts (optional cleanup)
 const findOrphanedPortalAccounts = async (tx) => {
   const orphaned = await tx.studentPortalAccount.findMany({
@@ -1342,21 +1374,29 @@ const processStudentUpload = async (tx, {
     const existing = existingMap.get(student.admissionNumber);
     const portalAccount = portalAccountMap.get(student.admissionNumber);
 
+    if (portalAccount) {
+      stats.returningStudentsRecognized++;
+    }
+
     if (!existing) {
       // ============ NEW OR RETURNING STUDENT ============
       // Check if they have a StudentPortalAccount (returning) or not (brand new)
-      if (portalAccount) {
-        stats.returningStudentsRecognized++;
-        console.log(`✅ Recognized returning student: ${student.admissionNumber}`);
-      } else {
+      if (!portalAccount) {
         stats.newAccountsCreated++;
+      } else {
+        console.log(`✅ Recognized returning student: ${student.admissionNumber}`);
       }
       
       createRows.push(toStudentCreateData(student, uploadBatchId, uploadType === 'update' ? targetForm : null));
       return;
     }
 
-    if (uploadType === 'new' && duplicateAction !== 'replace') {
+    const shouldRefreshExisting =
+      uploadType === 'update' ||
+      duplicateAction === 'replace' ||
+      existing.status !== 'active';
+
+    if (uploadType === 'new' && !shouldRefreshExisting) {
       stats.skippedRows++;
       stats.warnings.push(`Row ${student.__rowNumber}: skipped because admission number ${student.admissionNumber} already exists.`);
       return;
@@ -1401,6 +1441,7 @@ const processStudentUpload = async (tx, {
   stats.createdRows = createRows.length;
   stats.updatedRows = updateRows.length;
   stats.validRows = stats.createdRows + stats.updatedRows;
+  stats.returningStudentsRecognized = Math.min(stats.returningStudentsRecognized, stats.validRows);
   stats.createdStudents = createRows;
 
   // ============ SYNC PORTAL ACCOUNTS ============
@@ -1761,7 +1802,7 @@ export async function POST(request) {
       timeout: 180000
     });
 
-    const finalStats = await calculateStatistics({});
+    const finalStats = await calculateStatistics({ status: 'active' });
     await updateCachedStats(finalStats.stats);
 
     return NextResponse.json({
@@ -1871,7 +1912,7 @@ export async function PUT(request) {
         }
       });
 
-      await syncPortalAccountSnapshots(tx, [updatedStudent]);
+      await syncPortalAccountAfterStudentMutation(tx, currentStudent, updatedStudent);
 
       // Update stats if form changed
       if (updateData.form && updateData.form !== currentStudent.form) {
@@ -1902,7 +1943,7 @@ export async function PUT(request) {
     });
 
     // Recalculate to ensure consistency
-    const finalStats = await calculateStatistics({});
+    const finalStats = await calculateStatistics({ status: 'active' });
 
     console.log(`✅ Student updated by ${auth.user.name}: ${result.firstName} ${result.lastName}`);
 
@@ -1987,6 +2028,7 @@ export async function DELETE(request) {
             where: { uploadBatchId: batchId },
             data: {
               status: 'inactive',
+              uploadBatchId: null,
               updatedAt: new Date(),
               
             }
@@ -2020,7 +2062,7 @@ export async function DELETE(request) {
       });
 
       // Recalculate to ensure consistency
-      const finalStats = await calculateStatistics({});
+      const finalStats = await calculateStatistics({ status: 'active' });
 
       console.log(`✅ Batch deleted by ${auth.user.name}: ${result.batch.fileName} (${result.deletedCount} students)`);
 
@@ -2078,7 +2120,7 @@ export async function DELETE(request) {
       });
 
       // Recalculate to ensure consistency
-      const finalStats = await calculateStatistics({});
+      const finalStats = await calculateStatistics({ status: 'active' });
 
       console.log(`✅ Student deleted by ${auth.user.name}: ${result.student.firstName} ${result.student.lastName}`);
 

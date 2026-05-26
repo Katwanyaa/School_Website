@@ -266,6 +266,52 @@ const sanitizePublicStaff = (staff) => {
   return publicStaff;
 };
 
+const getFormString = (formData, key, fallback = "") => {
+  const value = formData.get(key);
+  if (value === null || value === undefined || typeof value !== "string") return fallback;
+  return value.trim();
+};
+
+const parseDepartmentId = (formData) => {
+  const raw = getFormString(formData, "staffDepartmentId") || getFormString(formData, "departmentId");
+  if (!raw) return null;
+  const id = Number(raw);
+  return Number.isFinite(id) && id > 0 ? id : null;
+};
+
+const isTeacherRecord = (role = "", staffType = "") => (
+  role?.toString().trim() === "Teacher" || staffType?.toString().trim() === "Teacher"
+);
+
+const formatStaffRecord = (staff) => {
+  if (!staff) return staff;
+  const departmentName = staff.department || staff.staffDepartment?.name || "";
+
+  return {
+    ...staff,
+    department: departmentName,
+    departmentId: staff.staffDepartmentId || null,
+    staffType: staff.staffType || (staff.role === "Teacher" ? "Teacher" : "Leadership"),
+  };
+};
+
+const syncDepartmentStaffCount = async (departmentId) => {
+  if (!departmentId) return;
+
+  const count = await prisma.staff.count({
+    where: {
+      staffDepartmentId: departmentId,
+      role: "Teacher",
+      status: "active",
+    },
+  });
+
+  await prisma.staffDepartment.update({
+    where: { id: departmentId },
+    data: { staffCount: count },
+  });
+};
+
 // 🔹 Check principal/deputy principal limits
 // 🔹 Enhanced role limits with position-based validation for Deputy Principals
 async function checkRoleLimits(role, staffId = null, position = null) {
@@ -347,11 +393,21 @@ export async function GET(req) {
 
     const staff = await prisma.staff.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        staffDepartment: {
+          select: {
+            id: true,
+            name: true,
+            category: true,
+          },
+        },
+      },
     });
 
+    const formattedStaff = staff.map(formatStaffRecord);
     const visibleStaff = isAdmin
-      ? staff
-      : staff.filter(isLeadershipStaff).map(sanitizePublicStaff);
+      ? formattedStaff
+      : formattedStaff.filter(isLeadershipStaff).map(sanitizePublicStaff);
 
     return NextResponse.json({ success: true, staff: visibleStaff });
   } catch (error) {
@@ -376,19 +432,23 @@ export async function POST(req) {
     const formData = await req.formData();
 
     // Basic fields - Include ALL fields from your Prisma schema
-    const name = formData.get("name");
-    const role = formData.get("role");
-    const position = formData.get("position");
-    const department = formData.get("department");
-    const email = formData.get("email");
-    const phone = formData.get("phone");
-    const bio = formData.get("bio");
-    const quote = formData.get("quote");
-    const education = formData.get("education") || "";
-    const experience = formData.get("experience") || "";
-    const gender = formData.get("gender") || "male";
-    const status = formData.get("status") || "active";
-    const joinDate = formData.get("joinDate") || new Date().toISOString().split('T')[0];
+    const name = getFormString(formData, "name");
+    const staffType = getFormString(formData, "staffType", "Leadership");
+    const role = getFormString(formData, "role", staffType === "Teacher" ? "Teacher" : "");
+    const position = getFormString(formData, "position");
+    const staffDepartmentId = parseDepartmentId(formData);
+    const department = getFormString(formData, "department");
+    const subjectOffered = getFormString(formData, "subjectOffered");
+    const email = getFormString(formData, "email");
+    const phone = getFormString(formData, "phone");
+    const bio = getFormString(formData, "bio");
+    const quote = getFormString(formData, "quote");
+    const education = getFormString(formData, "education");
+    const experience = getFormString(formData, "experience");
+    const gender = getFormString(formData, "gender", "male");
+    const status = getFormString(formData, "status", "active");
+    const joinDate = getFormString(formData, "joinDate", new Date().toISOString().split('T')[0]);
+    const isTeacher = isTeacherRecord(role, staffType);
 
     // 🔹 Validate required fields
     if (!name || !role) {
@@ -402,8 +462,39 @@ export async function POST(req) {
       );
     }
 
-    // 🔹 Restrict uploads to leadership profiles only
-    if (!isAllowedLeadershipRole(role, position)) {
+    let linkedDepartment = null;
+    if (staffDepartmentId) {
+      linkedDepartment = await prisma.staffDepartment.findUnique({
+        where: { id: staffDepartmentId },
+      });
+    }
+
+    if (isTeacher) {
+      if (!staffDepartmentId || !linkedDepartment || linkedDepartment.isActive === false) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Teachers must be linked to an existing active department.",
+            authenticated: true,
+          },
+          { status: 400 }
+        );
+      }
+
+      if (!subjectOffered) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Subject offered is required for teacher records.",
+            authenticated: true,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 🔹 Restrict individual non-teacher profiles to leadership roles only
+    if (!isTeacher && !isAllowedLeadershipRole(role, position)) {
       return NextResponse.json(
         {
           success: false,
@@ -415,7 +506,7 @@ export async function POST(req) {
     }
 
     // 🔹 Validate Deputy Principal has position specified
-    if (role === "Deputy Principal" && !position) {
+    if (!isTeacher && role === "Deputy Principal" && !position) {
       return NextResponse.json(
         { 
           success: false, 
@@ -427,7 +518,7 @@ export async function POST(req) {
     }
 
     // 🔹 Enforce Deputy Principal type (Academics/Admin) for privacy + grouping
-    if (role === "Deputy Principal" && position && !DEPUTY_POSITIONS.has(position)) {
+    if (!isTeacher && role === "Deputy Principal" && position && !DEPUTY_POSITIONS.has(position)) {
       return NextResponse.json(
         {
           success: false,
@@ -441,7 +532,7 @@ export async function POST(req) {
 
     // 🔹 Validate Principal/Deputy Principal limits
     try {
-      await checkRoleLimits(role, null, position);
+      if (!isTeacher) await checkRoleLimits(role, null, position);
     } catch (error) {
       return NextResponse.json(
         { 
@@ -562,9 +653,12 @@ export async function POST(req) {
     const newStaff = await prisma.staff.create({
       data: {
         name,
-        role,
-        position: position || null,
-        department: department || null,
+        role: isTeacher ? "Teacher" : role,
+        position: isTeacher ? "Teacher" : (position || null),
+        department: linkedDepartment?.name || department || null,
+        staffType: isTeacher ? "Teacher" : "Leadership",
+        subjectOffered: isTeacher ? subjectOffered : null,
+        staffDepartmentId,
         email: email || null,
         phone: phone || null,
         bio: bio || null,
@@ -579,14 +673,27 @@ export async function POST(req) {
         expertise,
         achievements,
       },
+      include: {
+        staffDepartment: {
+          select: {
+            id: true,
+            name: true,
+            category: true,
+          },
+        },
+      },
     });
+
+    if (isTeacher) {
+      await syncDepartmentStaffCount(staffDepartmentId);
+    }
 
     console.log(`✅ Staff member created by ${auth.user.name}: ${newStaff.name} (${newStaff.role}${newStaff.position ? ' - ' + newStaff.position : ''})`);
 
     return NextResponse.json(
       { 
         success: true, 
-        staff: newStaff,
+        staff: formatStaffRecord(newStaff),
         timestamp: new Date().toISOString()
       },
       { status: 201 }

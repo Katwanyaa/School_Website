@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 import { prisma } from '../../../libs/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'Katwanyaa-student-secret-key-2024'
 const STUDENT_TOKEN_EXPIRY = '2h';
 const SESSION_MS = 2 * 60 * 60 * 1000;
 const SETUP_TOKEN_EXPIRY = '20m';
+const RESET_TOKEN_MS = 30 * 60 * 1000;
+const SCHOOL_NAME = 'Katwanyaa Senior School';
+const CONTACT_EMAIL = 'katzict@gmail.com';
 
 const json = (body, status = 200, headers = {}) => (
   NextResponse.json(body, { status, headers })
@@ -32,6 +36,65 @@ const getClientInfo = (request) => ({
   ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown',
   userAgent: request.headers.get('user-agent') || 'unknown'
 });
+
+const getBaseUrl = (request) => (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.APP_URL ||
+  new URL(request.url).origin
+).replace(/\/$/, '');
+
+const maskEmail = (email) => {
+  if (!email || !email.includes('@')) return 'registered email';
+  const [name, domain] = email.split('@');
+  return `${name.slice(0, 2)}***@${domain}`;
+};
+
+const createResetTransporter = () => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error('Student password email is not configured. Set EMAIL_USER and EMAIL_PASS.');
+  }
+
+  return nodemailer.createTransport({
+    service: process.env.EMAIL_SERVICE || 'Gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+};
+
+const sendStudentResetEmail = async ({ to, studentName, admissionNumber, resetLink, expiresMinutes }) => {
+  const transporter = createResetTransporter();
+
+  await transporter.sendMail({
+    from: {
+      name: `${SCHOOL_NAME} Portal`,
+      address: process.env.EMAIL_USER
+    },
+    to,
+    subject: `Student Portal Password Reset - ${studentName || admissionNumber}`,
+    text: [
+      `A password reset was requested for ${studentName || 'a student'} (${admissionNumber}).`,
+      `Open this secure link within ${expiresMinutes} minutes: ${resetLink}`,
+      `If you did not request this, contact ${CONTACT_EMAIL}.`
+    ].join('\n\n'),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#0f172a;max-width:620px;margin:0 auto;padding:24px">
+        <h2 style="margin:0 0 12px">${SCHOOL_NAME} Student Portal</h2>
+        <p>A password reset was requested for <strong>${studentName || 'Student'}</strong> (${admissionNumber}).</p>
+        <p>
+          <a href="${resetLink}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700">
+            Reset Student Password
+          </a>
+        </p>
+        <p style="font-size:13px;color:#475569">This link expires in ${expiresMinutes} minutes. If the button does not work, copy this link into your browser:</p>
+        <p style="word-break:break-all;font-size:13px;color:#2563eb">${resetLink}</p>
+        <p style="font-size:13px;color:#64748b">If you did not request this reset, ignore this email or contact ${CONTACT_EMAIL}.</p>
+      </div>
+    `
+  });
+};
 
 const findStudentByName = (student, nameParts) => {
   const dbNames = [
@@ -330,6 +393,20 @@ const handleSetupPassword = async (request, body) => {
     admissionNumber,
     ...decoded.studentSnapshot
   };
+
+  const existingAccount = await prisma.studentPortalAccount.findUnique({
+    where: { admissionNumber }
+  });
+
+  if (existingAccount?.passwordHash) {
+    return json({
+      success: false,
+      error: 'This admission number already has portal credentials. Use Password Login or Forgot Password instead.',
+      isReturningStudent: true,
+      requiresPasswordLogin: true
+    }, 409);
+  }
+
   const passwordHash = await bcrypt.hash(body.newPassword, 12);
 
   // ============ IMPROVED ACCOUNT CREATION/UPDATE ============
@@ -386,7 +463,8 @@ const handlePasswordLogin = async (request, body) => {
     return json({ success: false, error: 'Invalid admission number or password.' }, 401);
   }
 
-  let student = await getStudentByAdmission(admissionNumber);
+  const studentRecord = await getStudentByAdmission(admissionNumber);
+  const student = studentRecord?.status === 'active' ? studentRecord : null;
   
   // ============ PERSISTENT STUDENT RECOGNITION SYSTEM ============
   // IMPROVEMENT: Handle three scenarios for returning students:
@@ -438,7 +516,8 @@ const handlePasswordResetRequest = async (request, body) => {
   const account = await prisma.studentPortalAccount.findUnique({
     where: { admissionNumber }
   });
-  const student = await getStudentByAdmission(admissionNumber);
+  const studentRecord = await getStudentByAdmission(admissionNumber);
+  const student = studentRecord?.status === 'active' ? studentRecord : null;
 
   if (!account?.passwordHash) {
     return json({
@@ -458,30 +537,78 @@ const handlePasswordResetRequest = async (request, body) => {
     }
   }
 
+  const resetEmail = student?.email || account.email || null;
+
+  if (!resetEmail) {
+    return json({
+      success: false,
+      error: 'No email address is registered for this student. Please contact the school office.'
+    }, 404);
+  }
+
   const rawToken = crypto.randomBytes(32).toString('hex');
   const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
   const { ipAddress, userAgent } = getClientInfo(request);
+  const expiresAt = new Date(Date.now() + RESET_TOKEN_MS);
 
-  await prisma.studentPasswordResetRequest.create({
+  await prisma.studentPasswordResetRequest.updateMany({
+    where: {
+      admissionNumber,
+      status: 'pending',
+      usedAt: null
+    },
+    data: {
+      status: 'replaced',
+      resolvedAt: new Date()
+    }
+  });
+
+  const resetRequest = await prisma.studentPasswordResetRequest.create({
     data: {
       admissionNumber,
       requestType,
       fullName: student ? fullNameFromParts(student) : account.fullName,
-      email: student?.email || account.email || null,
-      parentEmail: student?.email || account.email || null,
+      email: account.email || student?.email || null,
+      parentEmail: resetEmail,
       parentPhone: student?.parentPhone || account.parentPhone || null,
       message: String(body.message || '').trim() || null,
       tokenHash,
-      expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+      expiresAt,
       status: 'pending',
       requestedByIp: ipAddress,
       requestedByUserAgent: userAgent
     }
   });
 
+  const resetLink = `${getBaseUrl(request)}/pages/studentresetpassword?token=${rawToken}`;
+
+  try {
+    await sendStudentResetEmail({
+      to: resetEmail,
+      studentName: resetRequest.fullName,
+      admissionNumber,
+      resetLink,
+      expiresMinutes: Math.round(RESET_TOKEN_MS / 60000)
+    });
+  } catch (emailError) {
+    await prisma.studentPasswordResetRequest.update({
+      where: { id: resetRequest.id },
+      data: {
+        status: 'email_failed',
+        adminNote: emailError.message
+      }
+    });
+
+    console.error('Student password reset email error:', emailError);
+    return json({
+      success: false,
+      error: 'Password reset request was created, but the email could not be sent. Please contact the school office.'
+    }, 500);
+  }
+
   return json({
     success: true,
-    message: 'Password help request received. The school office can now send a secure reset link using the registered parent contact.'
+    message: `A secure password reset link has been sent to ${maskEmail(resetEmail)}. It expires in ${Math.round(RESET_TOKEN_MS / 60000)} minutes.`
   });
 };
 
@@ -546,7 +673,8 @@ export async function GET(request) {
       }, 401);
     }
 
-    const student = await getStudentByAdmission(account.admissionNumber);
+    const studentRecord = await getStudentByAdmission(account.admissionNumber);
+    const student = studentRecord?.status === 'active' ? studentRecord : null;
 
     return json({
       success: true,

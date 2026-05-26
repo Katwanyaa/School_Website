@@ -34,8 +34,12 @@ export async function GET(req) {
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     console.log('Verifying token hash:', tokenHash);
 
-    const resetRequest = await prisma.studentPasswordResetRequest.findUnique({
-      where: { tokenHash: tokenHash },
+    const resetRequest = await prisma.studentPasswordResetRequest.findFirst({
+      where: {
+        tokenHash: tokenHash,
+        usedAt: null,
+        status: { in: ['pending', 'email_sent'] },
+      },
     });
 
     if (!resetRequest) {
@@ -121,8 +125,12 @@ export async function POST(req) {
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     console.log('Looking up token hash:', tokenHash);
 
-    const resetRequest = await prisma.studentPasswordResetRequest.findUnique({
-      where: { tokenHash: tokenHash },
+    const resetRequest = await prisma.studentPasswordResetRequest.findFirst({
+      where: {
+        tokenHash: tokenHash,
+        usedAt: null,
+        status: { in: ['pending', 'email_sent'] },
+      },
     });
 
     if (!resetRequest) {

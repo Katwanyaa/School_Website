@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { prisma } from '../../../libs/prisma';
-import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 
 const transporter = nodemailer.createTransport({
@@ -85,7 +84,7 @@ export async function POST(req) {
     });
 
     // Generate token
-    const token = uuidv4();
+    const token = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     const expiresAt = new Date(Date.now() + 3600000); // 1 hour
 
@@ -112,7 +111,6 @@ export async function POST(req) {
     console.log('🔐 Student Password Reset Request -', SCHOOL_NAME);
     console.log('Admission Number:', normalizedAdmissionNumber);
     console.log('Parent Email:', parentEmail);
-    console.log('Reset link:', resetLink);
 
     // Send email to parent
     const emailHtml = `

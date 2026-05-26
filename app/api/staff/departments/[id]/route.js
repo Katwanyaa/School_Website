@@ -163,6 +163,21 @@ const authenticateWriteRequest = (req) => {
 
 const VALID_CATEGORIES = new Set(["CBC", "EIGHT_FOUR_FOUR", "TEACHING", "SUPPORT"]);
 
+const publicTeacherSelect = {
+  id: true,
+  name: true,
+  role: true,
+  position: true,
+  department: true,
+  staffType: true,
+  subjectOffered: true,
+  bio: true,
+  gender: true,
+  image: true,
+  status: true,
+  staffDepartmentId: true,
+};
+
 export async function GET(_req, { params }) {
   try {
     const id = Number(params.id);
@@ -172,13 +187,30 @@ export async function GET(_req, { params }) {
 
     const department = await prisma.staffDepartment.findUnique({
       where: { id },
-      include: { images: { orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] } },
+      include: {
+        images: { orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] },
+        staff: {
+          where: {
+            role: "Teacher",
+            status: "active",
+          },
+          orderBy: [{ name: "asc" }],
+          select: publicTeacherSelect,
+        },
+      },
     });
     if (!department) {
       return NextResponse.json({ success: false, error: "Department not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, department });
+    return NextResponse.json({
+      success: true,
+      department: {
+        ...department,
+        staffCount: department.staff?.length || 0,
+        staff: department.staff || [],
+      },
+    });
   } catch (error) {
     console.error("❌ GET Department Error:", error);
     return NextResponse.json(

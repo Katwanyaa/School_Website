@@ -164,11 +164,27 @@ const authenticateWriteRequest = (req) => {
 
 const VALID_CATEGORIES = new Set(["CBC", "EIGHT_FOUR_FOUR", "TEACHING", "SUPPORT"]);
 
+const publicTeacherSelect = {
+  id: true,
+  name: true,
+  role: true,
+  position: true,
+  department: true,
+  staffType: true,
+  subjectOffered: true,
+  bio: true,
+  gender: true,
+  image: true,
+  status: true,
+  staffDepartmentId: true,
+};
+
 export async function GET(req) {
   try {
     const url = new URL(req.url);
     const category = url.searchParams.get("category");
     const grouped = url.searchParams.get("grouped") === "1";
+    const includeStaff = url.searchParams.get("includeStaff") === "1" || grouped;
     const includeInactive = url.searchParams.get("includeInactive") === "1";
 
     // Only admins can include inactive records
@@ -213,21 +229,37 @@ export async function GET(req) {
       orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
       include: {
         images: { orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] },
+        ...(includeStaff && {
+          staff: {
+            where: {
+              role: "Teacher",
+              status: "active",
+            },
+            orderBy: [{ name: "asc" }],
+            select: publicTeacherSelect,
+          },
+        }),
       },
     });
 
+    const normalizedDepartments = departments.map((department) => ({
+      ...department,
+      staffCount: includeStaff ? department.staff?.length || 0 : department.staffCount,
+      staff: includeStaff ? department.staff || [] : undefined,
+    }));
+
     if (!grouped) {
-      return NextResponse.json({ success: true, departments });
+      return NextResponse.json({ success: true, departments: normalizedDepartments });
     }
 
-    const departmentsByCategory = departments.reduce((acc, dept) => {
+    const departmentsByCategory = normalizedDepartments.reduce((acc, dept) => {
       const key = dept.category;
       if (!acc[key]) acc[key] = [];
       acc[key].push(dept);
       return acc;
     }, {});
 
-    return NextResponse.json({ success: true, departmentsByCategory, departments });
+    return NextResponse.json({ success: true, departmentsByCategory, departments: normalizedDepartments });
   } catch (error) {
     console.error("❌ GET Departments Error:", error);
     return NextResponse.json(
