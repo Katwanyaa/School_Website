@@ -1005,10 +1005,22 @@ export default function StaffDirectory() {
                       title="School Leadership"
                       subtitle="Individual profiles for approved leadership roles"
                     />
-                    <div className={viewMode === "grid" ? "grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3" : "space-y-4"}>
-                      {filteredLeadership.map((staff) => (
-                        <LeadershipCard key={staff.id} staff={staff} viewMode={viewMode} />
-                      ))}
+                    <div className="space-y-6">
+                      {/* Principal Card - Full Width */}
+                      {filteredLeadership[0]?.role?.toLowerCase().includes("principal") && (
+                        <div className="col-span-full">
+                          <LeadershipCard key={filteredLeadership[0].id} staff={filteredLeadership[0]} viewMode="grid" />
+                        </div>
+                      )}
+                      
+                      {/* Other Leadership - Grid */}
+                      {filteredLeadership.length > 1 && (
+                        <div className={viewMode === "grid" ? "grid grid-cols-1 gap-5 sm:grid-cols-2" : "space-y-4"}>
+                          {filteredLeadership.slice(1).map((staff) => (
+                            <LeadershipCard key={staff.id} staff={staff} viewMode={viewMode} />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </section>
                 )}
