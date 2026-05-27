@@ -316,12 +316,27 @@ const router = useRouter();
   // Get current fee items based on active tab
   const getCurrentFeeItems = () => {
     if (!documentData) return [];
-    
+
+    const buildPlaceholder = (amount, label) => {
+      if (!amount || amount <= 0) return [];
+      return [{
+        id: `${label.toLowerCase().replace(/\s+/g, '-')}-annual`,
+        name: `${label} Annual Fees`,
+        amount,
+        description: `Total annual fee amount for ${label.toLowerCase()}`,
+        optional: false
+      }];
+    };
+
     switch(activeTab) {
-      case 'day':
-        return documentData.feesDayDistributionJson || [];
-      case 'boarding':
-        return documentData.feesBoardingDistributionJson || [];
+      case 'day': {
+        const items = documentData.feesDayDistributionJson || [];
+        return items.length > 0 ? items : buildPlaceholder(documentData.feesDayAnnualAmount || 0, 'Day Fees');
+      }
+      case 'boarding': {
+        const items = documentData.feesBoardingDistributionJson || [];
+        return items.length > 0 ? items : buildPlaceholder(documentData.feesBoardingAnnualAmount || 0, 'Boarding Fees');
+      }
       case 'admission':
         return documentData.admissionFeeDistribution || [];
       default:
@@ -331,9 +346,20 @@ const router = useRouter();
 
   // Get total amount for current tab
   const getCurrentTotal = () => {
-    const items = getCurrentFeeItems();
-    return items.reduce((sum, item) => sum + (item.amount || 0), 0);
+    if (!documentData) return 0;
+
+    switch(activeTab) {
+      case 'day':
+        return documentData.feesDayAnnualAmount || (documentData.feesDayDistributionJson || []).reduce((sum, item) => sum + (item.amount || 0), 0);
+      case 'boarding':
+        return documentData.feesBoardingAnnualAmount || (documentData.feesBoardingDistributionJson || []).reduce((sum, item) => sum + (item.amount || 0), 0);
+      case 'admission':
+        return (documentData.admissionFeeDistribution || []).reduce((sum, item) => sum + (item.amount || 0), 0);
+      default:
+        return 0;
+    }
   };
+
 
   // Get PDF info for current tab
   const getCurrentPDFInfo = () => {
