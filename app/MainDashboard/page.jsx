@@ -14,6 +14,7 @@ import {
   FiUserPlus,
   FiImage,
   FiShield,
+  FiKey,
   FiMessageCircle,
   FiInfo,
   FiGrid,
@@ -52,6 +53,7 @@ import ApplicationsManager from '../components/applications/page';
 import Resources from '../components/resources/page';
 import Careers from "../components/career/page";
 import Student from "../components/student/page";
+import StudentPasswordRequests from "../components/passwordrequests/page";
 import Fees from "../components/fees/page";
 import SchoolDocs from "../components/schooldocuments/page";
 import SMSManager from "../components/sms/page";
@@ -895,6 +897,8 @@ const handleLogout = () => {
         return <EmailManager />;
       case 'student':
         return <Student />;  
+      case 'student-passwords':
+        return <StudentPasswordRequests />;
       case 'fees':
         return <Fees />;
       case 'admins-profile':
@@ -965,6 +969,12 @@ const handleLogout = () => {
       label: 'Student Records',
       icon: FiInfo,
       badge: 'cyan'
+    },
+    {
+      id: 'student-passwords',
+      label: 'Portal Passwords',
+      icon: FiKey,
+      badge: 'emerald'
     },
     {
       id: 'fees',
