@@ -285,7 +285,7 @@ const isTeacherRecord = (role = "", staffType = "") => (
 
 const formatStaffRecord = (staff) => {
   if (!staff) return staff;
-  const departmentName = staff.department || staff.staffDepartment?.name || "";
+  const departmentName = staff.staffDepartment?.name || staff.department || "";
 
   return {
     ...staff,

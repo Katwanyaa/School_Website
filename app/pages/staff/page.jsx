@@ -155,38 +155,76 @@ const getImageSrc = (staff) => {
   return '/images/default-staff.jpg';
 };
 
-const getStaffHierarchy = (position) => {
-  if (!position) return 'teaching';
-  
+const getTeacherImage = (teacher) => {
+  if (teacher?.image) return teacher.image;
+  return teacher?.gender === 'female' ? '/female.png' : '/male.png';
+};
+
+const getDepartmentTeachers = (department) =>
+  Array.isArray(department?.staff) ? department.staff : [];
+
+const departmentSearchText = (department) => {
+  const teachers = getDepartmentTeachers(department);
+  return [
+    department?.name,
+    department?.description,
+    department?.headName,
+    department?.assistantHeadName,
+    department?.category,
+    ...teachers.flatMap((teacher) => [
+      teacher?.name,
+      teacher?.subjectOffered,
+      teacher?.department,
+    ]),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+};
+
+const getStaffHierarchy = (staffOrPosition) => {
+  const role =
+    typeof staffOrPosition === 'object'
+      ? staffOrPosition?.role || ''
+      : '';
+  const position =
+    typeof staffOrPosition === 'object'
+      ? staffOrPosition?.position || ''
+      : staffOrPosition || '';
+  const combined = `${role} ${position}`.toLowerCase();
   const positionLower = position.toLowerCase();
-  if (positionLower.includes('senior teacher')) {
-    return 'teaching';
-  }
+
   if (
-    (positionLower.includes('principal') || positionLower.includes('deputy principal')) &&
-    !positionLower.includes('senior') &&
-    !positionLower.includes('head')
+    combined.includes('principal') ||
+    combined.includes('deputy principal') ||
+    combined.includes('senior teacher') ||
+    combined.includes('head of department') ||
+    combined.includes('assistant head of department') ||
+    /\bhod\b/.test(combined) ||
+    /\bahod\b/.test(combined)
   ) {
     return 'leadership';
-  } else if (
+  }
+
+  if (!positionLower && role.toLowerCase().includes('teacher')) return 'teaching';
+
+  if (
     positionLower.includes('teacher') ||
     positionLower.includes('lecturer') ||
-    positionLower.includes('tutor') ||
-    positionLower.includes('senior') ||
-    positionLower.includes('head')
+    positionLower.includes('tutor')
   ) {
     return 'teaching';
-  } else {
-    return 'support';
   }
+
+  return 'support';
 };
 
 const sortStaffByHierarchy = (staff) => {
   const hierarchyOrder = { leadership: 1, teaching: 2, support: 3 };
   
   return [...staff].sort((a, b) => {
-    const aHierarchy = getStaffHierarchy(a.position);
-    const bHierarchy = getStaffHierarchy(b.position);
+    const aHierarchy = getStaffHierarchy(a);
+    const bHierarchy = getStaffHierarchy(b);
     
     if (hierarchyOrder[aHierarchy] !== hierarchyOrder[bHierarchy]) {
       return hierarchyOrder[aHierarchy] - hierarchyOrder[bHierarchy];
@@ -283,7 +321,7 @@ export default function StaffDirectory() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleContactClick = (staff) => {
-    if (getStaffHierarchy(staff?.position) === 'leadership') return;
+    if (getStaffHierarchy(staff) === 'leadership') return;
     setSelectedStaff(staff);
     setConsultForm((previous) => ({
       ...previous,
@@ -367,7 +405,9 @@ export default function StaffDirectory() {
           role: staff.role,
           position: staff.position || staff.role || '',
           department: staff.department || 'Administration',
-          departmentId: (staff.department || 'Administration').toLowerCase().replace(/\s+/g, '-'),
+          departmentId: staff.departmentId || staff.staffDepartmentId || (staff.department || 'Administration').toLowerCase().replace(/\s+/g, '-'),
+          staffType: staff.staffType || '',
+          subjectOffered: staff.subjectOffered || '',
           email: staff.email || '',
           phone: staff.phone || '',
           image: staff.image,
@@ -425,16 +465,20 @@ export default function StaffDirectory() {
   }
 
   const filteredStaff = useMemo(() => {
-    return staffData.filter(staff => {
-      const searchLower = searchQuery.toLowerCase();
-      const matchesSearch = 
-        staff.name.toLowerCase().includes(searchLower) ||
-        staff.role.toLowerCase().includes(searchLower) ||
-        (staff.position || '').toLowerCase().includes(searchLower) ||
-        (staff.bio && staff.bio.toLowerCase().includes(searchLower)) ||
-        staff.expertise.some(exp => exp.toLowerCase().includes(searchLower));
+    const searchLower = searchQuery.trim().toLowerCase();
 
-      const staffHierarchy = getStaffHierarchy(staff.position);
+    return staffData.filter(staff => {
+      const matchesSearch = 
+        !searchLower ||
+        (staff.name || '').toLowerCase().includes(searchLower) ||
+        (staff.role || '').toLowerCase().includes(searchLower) ||
+        (staff.position || '').toLowerCase().includes(searchLower) ||
+        (staff.department || '').toLowerCase().includes(searchLower) ||
+        (staff.subjectOffered || '').toLowerCase().includes(searchLower) ||
+        (staff.bio || '').toLowerCase().includes(searchLower) ||
+        staff.expertise.some(exp => (exp || '').toLowerCase().includes(searchLower));
+
+      const staffHierarchy = getStaffHierarchy(staff);
       const matchesHierarchy = selectedHierarchy === 'all' || selectedHierarchy === staffHierarchy;
 
       return matchesSearch && matchesHierarchy;
@@ -442,9 +486,9 @@ export default function StaffDirectory() {
   }, [staffData, searchQuery, selectedHierarchy]);
 
   const staffByHierarchy = useMemo(() => {
-    const leadership = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'leadership');
-    const teaching = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'teaching');
-    const support = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'support');
+    const leadership = filteredStaff.filter(staff => getStaffHierarchy(staff) === 'leadership');
+    const teaching = filteredStaff.filter(staff => getStaffHierarchy(staff) === 'teaching');
+    const support = filteredStaff.filter(staff => getStaffHierarchy(staff) === 'support');
     
     // Sort leadership with principal first
     const sortedLeadership = [...leadership].sort((a, b) => {
@@ -467,6 +511,28 @@ export default function StaffDirectory() {
       support: [...support].sort((a, b) => (a.name || '').localeCompare(b.name || ''))
     };
   }, [filteredStaff]);
+
+  const filteredDepartmentsByCategory = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return Object.entries(departmentsByCategory).reduce((acc, [category, departments]) => {
+      acc[category] = (departments || []).filter((department) => {
+        if (!query) return true;
+        return departmentSearchText(department).includes(query);
+      });
+      return acc;
+    }, {
+      CBC: [],
+      EIGHT_FOUR_FOUR: [],
+      TEACHING: [],
+      SUPPORT: [],
+    });
+  }, [departmentsByCategory, searchQuery]);
+
+  const departmentResultCount = Object.values(filteredDepartmentsByCategory)
+    .reduce((sum, departments) => sum + (departments?.length || 0), 0);
+  const totalDepartmentCount = Object.values(departmentsByCategory)
+    .reduce((sum, departments) => sum + (departments?.length || 0), 0);
 
   const totalPages = Math.ceil(filteredStaff.length / ITEMS_PER_PAGE);
   const paginatedStaff = useMemo(() => {
@@ -660,10 +726,7 @@ export default function StaffDirectory() {
                   <FiUsers className="h-5 w-5 text-[#38bdf8]" />
                 </div>
                 <p className="text-3xl font-black text-white">
-                  {(departmentsByCategory.CBC?.length || 0) +
-                    (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
-                    (departmentsByCategory.TEACHING?.length || 0) +
-                    (departmentsByCategory.SUPPORT?.length || 0)}
+                  {totalDepartmentCount}
                 </p>
                 <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/55">
                   Departments
@@ -702,10 +765,7 @@ export default function StaffDirectory() {
             Icon: FiUsers,
             count:
               staffByHierarchy.leadership.length +
-              (departmentsByCategory.CBC?.length || 0) +
-              (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
-              (departmentsByCategory.TEACHING?.length || 0) +
-              (departmentsByCategory.SUPPORT?.length || 0),
+              departmentResultCount,
           },
           {
             key: 'leadership',
@@ -720,16 +780,16 @@ export default function StaffDirectory() {
             shortLabel: 'Teach',
             Icon: FiBookOpen,
             count:
-              (departmentsByCategory.CBC?.length || 0) +
-              (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
-              (departmentsByCategory.TEACHING?.length || 0),
+              (filteredDepartmentsByCategory.CBC?.length || 0) +
+              (filteredDepartmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
+              (filteredDepartmentsByCategory.TEACHING?.length || 0),
           },
           {
             key: 'support',
             label: 'Support Staff',
             shortLabel: 'Support',
             Icon: FiSettings,
-            count: departmentsByCategory.SUPPORT?.length || 0,
+            count: filteredDepartmentsByCategory.SUPPORT?.length || 0,
           },
         ].map((item) => {
           const isActive = selectedHierarchy === item.key;
@@ -848,10 +908,7 @@ export default function StaffDirectory() {
 
             <div className="rounded-2xl bg-[#38bdf8] p-4 text-[#071527]">
               <p className="text-2xl font-black">
-                {(departmentsByCategory.CBC?.length || 0) +
-                  (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
-                  (departmentsByCategory.TEACHING?.length || 0) +
-                  (departmentsByCategory.SUPPORT?.length || 0)}
+                {departmentResultCount}
               </p>
               <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#071527]/60">
                 Departments
@@ -869,7 +926,7 @@ export default function StaffDirectory() {
         </p>
       </div>
     ) : staffByHierarchy.leadership.length > 0 ||
-      Object.values(departmentsByCategory).some((d) => d.length > 0) ? (
+      Object.values(filteredDepartmentsByCategory).some((d) => d.length > 0) ? (
       <div className="space-y-12">
         {/* LEADERSHIP SECTION */}
         {(selectedHierarchy === 'all' || selectedHierarchy === 'leadership') && (
@@ -965,7 +1022,7 @@ export default function StaffDirectory() {
                             )}
 
                             <Link
-                              href={`/pages/Staff/${principalStaff.id}/${generateSlug(
+                              href={`/pages/staff/${principalStaff.id}/${generateSlug(
                                 principalStaff.name,
                                 principalStaff.id
                               )}`}
@@ -1017,7 +1074,7 @@ export default function StaffDirectory() {
                               </p>
 
                               <Link
-                                href={`/pages/Staff/${staff.id}/${generateSlug(
+                                href={`/pages/staff/${staff.id}/${generateSlug(
                                   staff.name,
                                   staff.id
                                 )}`}
@@ -1043,10 +1100,10 @@ export default function StaffDirectory() {
           selectedHierarchy === 'support') && (
           <section className="space-y-10">
             {[
-              ['CBC', departmentsByCategory.CBC],
-              ['EIGHT_FOUR_FOUR', departmentsByCategory.EIGHT_FOUR_FOUR],
-              ['TEACHING', departmentsByCategory.TEACHING],
-              ['SUPPORT', departmentsByCategory.SUPPORT],
+              ['CBC', filteredDepartmentsByCategory.CBC],
+              ['EIGHT_FOUR_FOUR', filteredDepartmentsByCategory.EIGHT_FOUR_FOUR],
+              ['TEACHING', filteredDepartmentsByCategory.TEACHING],
+              ['SUPPORT', filteredDepartmentsByCategory.SUPPORT],
             ].map(([category, depts]) =>
               depts && depts.length > 0 ? (
                 <div key={category}>
@@ -1075,42 +1132,73 @@ export default function StaffDirectory() {
                   </div>
 
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-                    {depts.map((dept) => (
-                      <div
-                        key={dept.id}
-                        className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-[#38bdf8]/70 hover:shadow-xl"
-                      >
-                        <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-slate-50 transition group-hover:bg-[#38bdf8]/20" />
+                    {depts.map((dept) => {
+                      const teachers = getDepartmentTeachers(dept);
+                      const teacherCount = Number(dept.staffCount) || teachers.length;
 
-                        <div className="relative z-10">
-                          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#071527] text-white shadow-md">
-                            <FiBookOpen size={18} className="text-[#38bdf8]" />
-                          </div>
+                      return (
+                        <Link
+                          key={dept.id}
+                          href={`/pages/staff/departments/${dept.id}`}
+                          className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-[#38bdf8]/70 hover:shadow-xl"
+                        >
+                          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-slate-50 transition group-hover:bg-[#38bdf8]/20" />
 
-                          <h3 className="text-lg font-black leading-tight text-[#071527]">
-                            {dept.name}
-                          </h3>
+                          <div className="relative z-10">
+                            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#071527] text-white shadow-md">
+                              <FiBookOpen size={18} className="text-[#38bdf8]" />
+                            </div>
 
-                          {dept.description && (
-                            <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
-                              {dept.description}
-                            </p>
-                          )}
+                            <h3 className="text-lg font-black leading-tight text-[#071527]">
+                              {dept.name}
+                            </h3>
 
-                          <div className="mt-5 flex flex-wrap gap-2">
-                            {dept.headName && (
-                              <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black text-blue-700">
-                                HOD: {dept.headName}
-                              </span>
+                            {dept.description && (
+                              <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
+                                {dept.description}
+                              </p>
                             )}
 
-                            <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-600">
-                              {dept.staffCount || 0} staff
+                            <div className="mt-5 flex flex-wrap gap-2">
+                              {dept.headName && (
+                                <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black text-blue-700">
+                                  HOD: {dept.headName}
+                                </span>
+                              )}
+
+                              <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-600">
+                                {teacherCount} {teacherCount === 1 ? 'teacher' : 'teachers'}
+                              </span>
+                            </div>
+
+                            {teachers.length > 0 && (
+                              <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex -space-x-2">
+                                    {teachers.slice(0, 4).map((teacher) => (
+                                      <img
+                                        key={teacher.id}
+                                        src={getTeacherImage(teacher)}
+                                        alt={teacher.name}
+                                        className="h-8 w-8 rounded-full border-2 border-white object-cover object-top"
+                                      />
+                                    ))}
+                                  </div>
+                                  <p className="min-w-0 text-xs font-bold text-slate-600">
+                                    {teachers.slice(0, 2).map((teacher) => teacher.name).join(', ')}
+                                    {teachers.length > 2 ? ` +${teachers.length - 2} more` : ''}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
+                            <span className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#1d4ed8]">
+                              View teachers <FiChevronRight size={13} />
                             </span>
                           </div>
-                        </div>
-                      </div>
-                    ))}
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               ) : null
@@ -1135,7 +1223,7 @@ export default function StaffDirectory() {
               <span className="text-[10px] font-black text-blue-100/70 uppercase tracking-[0.2em]">Katwanyaa Senior School</span>
             </div>
             <p className="text-[10px] text-blue-100/45">
-              Committed to Excellence &bull; Staff Directory &bull; &copy; {new Date().getFullYear()}
+              Education is light &bull; Staff Directory &bull; &copy; {new Date().getFullYear()}
             </p>
           </div>
         </div>

@@ -2010,7 +2010,7 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!hasDepartmentImage) {
-      setImageError('Department image is required. Upload at least one Matungulu Girls department photo.');
+      setImageError('Department image is required. Upload at least one Katwanyaa department photo.');
       return;
     }
 
@@ -2184,7 +2184,7 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
                     onChange={(event) => handleImageChange(event.target.files)}
                     className="w-full text-sm text-slate-500 file:mr-3 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-bold file:text-blue-700"
                   />
-                  <p className="mt-2 text-xs font-semibold text-slate-500">Required. Upload real Matungulu Girls department images. Each image must be under 3 MB.</p>
+                  <p className="mt-2 text-xs font-semibold text-slate-500">Required. Upload real Katwanyaa department images. Each image must be under 3 MB.</p>
                   {imageError && <p className="mt-2 text-xs font-bold text-red-600">{imageError}</p>}
                 </div>
               </div>
@@ -2289,7 +2289,7 @@ function StaffDepartmentManager({ showNotification }) {
       if (isRefresh) setRefreshing(true);
       else setLoading(true);
 
-      const response = await fetch('/api/staff/departments?includeInactive=1', {
+      const response = await fetch('/api/staff/departments?includeInactive=1&includeStaff=1', {
         headers: getDepartmentAuthHeaders()
       });
       const data = await response.json();
@@ -2379,7 +2379,11 @@ function StaffDepartmentManager({ showNotification }) {
       department.description,
       department.headName,
       department.assistantHeadName,
-      department.category
+      department.category,
+      ...(department.staff || []).flatMap((teacher) => [
+        teacher?.name,
+        teacher?.subjectOffered,
+      ])
     ].filter(Boolean).join(' ').toLowerCase().includes(query);
     return matchesCategory && matchesSearch;
   });
@@ -2466,6 +2470,7 @@ function StaffDepartmentManager({ showNotification }) {
           {filteredDepartments.map((department) => {
             const categoryInfo = STAFF_DEPARTMENT_CATEGORIES.find((item) => item.value === department.category) || STAFF_DEPARTMENT_CATEGORIES[2];
             const departmentImage = getDepartmentImage(department);
+            const teachers = Array.isArray(department.staff) ? department.staff : [];
             return (
               <article key={department.id} className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50">
                 {departmentImage ? (
@@ -2503,6 +2508,35 @@ function StaffDepartmentManager({ showNotification }) {
                       <p className="font-black uppercase tracking-widest text-slate-400">AHOD</p>
                       <p className="mt-1 truncate font-bold text-slate-800">{department.assistantHeadName || 'Not set'}</p>
                     </div>
+                  </div>
+                  <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      Assigned Teachers
+                    </p>
+                    {teachers.length > 0 ? (
+                      <div className="mt-3 space-y-2">
+                        {teachers.slice(0, 4).map((teacher) => (
+                          <div key={teacher.id} className="flex items-center gap-2 rounded-xl bg-white p-2">
+                            <img
+                              src={teacher.image || (teacher.gender === 'female' ? '/female.png' : '/male.png')}
+                              alt={teacher.name}
+                              className="h-8 w-8 rounded-full object-cover object-top"
+                            />
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-black text-slate-800">{teacher.name}</p>
+                              <p className="truncate text-[10px] font-bold text-slate-400">{teacher.subjectOffered || 'Subject not set'}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {teachers.length > 4 && (
+                          <p className="text-xs font-bold text-slate-500">+{teachers.length - 4} more teachers</p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-xs font-semibold text-slate-500">
+                        No teachers are mapped to this department yet.
+                      </p>
+                    )}
                   </div>
                   <div className="mt-5 flex gap-2">
                     <button
@@ -3245,121 +3279,67 @@ const handleSubmit = async (formData, id) => {
   <StaffDepartmentManager showNotification={showNotification} />
 ) : (
 <>
-{/* --- ENLARGED SEARCH & FILTER ENGINE --- */}
-<div className="bg-gradient-to-br from-white via-gray-50/30 to-white rounded-[2.5rem] p-8 shadow-2xl shadow-gray-200/50 border border-gray-100/80 backdrop-blur-sm mb-8 transition-all duration-500 hover:shadow-3xl">
-  
-  {/* Animated background accent */}
-  <div className="absolute inset-0 overflow-hidden rounded-[2.5rem] pointer-events-none">
-    <div className="absolute -top-20 -right-20 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl animate-pulse" />
-    <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+<div className="mb-8 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+  <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p className="text-xs font-black uppercase tracking-widest text-slate-900">Search Staff</p>
+      <p className="text-sm text-slate-500">Use one search box and two simple filters.</p>
+    </div>
+    <p className="text-xs font-bold text-slate-500">
+      {filteredStaff.length} of {staff.length} shown
+    </p>
   </div>
 
-<div className="relative z-10 flex flex-col gap-6">
-  {/* Clean Dark Header */}
-  <div className="flex items-center justify-between px-2">
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2">
-        <div className="w-2 h-8 bg-black rounded-full" />
-        <div className="w-1.5 h-6 bg-gray-300 rounded-full" />
-      </div>
-
-      <div className="space-y-1">
-        <span className="text-[11px] font-black text-black uppercase tracking-[0.3em]">
-          Filter Engine & Search
-        </span>
-
-        <p className="text-[10px] text-gray-500 font-medium tracking-wide">
-          Refine your staff directory results
-        </p>
-      </div>
-    </div>
-
-    <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-gray-200">
-      <div className="w-1.5 h-1.5 bg-black rounded-full" />
-
-      <span className="text-[9px] font-black text-black uppercase tracking-wider">
-        Live Results
-      </span>
-    </div>
-  </div>
-
-  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-    {/* Search Bar */}
-    <div className="lg:col-span-6 relative group">
-      <div className="absolute left-6 top-1/2 -translate-y-1/2 z-10">
-        <FiSearch className="text-2xl text-gray-400 transition-all duration-300" />
-      </div>
-
+  <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_220px_190px_auto]">
+    <div className="relative">
+      <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
       <input
         type="text"
-        placeholder="Search by name, department, subject or expertise..."
+        placeholder="Search name, department, or subject"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full pl-16 pr-8 py-6 bg-white border-2 border-gray-200 rounded-2xl text-base font-semibold placeholder:text-gray-400 focus:border-black transition-all duration-300 outline-none shadow-sm"
+        className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm font-semibold outline-none focus:border-slate-900 focus:bg-white"
       />
     </div>
 
-    {/* Department Filter */}
-    <div className="lg:col-span-3 relative">
-      <label className="absolute -top-3 left-5 px-2.5 bg-white text-[9px] font-black text-gray-500 uppercase tracking-widest z-10">
-        Department
-      </label>
+    <select
+      value={selectedDepartment}
+      onChange={(e) => setSelectedDepartment(e.target.value)}
+      className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-slate-900 focus:bg-white"
+    >
+      <option value="all">All Departments</option>
+      {departments.map((dept) => (
+        <option key={dept} value={dept}>
+          {dept}
+        </option>
+      ))}
+    </select>
 
-      <select
-        value={selectedDepartment}
-        onChange={(e) => setSelectedDepartment(e.target.value)}
-        className="w-full px-6 py-6 bg-white border-2 border-gray-200 rounded-2xl text-xs font-black uppercase tracking-wider cursor-pointer appearance-none outline-none shadow-sm focus:border-black"
-      >
-        <option value="all">All Departments</option>
+    <select
+      value={selectedRole}
+      onChange={(e) => setSelectedRole(e.target.value)}
+      className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-slate-900 focus:bg-white"
+    >
+      <option value="all">All Roles</option>
+      {roles.map((role) => (
+        <option key={role} value={role}>
+          {role}
+        </option>
+      ))}
+    </select>
 
-        {departments.map((dept) => (
-          <option key={dept} value={dept}>
-            {dept}
-          </option>
-        ))}
-      </select>
-
-      <FiChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
-    </div>
-
-    {/* Role Filter */}
-    <div className="lg:col-span-3 relative">
-      <label className="absolute -top-3 left-5 px-2.5 bg-white text-[9px] font-black text-gray-500 uppercase tracking-widest z-10">
-        Staff Role
-      </label>
-
-      <select
-        value={selectedRole}
-        onChange={(e) => setSelectedRole(e.target.value)}
-        className="w-full px-6 py-6 bg-white border-2 border-gray-200 rounded-2xl text-xs font-black uppercase tracking-wider cursor-pointer appearance-none outline-none shadow-sm focus:border-black"
-      >
-        <option value="all">All Roles</option>
-
-        {roles.map((role) => (
-          <option key={role} value={role}>
-            {role}
-          </option>
-        ))}
-      </select>
-
-      <FiChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
-    </div>
-
-    {/* Reset Section */}
-    <div className="lg:col-span-12 pt-2">
-      <button
-        onClick={() => {
-          setSearchTerm('');
-          setSelectedDepartment('all');
-          setSelectedRole('all');
-        }}
-        className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-black"
-      >
-        Reset Filters
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={() => {
+        setSearchTerm('');
+        setSelectedDepartment('all');
+        setSelectedRole('all');
+      }}
+      className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-700 hover:bg-slate-50"
+    >
+      Clear
+    </button>
   </div>
-</div>
 </div>
 
 {stats && (

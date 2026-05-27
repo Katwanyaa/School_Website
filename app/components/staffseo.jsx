@@ -28,7 +28,7 @@ import { FaGraduationCap, FaUserTie, FaWhatsapp, FaFacebook, FaInstagram } from 
 export default function StaffProfilePage() {
   const params = useParams();
   const router = useRouter();
-  const { id } = params;
+  const { id, slug } = params;
   
   const [staff, setStaff] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -182,7 +182,7 @@ export default function StaffProfilePage() {
       `Experienced educator specializing in ${staff.expertise?.slice(0, 3).join(', ') || 'education'}. ` +
       `View leadership profile, qualifications, and responsibilities.`;
     
-    const profileUrl = `https://katwanyaasenior.school/pages/staff/${id}`;
+    const profileUrl = `https://katwanyaasenior.school/pages/staff/${id}${slug ? `/${slug}` : ''}`;
     const imageUrl = staff.image?.startsWith('http') ? staff.image : `https://katwanyaasenior.school${staff.image}`;
     
     return (
@@ -556,16 +556,16 @@ export default function StaffProfilePage() {
             <div className="relative px-4 sm:px-5 lg:px-8 pb-6 sm:pb-7 lg:pb-10">
               
               {/* Profile Image - Dramatic Overlap with responsive sizing */}
-              <div className="relative -mt-10 sm:-mt-12 lg:-mt-16 mb-4 sm:mb-5 lg:mb-8 flex flex-wrap items-end justify-between gap-4">
-                <div className="relative flex items-center gap-3 sm:gap-4">
+              <div className="relative -mt-14 sm:-mt-16 lg:-mt-24 mb-6 sm:mb-8 lg:mb-10 flex flex-wrap items-end justify-between gap-5">
+                <div className="relative flex items-end gap-4 sm:gap-6">
                   <div className="relative shrink-0">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-lg sm:rounded-xl lg:rounded-2xl border-2 sm:border-3 lg:border-4 border-white shadow-lg sm:shadow-xl lg:shadow-2xl overflow-hidden bg-white">
+                    <div className="w-24 h-28 sm:w-32 sm:h-36 lg:w-56 lg:h-64 rounded-xl sm:rounded-2xl lg:rounded-3xl border-2 sm:border-4 border-white shadow-lg sm:shadow-xl lg:shadow-2xl overflow-hidden bg-white">
                       <Image
                         src={staff.image || '/male.png'}
                         alt={staff.name}
-                        width={112}
-                        height={112}
-                        className="w-full h-full object-cover"
+                        width={320}
+                        height={384}
+                        className="w-full h-full object-cover object-top"
                         priority
                       />
                     </div>
@@ -579,8 +579,8 @@ export default function StaffProfilePage() {
                   </div>
                   
                   {/* Mobile: Name next to image */}
-                  <div className="lg:hidden">
-                    <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
+                  <div className="lg:hidden pb-1">
+                    <h1 className="text-lg sm:text-2xl font-bold text-gray-900 leading-tight">
                       {staff.name}
                     </h1>
                     <p className="text-xs sm:text-sm text-blue-600 font-medium">{staff.position}</p>

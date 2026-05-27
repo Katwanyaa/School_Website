@@ -20,7 +20,7 @@ try {
 }
 
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const { id, slug } = params;
   
   // Find staff from local data - this works at build time
   const staff = STAFF_DATA.find(s => s.id === id);
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }) {
       : staff.image.startsWith('/')
         ? `${baseUrl}${staff.image}`
         : `${baseUrl}/images/staff/${staff.image}`
-    : `${baseUrl}//seo/katz.png`;
+    : `${baseUrl}/seo/katz.png`;
 
   return {
     title,
@@ -94,7 +94,7 @@ export async function generateMetadata({ params }) {
       follow: true,
     },
     alternates: {
-      canonical: `${baseUrl}/staff/${id}`,
+      canonical: `${baseUrl}/pages/staff/${id}${slug ? `/${slug}` : ''}`,
     }
   };
 }

@@ -178,6 +178,18 @@ const publicTeacherSelect = {
   staffDepartmentId: true,
 };
 
+const mergeDepartmentTeachers = (linkedTeachers = [], legacyTeachers = []) => {
+  const seen = new Set();
+
+  return [...linkedTeachers, ...legacyTeachers]
+    .filter((teacher) => {
+      if (!teacher?.id || seen.has(teacher.id)) return false;
+      seen.add(teacher.id);
+      return true;
+    })
+    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+};
+
 export async function GET(_req, { params }) {
   try {
     const id = Number(params.id);
@@ -203,12 +215,24 @@ export async function GET(_req, { params }) {
       return NextResponse.json({ success: false, error: "Department not found" }, { status: 404 });
     }
 
+    const legacyTeachers = await prisma.staff.findMany({
+      where: {
+        role: "Teacher",
+        status: "active",
+        staffDepartmentId: null,
+        department: department.name,
+      },
+      orderBy: [{ name: "asc" }],
+      select: publicTeacherSelect,
+    });
+    const staff = mergeDepartmentTeachers(department.staff || [], legacyTeachers);
+
     return NextResponse.json({
       success: true,
       department: {
         ...department,
-        staffCount: department.staff?.length || 0,
-        staff: department.staff || [],
+        staffCount: staff.length,
+        staff,
       },
     });
   } catch (error) {

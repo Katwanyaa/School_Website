@@ -179,6 +179,21 @@ const publicTeacherSelect = {
   staffDepartmentId: true,
 };
 
+const normalizeDepartmentName = (value = "") =>
+  value.toString().trim().toLowerCase();
+
+const mergeDepartmentTeachers = (linkedTeachers = [], legacyTeachers = []) => {
+  const seen = new Set();
+
+  return [...linkedTeachers, ...legacyTeachers]
+    .filter((teacher) => {
+      if (!teacher?.id || seen.has(teacher.id)) return false;
+      seen.add(teacher.id);
+      return true;
+    })
+    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+};
+
 export async function GET(req) {
   try {
     const url = new URL(req.url);
@@ -242,11 +257,42 @@ export async function GET(req) {
       },
     });
 
-    const normalizedDepartments = departments.map((department) => ({
-      ...department,
-      staffCount: includeStaff ? department.staff?.length || 0 : department.staffCount,
-      staff: includeStaff ? department.staff || [] : undefined,
-    }));
+    let legacyTeachersByDepartment = {};
+    if (includeStaff && departments.length > 0) {
+      const departmentNames = departments.map((department) => department.name).filter(Boolean);
+      const legacyTeachers = await prisma.staff.findMany({
+        where: {
+          role: "Teacher",
+          status: "active",
+          staffDepartmentId: null,
+          department: { in: departmentNames },
+        },
+        orderBy: [{ name: "asc" }],
+        select: publicTeacherSelect,
+      });
+
+      legacyTeachersByDepartment = legacyTeachers.reduce((acc, teacher) => {
+        const key = normalizeDepartmentName(teacher.department);
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(teacher);
+        return acc;
+      }, {});
+    }
+
+    const normalizedDepartments = departments.map((department) => {
+      const staff = includeStaff
+        ? mergeDepartmentTeachers(
+            department.staff || [],
+            legacyTeachersByDepartment[normalizeDepartmentName(department.name)] || []
+          )
+        : undefined;
+
+      return {
+        ...department,
+        staffCount: includeStaff ? staff.length : department.staffCount,
+        staff,
+      };
+    });
 
     if (!grouped) {
       return NextResponse.json({ success: true, departments: normalizedDepartments });
