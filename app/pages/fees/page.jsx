@@ -389,7 +389,7 @@ export default function ModernFeesPage() {
           School Fees
         </h1>
         <p className="text-gray-300 text-sm sm:text-base mt-1">
-          Katwanyaa Senior School — Transparent fee structure
+          Katwanyaa Senior School  fee structure
         </p>
       </div>
       
