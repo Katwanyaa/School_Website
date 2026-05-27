@@ -187,7 +187,7 @@ function DynamicFeeCategory({ category, index, onChange, onRemove, type = 'day' 
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className={`bg-gradient-to-br ${type === 'boarding' ? 'from-teal-50 to-teal-100 border-teal-200' : 'from-green-50 to-green-100 border-green-200'} rounded-2xl p-4 border-2 mb-3`}>
+    <div className={`${type === 'boarding' ? 'bg-teal-50 border-teal-200' : 'bg-green-50 border-green-200'} rounded-2xl p-4 border-2 mb-3`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
@@ -254,11 +254,14 @@ function DynamicFeeCategory({ category, index, onChange, onRemove, type = 'day' 
               <input
                 type="number"
                 min="0"
-                step="100"
                 value={category.amount || ''}
-                onChange={(e) => onChange(index, 'amount', parseFloat(e.target.value) || 0)}
-                placeholder="Enter amount"
-                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none text-sm font-bold transition-all"
+                onChange={(e) => {
+                  const val = e.target.value.trim();
+                  const parsed = val === '' ? 0 : parseFloat(val);
+                  if (!isNaN(parsed) && parsed >= 0) onChange(index, 'amount', parsed);
+                }}
+                placeholder="0"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none text-sm font-bold transition-all [&::-webkit-outer-spin-button]:[appearance:none] [&::-webkit-inner-spin-button]:[appearance:none] [&amp;]:[-moz-appearance:textfield]"
               />
             </div>
           </div>
@@ -473,7 +476,7 @@ function FeeBreakdownModal({
         overflow: 'hidden',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
-        <div className={`bg-gradient-to-r ${type === 'boarding' ? 'from-teal-600 via-teal-700 to-indigo-700' : 'from-green-600 via-green-700 to-green-700'} p-6 text-white`}>
+        <div className={`${type === 'boarding' ? 'bg-teal-600' : 'bg-green-600'} p-6 text-white`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
@@ -2439,15 +2442,21 @@ const getExistingPdfData = (field) => {
                   </label>
                   <input
                     type="number"
-                    value={feeAmounts.daySchool}
-                    onChange={(e) => setFeeAmounts({...feeAmounts, daySchool: parseFloat(e.target.value) || 0})}
-                    placeholder="Enter total annual fees for day school"
+                    value={feeAmounts.daySchool || ''}
+                    onChange={(e) => {
+                      const value = e.target.value.trim();
+                      const parsed = value === '' ? 0 : parseFloat(value);
+                      if (!isNaN(parsed) && parsed >= 0) {
+                        setFeeAmounts({...feeAmounts, daySchool: parsed});
+                      }
+                    }}
+                    placeholder="0"
                     className="w-full px-4 py-3 border-2 border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-base font-bold"
                     min="0"
-                    step="0.01"
+                    step="1"
                   />
                   <p className="text-xs text-gray-600 mt-2 font-bold">
-                    Annual amount: KES {feeAmounts.daySchool.toLocaleString()}
+                    Annual amount: KES {feeAmounts.daySchool ? feeAmounts.daySchool.toLocaleString() : '0'}
                   </p>
                 </div>
               </div>
@@ -2489,15 +2498,21 @@ const getExistingPdfData = (field) => {
                   </label>
                   <input
                     type="number"
-                    value={feeAmounts.boarding}
-                    onChange={(e) => setFeeAmounts({...feeAmounts, boarding: parseFloat(e.target.value) || 0})}
-                    placeholder="Enter total annual fees for boarding"
+                    value={feeAmounts.boarding || ''}
+                    onChange={(e) => {
+                      const value = e.target.value.trim();
+                      const parsed = value === '' ? 0 : parseFloat(value);
+                      if (!isNaN(parsed) && parsed >= 0) {
+                        setFeeAmounts({...feeAmounts, boarding: parsed});
+                      }
+                    }}
+                    placeholder="0"
                     className="w-full px-4 py-3 border-2 border-purple-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-base font-bold"
                     min="0"
-                    step="0.01"
+                    step="1"
                   />
                   <p className="text-xs text-gray-600 mt-2 font-bold">
-                    Annual amount: KES {feeAmounts.boarding.toLocaleString()}
+                    Annual amount: KES {feeAmounts.boarding ? feeAmounts.boarding.toLocaleString() : '0'}
                   </p>
                 </div>
               </div>
