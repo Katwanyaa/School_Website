@@ -7,86 +7,71 @@ import {
   FiArrowLeft, FiBookOpen, FiCalendar, FiChevronRight, FiExternalLink,
   FiGlobe, FiGrid, FiImage, FiLayers, FiMapPin, FiMonitor, FiSearch,
   FiShield, FiUserCheck, FiUsers, FiX, FiStar, FiTrendingUp, FiClock,
-  FiAward, FiBriefcase, FiHome, FiMail, FiPhone, FiFacebook, FiInstagram,
-  FiTwitter, FiYoutube, FiLinkedin, FiGithub, FiCodepen, FiDribbble,
-  FiBehance, FiFigma, FiSlack, FiDiscord, FiTwitch, FiTiktok, FiSnapchat,
-  FiPinterest, FiReddit, FiMedium, FiBookmark, FiShare2, FiThumbsUp,
-  FiMessageCircle, FiSend, FiMoreVertical, FiCopy, FiDownload, FiCloud,
-  FiCloudLightning, FiCloudRain, FiCloudSnow, FiSun, FiMoon, FiWind,
-  FiCompass, FiAnchor, FiArchive, FiBarChart, FiBattery, FiBell, FiBluetooth,
-  FiBox, FiBriefcase as FiBriefcaseIcon, FiCamera, FiCast, FiHeart, FiChrome,
-  FiCircle, FiClipboard, FiClock as FiClockIcon, FiCoffee, FiCompass as FiCompassIcon,
+  FiAward, FiBriefcase, FiHome, FiMail, FiPhone, FiChevronLeft,
   FiAlertTriangle,
 } from 'react-icons/fi';
-import {
+import { 
   FaGraduationCap, FaHome, FaSchool, FaBook, FaChalkboardTeacher,
-  FaUsers as FaUsersIcon, FaRobot, FaBrain, FaMicrochip, FaRocket, FaGem,
-  FaCrown, FaMedal, FaTrophy, FaUniversity, FaLandmark, FaTree, FaSeedling,
-  FaHandsHelping, FaChild, FaApple, FaAndroid, FaWindows, FaLinux, FaCode,
-  FaDatabase, FaCloud, FaLock, FaShieldAlt, FaDragon, FaFeather, FaFire,
-  FaWater, FaEarth, FaWind as FaWindIcon, FaSun as FaSunIcon, FaMoon as FaMoonIcon,
-  FaStar, FaInfinity, FaPeace, FaDove, FaOwl, FaWolf, FaEagle,
+  FaUsers as FaUsersIcon, FaSeedling, FaHeart, FaRobot,
 } from 'react-icons/fa';
 import { normalizeSchoolImages } from './image-upload-field';
 
-// ============= ENHANCED ICONS CONFIGURATION =============
+// ============= ICONS & THEMES (unchanged) =============
 const ICONS = {
   CLUB: FiUsers,
   SOCIETY: FaGraduationCap,
   STUDENT_COUNCIL: FiUserCheck,
   COMPUTER_LAB: FiMonitor,
+  FARM: FaSeedling,
   BOARDING: FaHome,
   SECURITY: FiShield,
   DEPARTMENT: FiLayers,
   SPORTS: FiAward,
-  ARTS: FiHeart,
+  ARTS: FaHeart,
   SCIENCE: FiBookOpen,
   TECHNOLOGY: FiMonitor,
   LEADERSHIP: FiStar,
 };
 
-// ============= SIMPLE THEME CONFIGURATIONS (NO BORDERS/SHADOWS) =============
 const TYPE_THEMES = {
   CLUB: { bg: 'bg-purple-50', text: 'text-purple-700', iconBg: 'bg-purple-600' },
   SOCIETY: { bg: 'bg-indigo-50', text: 'text-indigo-700', iconBg: 'bg-indigo-600' },
   STUDENT_COUNCIL: { bg: 'bg-fuchsia-50', text: 'text-fuchsia-700', iconBg: 'bg-fuchsia-600' },
   COMPUTER_LAB: { bg: 'bg-sky-50', text: 'text-sky-700', iconBg: 'bg-sky-600' },
+  FARM: { bg: 'bg-emerald-50', text: 'text-emerald-700', iconBg: 'bg-emerald-600' },
   BOARDING: { bg: 'bg-amber-50', text: 'text-amber-700', iconBg: 'bg-amber-600' },
   SECURITY: { bg: 'bg-rose-50', text: 'text-rose-700', iconBg: 'bg-rose-600' },
   DEPARTMENT: { bg: 'bg-cyan-50', text: 'text-cyan-700', iconBg: 'bg-cyan-600' },
 };
 
-// ============= KATWANYAA SCHOOL INFORMATION =============
-const KATWANYAA_INFO = {
-  name: 'Katwanyaa Senior School',
-  shortName: 'Katz',
-  motto: 'Education is Light',
-  vision: 'To be a center of academic excellence and holistic development in Africa',
-  mission: 'To provide quality education that nurtures talent, builds character, and prepares students for global leadership',
-  location: 'Kitui County, Kenya',
-  email: 'info@katwanyaa.ac.ke',
-  phone: '+254 712 345 678',
-  website: 'https://katwanyaasenior.school',
-  colors: ['Emerald Green', 'Royal Blue', 'Gold'],
-  mascot: 'The Mighty Eagle',
+// ============= SCHOOL INFO (Matungulu Girls) =============
+const SCHOOL_INFO = {
+  name: 'Matungulu Girls Senior School',
+  shortName: 'Matungulu Girls',
+  motto: 'Committed To Excellence',
+  vision: 'To be a center of excellence for girls education, character formation, and leadership.',
+  mission: 'To provide quality, girls-centered education that nurtures talent, discipline, confidence, and service.',
+  location: 'Matungulu Sub-County, Machakos County, Kenya',
+  email: 'matungulugirls@gmail.com',
+  phone: '0734610130',
+  website: 'matungulugirls.school',
+  colors: ['Emerald Green', 'Navy Blue', 'White'],
   achievements: [
-    'Top Performer in Kitui County (2023)',
-    'National Science Congress Champions (2022)',
-    'Best in Drama Festivals (2021, 2023)',
-    'UNESCO Associated School',
+    'Focused girls boarding learning environment',
+    'CBC senior school pathways and co-curricular development',
+    'Active clubs, societies, student leadership, and welfare programs',
+    'Strong community link in Matungulu, Machakos County',
   ],
-  description: `Katwanyaa Senior School is a premier educational institution located in the heart of Kitui County, Kenya. 
-    Established in 1985, we have consistently provided quality education that transforms lives and builds future leaders. 
-    Our state-of-the-art facilities include modern science laboratories, a fully equipped computer lab, a well-stocked library, 
-    sports fields, and comfortable boarding facilities. We pride ourselves on our strong academic performance, 
-    vibrant co-curricular activities, and commitment to holistic student development.`
+  description: `Matungulu Girls Senior School is a public girls boarding senior school in Matungulu Sub-County, Machakos County. 
+    The school supports learners through academics, boarding life, student leadership, guidance and counselling, clubs, societies, 
+    practical learning, and a structured school environment built around discipline, confidence, and holistic growth.`
 };
 
-// ============= UTILITY FUNCTIONS =============
+// ============= UTILITIES =============
 const getTypeLabel = (type) => {
   const labels = {
     CLUB: 'Club', SOCIETY: 'Society', STUDENT_COUNCIL: 'Student Council',
-    COMPUTER_LAB: 'Computer Lab', BOARDING: 'Boarding', SECURITY: 'Security',
+    COMPUTER_LAB: 'Computer Lab', FARM: 'School Farm', BOARDING: 'Boarding', SECURITY: 'Security',
     DEPARTMENT: 'Department', SPORTS: 'Sports', ARTS: 'Arts', SCIENCE: 'Science',
     TECHNOLOGY: 'Technology', LEADERSHIP: 'Leadership'
   };
@@ -125,73 +110,14 @@ const getSocialLinks = (item) => {
 
 const renderGreenSchoolName = (text) => {
   if (!text || typeof text !== 'string') return text;
-  return text.split(/(Katwanyaa Senior School)/gi).map((part, index) =>
-    part.toLowerCase() === 'katwanyaa senior school'
+  return text.split(/(Matungulu Girls)/gi).map((part, index) =>
+    part.toLowerCase() === 'matungulu girls'
       ? <span key={`${part}-${index}`} className="text-emerald-700">{part}</span>
       : part
   );
 };
 
-// ============= SIMPLE COMPONENTS (NO BORDERS/SHADOWS) =============
-const InfoPill = ({ icon: Icon, children, variant = "default" }) => {
-  const variants = {
-    default: "bg-gray-100 text-gray-700",
-    primary: "bg-emerald-100 text-emerald-700",
-    secondary: "bg-indigo-100 text-indigo-700",
-  };
-  return (
-    <span className={`inline-flex items-center gap-2 px-3 py-2 text-xs font-medium ${variants[variant]}`}>
-      <Icon className="text-sm" />
-      {children}
-    </span>
-  );
-};
-
-const Spinner = ({ size = "md", color = "gray" }) => {
-  const sizeClasses = { sm: "w-4 h-4", md: "w-5 h-5", lg: "w-6 h-6" };
-  const colorClasses = { gray: "border-gray-600", white: "border-white" };
-  return (
-    <div className={`${sizeClasses[size]} animate-spin rounded-full border-2 ${colorClasses[color]} border-t-transparent`} />
-  );
-};
-
-const ModernLoadingSpinner = ({ message = "Loading content..." }) => (
-  <div className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-20">
-    <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-slate-900 text-white">
-      <Spinner size="lg" color="white" />
-    </div>
-    <p className="mt-6 text-sm font-semibold text-slate-700">{message}</p>
-    <div className="mt-3 flex gap-1">
-      {[0, 1, 2].map(i => (
-        <div key={i} className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
-      ))}
-    </div>
-  </div>
-);
-
-const RefreshButton = ({ refreshing, onClick }) => (
-  <button
-    onClick={onClick}
-    disabled={refreshing}
-    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98] disabled:opacity-60"
-  >
-    {refreshing ? (
-      <>
-        <Spinner size="sm" color="white" />
-        <span>Updating...</span>
-      </>
-    ) : (
-      <>
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-        Refresh
-      </>
-    )}
-  </button>
-);
-
-// ============= GALLERY MODAL (FIXED) =============
+// ============= GALLERY MODAL (unchanged, working) =============
 const GalleryModal = ({ item, onClose }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -399,142 +325,197 @@ const GalleryModal = ({ item, onClose }) => {
   );
 };
 
-// ============= HUB CARD (WITH CAROUSEL & THUMBNAILS) =============
-const HubCard = ({ item, onView }) => {
+// ============= SIMPLE INFO PILL =============
+const InfoPill = ({ icon: Icon, children, variant = "default" }) => {
+  const variants = {
+    default: "bg-gray-100 text-gray-700",
+    primary: "bg-emerald-100 text-emerald-700",
+    secondary: "bg-indigo-100 text-indigo-700",
+  };
+  return (
+    <span className={`inline-flex items-center gap-2 px-3 py-2 text-xs font-medium ${variants[variant]}`}>
+      <Icon className="text-sm" />
+      {children}
+    </span>
+  );
+};
+
+// ============= SPINNER & REFRESH BUTTON =============
+const Spinner = ({ size = "md", color = "gray" }) => {
+  const sizeClasses = { sm: "w-4 h-4", md: "w-5 h-5", lg: "w-6 h-6" };
+  const colorClasses = { gray: "border-gray-600", white: "border-white" };
+  return (
+    <div className={`${sizeClasses[size]} animate-spin rounded-full border-2 ${colorClasses[color]} border-t-transparent`} />
+  );
+};
+
+const ModernLoadingSpinner = ({ message = "Loading content..." }) => (
+  <div className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-20">
+    <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-slate-900 text-white">
+      <Spinner size="lg" color="white" />
+    </div>
+    <p className="mt-6 text-sm font-semibold text-slate-700">{message}</p>
+    <div className="mt-3 flex gap-1">
+      {[0, 1, 2].map(i => (
+        <div key={i} className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+      ))}
+    </div>
+  </div>
+);
+
+const RefreshButton = ({ refreshing, onClick }) => (
+  <button
+    onClick={onClick}
+    disabled={refreshing}
+    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98] disabled:opacity-60"
+  >
+    {refreshing ? (
+      <>
+        <Spinner size="sm" color="white" />
+        <span>Updating...</span>
+      </>
+    ) : (
+      <>
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Refresh
+      </>
+    )}
+  </button>
+);
+
+// ============= MODERN CAROUSEL CARD (for items) =============
+const CarouselCard = ({ item, onClick }) => {
   const images = normalizeSchoolImages(item);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const image = images[activeImageIndex]?.url || images[0]?.url;
+  const image = images[0]?.url;
   const Icon = ICONS[item.type] || FiLayers;
   const theme = TYPE_THEMES[item.type] || TYPE_THEMES.DEPARTMENT;
-  const detailCount = Array.isArray(item.details) ? item.details.length : 0;
-
-  useEffect(() => {
-    if (images.length < 2) return undefined;
-    const timer = setInterval(() => {
-      setActiveImageIndex((index) => (index + 1) % images.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [images.length]);
-
+  
   return (
-    <button
-      onClick={onView}
-      className="group grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-sm transition hover:shadow-lg lg:grid-cols-[minmax(320px,0.95fr)_minmax(0,1.25fr)]"
+    <div 
+      onClick={() => onClick(item)}
+      className="snap-start shrink-0 w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
     >
-      <div className="relative min-h-[260px] w-full bg-slate-100 sm:min-h-[320px] lg:min-h-full">
+      <div className="relative aspect-[4/3] bg-slate-100">
         {image ? (
-          <img src={image} alt={item.title} className="h-full w-full object-cover transition duration-500" />
+          <img src={image} alt={item.title} className="h-full w-full object-cover" />
         ) : (
           <div className={`flex h-full w-full items-center justify-center ${theme.bg}`}>
             <Icon className={`text-4xl ${theme.text}`} />
           </div>
         )}
-        
-        <div className="absolute left-3 top-3">
+        <div className="absolute bottom-3 left-3 right-3">
           <span className={`inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${theme.text} shadow-sm`}>
             <Icon className="text-xs" /> {getTypeLabel(item.type)}
           </span>
         </div>
-        
-        <div className="absolute right-3 top-14 inline-flex items-center gap-1 rounded-full bg-slate-950/80 px-2.5 py-1 text-xs font-bold text-white">
-          <FiImage className="text-[11px]" /> {images.length}
-        </div>
-
-        {images.length > 1 && (
-          <div className="absolute inset-x-3 bottom-3 flex gap-2 overflow-x-auto rounded-xl bg-slate-950/65 p-2 backdrop-blur-md">
-            {images.slice(0, 6).map((thumb, index) => (
-              <span
-                key={thumb.url}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setActiveImageIndex(index);
-                }}
-                className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-lg border transition ${
-                  activeImageIndex === index ? 'border-white ring-2 ring-white/45' : 'border-white/20 opacity-75'
-                }`}
-              >
-                <img src={thumb.url} alt={thumb.altText || `${item.title} ${index + 1}`} className="h-full w-full object-cover" />
-              </span>
-            ))}
-            {images.length > 6 && (
-              <span className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-white/15 text-xs font-black text-white">
-                +{images.length - 6}
-              </span>
-            )}
-          </div>
-        )}
       </div>
-
-      <div className="flex min-h-[300px] flex-1 flex-col p-5 sm:p-6">
-        <h3 className="text-2xl font-black leading-tight text-slate-950">
+      <div className="p-4">
+        <h3 className="text-base font-black leading-tight text-slate-950 line-clamp-1">
           {item.title}
         </h3>
-        
-        {(item.shortDescription || item.description) && (
-          <p className="mt-3 text-sm font-medium leading-7 text-slate-600 line-clamp-4">
-            {item.shortDescription || item.description}
+        {item.shortDescription && (
+          <p className="mt-2 text-xs font-medium text-slate-600 line-clamp-2">
+            {item.shortDescription}
           </p>
         )}
-
-        <div className="mt-5 flex flex-wrap gap-2">
-          {detailCount > 0 && (
-            <span className="flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
-              <FiLayers className="text-xs" /> {detailCount}
-            </span>
-          )}
-          {item.location && (
-            <span className="flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
-              <FiMapPin className="text-xs" /> {item.location.length > 20 ? item.location.slice(0, 20) + '...' : item.location}
-            </span>
-          )}
-        </div>
-
-        {images.length > 1 && (
-          <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-6">
-            {images.slice(0, 6).map((thumb, index) => (
-              <span
-                key={`${thumb.url}-small`}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setActiveImageIndex(index);
-                }}
-                className={`relative aspect-[4/3] overflow-hidden rounded-lg border bg-slate-100 ${
-                  activeImageIndex === index ? 'border-slate-900' : 'border-slate-200'
-                }`}
-              >
-                <img src={thumb.url} alt={thumb.altText || `${item.title} preview ${index + 1}`} className="h-full w-full object-cover" />
-              </span>
-            ))}
-          </div>
-        )}
-
-        <div className="mt-auto flex items-center justify-between pt-6">
-          <span className="text-xs font-black uppercase tracking-wider text-slate-400">View Details</span>
-          <span className={`ml-2 flex h-9 w-9 items-center justify-center rounded-xl ${theme.iconBg} text-white transition`}>
-            <FiChevronRight className="text-sm" />
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+            {images.length} photo{images.length !== 1 ? 's' : ''}
+          </span>
+          <span className={`flex h-7 w-7 items-center justify-center rounded-full ${theme.iconBg} text-white`}>
+            <FiChevronRight className="text-xs" />
           </span>
         </div>
       </div>
-    </button>
-  );
-};
-
-const HubCarousel = ({ items, onView }) => {
-  if (!items?.length) return null;
-  return (
-    <div className="grid gap-5 rounded-2xl bg-slate-50 p-3 sm:p-4">
-      {items.map((item) => (
-        <HubCard key={`${item.type}-${item.id}`} item={item} onView={() => onView(item)} />
-      ))}
     </div>
   );
 };
 
-// ============= MAIN COMPONENT =============
+// ============= AUTO-SCROLL HORIZONTAL CAROUSEL =============
+const AutoScrollCarousel = ({ items, onItemClick, title, icon: Icon }) => {
+  const scrollRef = useRef(null);
+  const autoScrollRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const scrollBy = (direction) => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({
+      left: direction * 280,
+      behavior: "smooth",
+    });
+  };
+
+  // Auto-scroll every 4.5 seconds
+  useEffect(() => {
+    if (!items.length || isHovered) return;
+    autoScrollRef.current = window.setInterval(() => {
+      if (!scrollRef.current) return;
+      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+      const nextPosition = scrollLeft + clientWidth * 0.9;
+      if (nextPosition + clientWidth >= scrollWidth - 2) {
+        scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        scrollRef.current.scrollTo({ left: nextPosition, behavior: "smooth" });
+      }
+    }, 4500);
+    return () => window.clearInterval(autoScrollRef.current);
+  }, [items.length, isHovered]);
+
+  if (!items.length) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-md">
+            <Icon className="text-base" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-950">{title}</h2>
+            <p className="text-xs font-bold uppercase text-slate-500">
+              {items.length} {items.length === 1 ? "item" : "items"} available
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => scrollBy(-1)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50"
+            aria-label="Scroll left"
+          >
+            <FiChevronLeft size={16} />
+          </button>
+          <button
+            onClick={() => scrollBy(1)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50"
+            aria-label="Scroll right"
+          >
+            <FiChevronRight size={16} />
+          </button>
+        </div>
+      </div>
+
+      <div
+        ref={scrollRef}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-3 touch-pan-x scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300/80"
+      >
+        {items.map((item) => (
+          <CarouselCard key={`${item.type}-${item.id}`} item={item} onClick={onItemClick} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ============= MAIN PUBLIC SCHOOL HUB PAGE =============
 export default function PublicSchoolHubPage({
   title = "School Hub",
-  eyebrow = "Katwanyaa Senior School",
-  description = KATWANYAA_INFO.description,
+  eyebrow = "Matungulu Girls Senior School",
+  description = SCHOOL_INFO.description,
   singleType,
   sections,
   departments = false,
@@ -626,18 +607,18 @@ export default function PublicSchoolHubPage({
     <div className="min-h-screen bg-white text-gray-900">
       <GalleryModal item={active} onClose={() => setActive(null)} />
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        {/* Hero Section */}
+        
+        {/* ========== ORIGINAL HERO SECTION (EXACTLY AS BEFORE) ========== */}
         <section className="overflow-hidden rounded-2xl bg-white text-slate-950 shadow-sm">
           <div className="flex flex-col items-center justify-center px-5 py-10 text-center sm:px-8 sm:py-12 lg:px-12">
             <div className="inline-flex max-w-full items-center gap-3 rounded-full bg-slate-50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-600">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
                 <Image
-                  src="/KatwanyaaLogo.png"  // Replace with your actual logo path
-                  alt="Katwanyaa Senior School Logo"
+                  src="/MatG.jpg"
+                  alt="Matungulu Girls Logo"
                   width={40}
                   height={40}
                   className="h-full w-full object-cover"
-                  onError={(e) => e.currentTarget.src = '/default-school-logo.png'} // fallback
                 />
               </span>
               {renderGreenSchoolName(eyebrow)}
@@ -651,11 +632,11 @@ export default function PublicSchoolHubPage({
               <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-5xl">
                 {title}
                 <span className="block text-slate-700">
-                  {renderGreenSchoolName(KATWANYAA_INFO.name)}
+                  {renderGreenSchoolName(SCHOOL_INFO.name)}
                 </span>
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-sm font-medium leading-7 text-slate-600 sm:text-base">
-                {description || KATWANYAA_INFO.description}
+                {description || SCHOOL_INFO.description}
               </p>
             </div>
 
@@ -671,14 +652,14 @@ export default function PublicSchoolHubPage({
 
             <div className="mt-8 w-full max-w-3xl rounded-2xl bg-white p-5 text-slate-900 shadow-sm">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-                {renderGreenSchoolName(KATWANYAA_INFO.shortName)}
+                {renderGreenSchoolName(SCHOOL_INFO.shortName)}
               </p>
-              <h2 className="mt-2 text-2xl font-black text-slate-900">{KATWANYAA_INFO.motto}</h2>
+              <h2 className="mt-2 text-2xl font-black text-slate-900">{SCHOOL_INFO.motto}</h2>
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
                 {[
-                  { icon: FiMapPin, label: KATWANYAA_INFO.location },
-                  { icon: FiPhone, label: KATWANYAA_INFO.phone },
-                  { icon: FiMail, label: KATWANYAA_INFO.email },
+                  { icon: FiMapPin, label: SCHOOL_INFO.location },
+                  { icon: FiPhone, label: SCHOOL_INFO.phone },
+                  { icon: FiMail, label: SCHOOL_INFO.email },
                 ].map(({ icon: InfoIcon, label }) => (
                   <div key={label} className="flex flex-col items-center rounded-xl bg-slate-50 p-4 text-center">
                     <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
@@ -692,12 +673,16 @@ export default function PublicSchoolHubPage({
           </div>
         </section>
 
-        {/* Search & Refresh Section */}
+        {/* ========== SEARCH & REFRESH SECTION (unchanged) ========== */}
         <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="text-center lg:text-left">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Browse School Life</p>
-              <h2 className="mt-1 text-xl font-black text-slate-950">Find the right information faster</h2>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">
+                Browse School Life
+              </p>
+              <h2 className="mt-1 text-xl font-black text-slate-950">
+                Find the right information faster
+              </h2>
             </div>
             <div className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-2xl">
               <div className="relative flex-1">
@@ -714,7 +699,6 @@ export default function PublicSchoolHubPage({
           </div>
         </section>
 
-        {/* Error Message */}
         {error && (
           <div className="mt-6 flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
             <span className="flex items-center gap-2"><FiAlertTriangle /> {error}</span>
@@ -724,7 +708,7 @@ export default function PublicSchoolHubPage({
           </div>
         )}
 
-        {/* Content Sections */}
+        {/* ========== MODERN AUTO-SCROLL CAROUSELS (replaces HubCarousel) ========== */}
         <section className="mt-8">
           {loading ? (
             <ModernLoadingSpinner message={`Loading ${title.toLowerCase()} content...`} />
@@ -737,27 +721,18 @@ export default function PublicSchoolHubPage({
               <p className="mt-2 text-sm font-medium text-slate-500">Check back soon for updates.</p>
             </div>
           ) : (
-            <div className="space-y-10">
+            <div className="space-y-12">
               {renderedSections.map((section) => {
                 if (!section.items.length) return null;
                 const SectionIcon = section.icon || ICONS[section.type] || FiLayers;
                 return (
-                  <section key={section.title}>
-                    <div className="mb-5 flex flex-col items-center justify-between gap-3 pb-4 text-center sm:flex-row sm:text-left">
-                      <div className="flex flex-col items-center gap-3 sm:flex-row">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-md">
-                          <SectionIcon className="text-base" />
-                        </div>
-                        <div>
-                          <h2 className="text-xl font-black text-slate-950">{section.title}</h2>
-                          <p className="text-xs font-bold uppercase text-slate-500">
-                            {section.items.length} {section.items.length === 1 ? "item" : "items"} available
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <HubCarousel items={section.items} onView={setActive} />
-                  </section>
+                  <AutoScrollCarousel
+                    key={section.title}
+                    title={section.title}
+                    icon={SectionIcon}
+                    items={section.items}
+                    onItemClick={setActive}
+                  />
                 );
               })}
             </div>
@@ -765,6 +740,7 @@ export default function PublicSchoolHubPage({
         </section>
       </main>
 
+      {/* Animation Styles (unchanged) */}
       <style jsx global>{`
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
@@ -773,7 +749,10 @@ export default function PublicSchoolHubPage({
         .animate-bounce { animation: bounce 0.8s infinite ease-in-out; }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .line-clamp-4 { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .scrollbar-thin::-webkit-scrollbar { height: 6px; }
+        .scrollbar-track-slate-100::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .scrollbar-thumb-slate-300\/80::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
       `}</style>
     </div>
   );
