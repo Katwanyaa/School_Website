@@ -33,8 +33,9 @@ import {
   FiActivity,
   FiLayers,
   FiShield,
-  FiCrown,
-  FiTrendingUp
+  FiAward as FiCrown,      // Use FiAward as crown alternative
+  FiTrendingUp,            // Valid icon
+  FiBarChart2
 } from 'react-icons/fi';
 import { toast } from 'sonner';
 import { SiGmail } from 'react-icons/si';
@@ -581,7 +582,6 @@ export default function StaffDirectory() {
 
       {/* ── Hero Banner - Dark Blue Theme ── */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#0c1a2f] to-[#0f1f3a]">
-        {/* Premium dark blue gradient overlay with subtle pattern */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(59,130,246,0.15),_transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(37,99,235,0.12),_transparent_55%),linear-gradient(145deg,_rgba(255,255,255,0.02)_0%,_transparent_45%)]" />
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" stroke-width="0.5"/%3E%3C/svg%3E")', backgroundSize: '30px 30px' }} />
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:py-20">
