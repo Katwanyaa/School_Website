@@ -63,19 +63,19 @@ const KATWANYAA_INFO = {
   motto: 'Education is Light',
   vision: 'To be a center of academic excellence and holistic development in Africa',
   mission: 'To provide quality education that nurtures talent, builds character, and prepares students for global leadership',
-  location: 'Kitui County, Kenya',
-  email: 'info@katwanyaa.ac.ke',
+  location: 'Matungulu, ',
+  email: 'katcict@gmail.com',
   phone: '+254 712 345 678',
   website: 'https://katwanyaasenior.school',
   colors: ['Emerald Green', 'Royal Blue', 'Gold'],
   mascot: 'The Mighty Eagle',
   achievements: [
-    'Top Performer in Kitui County (2023)',
+    'Top Performer in matungulu  (2023)',
     'National Science Congress Champions (2022)',
     'Best in Drama Festivals (2021, 2023)',
     'UNESCO Associated School',
   ],
-  description: `Katwanyaa Senior School is a premier educational institution located in the heart of Kitui County, Kenya. 
+  description: `Katwanyaa Senior School is a  public institution located in the heart of matungulu. 
     Established in 1985, we have consistently provided quality education that transforms lives and builds future leaders. 
     Our state-of-the-art facilities include modern science laboratories, a fully equipped computer lab, a well-stocked library, 
     sports fields, and comfortable boarding facilities. We pride ourselves on our strong academic performance, 
