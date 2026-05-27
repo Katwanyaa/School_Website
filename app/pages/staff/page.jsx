@@ -164,11 +164,19 @@ const getStaffHierarchy = (position) => {
   if (positionLower.includes('senior teacher')) {
     return 'leadership';
   }
-  if ((positionLower.includes('principal') || positionLower.includes('deputy principal')) &&
-      !positionLower.includes('senior') && !positionLower.includes('head')) {
+  if (
+    (positionLower.includes('principal') || positionLower.includes('deputy principal')) &&
+    !positionLower.includes('senior') &&
+    !positionLower.includes('head')
+  ) {
     return 'leadership';
-  } else if (positionLower.includes('teacher') || positionLower.includes('lecturer') || positionLower.includes('tutor') ||
-             positionLower.includes('senior') || positionLower.includes('head')) {
+  } else if (
+    positionLower.includes('teacher') ||
+    positionLower.includes('lecturer') ||
+    positionLower.includes('tutor') ||
+    positionLower.includes('senior') ||
+    positionLower.includes('head')
+  ) {
     return 'teaching';
   } else {
     return 'support';
@@ -187,8 +195,12 @@ const sortStaffByHierarchy = (staff) => {
     }
     
     if (aHierarchy === 'leadership' && bHierarchy === 'leadership') {
-      const aIsPrincipal = a.position?.toLowerCase().includes('principal') && !a.position?.toLowerCase().includes('deputy');
-      const bIsPrincipal = b.position?.toLowerCase().includes('principal') && !b.position?.toLowerCase().includes('deputy');
+      const aIsPrincipal =
+        a.position?.toLowerCase().includes('principal') &&
+        !a.position?.toLowerCase().includes('deputy');
+      const bIsPrincipal =
+        b.position?.toLowerCase().includes('principal') &&
+        !b.position?.toLowerCase().includes('deputy');
       
       if (aIsPrincipal && !bIsPrincipal) return -1;
       if (!aIsPrincipal && bIsPrincipal) return 1;
@@ -203,7 +215,11 @@ const sortStaffByHierarchy = (staff) => {
 const isPrincipalStaff = (staff) => {
   const role = (staff?.role || '').toLowerCase();
   const position = (staff?.position || '').toLowerCase();
-  return (role.includes('principal') || position.includes('principal')) && !role.includes('deputy') && !position.includes('deputy');
+  return (
+    (role.includes('principal') || position.includes('principal')) &&
+    !role.includes('deputy') &&
+    !position.includes('deputy')
+  );
 };
 
 // ==========================================
@@ -411,9 +427,14 @@ export default function StaffDirectory() {
     const teaching = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'teaching');
     const support = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'support');
     
+    // ✅ FIX: Principal always first in leadership
     const sortedLeadership = [...leadership].sort((a, b) => {
-      const aIsPrincipal = a.position?.toLowerCase().includes('principal') && !a.position?.toLowerCase().includes('deputy');
-      const bIsPrincipal = b.position?.toLowerCase().includes('principal') && !b.position?.toLowerCase().includes('deputy');
+      const aIsPrincipal =
+        a.position?.toLowerCase().includes('principal') &&
+        !a.position?.toLowerCase().includes('deputy');
+      const bIsPrincipal =
+        b.position?.toLowerCase().includes('principal') &&
+        !b.position?.toLowerCase().includes('deputy');
       
       if (aIsPrincipal && !bIsPrincipal) return -1;
       if (!aIsPrincipal && bIsPrincipal) return 1;
@@ -470,6 +491,7 @@ export default function StaffDirectory() {
       <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/88 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-3 py-2 sm:gap-3 sm:px-6 sm:py-3 lg:flex-row lg:items-center lg:justify-between">
           
+          {/* ✅ FIX 1: "Katwanyaa Senior School" in header */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#244863] to-[#d7a73d] p-[1px] shadow-sm">
               <div className="flex h-full w-full items-center justify-center rounded-2xl bg-white">
@@ -478,7 +500,7 @@ export default function StaffDirectory() {
             </div>
             <div>
               <span className="text-sm font-black tracking-tight text-[#1a1a2e]">
-                Katwanyaa School
+                Katwanyaa Senior School
               </span>
               <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Staff Directory</p>
             </div>
@@ -531,13 +553,16 @@ export default function StaffDirectory() {
       </header>
 
       {/* ── Hero Banner ── */}
+      {/* ✅ FIX 2: Hero label updated to "Katwanyaa Senior School" */}
       <div className="relative overflow-hidden bg-[#0f1724]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(215,167,61,0.24),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.22),_transparent_30%),linear-gradient(135deg,_rgba(255,255,255,0.05),_transparent_48%)]" />
         <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-end">
             <div>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.34em] text-[#f8c95f]/80">Katwanyaa Senior School</p>
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.34em] text-[#f8c95f]/80">
+                Katwanyaa Senior School
+              </p>
               <h1 className="max-w-4xl text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl lg:text-5xl">
                 Meet the dedicated team shaping the next generation.
               </h1>
@@ -580,7 +605,12 @@ export default function StaffDirectory() {
                     <div className="flex items-center gap-1.5 sm:gap-2">
                       <FiUsers size={12} className="text-[#f8c95f]" />
                       <div className="min-w-0">
-                        <span className="block text-sm sm:text-lg font-black text-white">{departmentsByCategory.CBC?.length + departmentsByCategory.EIGHT_FOUR_FOUR?.length + departmentsByCategory.TEACHING?.length + departmentsByCategory.SUPPORT?.length}</span>
+                        <span className="block text-sm sm:text-lg font-black text-white">
+                          {(departmentsByCategory.CBC?.length || 0) +
+                           (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
+                           (departmentsByCategory.TEACHING?.length || 0) +
+                           (departmentsByCategory.SUPPORT?.length || 0)}
+                        </span>
                         <span className="block text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.24em] text-white/45">Departments</span>
                       </div>
                     </div>
@@ -605,9 +635,27 @@ export default function StaffDirectory() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6">
           <div className="flex items-center gap-1.5 py-2.5 sm:gap-2 sm:py-3.5 overflow-x-auto scrollbar-hide -mx-0.5 px-0.5 sm:-mx-1 sm:px-1">
             {[
-              { key: 'all', label: 'All', Icon: FiUsers, count: staffByHierarchy.leadership.length + (departmentsByCategory.CBC?.length || 0) + (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) + (departmentsByCategory.TEACHING?.length || 0) + (departmentsByCategory.SUPPORT?.length || 0) },
+              {
+                key: 'all',
+                label: 'All',
+                Icon: FiUsers,
+                count:
+                  staffByHierarchy.leadership.length +
+                  (departmentsByCategory.CBC?.length || 0) +
+                  (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
+                  (departmentsByCategory.TEACHING?.length || 0) +
+                  (departmentsByCategory.SUPPORT?.length || 0),
+              },
               { key: 'leadership', label: 'Leadership', Icon: FiShield, count: staffByHierarchy.leadership?.length || 0 },
-              { key: 'teaching', label: 'Teaching', Icon: FiBookOpen, count: (departmentsByCategory.CBC?.length || 0) + (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) + (departmentsByCategory.TEACHING?.length || 0) },
+              {
+                key: 'teaching',
+                label: 'Teaching',
+                Icon: FiBookOpen,
+                count:
+                  (departmentsByCategory.CBC?.length || 0) +
+                  (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
+                  (departmentsByCategory.TEACHING?.length || 0),
+              },
               { key: 'support', label: 'Support', Icon: FiSettings, count: departmentsByCategory.SUPPORT?.length || 0 },
             ].map((item) => (
               <button
@@ -664,10 +712,11 @@ export default function StaffDirectory() {
             <div className="text-center py-12">
               <p className="text-slate-500">Loading staff directory...</p>
             </div>
-          ) : staffByHierarchy.leadership.length > 0 ? (
+          ) : staffByHierarchy.leadership.length > 0 || Object.values(departmentsByCategory).some(d => d.length > 0) ? (
             <div className="space-y-6">
-              {/* Leadership Section */}
-              {selectedHierarchy === 'all' || selectedHierarchy === 'leadership' && (
+
+              {/* ✅ FIX 3: Leadership section — parentheses fix operator precedence */}
+              {(selectedHierarchy === 'all' || selectedHierarchy === 'leadership') && (
                 <section>
                   <div className="flex items-center gap-3 mb-5">
                     <div className="w-8 h-8 rounded-lg bg-[#1a1a2e] flex items-center justify-center">
@@ -682,69 +731,93 @@ export default function StaffDirectory() {
                     <div className="flex-1 h-px bg-slate-100 ml-2" />
                   </div>
                   
-                  <div className="space-y-4">
-                    {staffByHierarchy.leadership.map((staff) => (
-                      <div key={staff.id} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col sm:flex-row gap-4">
-                        <div className="w-24 h-24 rounded-xl flex-shrink-0">
-                          <Image
-                            src={getImageSrc(staff)}
-                            alt={staff.name}
-                            width={96}
-                            height={96}
-                            className="w-full h-full object-cover rounded-xl"
-                          />
+                  {staffByHierarchy.leadership.length === 0 ? (
+                    <p className="text-sm text-slate-400 italic">No leadership profiles found.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {staffByHierarchy.leadership.map((staff) => (
+                        <div key={staff.id} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col sm:flex-row gap-4 items-start">
+                          <div className="w-24 h-24 rounded-xl flex-shrink-0 overflow-hidden bg-slate-100">
+                            <Image
+                              src={getImageSrc(staff)}
+                              alt={staff.name}
+                              width={96}
+                              height={96}
+                              className="w-full h-full object-cover rounded-xl"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-black text-slate-900">{staff.name}</h3>
+                            <p className="text-sm font-bold text-slate-600 uppercase tracking-wide">{staff.position}</p>
+                            {staff.bio && (
+                              <p className="mt-2 text-sm text-slate-600 line-clamp-2">{staff.bio}</p>
+                            )}
+                          </div>
+                          <Link
+                            href={`/pages/SchoolTeam/${staff.id}/${generateSlug(staff.name, staff.id)}`}
+                            className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a2e] text-white font-bold text-sm h-fit flex-shrink-0 hover:bg-[#2d2d44] transition-colors"
+                          >
+                            View <FiChevronRight size={14} />
+                          </Link>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-black text-slate-900">{staff.name}</h3>
-                          <p className="text-sm font-bold text-slate-600 uppercase">{staff.position}</p>
-                          <p className="mt-2 text-sm text-slate-600 line-clamp-2">{staff.bio}</p>
-                        </div>
-                        <Link
-                          href={`/pages/SchoolTeam/${staff.id}/${generateSlug(staff.name, staff.id)}`}
-                          className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a2e] text-white font-bold text-sm h-fit"
-                        >
-                          View <FiChevronRight size={14} />
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </section>
               )}
 
-              {/* Departments Section */}
-              {(selectedHierarchy === 'all' || selectedHierarchy !== 'leadership') && (
+              {/* ✅ FIX 4: Departments section — correct condition, covers teaching + support filters */}
+              {(selectedHierarchy === 'all' || selectedHierarchy === 'teaching' || selectedHierarchy === 'support') && (
                 <>
-                  {[['CBC', departmentsByCategory.CBC], ['EIGHT_FOUR_FOUR', departmentsByCategory.EIGHT_FOUR_FOUR], ['TEACHING', departmentsByCategory.TEACHING], ['SUPPORT', departmentsByCategory.SUPPORT]].map(([category, depts]) => (
-                    depts && depts.length > 0 && (
+                  {[
+                    ['CBC', departmentsByCategory.CBC],
+                    ['EIGHT_FOUR_FOUR', departmentsByCategory.EIGHT_FOUR_FOUR],
+                    ['TEACHING', departmentsByCategory.TEACHING],
+                    ['SUPPORT', departmentsByCategory.SUPPORT],
+                  ].map(([category, depts]) =>
+                    depts && depts.length > 0 ? (
                       <section key={category}>
                         <div className="flex items-center gap-3 mb-5">
                           <div className="w-8 h-8 rounded-lg bg-[#1a1a2e] flex items-center justify-center">
                             <FiLayers size={14} className="text-white" />
                           </div>
                           <h2 className="text-sm font-black text-[#1a1a2e] uppercase tracking-[0.15em]">
-                            {category === 'CBC' ? 'CBC' : category === 'EIGHT_FOUR_FOUR' ? '8-4-4' : category} Departments
+                            {category === 'CBC'
+                              ? 'CBC'
+                              : category === 'EIGHT_FOUR_FOUR'
+                              ? '8-4-4'
+                              : category}{' '}
+                            Departments
                           </h2>
                           <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                             {depts.length}
                           </span>
                           <div className="flex-1 h-px bg-slate-100 ml-2" />
                         </div>
-                        
+
                         <div className="space-y-4">
                           {depts.map((dept) => (
                             <div key={dept.id} className="bg-white rounded-xl border border-slate-200 p-4">
                               <h3 className="text-lg font-black text-slate-900">{dept.name}</h3>
-                              <p className="mt-1 text-sm text-slate-600">{dept.description}</p>
-                              <div className="mt-3 flex gap-2 text-xs">
-                                {dept.headName && <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">HOD: {dept.headName}</span>}
-                                <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-full">{dept.staffCount || 0} staff</span>
+                              {dept.description && (
+                                <p className="mt-1 text-sm text-slate-600">{dept.description}</p>
+                              )}
+                              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                                {dept.headName && (
+                                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+                                    HOD: {dept.headName}
+                                  </span>
+                                )}
+                                <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-full">
+                                  {dept.staffCount || 0} staff
+                                </span>
                               </div>
                             </div>
                           ))}
                         </div>
                       </section>
-                    )
-                  ))}
+                    ) : null
+                  )}
                 </>
               )}
             </div>
@@ -764,7 +837,9 @@ export default function StaffDirectory() {
               <Image src="/katz.jpeg" alt="Logo" width={24} height={24} className="opacity-40" />
               <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Katwanyaa Senior School</span>
             </div>
-            <p className="text-[10px] text-slate-300">Committed to Excellence &bull; Staff Directory &bull; &copy; {new Date().getFullYear()}</p>
+            <p className="text-[10px] text-slate-300">
+              Committed to Excellence &bull; Staff Directory &bull; &copy; {new Date().getFullYear()}
+            </p>
           </div>
         </div>
       </footer>
