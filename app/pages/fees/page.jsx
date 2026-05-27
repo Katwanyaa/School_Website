@@ -527,9 +527,8 @@ export default function ModernFeesPage() {
         <div className="space-y-4 sm:space-y-6">
           {/* Header */}
           <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-slate-700">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-black mb-1 sm:mb-2">💳 School Fees Payment Methods</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black mb-1 sm:mb-2"> School Fees Payment Methods</h2>
             <p className="text-slate-300 text-xs sm:text-sm md:text-base">Multiple secure payment options available. Choose the method that works best for you.</p>
-            <p className="text-amber-400 text-xs sm:text-sm font-bold mt-2 sm:mt-3">📍 Branch Reference: TALA</p>
           </div>
 
           {/* DIRECT BANK PAYMENTS */}
