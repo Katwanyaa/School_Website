@@ -95,7 +95,7 @@ const DetailStat = ({ icon: Icon, label, value }) => (
 );
 
 const TeacherCard = ({ teacher }) => (
-  <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
     <div className="relative aspect-[4/3] bg-slate-100">
       <img
         src={getTeacherImage(teacher)}
@@ -199,56 +199,75 @@ export default function StaffDepartmentDetailPage() {
       <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
         <Link
           href="/pages/staff"
-          className="mb-5 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm"
+          className="mb-5 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-700 shadow-sm transition hover:bg-slate-50"
         >
           <FiArrowLeft size={14} /> Staff Directory
         </Link>
 
         <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
-          <div className="relative min-h-[360px] bg-slate-950">
-            <img
-              src={getDepartmentImage(department)}
-              alt={department.name}
-              className="absolute inset-0 h-full w-full object-cover opacity-70"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-slate-950/10" />
-            <div className="relative z-10 flex min-h-[360px] flex-col justify-end p-6 text-white sm:p-10">
-              <span className={`inline-flex w-fit items-center gap-2 rounded-full border bg-white/95 px-4 py-2 text-[10px] font-black uppercase tracking-widest ${meta.badge}`}>
+          {/* FULL IMAGE HERO SECTION - shows the entire image without cropping */}
+          <div className="relative w-full">
+            {/* Taller container on mobile, even taller on desktop to reveal full image */}
+            <div className="relative h-[55vh] sm:h-[65vh] lg:h-[70vh] w-full bg-slate-900">
+              <img
+                src={getDepartmentImage(department)}
+                alt={department.name}
+                className="absolute inset-0 h-full w-full object-contain bg-slate-800"
+                style={{ objectPosition: "center top" }}
+              />
+              {/* Fallback gradient for readability if image is bright */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            </div>
+            {/* Text overlay positioned over the bottom part of the image */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white sm:p-10">
+              <span
+                className={`inline-flex w-fit items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-[10px] font-black uppercase tracking-widest shadow-md ${meta.badge}`}
+              >
                 <Icon size={14} /> {meta.label}
               </span>
-              <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl">{department.name}</h1>
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base">
-                {department.description || "Department-level staff information is shared here without exposing individual private teacher details."}
+              <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight drop-shadow-lg sm:text-4xl lg:text-5xl">
+                {department.name}
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/90 drop-shadow-md sm:text-base">
+                {department.description ||
+                  "Department-level staff information is shared here without exposing individual private teacher details."}
               </p>
             </div>
           </div>
 
           <div className="p-5 sm:p-8">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Stats grid - responsive: 1 column mobile, 2 on sm, 4 on lg */}
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               <DetailStat icon={FiUsers} label="Teachers/Staff" value={`${department.staffCount || 0} members`} />
               <DetailStat icon={FiUser} label="Head of Department" value={department.headName} />
               <DetailStat icon={FiShield} label="AHOD" value={department.assistantHeadName} />
               <DetailStat icon={Icon} label="Category" value={meta.label} />
             </div>
 
+            {/* Overview and Privacy Notice - stack on mobile, side by side on lg */}
             <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
               <section className="rounded-2xl border border-slate-100 bg-slate-50 p-5 sm:p-6">
                 <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-900">
                   <FiBookOpen className="text-blue-600" /> Department Overview
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-                  {department.description || "This department is managed as a grouped staff area for privacy. Public details focus on the department structure, responsibilities, and school-level service."}
+                  {department.description ||
+                    "This department is managed as a grouped staff area for privacy. Public details focus on the department structure, responsibilities, and school-level service."}
                 </p>
               </section>
 
-              <section className={`rounded-2xl bg-gradient-to-br ${meta.accent} p-5 text-white sm:p-6`}>
+              <section
+                className={`rounded-2xl bg-gradient-to-br ${meta.accent} p-5 text-white sm:p-6`}
+              >
                 <h2 className="text-sm font-black uppercase tracking-widest">Privacy Notice</h2>
                 <p className="mt-4 text-sm leading-7 text-white/85">
-                  Individual teacher and support staff contact details are not published. Department information is shared at group level.
+                  Individual teacher and support staff contact details are not published. Department
+                  information is shared at group level.
                 </p>
               </section>
             </div>
 
+            {/* Extra details */}
             {extraDetails.length > 0 && (
               <section className="mt-8">
                 <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-900">
@@ -257,20 +276,25 @@ export default function StaffDepartmentDetailPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {extraDetails.map(([key, value]) => (
                     <div key={key} className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{formatKey(key)}</p>
-                      <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-700">{value}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        {formatKey(key)}
+                      </p>
+                      <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-700">
+                        {value}
+                      </p>
                     </div>
                   ))}
                 </div>
               </section>
             )}
 
+            {/* Teachers grid - responsive: 1 col mobile, 2 on sm, 3 on lg */}
             <section className="mt-8">
               <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-900">
                 <FiUsers className="text-emerald-600" /> Department Teachers
               </h2>
               {teachers.length > 0 ? (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {teachers.map((teacher) => (
                     <TeacherCard key={teacher.id} teacher={teacher} />
                   ))}
