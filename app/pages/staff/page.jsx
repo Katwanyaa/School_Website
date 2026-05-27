@@ -814,7 +814,7 @@ export default function StaffDirectory() {
                                 
                                 <div className="pt-2">
                                   <Link
-                                    href={`/pages/SchoolTeam/${principalStaff.id}/${generateSlug(principalStaff.name, principalStaff.id)}`}
+                                    href={`/pages/Staff/${principalStaff.id}/${generateSlug(principalStaff.name, principalStaff.id)}`}
                                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#1a1a2e] to-[#244863] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
                                   >
                                     View Full Profile <FiChevronRight size={14} />
@@ -858,7 +858,7 @@ export default function StaffDirectory() {
                                       <p className="mt-2 text-xs text-slate-500 line-clamp-2">{staff.bio}</p>
                                     )}
                                     <Link
-                                      href={`/pages/SchoolTeam/${staff.id}/${generateSlug(staff.name, staff.id)}`}
+                                      href={`/pages/Staff/${staff.id}/${generateSlug(staff.name, staff.id)}`}
                                       className="inline-flex items-center gap-1 mt-3 text-xs font-bold text-[#1e3a8a] hover:gap-2 transition-all"
                                     >
                                       View profile <FiChevronRight size={12} />
