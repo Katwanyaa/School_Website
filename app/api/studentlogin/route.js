@@ -7,7 +7,12 @@ import { prisma } from '../../../libs/prisma';
 
 export const dynamic = 'force-dynamic';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'Katwanyaa-student-secret-key-2024';
+// CRITICAL: Require JWT_SECRET - fail fast if not configured
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('CRITICAL: JWT_SECRET environment variable is required for session security. Set it in your .env.local file.');
+}
+
 const STUDENT_TOKEN_EXPIRY = '2h';
 const SESSION_MS = 2 * 60 * 60 * 1000;
 const SETUP_TOKEN_EXPIRY = '20m';

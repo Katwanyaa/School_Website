@@ -378,17 +378,48 @@ export async function POST(req) {
       </html>
     `;
 
-    await transporter.sendMail({
-      from: {
-        name: `${SCHOOL_NAME} Portal`,
-        address: process.env.EMAIL_USER
-      },
-      to: parentEmail,
-      subject: `🔐 Student Password Reset Request - ${studentName} | ${SCHOOL_NAME}`,
-      html: emailHtml,
-    });
+    // CRITICAL FIX: Wrap email sending in try-catch to handle failures properly
+    let emailSent = false;
+    try {
+      await transporter.sendMail({
+        from: {
+          name: `${SCHOOL_NAME} Portal`,
+          address: process.env.EMAIL_USER
+        },
+        to: parentEmail,
+        subject: `🔐 Student Password Reset Request - ${studentName} | ${SCHOOL_NAME}`,
+        html: emailHtml,
+      });
+      emailSent = true;
+      console.log(`✅ Password reset email sent to ${parentEmail}`);
+    } catch (emailError) {
+      console.error(`❌ Failed to send password reset email: ${emailError.message}`);
+      
+      // Update request status to track email failure
+      await prisma.studentPasswordResetRequest.update({
+        where: { 
+          id: (await prisma.studentPasswordResetRequest.findFirst({
+            where: { tokenHash }
+          }))?.id 
+        },
+        data: { 
+          status: 'email_failed',
+          adminNote: `Email send failed: ${emailError.message}`
+        }
+      }).catch(() => {}); // Ignore update errors
+    }
 
-    console.log(`✅ Password reset email sent to ${parentEmail}`);
+    // Only return success if email was actually sent
+    if (!emailSent) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'We could not send the password reset email. Please contact school office.',
+          support: `Email: ${CONTACT_EMAIL} | Phone: ${CONTACT_PHONE}`,
+        },
+        { status: 503 } // Service Unavailable
+      );
+    }
 
     return NextResponse.json(
       {

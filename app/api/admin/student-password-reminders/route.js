@@ -3,6 +3,47 @@ import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import { prisma } from '../../../../libs/prisma';
 
+// CRITICAL: Verify admin authentication
+const verifyAdminAuth = async (request) => {
+  try {
+    // Check for admin token/session
+    const authHeader = request.headers.get('authorization');
+    const deviceToken = request.headers.get('x-device-token');
+    
+    if (!authHeader && !deviceToken) {
+      return null;
+    }
+
+    // If using device token (typical for mobile), verify it
+    if (deviceToken) {
+      const token = await prisma.deviceToken.findFirst({
+        where: { 
+          token: deviceToken,
+          isValid: true
+        },
+        include: { user: true }
+      });
+      
+      if (!token || token.user?.role !== 'ADMIN') {
+        return null;
+      }
+      return token.user;
+    }
+
+    // If using authorization header (Bearer token), verify JWT
+    if (authHeader?.startsWith('Bearer ')) {
+      // This would require JWT verification logic
+      // For now, require device token approach
+      return null;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Auth verification error:', error);
+    return null;
+  }
+};
+
 // Configure email transporter
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -20,6 +61,14 @@ const CONTACT_PHONE = '0710894145';
 // Get students with password status
 export async function GET(req) {
   try {
+    // CRITICAL FIX: Verify admin authentication
+    const admin = await verifyAdminAuth(req);
+    if (!admin) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
     const { searchParams } = new URL(req.url);
     const filter = searchParams.get('filter') || 'all'; // 'all', 'not-set', 'set'
     const form = searchParams.get('form'); // optional form filter
@@ -124,6 +173,14 @@ export async function GET(req) {
 // Send password reminder emails
 export async function POST(req) {
   try {
+    // CRITICAL FIX: Verify admin authentication
+    const admin = await verifyAdminAuth(req);
+    if (!admin) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
     const { admissionNumbers, message } = await req.json();
 
     if (!admissionNumbers || !Array.isArray(admissionNumbers) || admissionNumbers.length === 0) {
