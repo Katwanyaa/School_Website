@@ -510,6 +510,7 @@ model SchoolDocument {
   feesDayDescription     String?   @db.Text
   feesDayYear            Int?
   feesDayTerm            String?   @db.VarChar(50)
+  feesDayAnnualAmount    Float?    // Total annual fees for day school
   feesDayConfig          Json?
   feesDayPublished       Boolean   @default(true)
   feesDayArchived        Boolean   @default(false)
@@ -522,6 +523,7 @@ model SchoolDocument {
   feesBoardingDescription     String?   @db.Text
   feesBoardingYear            Int?
   feesBoardingTerm            String?   @db.VarChar(50)
+  feesBoardingAnnualAmount    Float?    // Total annual fees for boarding
   feesBoardingConfig          Json?
   feesBoardingPublished       Boolean   @default(true)
   feesBoardingArchived        Boolean   @default(false)
@@ -875,6 +877,8 @@ model FeeBalanceUpload {
   term         String?
   academicYear String?
   uploadType   String // new, update
+  feeCategory  String?  // "day" or "boarding" - indicates which type of fees this is
+  annualAmount Float?   // Total annual fees for this category
 
   // Statistics
   totalRows   Int

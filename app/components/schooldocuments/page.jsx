@@ -2023,6 +2023,12 @@ const [formData, setFormData] = useState(() => {
     kcseDescription: documents?.kcseDescription || ''
   });
 
+  // Fee annual amounts for day school and boarding
+  const [feeAmounts, setFeeAmounts] = useState({
+    daySchool: documents?.feesDayAnnualAmount || 0,
+    boarding: documents?.feesBoardingAnnualAmount || 0
+  });
+
   const [actionLoading, setActionLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -2035,9 +2041,9 @@ const [formData, setFormData] = useState(() => {
     },
     { 
       id: 'fees', 
-      label: 'Boarding Fees', 
-      icon: FaBuilding, 
-      description: 'Boarding school fee structure documents' 
+      label: 'Fees', 
+      icon: FaDollarSign, 
+      description: 'School fee structure documents for day school and boarding' 
     },
     { 
       id: 'admission', 
@@ -2138,6 +2144,14 @@ const handleSubmitAfterReview = async () => {
     
     // IMPORTANT: No fee breakdowns are submitted - only the documents themselves
     console.log('Submitting simplified documents - no fee breakdowns or metadata');
+    
+    // Append fee annual amounts if they are set
+    if (feeAmounts.daySchool > 0) {
+      data.append('feesDayAnnualAmount', feeAmounts.daySchool);
+    }
+    if (feeAmounts.boarding > 0) {
+      data.append('feesBoardingAnnualAmount', feeAmounts.boarding);
+    }
     
     // Append year/term/description for boarding fee documents only if they exist
     
@@ -2377,32 +2391,141 @@ const getExistingPdfData = (field) => {
           </div>
         );
       
-      case 1: // Boarding Fee Structures
+      case 1: // Fee Structures (Both Day School and Boarding)
         return (
           <div className="space-y-8">
             <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-4">
               <div className="flex items-center gap-2">
                 <FaInfoCircle className="text-blue-600" />
                 <p className="text-sm font-bold text-blue-800">
-                  Upload only the boarding fees document - no metadata or fee breakdowns required. The document itself is sufficient.
+                  Upload both day school and boarding fee documents. Enter the total annual fees for each category.
                 </p>
               </div>
             </div>
             
-            <div className="w-full max-w-2xl">
-              <ModernPdfUpload
-                pdfFile={formData.feesBoardingDistributionPdf?.file || null}
-                onPdfChange={(file, year, description, term) => 
-                  handleFileChange('feesBoardingDistributionPdf', file, year, description, term)
-                }
-                onRemove={() => handleFileRemove('feesBoardingDistributionPdf')}
-                label="Boarding School Fees PDF"
-                required={true}
-                existingPdf={getExistingPdfData('feesBoardingDistributionPdf')}
-                onCancelExisting={(existingFile) => handleCancelExisting('feesBoardingDistributionPdf', existingFile)}
-                onRemoveExisting={() => handleRemoveExisting('feesBoardingDistributionPdf')}
-                type="boarding"
-              />
+            {/* Day School Fees Section */}
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-green-500 text-white rounded-xl">
+                  <FaBook className="text-lg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Day School Fees</h3>
+                  <p className="text-sm text-gray-600 font-bold">Upload PDF and enter annual amount</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="w-full">
+                  <ModernPdfUpload
+                    pdfFile={formData.feesDayDistributionPdf?.file || null}
+                    onPdfChange={(file) => 
+                      handleFileChange('feesDayDistributionPdf', file)
+                    }
+                    onRemove={() => handleFileRemove('feesDayDistributionPdf')}
+                    label="Day School Fees PDF"
+                    required={false}
+                    existingPdf={getExistingPdfData('feesDayDistributionPdf')}
+                    onCancelExisting={(existingFile) => handleCancelExisting('feesDayDistributionPdf', existingFile)}
+                    onRemoveExisting={() => handleRemoveExisting('feesDayDistributionPdf')}
+                    type="day"
+                    description="Upload the official day school fee structure document"
+                  />
+                </div>
+                
+                <div className="bg-white rounded-xl border-2 border-green-200 p-4">
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Total Annual Fees (KES)
+                  </label>
+                  <input
+                    type="number"
+                    value={feeAmounts.daySchool}
+                    onChange={(e) => setFeeAmounts({...feeAmounts, daySchool: parseFloat(e.target.value) || 0})}
+                    placeholder="Enter total annual fees for day school"
+                    className="w-full px-4 py-3 border-2 border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-base font-bold"
+                    min="0"
+                    step="0.01"
+                  />
+                  <p className="text-xs text-gray-600 mt-2 font-bold">
+                    Annual amount: KES {feeAmounts.daySchool.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Boarding Fees Section */}
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-purple-500 text-white rounded-xl">
+                  <FaBuilding className="text-lg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Boarding School Fees</h3>
+                  <p className="text-sm text-gray-600 font-bold">Upload PDF and enter annual amount</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="w-full">
+                  <ModernPdfUpload
+                    pdfFile={formData.feesBoardingDistributionPdf?.file || null}
+                    onPdfChange={(file) => 
+                      handleFileChange('feesBoardingDistributionPdf', file)
+                    }
+                    onRemove={() => handleFileRemove('feesBoardingDistributionPdf')}
+                    label="Boarding School Fees PDF"
+                    required={false}
+                    existingPdf={getExistingPdfData('feesBoardingDistributionPdf')}
+                    onCancelExisting={(existingFile) => handleCancelExisting('feesBoardingDistributionPdf', existingFile)}
+                    onRemoveExisting={() => handleRemoveExisting('feesBoardingDistributionPdf')}
+                    type="boarding"
+                    description="Upload the official boarding school fee structure document"
+                  />
+                </div>
+                
+                <div className="bg-white rounded-xl border-2 border-purple-200 p-4">
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Total Annual Fees (KES)
+                  </label>
+                  <input
+                    type="number"
+                    value={feeAmounts.boarding}
+                    onChange={(e) => setFeeAmounts({...feeAmounts, boarding: parseFloat(e.target.value) || 0})}
+                    placeholder="Enter total annual fees for boarding"
+                    className="w-full px-4 py-3 border-2 border-purple-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-base font-bold"
+                    min="0"
+                    step="0.01"
+                  />
+                  <p className="text-xs text-gray-600 mt-2 font-bold">
+                    Annual amount: KES {feeAmounts.boarding.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Fee Summary */}
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-blue-500 text-white rounded-xl">
+                  <FaCalculator className="text-lg" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">Fee Summary</h3>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-4 rounded-xl border border-blue-200">
+                  <p className="text-xs text-gray-600 font-bold uppercase mb-2">Day School</p>
+                  <p className="text-2xl font-bold text-green-700">
+                    KES {feeAmounts.daySchool.toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-white p-4 rounded-xl border border-blue-200">
+                  <p className="text-xs text-gray-600 font-bold uppercase mb-2">Boarding</p>
+                  <p className="text-2xl font-bold text-purple-700">
+                    KES {feeAmounts.boarding.toLocaleString()}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -3567,3 +3690,4 @@ if (typeof document !== 'undefined') {
   style.innerHTML = customScrollbarStyles;
   document.head.appendChild(style);
 }
+

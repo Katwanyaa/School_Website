@@ -540,9 +540,11 @@ const router = useRouter();
             </div>
             <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 mb-1">Day Scholars</h3>
             <p className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-2 leading-tight">
-              KSh {documentData?.feesDayDistributionJson?.reduce((sum, item) => sum + item.amount, 0)?.toLocaleString() || '0'}
+              KSh {(documentData?.feesDayAnnualAmount || documentData?.feesDayDistributionJson?.reduce((sum, item) => sum + item.amount, 0) || 0)?.toLocaleString()}
             </p>
-            <p className="text-[10px] sm:text-xs md:text-sm text-slate-500">{documentData?.feesDayDistributionJson?.length || 0} fee items</p>
+            <p className="text-[10px] sm:text-xs md:text-sm text-slate-500">
+              {documentData?.feesDayAnnualAmount ? 'Total annual fees' : `${documentData?.feesDayDistributionJson?.length || 0} fee items`}
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 p-4 sm:p-5 md:p-6 shadow-sm">
@@ -569,9 +571,11 @@ const router = useRouter();
             </div>
             <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 mb-1">Boarders</h3>
             <p className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-2 leading-tight">
-              KSh {documentData?.feesBoardingDistributionJson?.reduce((sum, item) => sum + item.amount, 0)?.toLocaleString() || '0'}
+              KSh {(documentData?.feesBoardingAnnualAmount || documentData?.feesBoardingDistributionJson?.reduce((sum, item) => sum + item.amount, 0) || 0)?.toLocaleString()}
             </p>
-            <p className="text-[10px] sm:text-xs md:text-sm text-slate-500">{documentData?.feesBoardingDistributionJson?.length || 0} fee items</p>
+            <p className="text-[10px] sm:text-xs md:text-sm text-slate-500">
+              {documentData?.feesBoardingAnnualAmount ? 'Total annual fees' : `${documentData?.feesBoardingDistributionJson?.length || 0} fee items`}
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 p-4 sm:p-5 md:p-6 shadow-sm sm:col-span-2 lg:col-span-1">

@@ -274,6 +274,7 @@ const cleanDocumentResponse = (document) => {
     feesDayDescription: document.feesDayDescription,
     feesDayYear: document.feesDayYear,
     feesDayTerm: document.feesDayTerm,
+    feesDayAnnualAmount: document.feesDayAnnualAmount || 0,
     feesDayConfig: document.feesDayConfig || null,
     feesDayPublished: document.feesDayPublished,
     feesDayArchived: document.feesDayArchived,
@@ -286,6 +287,7 @@ const cleanDocumentResponse = (document) => {
     feesBoardingDescription: document.feesBoardingDescription,
     feesBoardingYear: document.feesBoardingYear,
     feesBoardingTerm: document.feesBoardingTerm,
+    feesBoardingAnnualAmount: document.feesBoardingAnnualAmount || 0,
     feesBoardingConfig: document.feesBoardingConfig || null,
     feesBoardingPublished: document.feesBoardingPublished,
     feesBoardingArchived: document.feesBoardingArchived,
@@ -446,6 +448,10 @@ export async function POST(req) {
     const feesBoardingConfigRaw = formData.get('feesBoardingConfig');
     const parsedFeesDayConfig = parseJsonField(feesDayConfigRaw);
     const parsedFeesBoardingConfig = parseJsonField(feesBoardingConfigRaw);
+    
+    // Get annual amount fields
+    const feesDayAnnualAmount = formData.get('feesDayAnnualAmount');
+    const feesBoardingAnnualAmount = formData.get('feesBoardingAnnualAmount');
 
     if (parsedFeesDayConfig) {
       updateData.feesDayConfig = normalizeFeeConfig(parsedFeesDayConfig);
@@ -465,6 +471,16 @@ export async function POST(req) {
       if (parsedFeesBoardingConfig.archived !== undefined) {
         updateData.feesBoardingArchived = parsedFeesBoardingConfig.archived === true;
       }
+    }
+    
+    // Add annual amounts if provided
+    if (feesDayAnnualAmount) {
+      updateData.feesDayAnnualAmount = parseFloat(feesDayAnnualAmount);
+      console.log('✅ Day school annual amount:', updateData.feesDayAnnualAmount);
+    }
+    if (feesBoardingAnnualAmount) {
+      updateData.feesBoardingAnnualAmount = parseFloat(feesBoardingAnnualAmount);
+      console.log('✅ Boarding annual amount:', updateData.feesBoardingAnnualAmount);
     }
 
     // Process all fields (documents + exams)
