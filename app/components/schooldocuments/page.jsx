@@ -1520,6 +1520,7 @@ function ModernDocumentCard({
   year = null,
   term = null,
   feeBreakdown = null,
+  feeAmount = null,
   onReplace = null,
   onRemove = null,
   onEdit = null,
@@ -1544,7 +1545,8 @@ function ModernDocumentCard({
     term,
     type,
     fileSize,
-    uploadDate
+    uploadDate,
+    feeAmount
   };
 
   return (
@@ -1724,7 +1726,8 @@ function DocumentDetailsModal({
     term,
     type,
     fileSize,
-    uploadDate
+    uploadDate,
+    feeAmount
   } = documentData;
 
   const getDocumentTypeIcon = () => {
@@ -1834,6 +1837,13 @@ function DocumentDetailsModal({
                 <div className="bg-white p-3 rounded-lg border border-gray-200">
                   <p className="text-xs text-gray-500 font-bold">Term</p>
                   <p className="text-sm font-bold text-gray-900">{term}</p>
+                </div>
+              )}
+              
+              {feeAmount && (type === 'day' || type === 'boarding') && (
+                <div className="bg-white p-3 rounded-lg border border-gray-200">
+                  <p className="text-xs text-gray-500 font-bold">Annual Amount</p>
+                  <p className="text-sm font-bold text-gray-900">Ksh {feeAmount.toLocaleString()}</p>
                 </div>
               )}
               
@@ -3384,6 +3394,7 @@ const hasDocuments = documents && (
                   year={documents.feesDayYear}
                   term={documents.feesDayTerm}
                   feeBreakdown={documents.feesDayDistributionJson || []}
+                  feeAmount={documents.feesDayAnnualAmount}
                   type="day"
                   fileSize={documents.feesDayPdfSize}
                   uploadDate={documents.feesDayUploadDate}
@@ -3403,6 +3414,7 @@ const hasDocuments = documents && (
                   year={documents.feesBoardingYear}
                   term={documents.feesBoardingTerm}
                   feeBreakdown={documents.feesBoardingDistributionJson || []}
+                  feeAmount={documents.feesBoardingAnnualAmount}
                   type="boarding"
                   fileSize={documents.feesBoardingPdfSize}
                   uploadDate={documents.feesBoardingUploadDate}
