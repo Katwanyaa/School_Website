@@ -627,93 +627,96 @@ export default function PublicSchoolHubPage({
       <GalleryModal item={active} onClose={() => setActive(null)} />
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Hero Section */}
-        <section className="overflow-hidden rounded-2xl bg-white text-slate-950 shadow-sm">
-          <div className="flex flex-col items-center justify-center px-5 py-10 text-center sm:px-8 sm:py-12 lg:px-12">
-            <div className="inline-flex max-w-full items-center gap-3 rounded-full bg-slate-50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-600">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
-                <Image
-                  src="/KatwanyaaLogo.png"  // Replace with your actual logo path
-                  alt="Katwanyaa Senior School Logo"
-                  width={40}
-                  height={40}
-                  className="h-full w-full object-cover"
-                  onError={(e) => e.currentTarget.src = '/default-school-logo.png'} // fallback
-                />
-              </span>
-              {renderGreenSchoolName(eyebrow)}
-            </div>
+       {/* ========== KATWANYAA HERO SECTION (Matungulu style) ========== */}
+<section className="overflow-hidden rounded-2xl bg-white text-slate-950 shadow-sm">
+  <div className="flex flex-col items-center justify-center px-5 py-10 text-center sm:px-8 sm:py-12 lg:px-12">
+    <div className="inline-flex max-w-full items-center gap-3 rounded-full bg-slate-50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-600">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
+        <Image
+          src="/katz.jpeg"           // Katwanyaa logo
+          alt="Katwanyaa Senior School Logo"
+          width={40}
+          height={40}
+          className="h-full w-full object-cover"
+        />
+      </span>
+      {renderGreenSchoolName(eyebrow)}   {/* "Katwanyaa Senior School" will be green */}
+    </div>
 
-            <div className="mt-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
-              <HeroIcon className="text-3xl" />
-            </div>
+    <div className="mt-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
+      <HeroIcon className="text-3xl" />
+    </div>
 
-            <div className="mx-auto mt-8 max-w-4xl">
-              <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-5xl">
-                {title}
-                <span className="block text-slate-700">
-                  {renderGreenSchoolName(KATWANYAA_INFO.name)}
-                </span>
-              </h1>
-              <p className="mx-auto mt-5 max-w-2xl text-sm font-medium leading-7 text-slate-600 sm:text-base">
-                {description || KATWANYAA_INFO.description}
-              </p>
-            </div>
+    <div className="mx-auto mt-8 max-w-4xl">
+      <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-5xl">
+        {title}
+        <span className="block text-slate-700">
+          {renderGreenSchoolName(KATWANYAA_INFO.name)}   {/* "Katwanyaa Senior School" */}
+        </span>
+      </h1>
+      <p className="mx-auto mt-5 max-w-2xl text-sm font-medium leading-7 text-slate-600 sm:text-base">
+        {description || KATWANYAA_INFO.description}
+      </p>
+    </div>
 
-            <div className="mt-8 grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
-              {heroStats.map(({ label, value, icon: StatIcon }) => (
-                <div key={label} className="rounded-2xl bg-slate-50 px-5 py-4 text-center">
-                  <StatIcon className="mx-auto mb-3 text-xl text-slate-500" />
-                  <p className="text-2xl font-black text-slate-950">{value}</p>
-                  <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
-                </div>
-              ))}
-            </div>
+    <div className="mt-8 grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
+      {heroStats.map(({ label, value, icon: StatIcon }) => (
+        <div key={label} className="rounded-2xl bg-slate-50 px-5 py-4 text-center">
+          <StatIcon className="mx-auto mb-3 text-xl text-slate-500" />
+          <p className="text-2xl font-black text-slate-950">{value}</p>
+          <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
+        </div>
+      ))}
+    </div>
 
-            <div className="mt-8 w-full max-w-3xl rounded-2xl bg-white p-5 text-slate-900 shadow-sm">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-                {renderGreenSchoolName(KATWANYAA_INFO.shortName)}
-              </p>
-              <h2 className="mt-2 text-2xl font-black text-slate-900">{KATWANYAA_INFO.motto}</h2>
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                {[
-                  { icon: FiMapPin, label: KATWANYAA_INFO.location },
-                  { icon: FiPhone, label: KATWANYAA_INFO.phone },
-                  { icon: FiMail, label: KATWANYAA_INFO.email },
-                ].map(({ icon: InfoIcon, label }) => (
-                  <div key={label} className="flex flex-col items-center rounded-xl bg-slate-50 p-4 text-center">
-                    <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
-                      <InfoIcon />
-                    </span>
-                    <span className="text-sm font-bold leading-6 text-slate-700">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+    <div className="mt-8 w-full max-w-3xl rounded-2xl bg-white p-5 text-slate-900 shadow-sm">
+      <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+        {renderGreenSchoolName(KATWANYAA_INFO.shortName)}
+      </p>
+      <h2 className="mt-2 text-2xl font-black text-slate-900">{KATWANYAA_INFO.motto}</h2>
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+        {[
+          { icon: FiMapPin, label: KATWANYAA_INFO.location },
+          { icon: FiPhone, label: KATWANYAA_INFO.phone },
+          { icon: FiMail, label: KATWANYAA_INFO.email },
+        ].map(({ icon: InfoIcon, label }) => (
+          <div key={label} className="flex flex-col items-center rounded-xl bg-slate-50 p-4 text-center">
+            <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
+              <InfoIcon />
+            </span>
+            <span className="text-sm font-bold leading-6 text-slate-700">{label}</span>
           </div>
-        </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
-        {/* Search & Refresh Section */}
-        <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="text-center lg:text-left">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Browse School Life</p>
-              <h2 className="mt-1 text-xl font-black text-slate-950">Find the right information faster</h2>
-            </div>
-            <div className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-2xl">
-              <div className="relative flex-1">
-                <FiSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder={`Search ${title.toLowerCase()}...`}
-                  className="h-12 w-full rounded-xl bg-slate-50 py-3 pl-11 pr-4 text-sm font-semibold text-slate-900 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-500/10"
-                />
-              </div>
-              <RefreshButton refreshing={refreshing} onClick={() => load(true)} />
-            </div>
-          </div>
-        </section>
-
+{/* ========== SEARCH & REFRESH SECTION ========== */}
+<section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="text-center lg:text-left">
+      <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">
+        Browse School Life
+      </p>
+      <h2 className="mt-1 text-xl font-black text-slate-950">
+        Find the right information faster
+      </h2>
+    </div>
+    <div className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-2xl">
+      <div className="relative flex-1">
+        <FiSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={`Search ${title.toLowerCase()}...`}
+          className="h-12 w-full rounded-xl bg-slate-50 py-3 pl-11 pr-4 text-sm font-semibold text-slate-900 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-500/10"
+        />
+      </div>
+      <RefreshButton refreshing={refreshing} onClick={() => load(true)} />
+    </div>
+  </div>
+</section>
         {/* Error Message */}
         {error && (
           <div className="mt-6 flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
