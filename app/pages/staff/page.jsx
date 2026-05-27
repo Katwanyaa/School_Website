@@ -792,7 +792,29 @@ export default function StaffDirectory() {
   const hasResults = filteredLeadership.length > 0 || filteredDepartments.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+              <FiUsers className="text-white text-lg" />
+            </div>
+            <div>
+              <h3 className="font-black text-slate-900 text-sm uppercase tracking-wider">Staff Directory</h3>
+              <p className="text-xs text-slate-500">School Hierarchy & Organization</p>
+            </div>
+          </div>
+          
+          <button
+            onClick={() => fetchStaffPageData(true)}
+            disabled={refreshing}
+            className="p-2.5 rounded-lg hover:bg-slate-100 transition disabled:opacity-50 self-start md:self-auto"
+          >
+            <FiRefreshCw className={`text-slate-700 ${refreshing ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </div>
       {isSidebarOpen && (
         <button
           aria-label="Close filters"
@@ -889,6 +911,33 @@ export default function StaffDirectory() {
             </div>
           </div>
         </section>
+
+        {/* Sticky Filter Tabs */}
+        <div className="sticky top-16 z-40 bg-white border-b border-slate-200 shadow-md mb-8 -mx-4 px-4 md:-mx-6 md:px-6">
+          <div className="flex items-center gap-2 overflow-x-auto py-3 pb-3 scrollbar-hide">
+            {FILTERS.map((filter) => {
+              const Icon = filter.icon;
+              const active = selectedFilter === filter.id;
+              return (
+                <button
+                  key={filter.id}
+                  onClick={() => setSelectedFilter(filter.id)}
+                  className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider whitespace-nowrap transition flex items-center gap-2 ${
+                    active
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  <Icon size={14} />
+                  {filter.label}
+                  <span className="ml-1 inline-block px-2 py-0.5 rounded-md text-[10px] bg-white/20">
+                    {filterCounts[filter.id] || 0}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="flex flex-col gap-6 lg:flex-row">
           <aside
