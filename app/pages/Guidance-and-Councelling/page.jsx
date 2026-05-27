@@ -1189,6 +1189,10 @@ export default function StudentCounseling() {
     { id: 'drugs', name: 'Drug Awareness', icon: FiAlertTriangle, gradient: 'from-red-500 to-rose-500' }
   ];
 
+  // Team data removed from API — provide safe placeholders
+  const teamData = [];
+  const teamMembers = [];
+
   // Load guidance sessions and team members from API
   const loadData = async () => {
     try {
@@ -1737,13 +1741,7 @@ onClick={() => toast.info('Access schedule sessions via the Student Portal.')}  
                     <span className="text-xs font-bold text-blue-600">API ({guidanceSessions.length})</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-blue-100">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                      <span className="text-sm font-medium text-slate-700">Team Members</span>
-                    </div>
-                    <span className="text-xs font-bold text-blue-600">API ({teamMembers.length})</span>
-                  </div>
+                  {/* Team Members removed (API unavailable) */}
                 </div>
               </div>
 
