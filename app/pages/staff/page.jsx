@@ -103,7 +103,6 @@ const isLeadershipProfile = (staff) => {
   const position = normalizeText(staff?.position);
   const combined = `${role} ${position}`;
 
-  // Check for leadership keywords
   if (
     role.includes("principal") ||
     position.includes("principal") ||
@@ -470,6 +469,9 @@ const TeacherCard = ({ teacher }) => (
   </article>
 );
 
+// ==========================================
+// ENHANCED DEPARTMENT CAROUSEL (AUTO-SCROLL)
+// ==========================================
 const DepartmentTeacherCarousel = ({ department, viewMode }) => {
   const scrollRef = useRef(null);
   const autoScrollRef = useRef(null);
@@ -487,6 +489,7 @@ const DepartmentTeacherCarousel = ({ department, viewMode }) => {
     });
   };
 
+  // Auto-scroll every 4 seconds
   useEffect(() => {
     if (!teachers.length || isHovered) return;
 
@@ -640,6 +643,9 @@ const SkeletonGrid = ({ viewMode }) => (
   </div>
 );
 
+// ==========================================
+// MAIN COMPONENT (PRINCIPAL FIRST, PRIVATE HIDDEN)
+// ==========================================
 export default function StaffDirectory() {
   const [leadership, setLeadership] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -663,7 +669,6 @@ export default function StaffDirectory() {
       let staffData = { staff: [] };
       let departmentData = { departments: [] };
 
-      // Parse staff data
       if (staffResponse.ok) {
         const staffJson = await staffResponse.json();
         if (staffJson && staffJson.success && Array.isArray(staffJson.staff)) {
@@ -680,7 +685,7 @@ export default function StaffDirectory() {
         staffData = { staff: [] };
       }
 
-      // Try to fetch departments, but don't fail if it doesn't work
+      // Try to fetch departments with staff included
       try {
         const departmentsResponse = await fetch("/api/staff/departments?grouped=1&includeStaff=1", { cache: "no-store" });
         if (departmentsResponse.ok) {
@@ -695,10 +700,9 @@ export default function StaffDirectory() {
         }
       } catch (deptError) {
         console.warn("Could not fetch departments:", deptError);
-        // Continue without departments
       }
 
-      // Filter leadership profiles
+      // Filter leadership profiles and sort (Principal first!)
       const allStaff = staffData.staff || [];
       const publicLeadership = allStaff
         .filter(staff => staff && isLeadershipProfile(staff))
@@ -709,7 +713,7 @@ export default function StaffDirectory() {
           return (a?.name || "").localeCompare(b?.name || "");
         });
 
-      // Process departments
+      // Process departments (keep active ones)
       const allDepartments = departmentData.departments || [];
       const publicDepartments = allDepartments
         .filter((department) => department && department.isActive !== false)
