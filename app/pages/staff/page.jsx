@@ -72,26 +72,26 @@ const STAFF_HIERARCHY = [
   {
     level: 'teaching',
     label: 'Teaching Staff',
-    color: 'emerald',
+    color: 'blue',
     positions: ['Teacher', 'Subject Teacher', 'Class Teacher', 'Assistant Teacher', 'Senior Teacher', 'Head of Department']
   },
   {
     level: 'support',
     label: 'Support Staff',
-    color: 'orange',
+    color: 'indigo',
     positions: ['Librarian', 'Laboratory Technician', 'Accountant', 'Secretary', 'Support Staff']
   }
 ];
 
 const DEPARTMENTS = [
   { id: 'administration', label: 'Administration', color: 'blue', hierarchy: 'leadership' },
-  { id: 'sciences', label: 'Sciences', color: 'emerald', hierarchy: 'teaching' },
-  { id: 'mathematics', label: 'Mathematics', color: 'orange', hierarchy: 'teaching' },
-  { id: 'languages', label: 'Languages', color: 'violet', hierarchy: 'teaching' },
-  { id: 'humanities', label: 'Humanities', color: 'amber', hierarchy: 'teaching' },
-  { id: 'guidance', label: 'Guidance & Counseling', color: 'pink', hierarchy: 'support' },
-  { id: 'sports', label: 'Sports & Athletics', color: 'teal', hierarchy: 'teaching' },
-  { id: 'technical', label: 'Technical & IT', color: 'cyan', hierarchy: 'support' },
+  { id: 'sciences', label: 'Sciences', color: 'blue', hierarchy: 'teaching' },
+  { id: 'mathematics', label: 'Mathematics', color: 'indigo', hierarchy: 'teaching' },
+  { id: 'languages', label: 'Languages', color: 'blue', hierarchy: 'teaching' },
+  { id: 'humanities', label: 'Humanities', color: 'sky', hierarchy: 'teaching' },
+  { id: 'guidance', label: 'Guidance & Counseling', color: 'indigo', hierarchy: 'support' },
+  { id: 'sports', label: 'Sports & Athletics', color: 'blue', hierarchy: 'teaching' },
+  { id: 'technical', label: 'Technical & IT', color: 'sky', hierarchy: 'support' },
   { id: 'support', label: 'Support Staff', color: 'slate', hierarchy: 'support' }
 ];
 
@@ -115,13 +115,8 @@ const generateSlug = (name, id) => {
 const getBadgeColorStyles = (colorName) => {
   const map = {
     blue: 'bg-blue-50 text-blue-700 border-blue-200',
-    emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    orange: 'bg-orange-50 text-orange-700 border-orange-200',
-    violet: 'bg-violet-50 text-violet-700 border-violet-200',
-    amber: 'bg-amber-50 text-amber-700 border-amber-200',
-    pink: 'bg-pink-50 text-pink-700 border-pink-200',
-    teal: 'bg-teal-50 text-teal-700 border-teal-200',
-    cyan: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+    indigo: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    sky: 'bg-sky-50 text-sky-700 border-sky-200',
     slate: 'bg-slate-50 text-slate-700 border-slate-200',
   };
   return map[colorName] || map.slate;
@@ -504,7 +499,7 @@ export default function StaffDirectory() {
           <p className="text-sm text-slate-500 mb-5">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="bg-[#1a1a2e] text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-[#2d2d44] transition-colors w-full"
+            className="bg-[#071527] text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-[#0f2743] transition-colors w-full"
           >
             Try Again
           </button>
@@ -514,20 +509,20 @@ export default function StaffDirectory() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       
       {/* ── Sticky Header ── */}
       <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/88 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-3 py-2 sm:gap-3 sm:px-6 sm:py-3 lg:flex-row lg:items-center lg:justify-between">
           
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#244863] to-[#d7a73d] p-[1px] shadow-sm">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#071527] via-[#0f2743] to-[#1d4ed8] p-[1px] shadow-sm">
               <div className="flex h-full w-full items-center justify-center rounded-2xl bg-white">
                 <Image src="/katz.jpeg" alt="Logo" width={28} height={28} className="rounded-xl object-cover" />
               </div>
             </div>
             <div>
-              <span className="text-sm font-black tracking-tight text-[#1a1a2e]">
+              <span className="text-sm font-black tracking-tight text-[#071527]">
                 Katwanyaa Senior School
               </span>
               <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Staff Directory</p>
@@ -542,7 +537,7 @@ export default function StaffDirectory() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search names, subjects..."
-                className="w-full rounded-lg sm:rounded-2xl border border-slate-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-9 sm:pr-10 text-xs sm:text-sm font-bold shadow-sm outline-none transition-all focus:border-[#1a1a2e] focus:ring-4 focus:ring-[#1a1a2e]/5"
+                className="w-full rounded-lg sm:rounded-2xl border border-slate-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-9 sm:pr-10 text-xs sm:text-sm font-bold shadow-sm outline-none transition-all focus:border-[#1d4ed8] focus:ring-4 focus:ring-blue-500/10"
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')} className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -555,7 +550,7 @@ export default function StaffDirectory() {
               <button
                 onClick={fetchStaffData}
                 disabled={loading}
-                className="flex items-center gap-1 rounded-lg sm:rounded-xl border border-slate-200 px-2.5 sm:px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs font-bold text-slate-600 transition-all hover:border-[#1a1a2e] hover:text-[#1a1a2e] disabled:opacity-50 whitespace-nowrap"
+                className="flex items-center gap-1 rounded-lg sm:rounded-xl border border-slate-200 px-2.5 sm:px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs font-bold text-slate-600 transition-all hover:border-[#1d4ed8] hover:text-[#071527] disabled:opacity-50 whitespace-nowrap"
               >
                 <FiRefreshCw size={11} className={loading ? 'animate-spin' : ''} />
                 <span className="hidden sm:inline">{loading ? 'Loading...' : 'Refresh'}</span>
@@ -564,13 +559,13 @@ export default function StaffDirectory() {
               <div className="flex rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 p-0.5 sm:p-1">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`rounded-md p-1.5 sm:p-2 transition-all ${viewMode === 'grid' ? 'bg-[#1a1a2e] text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`rounded-md p-1.5 sm:p-2 transition-all ${viewMode === 'grid' ? 'bg-[#071527] text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   <FiGrid size={12} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`rounded-md p-1.5 sm:p-2 transition-all ${viewMode === 'list' ? 'bg-[#1a1a2e] text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`rounded-md p-1.5 sm:p-2 transition-all ${viewMode === 'list' ? 'bg-[#071527] text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   <FiList size={12} />
                 </button>
@@ -580,42 +575,42 @@ export default function StaffDirectory() {
         </div>
       </header>
 
-    {/* ── Hero Banner - Katwanyaa Staff Clean Theme ── */}
-<div className="relative overflow-hidden bg-[#f7f1e6]">
+    {/* ── Hero Banner - Dark Bluish Katwanyaa Staff Theme ── */}
+<div className="relative overflow-hidden bg-[#071527]">
   {/* Decorative background */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(248,201,95,0.35),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(10,22,40,0.12),_transparent_35%)]" />
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.22),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(10,22,40,0.12),_transparent_35%)]" />
 
-  <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[#f8c95f]/30 blur-3xl" />
-  <div className="absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-[#0a1628]/10 blur-3xl" />
+  <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[#38bdf8]/30 blur-3xl" />
+  <div className="absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-[#071527]/10 blur-3xl" />
 
   <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
     <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
       
       {/* Left content */}
       <div>
-        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#0a1628]/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur">
-          <FiUsers className="h-4 w-4 text-[#0a1628]" />
-          <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0a1628]/70">
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-300/20 bg-white/10 px-4 py-2 shadow-sm backdrop-blur">
+          <FiUsers className="h-4 w-4 text-sky-300" />
+          <span className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-100/80">
             Katwanyaa School Staff
           </span>
         </div>
 
-        <h1 className="max-w-4xl text-4xl font-black leading-tight tracking-tight text-[#0a1628] sm:text-5xl lg:text-6xl">
+        <h1 className="max-w-4xl text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
           The people behind our learning community.
         </h1>
 
-        <p className="mt-5 max-w-2xl text-sm leading-7 text-[#0a1628]/70 sm:text-base">
+        <p className="mt-5 max-w-2xl text-sm leading-7 text-blue-100/75 sm:text-base">
           Meet the leadership, teachers, and support team working together to guide, support, and serve our students every day.
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <div className="inline-flex items-center gap-2 rounded-2xl bg-[#0a1628] px-5 py-3 text-xs font-bold text-white shadow-lg">
-            <FiShield className="h-4 w-4 text-[#f8c95f]" />
+          <div className="inline-flex items-center gap-2 rounded-2xl bg-[#1d4ed8] px-5 py-3 text-xs font-bold text-white shadow-lg shadow-blue-950/30">
+            <FiShield className="h-4 w-4 text-[#38bdf8]" />
             Leadership Team
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-2xl border border-[#0a1628]/10 bg-white px-5 py-3 text-xs font-bold text-[#0a1628] shadow-sm">
-            <FiStar className="h-4 w-4 text-[#f8c95f]" />
+          <div className="inline-flex items-center gap-2 rounded-2xl border border-[#071527]/10 bg-white/10 px-5 py-3 text-xs font-bold text-blue-50 shadow-sm">
+            <FiStar className="h-4 w-4 text-[#38bdf8]" />
             Dedicated Educators
           </div>
         </div>
@@ -624,21 +619,21 @@ export default function StaffDirectory() {
       {/* Right card */}
       {!loading ? (
         <div className="relative">
-          <div className="absolute -inset-3 rounded-[2rem] bg-[#f8c95f]/30 blur-xl" />
+          <div className="absolute -inset-3 rounded-[2rem] bg-[#38bdf8]/30 blur-xl" />
 
-          <div className="relative rounded-[2rem] border border-white/70 bg-white/85 p-6 shadow-2xl backdrop-blur-md sm:p-8">
+          <div className="relative rounded-[2rem] border border-blue-200/15 bg-white/10 p-6 shadow-2xl backdrop-blur-md sm:p-8">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#0a1628]/45">
+                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-100/55">
                   Staff Directory
                 </p>
-                <h2 className="mt-2 text-2xl font-black text-[#0a1628]">
+                <h2 className="mt-2 text-2xl font-black text-white">
                   Overview
                 </h2>
               </div>
 
-              <div className="rounded-2xl bg-[#0a1628] px-4 py-2 text-center shadow-lg">
-                <span className="block text-2xl font-black text-[#f8c95f]">
+              <div className="rounded-2xl bg-[#1d4ed8] px-4 py-2 text-center shadow-lg shadow-blue-950/30">
+                <span className="block text-2xl font-black text-white">
                   {staffData.length}
                 </span>
                 <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-white/70">
@@ -648,44 +643,44 @@ export default function StaffDirectory() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-2xl border border-[#0a1628]/10 bg-[#f7f1e6] p-4">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#0a1628]">
-                  <FiShield className="h-5 w-5 text-[#f8c95f]" />
+              <div className="rounded-2xl border border-blue-200/15 bg-white/10 p-4">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#1d4ed8]">
+                  <FiShield className="h-5 w-5 text-[#38bdf8]" />
                 </div>
-                <p className="text-3xl font-black text-[#0a1628]">
+                <p className="text-3xl font-black text-white">
                   {staffByHierarchy.leadership.length}
                 </p>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#0a1628]/50">
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/55">
                   Leadership
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-[#0a1628]/10 bg-[#f7f1e6] p-4">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#0a1628]">
-                  <FiUsers className="h-5 w-5 text-[#f8c95f]" />
+              <div className="rounded-2xl border border-blue-200/15 bg-white/10 p-4">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#1d4ed8]">
+                  <FiUsers className="h-5 w-5 text-[#38bdf8]" />
                 </div>
-                <p className="text-3xl font-black text-[#0a1628]">
+                <p className="text-3xl font-black text-white">
                   {(departmentsByCategory.CBC?.length || 0) +
                     (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
                     (departmentsByCategory.TEACHING?.length || 0) +
                     (departmentsByCategory.SUPPORT?.length || 0)}
                 </p>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#0a1628]/50">
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/55">
                   Departments
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-[#0a1628]/10 bg-white p-4">
-              <p className="text-sm font-semibold leading-relaxed text-[#0a1628]/65">
+            <div className="mt-6 rounded-2xl border border-blue-200/15 bg-white/10 p-4">
+              <p className="text-sm font-semibold leading-relaxed text-blue-100/70">
                 {`${staffData.length} staff members listed across leadership, teaching, and support departments.`}
               </p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="rounded-[2rem] border border-[#0a1628]/10 bg-white/70 p-8 shadow-xl backdrop-blur">
-          <p className="text-sm font-semibold text-[#0a1628]/50 animate-pulse">
+        <div className="rounded-[2rem] border border-blue-200/15 bg-white/10 p-8 shadow-xl backdrop-blur">
+          <p className="text-sm font-semibold text-blue-100/60 animate-pulse">
             Loading Katwanyaa staff directory...
           </p>
         </div>
@@ -745,7 +740,7 @@ export default function StaffDirectory() {
               onClick={() => setSelectedHierarchy(item.key)}
               className={`group flex min-w-[130px] flex-shrink-0 items-center justify-between gap-3 rounded-xl border px-3 py-3 text-left transition-all duration-200 sm:min-w-[165px] sm:px-4 ${
                 isActive
-                  ? 'border-[#0a1628] bg-[#0a1628] text-white shadow-lg shadow-slate-900/15'
+                  ? 'border-[#071527] bg-[#071527] text-white shadow-lg shadow-slate-900/15'
                   : 'border-slate-200 bg-white text-slate-700 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md'
               }`}
             >
@@ -753,8 +748,8 @@ export default function StaffDirectory() {
                 <div
                   className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${
                     isActive
-                      ? 'bg-[#f8c95f] text-[#0a1628]'
-                      : 'bg-slate-100 text-[#0a1628] group-hover:bg-[#f8c95f]/25'
+                      ? 'bg-[#38bdf8] text-[#071527]'
+                      : 'bg-slate-100 text-[#071527] group-hover:bg-[#38bdf8]/25'
                   }`}
                 >
                   <item.Icon size={16} />
@@ -778,7 +773,7 @@ export default function StaffDirectory() {
               <span
                 className={`flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-[10px] font-black ${
                   isActive
-                    ? 'bg-white/15 text-[#f8c95f]'
+                    ? 'bg-white/15 text-[#38bdf8]'
                     : 'bg-slate-100 text-slate-600'
                 }`}
               >
@@ -813,7 +808,7 @@ export default function StaffDirectory() {
             Staff Directory
           </p>
 
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-[#0a1628] sm:text-3xl">
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-[#071527] sm:text-3xl">
             {selectedHierarchy === 'leadership'
               ? 'School Leadership'
               : 'Our Staff & Departments'}
@@ -825,7 +820,7 @@ export default function StaffDirectory() {
             ) : selectedHierarchy === 'leadership' ? (
               <>
                 Showing{' '}
-                <span className="font-black text-[#0a1628]">
+                <span className="font-black text-[#071527]">
                   {filteredStaff.length}
                 </span>{' '}
                 leadership profiles
@@ -833,7 +828,7 @@ export default function StaffDirectory() {
             ) : (
               <>
                 Showing{' '}
-                <span className="font-black text-[#0a1628]">
+                <span className="font-black text-[#071527]">
                   {staffByHierarchy.leadership.length}
                 </span>{' '}
                 leadership members and departments
@@ -844,21 +839,21 @@ export default function StaffDirectory() {
 
         {!loading && !departmentsLoading && (
           <div className="grid grid-cols-2 gap-3 sm:min-w-[260px]">
-            <div className="rounded-2xl bg-[#0a1628] p-4 text-white">
+            <div className="rounded-2xl bg-[#071527] p-4 text-white">
               <p className="text-2xl font-black">{leadershipStaff.length}</p>
               <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
                 Leaders
               </p>
             </div>
 
-            <div className="rounded-2xl bg-[#f8c95f] p-4 text-[#0a1628]">
+            <div className="rounded-2xl bg-[#38bdf8] p-4 text-[#071527]">
               <p className="text-2xl font-black">
                 {(departmentsByCategory.CBC?.length || 0) +
                   (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
                   (departmentsByCategory.TEACHING?.length || 0) +
                   (departmentsByCategory.SUPPORT?.length || 0)}
               </p>
-              <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#0a1628]/60">
+              <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#071527]/60">
                 Departments
               </p>
             </div>
@@ -880,12 +875,12 @@ export default function StaffDirectory() {
         {(selectedHierarchy === 'all' || selectedHierarchy === 'leadership') && (
           <section>
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0a1628] shadow-md">
-                <FiCrown size={18} className="text-[#f8c95f]" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#071527] shadow-md">
+                <FiCrown size={18} className="text-[#38bdf8]" />
               </div>
 
               <div>
-                <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#0a1628]">
+                <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#071527]">
                   School Leadership
                 </h2>
                 <p className="text-xs font-semibold text-slate-400">
@@ -908,13 +903,13 @@ export default function StaffDirectory() {
               <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
                 {/* Principal Feature Card */}
                 {principalStaff && (
-                  <div className="relative overflow-hidden rounded-[2rem] bg-[#0a1628] p-6 text-white shadow-2xl">
-                    <div className="absolute right-0 top-0 h-44 w-44 rounded-bl-full bg-[#f8c95f]/20" />
+                  <div className="relative overflow-hidden rounded-[2rem] bg-[#071527] p-6 text-white shadow-2xl">
+                    <div className="absolute right-0 top-0 h-44 w-44 rounded-bl-full bg-[#38bdf8]/20" />
                     <div className="absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
 
                     <div className="relative z-10">
                       <div className="mb-6 flex items-center justify-between gap-4">
-                        <span className="inline-flex items-center gap-2 rounded-full bg-[#f8c95f] px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#0a1628]">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-[#38bdf8] px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#071527]">
                           <FiCrown size={12} />
                           Principal
                         </span>
@@ -923,7 +918,7 @@ export default function StaffDirectory() {
                       </div>
 
                       <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-                        <div className="relative h-36 w-36 flex-shrink-0 overflow-hidden rounded-3xl ring-4 ring-[#f8c95f]/50 sm:h-44 sm:w-44">
+                        <div className="relative h-36 w-36 flex-shrink-0 overflow-hidden rounded-3xl ring-4 ring-[#38bdf8]/50 sm:h-44 sm:w-44">
                           <Image
                             src={getImageSrc(principalStaff)}
                             alt={principalStaff.name}
@@ -938,7 +933,7 @@ export default function StaffDirectory() {
                             {principalStaff.name}
                           </h3>
 
-                          <p className="mt-2 text-sm font-black uppercase tracking-[0.18em] text-[#f8c95f]">
+                          <p className="mt-2 text-sm font-black uppercase tracking-[0.18em] text-[#38bdf8]">
                             {principalStaff.position || 'Principal'}
                           </p>
 
@@ -974,7 +969,7 @@ export default function StaffDirectory() {
                                 principalStaff.name,
                                 principalStaff.id
                               )}`}
-                              className="inline-flex items-center gap-2 rounded-full bg-[#f8c95f] px-5 py-2 text-xs font-black text-[#0a1628] transition hover:scale-[1.02]"
+                              className="inline-flex items-center gap-2 rounded-full bg-[#38bdf8] px-5 py-2 text-xs font-black text-[#071527] transition hover:scale-[1.02]"
                             >
                               View Profile <FiChevronRight size={13} />
                             </Link>
@@ -989,7 +984,7 @@ export default function StaffDirectory() {
                 {otherLeadershipStaff.length > 0 && (
                   <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
                     <div className="mb-4 flex items-center gap-2">
-                      <FiTrendingUp size={16} className="text-[#0a1628]" />
+                      <FiTrendingUp size={16} className="text-[#071527]" />
                       <h4 className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
                         Leadership Team
                       </h4>
@@ -999,7 +994,7 @@ export default function StaffDirectory() {
                       {otherLeadershipStaff.map((staff) => (
                         <div
                           key={staff.id}
-                          className="group rounded-2xl border border-slate-100 bg-slate-50 p-3 transition-all hover:border-[#f8c95f]/60 hover:bg-white hover:shadow-md"
+                          className="group rounded-2xl border border-slate-100 bg-slate-50 p-3 transition-all hover:border-[#38bdf8]/60 hover:bg-white hover:shadow-md"
                         >
                           <div className="flex items-center gap-4">
                             <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200">
@@ -1013,7 +1008,7 @@ export default function StaffDirectory() {
                             </div>
 
                             <div className="min-w-0 flex-1">
-                              <h3 className="truncate text-sm font-black text-[#0a1628]">
+                              <h3 className="truncate text-sm font-black text-[#071527]">
                                 {staff.name}
                               </h3>
 
@@ -1026,7 +1021,7 @@ export default function StaffDirectory() {
                                   staff.name,
                                   staff.id
                                 )}`}
-                                className="mt-2 inline-flex items-center gap-1 text-xs font-black text-[#1e3a8a] transition-all group-hover:gap-2"
+                                className="mt-2 inline-flex items-center gap-1 text-xs font-black text-[#1d4ed8] transition-all group-hover:gap-2"
                               >
                                 View profile <FiChevronRight size={12} />
                               </Link>
@@ -1056,12 +1051,12 @@ export default function StaffDirectory() {
               depts && depts.length > 0 ? (
                 <div key={category}>
                   <div className="mb-5 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f8c95f]">
-                      <FiLayers size={16} className="text-[#0a1628]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#38bdf8]">
+                      <FiLayers size={16} className="text-[#071527]" />
                     </div>
 
                     <div>
-                      <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#0a1628]">
+                      <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#071527]">
                         {category === 'CBC'
                           ? 'CBC'
                           : category === 'EIGHT_FOUR_FOUR'
@@ -1083,16 +1078,16 @@ export default function StaffDirectory() {
                     {depts.map((dept) => (
                       <div
                         key={dept.id}
-                        className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-[#f8c95f]/70 hover:shadow-xl"
+                        className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-[#38bdf8]/70 hover:shadow-xl"
                       >
-                        <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-slate-50 transition group-hover:bg-[#f8c95f]/20" />
+                        <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-slate-50 transition group-hover:bg-[#38bdf8]/20" />
 
                         <div className="relative z-10">
-                          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0a1628] text-white shadow-md">
-                            <FiBookOpen size={18} className="text-[#f8c95f]" />
+                          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#071527] text-white shadow-md">
+                            <FiBookOpen size={18} className="text-[#38bdf8]" />
                           </div>
 
-                          <h3 className="text-lg font-black leading-tight text-[#0a1628]">
+                          <h3 className="text-lg font-black leading-tight text-[#071527]">
                             {dept.name}
                           </h3>
 
@@ -1132,14 +1127,14 @@ export default function StaffDirectory() {
 </div>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-slate-100 bg-white mt-12">
+      <footer className="mt-12 border-t border-blue-950/10 bg-[#071527]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-2">
-              <Image src="/katz.jpeg" alt="Logo" width={24} height={24} className="opacity-40" />
-              <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Katwanyaa Senior School</span>
+              <Image src="/katz.jpeg" alt="Logo" width={24} height={24} className="opacity-80" />
+              <span className="text-[10px] font-black text-blue-100/70 uppercase tracking-[0.2em]">Katwanyaa Senior School</span>
             </div>
-            <p className="text-[10px] text-slate-300">
+            <p className="text-[10px] text-blue-100/45">
               Committed to Excellence &bull; Staff Directory &bull; &copy; {new Date().getFullYear()}
             </p>
           </div>
