@@ -1,1123 +1,773 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
-import {
-  FiArrowRight,
-  FiAward,
-  FiBookOpen,
+import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { 
+  FiMail, 
+  FiPhone, 
+  FiSearch, 
+  FiFilter, 
+  FiGrid, 
+  FiList, 
+  FiChevronDown, 
+  FiChevronRight, 
   FiBriefcase,
-  FiChevronDown,
-  FiChevronLeft,
-  FiChevronRight,
-  FiFilter,
-  FiGrid,
-  FiLayers,
-  FiList,
-  FiMenu,
-  FiRefreshCw,
-  FiSearch,
-  FiShield,
+  FiCalendar, 
   FiUser,
-  FiUsers,
   FiX,
-} from "react-icons/fi";
+  FiArrowLeft,
+  FiArrowRight,
+  FiMapPin,
+  FiAward,
+  FiStar,
+  FiBook,
+  FiTarget,
+  FiUsers,
+  FiBookOpen,
+  FiRefreshCw,
+  FiSettings,
+  FiHeart,
+  FiCpu,
+  FiGlobe,
+  FiActivity,
+  FiLayers,
+  FiShield
+} from 'react-icons/fi';
+import { toast } from 'sonner';
+import { SiGmail } from 'react-icons/si';
 
-const CATEGORY_META = {
-  CBC: {
-    label: "CBC Department",
-    shortLabel: "CBC",
-    icon: FiBookOpen,
-    color: "blue",
-    badge: "bg-blue-50 text-blue-700 border-blue-200",
-    panel: "from-blue-50 to-white border-blue-100",
-  },
-  EIGHT_FOUR_FOUR: {
-    label: "8-4-4 Department",
-    shortLabel: "8-4-4",
-    icon: FiAward,
-    color: "amber",
-    badge: "bg-amber-50 text-amber-700 border-amber-200",
-    panel: "from-amber-50 to-white border-amber-100",
-  },
-  TEACHING: {
-    label: "Teaching Department",
-    shortLabel: "Teaching",
-    icon: FiBriefcase,
-    color: "emerald",
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    panel: "from-emerald-50 to-white border-emerald-100",
-  },
-  SUPPORT: {
-    label: "Support Department",
-    shortLabel: "Support",
-    icon: FiShield,
-    color: "slate",
-    badge: "bg-slate-50 text-slate-700 border-slate-200",
-    panel: "from-slate-50 to-white border-slate-100",
-  },
+// ==========================================
+// 1. ENHANCED CONFIGURATION WITH HIERARCHY
+// ==========================================
+
+const HIERARCHY_ICONS = {
+  leadership: FiShield,
+  teaching: FiBookOpen,
+  support: FiSettings,
 };
 
-const FILTERS = [
-  { id: "all", label: "All Staff Areas", icon: FiLayers },
-  { id: "leadership", label: "Leadership Profiles", icon: FiUser },
-  { id: "CBC", label: "CBC Departments", icon: FiBookOpen },
-  { id: "EIGHT_FOUR_FOUR", label: "8-4-4 Departments", icon: FiAward },
-  { id: "TEACHING", label: "Teaching Departments", icon: FiBriefcase },
-  { id: "SUPPORT", label: "Support Departments", icon: FiShield },
+const DEPT_ICONS = {
+  administration: FiShield,
+  sciences: FiActivity,
+  mathematics: FiTarget,
+  languages: FiGlobe,
+  humanities: FiBook,
+  guidance: FiHeart,
+  sports: FiAward,
+  technical: FiCpu,
+  support: FiSettings,
+};
+
+const STAFF_HIERARCHY = [
+  {
+    level: 'leadership',
+    label: 'School Leadership',
+    color: 'blue',
+    positions: ['Principal', 'Deputy Principal']
+  },
+  {
+    level: 'teaching',
+    label: 'Teaching Staff',
+    color: 'emerald',
+    positions: ['Teacher', 'Subject Teacher', 'Class Teacher', 'Assistant Teacher', 'Senior Teacher', 'Head of Department']
+  },
+  {
+    level: 'support',
+    label: 'Support Staff',
+    color: 'orange',
+    positions: ['Librarian', 'Laboratory Technician', 'Accountant', 'Secretary', 'Support Staff']
+  }
 ];
 
-const CATEGORY_ORDER = ["CBC", "EIGHT_FOUR_FOUR", "TEACHING", "SUPPORT"];
+const DEPARTMENTS = [
+  { id: 'administration', label: 'Administration', color: 'blue', hierarchy: 'leadership' },
+  { id: 'sciences', label: 'Sciences', color: 'emerald', hierarchy: 'teaching' },
+  { id: 'mathematics', label: 'Mathematics', color: 'orange', hierarchy: 'teaching' },
+  { id: 'languages', label: 'Languages', color: 'violet', hierarchy: 'teaching' },
+  { id: 'humanities', label: 'Humanities', color: 'amber', hierarchy: 'teaching' },
+  { id: 'guidance', label: 'Guidance & Counseling', color: 'pink', hierarchy: 'support' },
+  { id: 'sports', label: 'Sports & Athletics', color: 'teal', hierarchy: 'teaching' },
+  { id: 'technical', label: 'Technical & IT', color: 'cyan', hierarchy: 'support' },
+  { id: 'support', label: 'Support Staff', color: 'slate', hierarchy: 'support' }
+];
 
-const generateSlug = (name = "staff", id = "") => {
-  const safeName = name == null ? "staff" : String(name);
-  const cleanName = safeName
+const ITEMS_PER_PAGE = 12;
+
+// ==========================================
+// 2. ENHANCED UTILITY FUNCTIONS WITH HIERARCHY
+// ==========================================
+
+const generateSlug = (name, id) => {
+  const cleanName = name
     .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
     .trim();
-
-  return `${cleanName || "staff"}-${id}`;
-};
-
-const normalizeText = (value) => {
-  if (value == null) return "";
-  return String(value).trim().toLowerCase();
-};
-
-const isHodValue = (value = "") => {
-  const normalized = normalizeText(value);
-  return (
-    normalized === "hod" ||
-    normalized === "ahod" ||
-    normalized.includes("head of department") ||
-    normalized.includes("assistant head of department")
-  );
-};
-
-const isLeadershipProfile = (staff) => {
-  if (!staff) return false;
   
-  const role = normalizeText(staff?.role);
-  const position = normalizeText(staff?.position);
-  const combined = `${role} ${position}`;
-
-  if (
-    role.includes("principal") ||
-    position.includes("principal") ||
-    role.includes("deputy principal") ||
-    position.includes("deputy principal") ||
-    role.includes("senior teacher") ||
-    position.includes("senior teacher") ||
-    role.includes("hod") ||
-    position.includes("hod") ||
-    isHodValue(role) ||
-    isHodValue(position)
-  ) {
-    return true;
-  }
-  
-  return false;
+  return `${cleanName}-${id}`;
 };
 
-const leadershipRank = (staff) => {
-  if (!staff) return 10;
-  
-  const role = normalizeText(staff?.role);
-  const position = normalizeText(staff?.position);
-  const combined = `${role || ''} ${position || ''}`;
-
-  if (role === "principal" || (position && position.includes("principal"))) return 1;
-  if (combined.includes("deputy principal") && combined.includes("academic")) return 2;
-  if (combined.includes("deputy principal") && combined.includes("admin")) return 3;
-  if (combined.includes("senior teacher")) return 4;
-  if (isHodValue(combined)) return 5;
-  return 10;
-};
-
-const getLeadershipImage = (staff) => {
-  if (!staff) return "/male.png";
-  if (staff?.image && staff.image !== "/images/avata/male.png" && staff.image !== "/images/avata/female.png") {
-    return staff.image;
-  }
-  return staff?.gender === "female" ? "/female.png" : "/male.png";
-};
-
-const getDepartmentImage = (department) => {
-  if (!department) return "/teachers.png";
-  return department?.image || department?.images?.[0]?.url || "/teachers.png";
-};
-
-const getCategoryMeta = (category) => {
-  return CATEGORY_META[category] || CATEGORY_META.TEACHING;
-};
-
-const getDepartmentSearchText = (department) => {
-  if (!department) return "";
-  
-  const extra =
-    department?.extra && typeof department.extra === "object"
-      ? Object.values(department.extra).flat().join(" ")
-      : "";
-  const teacherText = Array.isArray(department?.staff)
-    ? department.staff.map((teacher) => [teacher.name, teacher.subjectOffered, teacher.bio].filter(Boolean).join(" ")).join(" ")
-    : "";
-
-  return [
-    department?.name,
-    department?.category,
-    department?.description,
-    department?.headName,
-    department?.assistantHeadName,
-    teacherText,
-    extra,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-};
-
-const getLeadershipSearchText = (staff) => {
-  if (!staff) return "";
-  
-  return [
-    staff?.name,
-    staff?.role,
-    staff?.position,
-    staff?.department,
-    staff?.bio,
-    ...(Array.isArray(staff?.expertise) ? staff.expertise : []),
-    ...(Array.isArray(staff?.achievements) ? staff.achievements : []),
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-};
-
-const StatPill = ({ icon: Icon, value, label, tone }) => {
-  const tones = {
-    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    slate: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+const getBadgeColorStyles = (colorName) => {
+  const map = {
+    blue: 'bg-blue-50 text-blue-700 border-blue-200',
+    emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    orange: 'bg-orange-50 text-orange-700 border-orange-200',
+    violet: 'bg-violet-50 text-violet-700 border-violet-200',
+    amber: 'bg-amber-50 text-amber-700 border-amber-200',
+    pink: 'bg-pink-50 text-pink-700 border-pink-200',
+    teal: 'bg-teal-50 text-teal-700 border-teal-200',
+    cyan: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+    slate: 'bg-slate-50 text-slate-700 border-slate-200',
   };
-
-  return (
-    <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all ${tones[tone]} min-w-0`}>
-      <div className="shrink-0">
-        <Icon size={18} />
-      </div>
-      <div className="min-w-0 flex flex-col">
-        <span className="text-lg font-black leading-none tracking-tight truncate">
-          {value ?? 0}
-        </span>
-        <span className="text-[9px] font-bold uppercase tracking-widest opacity-70 truncate">
-          {label}
-        </span>
-      </div>
-    </div>
-  );
+  return map[colorName] || map.slate;
 };
 
-const SectionHeader = ({ icon: Icon, title, subtitle }) => (
-  <div className="mb-5 flex items-center gap-3">
-    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg">
-      <Icon size={19} />
-    </div>
-    <div className="min-w-0">
-      <h2 className="text-xl font-black tracking-tight text-slate-900">{title}</h2>
-      <p className="text-xs font-bold uppercase tracking-widest text-blue-600">{subtitle}</p>
-    </div>
-    <div className="hidden h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent sm:block" />
-  </div>
-);
-
-const DepartmentIntro = ({ departments, totalStaff }) => {
-  const safeDepartments = Array.isArray(departments) ? departments : [];
-  const previewDepartments = safeDepartments.slice(0, 4);
-
-  return (
-    <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 shadow-2xl ring-1 ring-slate-900/10 backdrop-blur-sm">
-      <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
-        <div className="p-6 sm:p-8">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">
-            <FiLayers size={14} />
-            Department Groups
-          </div>
-          <h2 className="max-w-2xl text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl">
-            Teaching and support staff are shown by department for privacy
-          </h2>
-          <p className="mt-4 max-w-3xl text-sm font-medium leading-7 text-slate-600">
-            The school admin manages each department with its own image, public description, HOD, AHOD where needed, and staff count. This keeps the Staff page useful while avoiding public exposure of every individual teacher or support staff member.
-          </p>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatPill icon={FiLayers} value={safeDepartments.length} label="Departments" tone="blue" />
-            <StatPill icon={FiUsers} value={totalStaff} label="Grouped Staff" tone="emerald" />
-            <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
-            <StatPill icon={FiBookOpen} value="Custom" label="Descriptions" tone="amber" />
-          </div>
-        </div>
-
-        <div className="grid min-h-[260px] grid-cols-2 gap-2 bg-slate-950 p-3">
-          {previewDepartments.length > 0 ? (
-            previewDepartments.map((department, index) => (
-              <div key={department?.id || index} className="relative overflow-hidden rounded-xl bg-slate-800">
-                <img
-                  src={getDepartmentImage(department)}
-                  alt={department?.name || "Department"}
-                  className="h-full min-h-[118px] w-full object-cover opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                <p className="absolute bottom-3 left-3 right-3 line-clamp-2 text-xs font-black leading-tight text-white">
-                  {department?.name || "Department"}
-                </p>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-2 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-              <p className="text-xs font-bold leading-6 text-slate-300">
-                Department images uploaded by the admin will appear here.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
-  );
+const FILTER_BUTTON_STYLES = {
+  all: {
+    base: 'border-[#334155] bg-[#334155] text-white',
+    active: 'border-[#0f172a] bg-[#0f172a] text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_0_0_6px_rgba(15,23,42,0.18)]',
+    count: 'bg-white/20 text-white',
+  },
+  leadership: {
+    base: 'border-[#1e3a5f] bg-[#1e3a5f] text-white',
+    active: 'border-[#0f2743] bg-[#0f2743] text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_0_0_6px_rgba(30,58,95,0.24)]',
+    count: 'bg-white/20 text-white',
+  },
+  teaching: {
+    base: 'border-[#1f5f3a] bg-[#1f5f3a] text-white',
+    active: 'border-[#154529] bg-[#154529] text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_0_0_6px_rgba(31,95,58,0.24)]',
+    count: 'bg-white/20 text-white',
+  },
+  support: {
+    base: 'border-[#6f1d3d] bg-[#6f1d3d] text-white',
+    active: 'border-[#54122d] bg-[#54122d] text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_0_0_6px_rgba(111,29,61,0.24)]',
+    count: 'bg-white/20 text-white',
+  },
 };
 
-const LeadershipCard = ({ staff, viewMode }) => {
-  if (!staff) return null;
+const getImageSrc = (staff) => {
+  if (staff?.image) {
+    if (staff.image.startsWith('/')) {
+      return `${process.env.NEXT_PUBLIC_SITE_URL || ''}${staff.image}`;
+    }
+    if (staff.image.startsWith('http')) return staff.image;
+  }
+  return '/images/default-staff.jpg';
+};
+
+const getStaffHierarchy = (position) => {
+  if (!position) return 'teaching';
   
-  const title = staff.position || staff.role || "School Leadership";
-  const profileHref = `/pages/staff/${staff.id}/${generateSlug(staff.name, staff.id)}`;
-
-  if (viewMode === "list") {
-    return (
-      <article className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
-        <img
-          src={getLeadershipImage(staff)}
-          alt={staff.name}
-          className="h-24 w-24 shrink-0 rounded-xl object-cover object-top"
-        />
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">{title}</p>
-          <h3 className="mt-1 text-lg font-black text-slate-900">{staff.name}</h3>
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">
-            {staff.bio || "Part of the school leadership team guiding academic and student development."}
-          </p>
-        </div>
-        <Link
-          href={profileHref}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-xs font-black uppercase tracking-widest text-white"
-        >
-          Profile <FiArrowRight size={14} />
-        </Link>
-      </article>
-    );
+  const positionLower = position.toLowerCase();
+  if (positionLower.includes('senior teacher')) {
+    return 'leadership';
   }
-
-  return (
-    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="relative aspect-[4/3] bg-slate-100">
-        <img
-          src={getLeadershipImage(staff)}
-          alt={staff.name}
-          className="h-full w-full object-cover object-top"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-        <div className="absolute bottom-3 left-3 right-3">
-          <span className="inline-flex rounded-full bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-blue-700 shadow">
-            {title}
-          </span>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="text-lg font-black leading-tight text-slate-900">{staff.name}</h3>
-        <p className="mt-2 line-clamp-3 min-h-[3.75rem] text-sm leading-relaxed text-slate-600">
-          {staff.bio || "Part of the school leadership team guiding academic and student development."}
-        </p>
-        <Link
-          href={profileHref}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-xs font-black uppercase tracking-widest text-white"
-        >
-          View Profile <FiArrowRight size={14} />
-        </Link>
-      </div>
-    </article>
-  );
+  if ((positionLower.includes('principal') || positionLower.includes('deputy principal')) &&
+      !positionLower.includes('senior') && !positionLower.includes('head')) {
+    return 'leadership';
+  } else if (positionLower.includes('teacher') || positionLower.includes('lecturer') || positionLower.includes('tutor') ||
+             positionLower.includes('senior') || positionLower.includes('head')) {
+    return 'teaching';
+  } else {
+    return 'support';
+  }
 };
 
-const DepartmentCard = ({ department, viewMode }) => {
-  if (!department) return null;
+const sortStaffByHierarchy = (staff) => {
+  const hierarchyOrder = { leadership: 1, teaching: 2, support: 3 };
   
-  const meta = getCategoryMeta(department.category);
-  const Icon = meta.icon;
-  const href = `/pages/staff/departments/${department.id}`;
-
-  if (viewMode === "list") {
-    return (
-      <article className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row">
-        <img
-          src={getDepartmentImage(department)}
-          alt={department.name}
-          className="h-28 w-full rounded-xl object-cover sm:w-36"
-        />
-        <div className="min-w-0 flex-1">
-          <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${meta.badge}`}>
-            <Icon size={12} /> {meta.label}
-          </span>
-          <h3 className="mt-3 text-xl font-black tracking-tight text-slate-900">{department.name}</h3>
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">
-            {department.description || "Department group details are maintained at department level for staff privacy."}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-slate-600">
-            {department.headName && <span>HOD: {department.headName}</span>}
-            {department.assistantHeadName && <span>AHOD: {department.assistantHeadName}</span>}
-            <span>{department.staffCount || 0} staff</span>
-          </div>
-        </div>
-        <Link
-          href={href}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-xs font-black uppercase tracking-widest text-white"
-        >
-          View Department <FiArrowRight size={14} />
-        </Link>
-      </article>
-    );
-  }
-
-  return (
-    <article className={`overflow-hidden rounded-xl border bg-gradient-to-br ${meta.panel} shadow-sm`}>
-      <div className="relative aspect-[16/10] bg-slate-100">
-        <img
-          src={getDepartmentImage(department)}
-          alt={department.name}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-transparent to-transparent" />
-        <span className={`absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-widest ${meta.badge}`}>
-          <Icon size={12} /> {meta.shortLabel}
-        </span>
-      </div>
-      <div className="p-5">
-        <h3 className="text-xl font-black tracking-tight text-slate-900">{department.name}</h3>
-        <p className="mt-2 line-clamp-3 min-h-[4rem] text-sm leading-relaxed text-slate-600">
-          {department.description || "Department group details are maintained at department level for staff privacy."}
-        </p>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className="rounded-xl bg-white/80 p-3">
-            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">HOD</p>
-            <p className="mt-1 truncate text-sm font-bold text-slate-800">{department.headName || "Not listed"}</p>
-          </div>
-          <div className="rounded-xl bg-white/80 p-3">
-            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Staff</p>
-            <p className="mt-1 text-sm font-bold text-slate-800">{department.staffCount || 0} members</p>
-          </div>
-          {department.assistantHeadName && (
-            <div className="col-span-2 rounded-xl bg-white/80 p-3">
-              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">AHOD</p>
-              <p className="mt-1 truncate text-sm font-bold text-slate-800">{department.assistantHeadName}</p>
-            </div>
-          )}
-        </div>
-        <Link
-          href={href}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-xs font-black uppercase tracking-widest text-white"
-        >
-          View Department <FiArrowRight size={14} />
-        </Link>
-      </div>
-    </article>
-  );
+  return [...staff].sort((a, b) => {
+    const aHierarchy = getStaffHierarchy(a.position);
+    const bHierarchy = getStaffHierarchy(b.position);
+    
+    if (hierarchyOrder[aHierarchy] !== hierarchyOrder[bHierarchy]) {
+      return hierarchyOrder[aHierarchy] - hierarchyOrder[bHierarchy];
+    }
+    
+    if (aHierarchy === 'leadership' && bHierarchy === 'leadership') {
+      const aIsPrincipal = a.position?.toLowerCase().includes('principal') && !a.position?.toLowerCase().includes('deputy');
+      const bIsPrincipal = b.position?.toLowerCase().includes('principal') && !b.position?.toLowerCase().includes('deputy');
+      
+      if (aIsPrincipal && !bIsPrincipal) return -1;
+      if (!aIsPrincipal && bIsPrincipal) return 1;
+      
+      return (a.name || '').localeCompare(b.name || '');
+    }
+    
+    return (a.name || '').localeCompare(b.name || '');
+  });
 };
 
-const getTeacherImage = (teacher) => {
-  if (teacher?.image && teacher.image !== "/images/avata/male.png" && teacher.image !== "/images/avata/female.png") {
-    return teacher.image;
-  }
-  return teacher?.gender === "female" ? "/female.png" : "/male.png";
+const isPrincipalStaff = (staff) => {
+  const role = (staff?.role || '').toLowerCase();
+  const position = (staff?.position || '').toLowerCase();
+  return (role.includes('principal') || position.includes('principal')) && !role.includes('deputy') && !position.includes('deputy');
 };
 
-const TeacherCard = ({ teacher }) => (
-  <article className="snap-start shrink-0 w-[240px] overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
-    <div className="relative aspect-[4/3] bg-slate-100">
-      <img
-        src={getTeacherImage(teacher)}
-        alt={teacher.name}
-        className="h-full w-full object-cover object-top"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-      {teacher.subjectOffered && (
-        <span className="absolute bottom-3 left-3 right-3 rounded-full bg-white/95 px-3 py-1 text-center text-[10px] font-black uppercase tracking-widest text-emerald-700 shadow">
-          {teacher.subjectOffered}
-        </span>
-      )}
-    </div>
-    <div className="p-4">
-      <h4 className="truncate text-base font-black text-slate-900">{teacher.name}</h4>
-      <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-        Teacher
-      </p>
-      {teacher.bio && (
-        <p className="mt-3 line-clamp-2 text-xs font-medium leading-relaxed text-slate-500">
-          {teacher.bio}
-        </p>
-      )}
-    </div>
-  </article>
-);
-
 // ==========================================
-// ENHANCED DEPARTMENT CAROUSEL (AUTO-SCROLL)
+// 3. MAIN COMPONENT
 // ==========================================
-const DepartmentTeacherCarousel = ({ department, viewMode }) => {
-  const scrollRef = useRef(null);
-  const autoScrollRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const teachers = Array.isArray(department?.staff) ? department.staff : [];
-  const meta = getCategoryMeta(department?.category);
-  const Icon = meta.icon;
-  const href = `/pages/staff/departments/${department?.id}`;
 
-  const scrollBy = (direction) => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({
-      left: direction * 280,
-      behavior: "smooth",
-    });
-  };
-
-  // Auto-scroll every 4 seconds
-  useEffect(() => {
-    if (!teachers.length || isHovered) return;
-
-    autoScrollRef.current = window.setInterval(() => {
-      if (!scrollRef.current) return;
-      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
-      const nextPosition = scrollLeft + clientWidth * 0.9;
-      if (nextPosition + clientWidth >= scrollWidth - 2) {
-        scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        scrollRef.current.scrollTo({ left: nextPosition, behavior: "smooth" });
-      }
-    }, 4200);
-
-    return () => window.clearInterval(autoScrollRef.current);
-  }, [teachers.length, isHovered]);
-
-  if (!department) return null;
-
-  if (viewMode === "list") {
-    return (
-      <div className="space-y-3">
-        <DepartmentCard department={department} viewMode={viewMode} />
-        {teachers.length > 0 && (
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {teachers.map((teacher) => (
-              <TeacherCard key={teacher.id} teacher={teacher} />
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <article className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 shadow-2xl ring-1 ring-slate-900/10 backdrop-blur-sm">
-      <div className="overflow-hidden rounded-t-[2rem]">
-        <div className="relative aspect-[16/9] bg-slate-100">
-          <img
-            src={getDepartmentImage(department)}
-            alt={department.name}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
-          <div className="relative z-10 flex h-full flex-col justify-end p-6 text-white">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-900">
-              <Icon size={12} /> {meta.shortLabel}
-            </span>
-            <h3 className="text-3xl font-black tracking-tight sm:text-4xl">{department.name}</h3>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base">
-              {department.description || "Department profile maintained by the school administration."}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-5 sm:p-6">
-        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Assigned Staff</p>
-            <h4 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
-              {teachers.length ? `${teachers.length} teacher${teachers.length === 1 ? "" : "s"}` : "No teachers assigned yet"}
-            </h4>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
-              Swipe or use the controls to preview the current department team in a smooth carousel.
-            </p>
-          </div>
-          <Link
-            href={href}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800"
-          >
-            View Department <FiArrowRight size={14} />
-          </Link>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-[1.5rem] bg-slate-50 p-4 text-sm shadow-sm ring-1 ring-slate-200">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-slate-500">HOD</p>
-            <p className="mt-2 font-black text-slate-900">{department.headName || "Not listed"}</p>
-          </div>
-          <div className="rounded-[1.5rem] bg-slate-50 p-4 text-sm shadow-sm ring-1 ring-slate-200">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-slate-500">Teachers</p>
-            <p className="mt-2 font-black text-slate-900">{teachers.length}</p>
-          </div>
-          <div className="rounded-[1.5rem] bg-slate-50 p-4 text-sm shadow-sm ring-1 ring-slate-200">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-slate-500">Department</p>
-            <p className="mt-2 font-black text-slate-900">{meta.label}</p>
-          </div>
-        </div>
-
-        {teachers.length > 0 ? (
-          <div className="mt-6 space-y-4">
-            <div className="flex items-center justify-between gap-3 rounded-[1.75rem] bg-slate-100 px-4 py-3 shadow-sm ring-1 ring-slate-200">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">Teacher Carousel</p>
-                <p className="mt-1 text-xs text-slate-500">Auto-scrolls every few seconds. Hover to pause.</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => scrollBy(-1)}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
-                  aria-label={`Previous ${department.name} teachers`}
-                >
-                  <FiChevronLeft size={18} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollBy(1)}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
-                  aria-label={`Next ${department.name} teachers`}
-                >
-                  <FiChevronRight size={18} />
-                </button>
-              </div>
-            </div>
-
-            <div
-              ref={scrollRef}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-3 touch-pan-x scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300/80"
-            >
-              {teachers.map((teacher) => (
-                <TeacherCard key={teacher.id} teacher={teacher} />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="mt-6 flex min-h-[250px] items-center justify-center rounded-[1.75rem] border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <p className="max-w-sm text-sm font-semibold leading-relaxed text-slate-500">
-              Teachers uploaded from the dashboard will appear here after they are linked to this department.
-            </p>
-          </div>
-        )}
-      </div>
-    </article>
-  );
-};
-
-const SkeletonGrid = ({ viewMode }) => (
-  <div className={viewMode === "grid" ? "grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3" : "space-y-4"}>
-    {Array.from({ length: 6 }).map((_, index) => (
-      <div key={index} className="animate-pulse rounded-xl border border-slate-200 bg-white p-4">
-        <div className="aspect-[16/10] rounded-xl bg-slate-200" />
-        <div className="mt-4 h-5 w-2/3 rounded bg-slate-200" />
-        <div className="mt-3 h-4 w-full rounded bg-slate-100" />
-        <div className="mt-2 h-4 w-4/5 rounded bg-slate-100" />
-      </div>
-    ))}
-  </div>
-);
-
-// ==========================================
-// MAIN COMPONENT (PRINCIPAL FIRST, PRIVATE HIDDEN)
-// ==========================================
 export default function StaffDirectory() {
-  const [leadership, setLeadership] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  const [staffData, setStaffData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("all");
-  const [viewMode, setViewMode] = useState("grid");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const fetchStaffPageData = async (isRefresh = false) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedHierarchy, setSelectedHierarchy] = useState('all');
+
+  // Department groupings (public, privacy-safe)
+  const [departmentsByCategory, setDepartmentsByCategory] = useState({
+    CBC: [],
+    EIGHT_FOUR_FOUR: [],
+    TEACHING: [],
+    SUPPORT: []
+  });
+  const [departmentsLoading, setDepartmentsLoading] = useState(true);
+  
+  const [viewMode, setViewMode] = useState('list');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [showConsultModal, setShowConsultModal] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState(null);
+  const [consultForm, setConsultForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+    subject: '',
+    inquiryType: 'general',
+    contactMethod: 'email',
+    studentGrade: '',
+    staffId: '',
+    staffName: '',
+    staffEmail: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleContactClick = (staff) => {
+    if (getStaffHierarchy(staff?.position) === 'leadership') return;
+    setSelectedStaff(staff);
+    setConsultForm((previous) => ({
+      ...previous,
+      staffId: staff.id,
+      staffName: staff.name,
+      staffEmail: staff.email,
+      subject: `Inquiry for ${staff.name}`
+    }));
+    setShowConsultModal(true);
+  };
+
+  const handleConsultSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
     try {
-      if (isRefresh) setRefreshing(true);
-      else setLoading(true);
-      setError(null);
+      const payload = {
+        name: consultForm.name,
+        email: consultForm.email,
+        phone: consultForm.phone,
+        message: consultForm.message,
+        subject: consultForm.subject || `Consultation with ${selectedStaff.name}`,
+        studentDetails: consultForm.studentGrade,
+        inquiryType: consultForm.inquiryType,
+        contactMethod: consultForm.contactMethod,
+        teacherId: selectedStaff.id,
+        teacherName: selectedStaff.name,
+        teacherEmail: selectedStaff.email,
+        teacherPosition: selectedStaff.position
+      };
 
-      // Fetch staff data
-      const staffResponse = await fetch("/api/staff", { cache: "no-store" });
-      
-      let staffData = { staff: [] };
-      let departmentData = { departments: [] };
+      const response = await fetch('/api/contactTeacher', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-      if (staffResponse.ok) {
-        const staffJson = await staffResponse.json();
-        if (staffJson && staffJson.success && Array.isArray(staffJson.staff)) {
-          staffData = staffJson;
-        } else if (Array.isArray(staffJson)) {
-          staffData = { staff: staffJson };
-        } else if (staffJson && Array.isArray(staffJson.staff)) {
-          staffData = staffJson;
-        } else {
-          staffData = { staff: [] };
-        }
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        toast.success('Your inquiry has been received. The teacher will respond shortly.');
+        setShowConsultModal(false);
+        setConsultForm({
+          name: '',
+          email: '',
+          phone: '',
+          message: '',
+          subject: '',
+          inquiryType: 'general',
+          contactMethod: 'email',
+          studentGrade: '',
+          staffId: '',
+          staffName: '',
+          staffEmail: ''
+        });
       } else {
-        console.error(`Staff API returned ${staffResponse.status}`);
-        staffData = { staff: [] };
+        throw new Error(data.error || 'Failed to send consultation request');
       }
+    } catch (error) {
+      console.error('Error sending consultation:', error);
+      toast.error(error.message || 'Failed to send message. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-      // Try to fetch departments with staff included
-      try {
-        const departmentsResponse = await fetch("/api/staff/departments?grouped=1&includeStaff=1", { cache: "no-store" });
-        if (departmentsResponse.ok) {
-          const departmentsJson = await departmentsResponse.json();
-          if (departmentsJson && departmentsJson.success && Array.isArray(departmentsJson.departments)) {
-            departmentData = departmentsJson;
-          } else if (Array.isArray(departmentsJson)) {
-            departmentData = { departments: departmentsJson };
-          } else if (departmentsJson && Array.isArray(departmentsJson.departments)) {
-            departmentData = departmentsJson;
-          }
-        }
-      } catch (deptError) {
-        console.warn("Could not fetch departments:", deptError);
+  const fetchStaffData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/staff', { cache: 'no-store' });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Failed to fetch staff data: ${response.status}`);
       }
-
-      // Filter leadership profiles and sort (Principal first!)
-      const allStaff = staffData.staff || [];
-      const publicLeadership = allStaff
-        .filter(staff => staff && isLeadershipProfile(staff))
-        .sort((a, b) => {
-          const rankA = leadershipRank(a);
-          const rankB = leadershipRank(b);
-          if (rankA !== rankB) return rankA - rankB;
-          return (a?.name || "").localeCompare(b?.name || "");
-        });
-
-      // Process departments (keep active ones)
-      const allDepartments = departmentData.departments || [];
-      const publicDepartments = allDepartments
-        .filter((department) => department && department.isActive !== false)
-        .sort((a, b) => {
-          const categoryA = CATEGORY_ORDER.indexOf(a?.category);
-          const categoryB = CATEGORY_ORDER.indexOf(b?.category);
-          if (categoryA !== categoryB) return categoryA - categoryB;
-          return (a?.displayOrder || 0) - (b?.displayOrder || 0) || (a?.name || "").localeCompare(b?.name || "");
-        });
-
-      setLeadership(publicLeadership);
-      setDepartments(publicDepartments);
       
-      if (publicLeadership.length === 0 && publicDepartments.length === 0) {
-        setError("No staff or department data available. Please check your API endpoints.");
+      if (data.success && data.staff) {
+        const mappedStaff = data.staff.map(staff => ({
+          id: staff.id,
+          name: staff.name,
+          role: staff.role,
+          position: staff.position || staff.role || '',
+          department: staff.department || 'Administration',
+          departmentId: (staff.department || 'Administration').toLowerCase().replace(/\s+/g, '-'),
+          email: staff.email || '',
+          phone: staff.phone || '',
+          image: staff.image,
+          expertise: Array.isArray(staff.expertise) ? staff.expertise : [],
+          bio: staff.bio,
+          responsibilities: Array.isArray(staff.responsibilities) ? staff.responsibilities : [],
+          achievements: Array.isArray(staff.achievements) ? staff.achievements : [],
+          location: 'Katwanyaa Senior School',
+          joinDate: '2020'
+        }));
+        
+        const sortedStaff = sortStaffByHierarchy(mappedStaff);
+        setStaffData(sortedStaff);
+      } else {
+        throw new Error('Invalid data format from API');
       }
     } catch (err) {
-      console.error("Error loading staff page:", err);
-      setError(err.message || "Unable to load staff information. Please try again later.");
+      console.error('Error fetching staff data:', err);
+      setError(err.message);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchStaffPageData();
+    fetchStaffData();
+    fetchDepartmentsData();
   }, []);
 
-  const filteredLeadership = useMemo(() => {
-    if (!["all", "leadership"].includes(selectedFilter)) return [];
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return leadership;
-    return leadership.filter((staff) => staff && getLeadershipSearchText(staff).includes(query));
-  }, [leadership, searchQuery, selectedFilter]);
+  async function fetchDepartmentsData() {
+    try {
+      setDepartmentsLoading(true);
+      const response = await fetch('/api/staff/departments?grouped=1', { cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || `Failed to fetch departments: ${response.status}`);
+      }
+      if (data.success) {
+        const grouped = data.departmentsByCategory || {};
+        setDepartmentsByCategory({
+          CBC: grouped.CBC || [],
+          EIGHT_FOUR_FOUR: grouped.EIGHT_FOUR_FOUR || [],
+          TEACHING: grouped.TEACHING || [],
+          SUPPORT: grouped.SUPPORT || []
+        });
+      } else {
+        throw new Error(data.error || 'Invalid departments response');
+      }
+    } catch (err) {
+      console.error('Error fetching departments:', err);
+      setDepartmentsByCategory({ CBC: [], EIGHT_FOUR_FOUR: [], TEACHING: [], SUPPORT: [] });
+    } finally {
+      setDepartmentsLoading(false);
+    }
+  }
 
-  const filteredDepartments = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+  const filteredStaff = useMemo(() => {
+    return staffData.filter(staff => {
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = 
+        staff.name.toLowerCase().includes(searchLower) ||
+        staff.role.toLowerCase().includes(searchLower) ||
+        (staff.position || '').toLowerCase().includes(searchLower) ||
+        (staff.bio && staff.bio.toLowerCase().includes(searchLower)) ||
+        staff.expertise.some(exp => exp.toLowerCase().includes(searchLower));
 
-    return departments.filter((department) => {
-      if (!department) return false;
-      const matchesFilter = selectedFilter === "all" || department.category === selectedFilter;
-      const matchesSearch = !query || getDepartmentSearchText(department).includes(query);
-      return matchesFilter && matchesSearch;
+      const staffHierarchy = getStaffHierarchy(staff.position);
+      const matchesHierarchy = selectedHierarchy === 'all' || selectedHierarchy === staffHierarchy;
+
+      return matchesSearch && matchesHierarchy;
     });
-  }, [departments, searchQuery, selectedFilter]);
+  }, [staffData, searchQuery, selectedHierarchy]);
 
-  const departmentsByCategory = useMemo(() => {
-    return CATEGORY_ORDER.reduce((acc, category) => {
-      const items = filteredDepartments.filter((department) => department && department.category === category);
-      if (items.length) acc[category] = items;
-      return acc;
-    }, {});
-  }, [filteredDepartments]);
-
-  const filterCounts = useMemo(() => {
-    const counts = {
-      all: leadership.length + departments.length,
-      leadership: leadership.length,
+  const staffByHierarchy = useMemo(() => {
+    const leadership = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'leadership');
+    const teaching = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'teaching');
+    const support = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'support');
+    
+    const sortedLeadership = [...leadership].sort((a, b) => {
+      const aIsPrincipal = a.position?.toLowerCase().includes('principal') && !a.position?.toLowerCase().includes('deputy');
+      const bIsPrincipal = b.position?.toLowerCase().includes('principal') && !b.position?.toLowerCase().includes('deputy');
+      
+      if (aIsPrincipal && !bIsPrincipal) return -1;
+      if (!aIsPrincipal && bIsPrincipal) return 1;
+      
+      return (a.name || '').localeCompare(b.name || '');
+    });
+    
+    return {
+      leadership: sortedLeadership,
+      teaching: [...teaching].sort((a, b) => (a.name || '').localeCompare(b.name || '')),
+      support: [...support].sort((a, b) => (a.name || '').localeCompare(b.name || ''))
     };
-    CATEGORY_ORDER.forEach((category) => {
-      counts[category] = departments.filter((department) => department && department.category === category).length;
-    });
-    return counts;
-  }, [departments, leadership]);
+  }, [filteredStaff]);
 
-  const totalDepartmentStaff = departments.reduce(
-    (sum, department) => sum + (Number(department?.staffCount) || 0),
-    0
-  );
-  const filteredDepartmentStaff = filteredDepartments.reduce(
-    (sum, department) => sum + (Number(department?.staffCount) || 0),
-    0
-  );
+  const totalPages = Math.ceil(filteredStaff.length / ITEMS_PER_PAGE);
+  const paginatedStaff = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredStaff.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredStaff, currentPage]);
 
-  const hasResults = filteredLeadership.length > 0 || filteredDepartments.length > 0;
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedHierarchy]);
 
-  return (
-    <div className="min-h-screen bg-white text-slate-900">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              <FiUsers className="text-white text-lg" />
-            </div>
-            <div>
-              <h3 className="font-black text-slate-900 text-sm uppercase tracking-wider">Staff Directory</h3>
-              <p className="text-xs text-slate-500">School Hierarchy & Organization</p>
-            </div>
+  const clearAllFilters = () => {
+    setSearchQuery('');
+    setSelectedHierarchy('all');
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="text-center max-w-sm w-full">
+          <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-100">
+            <FiUser className="text-xl text-red-500" />
           </div>
-          
-          <button
-            onClick={() => fetchStaffPageData(true)}
-            disabled={refreshing}
-            className="p-2.5 rounded-lg hover:bg-slate-100 transition disabled:opacity-50 self-start md:self-auto"
+          <h2 className="text-lg font-black text-slate-900 mb-2">Error Loading Directory</h2>
+          <p className="text-sm text-slate-500 mb-5">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-[#1a1a2e] text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-[#2d2d44] transition-colors w-full"
           >
-            <FiRefreshCw className={`text-slate-700 ${refreshing ? 'animate-spin' : ''}`} />
+            Try Again
           </button>
         </div>
       </div>
-      {isSidebarOpen && (
-        <button
-          aria-label="Close filters"
-          className="fixed inset-0 z-40 bg-slate-950/30 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+    );
+  }
 
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-[80%] items-center justify-between gap-4 px-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
-              aria-label="Open filters"
-            >
-              <FiMenu size={21} />
-            </button>
-            <Link href="/" className="flex items-center gap-3">
-              <img src="/katz.jpeg" alt="School logo" className="h-10 w-10 rounded-xl object-contain" />
-              <div className="hidden sm:block">
-                <p className="text-sm font-black uppercase tracking-widest text-slate-900">Katwanyaa Senior Staff</p>
-                <p className="text-[10px] font-bold text-slate-400">Leadership and departments</p>
+  return (
+    <div className="min-h-screen bg-white font-sans text-slate-900">
+      
+      {/* ── Sticky Header ── */}
+      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/88 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-3 py-2 sm:gap-3 sm:px-6 sm:py-3 lg:flex-row lg:items-center lg:justify-between">
+          
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#244863] to-[#d7a73d] p-[1px] shadow-sm">
+              <div className="flex h-full w-full items-center justify-center rounded-2xl bg-white">
+                <Image src="/katz.jpeg" alt="Logo" width={28} height={28} className="rounded-xl object-cover" />
               </div>
-            </Link>
-          </div>
+            </div>
+            <div>
+              <span className="text-sm font-black tracking-tight text-[#1a1a2e]">
+                Katwanyaa School
+              </span>
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Staff Directory</p>
+            </div>
+          </Link>
 
-          <div className="hidden max-w-lg flex-1 md:block">
-            <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+          <div className="flex flex-1 flex-col gap-3 lg:max-w-3xl lg:flex-row lg:items-center lg:justify-end">
+            <div className="relative w-full lg:max-w-md">
+              <FiSearch className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
               <input
+                type="text"
                 value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search leadership or departments..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-10 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search names, subjects..."
+                className="w-full rounded-lg sm:rounded-2xl border border-slate-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-9 sm:pr-10 text-xs sm:text-sm font-bold shadow-sm outline-none transition-all focus:border-[#1a1a2e] focus:ring-4 focus:ring-[#1a1a2e]/5"
               />
               {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
-                  aria-label="Clear search"
-                >
-                  <FiX size={16} />
+                <button onClick={() => setSearchQuery('')} className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                  <FiX size={12} />
                 </button>
               )}
             </div>
-          </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => fetchStaffPageData(true)}
-              disabled={refreshing || loading}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black uppercase tracking-widest text-slate-600 shadow-sm disabled:opacity-60"
-            >
-              <FiRefreshCw className={refreshing ? "animate-spin text-blue-600" : ""} size={14} />
-              <span className="hidden sm:inline">Refresh</span>
-            </button>
-            <div className="hidden rounded-xl border border-slate-200 bg-white p-1 sm:flex">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <button
-                onClick={() => setViewMode("grid")}
-                className={`rounded-lg p-2 ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-slate-500"}`}
-                aria-label="Grid view"
+                onClick={fetchStaffData}
+                disabled={loading}
+                className="flex items-center gap-1 rounded-lg sm:rounded-xl border border-slate-200 px-2.5 sm:px-3 py-2 sm:py-2.5 text-[10px] sm:text-xs font-bold text-slate-600 transition-all hover:border-[#1a1a2e] hover:text-[#1a1a2e] disabled:opacity-50 whitespace-nowrap"
               >
-                <FiGrid size={16} />
+                <FiRefreshCw size={11} className={loading ? 'animate-spin' : ''} />
+                <span className="hidden sm:inline">{loading ? 'Loading...' : 'Refresh'}</span>
               </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`rounded-lg p-2 ${viewMode === "list" ? "bg-blue-600 text-white" : "text-slate-500"}`}
-                aria-label="List view"
-              >
-                <FiList size={16} />
-              </button>
+              
+              <div className="flex rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 p-0.5 sm:p-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`rounded-md p-1.5 sm:p-2 transition-all ${viewMode === 'grid' ? 'bg-[#1a1a2e] text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  <FiGrid size={12} />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`rounded-md p-1.5 sm:p-2 transition-all ${viewMode === 'list' ? 'bg-[#1a1a2e] text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  <FiList size={12} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full px-4 py-6 md:max-w-[80%] lg:max-w-[80%]">
-        <section className="mb-6 overflow-hidden rounded-[2rem] bg-slate-950 p-6 text-white shadow-2xl ring-1 ring-slate-950/10 sm:p-8">
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+      {/* ── Hero Banner ── */}
+      <div className="relative overflow-hidden bg-[#0f1724]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(215,167,61,0.24),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.22),_transparent_30%),linear-gradient(135deg,_rgba(255,255,255,0.05),_transparent_48%)]" />
+        <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-end">
             <div>
-              <h1 className="text-3xl font-black tracking-tight sm:text-4xl">
-                Department Staff Directory
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.34em] text-[#f8c95f]/80">Katwanyaa Senior School</p>
+              <h1 className="max-w-4xl text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl lg:text-5xl">
+                Meet the dedicated team shaping the next generation.
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-                Teaching and support staff are shown by department for privacy.
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/85 sm:text-base sm:leading-relaxed">
+                Explore school leadership and browse each department to see the teachers mapped to that learning area.
               </p>
-            </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end lg:gap-4">
-              <StatPill icon={FiUser} value={leadership.length} label="Leaders" tone="blue" />
-              <StatPill icon={FiLayers} value={departments.length} label="Depts" tone="emerald" />
-              <StatPill icon={FiUsers} value={totalDepartmentStaff} label="Staff" tone="amber" />
-              <StatPill icon={FiShield} value="Private" label="Contacts" tone="slate" />
-            </div>
-          </div>
-        </section>
-
-        {/* Sticky Filter Tabs */}
-        <div className="sticky top-16 z-40 bg-white border-b border-slate-200 shadow-md mb-8 -mx-4 px-4 md:-mx-6 md:px-6">
-          <div className="flex items-center gap-2 overflow-x-auto py-3 pb-3 scrollbar-hide">
-            {FILTERS.map((filter) => {
-              const Icon = filter.icon;
-              const active = selectedFilter === filter.id;
-              return (
-                <button
-                  key={filter.id}
-                  onClick={() => setSelectedFilter(filter.id)}
-                  className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider whitespace-nowrap transition flex items-center gap-2 ${
-                    active
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  <Icon size={14} />
-                  {filter.label}
-                  <span className="ml-1 inline-block px-2 py-0.5 rounded-md text-[10px] bg-white/20">
-                    {filterCounts[filter.id] || 0}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-6 lg:flex-row">
-          <aside
-            className={`fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] transform overflow-y-auto border-r border-slate-200 bg-white p-4 shadow-xl transition-transform lg:static lg:z-auto lg:w-72 lg:translate-x-0 lg:border-r-0 lg:bg-transparent lg:p-0 lg:shadow-none ${
-              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
-          >
-            <div className="sticky top-20 space-y-4">
-              <div className="flex items-center justify-between lg:hidden">
-                <p className="text-xs font-black uppercase tracking-widest text-slate-900">Filters</p>
-                <button onClick={() => setIsSidebarOpen(false)} className="rounded-lg bg-slate-100 p-2 text-slate-600">
-                  <FiX size={18} />
-                </button>
-              </div>
-
-              <div className="md:hidden">
-                <div className="relative">
-                  <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <input
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    placeholder="Search..."
-                    className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm font-semibold outline-none focus:border-blue-500"
-                  />
+              <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
+                <div className="rounded-2xl border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm sm:rounded-full">
+                  Departments first, leadership preserved
+                </div>
+                <div className="rounded-2xl border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm sm:rounded-full">
+                  Teachers grouped under valid departments
                 </div>
               </div>
-
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div className="border-b border-slate-100 bg-slate-900 p-4 text-white">
-                  <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest">
-                    <FiFilter size={15} /> Directory View
-                  </h2>
-                </div>
-                <div className="space-y-1 p-2">
-                  {FILTERS.map((filter) => {
-                    const Icon = filter.icon;
-                    const active = selectedFilter === filter.id;
-                    return (
-                      <button
-                        key={filter.id}
-                        onClick={() => {
-                          setSelectedFilter(filter.id);
-                          setIsSidebarOpen(false);
-                        }}
-                        className={`flex w-full items-center justify-between rounded-lg p-3 text-left transition ${
-                          active ? "bg-blue-600 text-white shadow" : "text-slate-700 hover:bg-slate-50"
-                        }`}
-                      >
-                        <span className="flex items-center gap-2 text-xs font-black uppercase tracking-tight">
-                          <Icon size={15} /> {filter.label}
-                        </span>
-                        <span className={`rounded-md px-2 py-1 text-[10px] font-black ${active ? "bg-white/20" : "bg-slate-100 text-slate-500"}`}>
-                          {filterCounts[filter.id] || 0}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {(searchQuery || selectedFilter !== "all") && (
-                <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedFilter("all");
-                  }}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-900 bg-white px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-900 transition hover:bg-slate-900 hover:text-white"
-                >
-                  <FiX size={14} /> Reset Filters
-                </button>
-              )}
-            </div>
-          </aside>
-
-          <section className="min-w-0 flex-1">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-2xl font-black tracking-tight text-slate-900">Staff Directory</h2>
-                <p className="mt-1 text-sm font-medium text-slate-500">
-                  Showing {filteredLeadership.length} leadership profiles and {filteredDepartments.length} departments
-                </p>
-              </div>
-              <div className="relative w-full sm:w-64">
-                <select
-                  value={selectedFilter}
-                  onChange={(event) => setSelectedFilter(event.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 pr-10 text-xs font-black uppercase tracking-widest text-slate-700 outline-none focus:border-blue-500"
-                >
-                  {FILTERS.map((filter) => (
-                    <option key={filter.id} value={filter.id}>
-                      {filter.label}
-                    </option>
-                  ))}
-                </select>
-                <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-              </div>
             </div>
 
-            {error && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-700">
-                <p className="font-bold">Unable to load staff information</p>
-                <p className="mt-1 text-sm">{error}</p>
-              </div>
-            )}
+            {!loading ? (
+              <div className="rounded-[28px] border border-white/12 bg-white/7 p-4 shadow-2xl backdrop-blur-md sm:p-5">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">Directory Snapshot</p>
+                    <p className="mt-1 text-lg font-black text-white">Staff overview</p>
+                  </div>
+                  <div className="rounded-2xl bg-[#f8c95f] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#1a1a2e]">
+                    {staffData.length} Total
+                  </div>
+                </div>
 
-            {loading ? (
-              <SkeletonGrid viewMode={viewMode} />
-            ) : hasResults ? (
-              <div className="space-y-10">
-                {filteredLeadership.length > 0 && (
-                  <section>
-                    <SectionHeader
-                      icon={FiUser}
-                      title="School Leadership"
-                      subtitle="Individual profiles for approved leadership roles"
-                    />
-                    <div className="space-y-6">
-                      {/* Principal Card - Full Width */}
-                      {filteredLeadership[0]?.role?.toLowerCase().includes("principal") && (
-                        <div className="col-span-full">
-                          <LeadershipCard key={filteredLeadership[0].id} staff={filteredLeadership[0]} viewMode="grid" />
-                        </div>
-                      )}
-                      
-                      {/* Other Leadership - Grid */}
-                      {filteredLeadership.length > 1 && (
-                        <div className={viewMode === "grid" ? "grid grid-cols-1 gap-5 sm:grid-cols-2" : "space-y-4"}>
-                          {filteredLeadership.slice(1).map((staff) => (
-                            <LeadershipCard key={staff.id} staff={staff} viewMode={viewMode} />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </section>
-                )}
-
-                {filteredDepartments.length > 0 && selectedFilter !== "leadership" && (
-                  <DepartmentIntro departments={filteredDepartments} totalStaff={filteredDepartmentStaff} />
-                )}
-
-                {Object.entries(departmentsByCategory).map(([category, items]) => {
-                  const meta = getCategoryMeta(category);
-                  return (
-                    <section key={category}>
-                      <SectionHeader
-                        icon={meta.icon}
-                        title={meta.label}
-                        subtitle={`${items.length} department group${items.length === 1 ? "" : "s"}`}
-                      />
-                      <div className="space-y-5">
-                        {items.map((department) => (
-                          <DepartmentTeacherCarousel key={department.id} department={department} viewMode={viewMode} />
-                        ))}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg sm:rounded-2xl border border-white/12 bg-white/6 px-2.5 sm:px-4 py-2 sm:py-3 backdrop-blur-sm">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <FiShield size={12} className="text-[#f8c95f]" />
+                      <div className="min-w-0">
+                        <span className="block text-sm sm:text-lg font-black text-white">{staffByHierarchy.leadership.length}</span>
+                        <span className="block text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.24em] text-white/45">Leadership</span>
                       </div>
-                    </section>
-                  );
-                })}
+                    </div>
+                  </div>
+                  <div className="rounded-lg sm:rounded-2xl border border-white/12 bg-white/6 px-2.5 sm:px-4 py-2 sm:py-3 backdrop-blur-sm">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <FiUsers size={12} className="text-[#f8c95f]" />
+                      <div className="min-w-0">
+                        <span className="block text-sm sm:text-lg font-black text-white">{departmentsByCategory.CBC?.length + departmentsByCategory.EIGHT_FOUR_FOUR?.length + departmentsByCategory.TEACHING?.length + departmentsByCategory.SUPPORT?.length}</span>
+                        <span className="block text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.24em] text-white/45">Departments</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="mt-4 text-xs leading-relaxed text-white/45">
+                  {`${staffData.length} dedicated professionals shaping the future`}
+                </p>
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
-                <FiSearch className="mx-auto text-4xl text-slate-300" />
-                <h3 className="mt-4 text-xl font-black text-slate-900">No matching staff areas found</h3>
-                <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate-500">
-                  Try clearing the search or selecting another department category.
-                </p>
-                <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedFilter("all");
-                    fetchStaffPageData();
-                  }}
-                  className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-xs font-black uppercase tracking-widest text-white"
-                >
-                  Refresh Data
-                </button>
-              </div>
+              <p className="max-w-md text-sm text-white/50">
+                Discovering our talented educators...
+              </p>
             )}
-          </section>
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* ── Top Filter Bar ── */}
+      <div className="sticky top-[140px] z-20 border-b border-slate-100 bg-slate-50/88 backdrop-blur-sm sm:top-[82px] lg:top-[73px]">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="flex items-center gap-1.5 py-2.5 sm:gap-2 sm:py-3.5 overflow-x-auto scrollbar-hide -mx-0.5 px-0.5 sm:-mx-1 sm:px-1">
+            {[
+              { key: 'all', label: 'All', Icon: FiUsers, count: staffByHierarchy.leadership.length + (departmentsByCategory.CBC?.length || 0) + (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) + (departmentsByCategory.TEACHING?.length || 0) + (departmentsByCategory.SUPPORT?.length || 0) },
+              { key: 'leadership', label: 'Leadership', Icon: FiShield, count: staffByHierarchy.leadership?.length || 0 },
+              { key: 'teaching', label: 'Teaching', Icon: FiBookOpen, count: (departmentsByCategory.CBC?.length || 0) + (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) + (departmentsByCategory.TEACHING?.length || 0) },
+              { key: 'support', label: 'Support', Icon: FiSettings, count: departmentsByCategory.SUPPORT?.length || 0 },
+            ].map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setSelectedHierarchy(item.key)}
+                className={`flex-shrink-0 flex items-center gap-1 sm:gap-2 rounded-full border px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-black transition-[box-shadow,filter] whitespace-nowrap ${
+                  selectedHierarchy === item.key
+                    ? FILTER_BUTTON_STYLES[item.key].active
+                    : `${FILTER_BUTTON_STYLES[item.key].base} opacity-95 hover:opacity-100`
+                }`}
+              >
+                <item.Icon size={14} />
+                <span className="hidden sm:inline">{item.label}</span>
+                <span className="sm:hidden">{item.label.charAt(0)}</span>
+                <span className={`rounded-full px-1 sm:px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black ${FILTER_BUTTON_STYLES[item.key].count}`}>
+                  {item.count}
+                </span>
+              </button>
+            ))}
+
+            {/* Clear Filters */}
+            {(searchQuery || selectedHierarchy !== 'all') && (
+              <>
+                <div className="w-px h-4 sm:h-5 bg-slate-200 mx-0.5 sm:mx-1 flex-shrink-0" />
+                <button
+                  onClick={clearAllFilters}
+                  className="flex-shrink-0 flex items-center gap-0.5 px-1.5 sm:px-2 py-1 rounded-lg text-[8px] sm:text-[10px] font-black text-red-500 hover:bg-red-50 transition-colors uppercase tracking-wider"
+                >
+                  <FiX size={10} /> <span className="hidden sm:inline">Clear</span>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <main className="w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3 mb-4 sm:mb-5">
+            <div>
+              <p className="text-xs sm:text-sm text-slate-500">
+                {loading || departmentsLoading ? 'Loading...' : (
+                  selectedHierarchy === 'leadership' ? (
+                    <>Showing <span className="font-bold text-slate-900">{filteredStaff.length}</span> leadership profiles</>
+                  ) : (
+                    <>Showing <span className="font-bold text-slate-900">{staffByHierarchy.leadership.length}</span> leadership and departments</>
+                  )
+                )}
+              </p>
+            </div>
+          </div>
+
+          {loading || departmentsLoading ? (
+            <div className="text-center py-12">
+              <p className="text-slate-500">Loading staff directory...</p>
+            </div>
+          ) : staffByHierarchy.leadership.length > 0 ? (
+            <div className="space-y-6">
+              {/* Leadership Section */}
+              {selectedHierarchy === 'all' || selectedHierarchy === 'leadership' && (
+                <section>
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-8 h-8 rounded-lg bg-[#1a1a2e] flex items-center justify-center">
+                      <FiShield size={14} className="text-white" />
+                    </div>
+                    <h2 className="text-sm font-black text-[#1a1a2e] uppercase tracking-[0.15em]">
+                      School Leadership
+                    </h2>
+                    <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                      {staffByHierarchy.leadership.length}
+                    </span>
+                    <div className="flex-1 h-px bg-slate-100 ml-2" />
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {staffByHierarchy.leadership.map((staff) => (
+                      <div key={staff.id} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col sm:flex-row gap-4">
+                        <div className="w-24 h-24 rounded-xl flex-shrink-0">
+                          <Image
+                            src={getImageSrc(staff)}
+                            alt={staff.name}
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-cover rounded-xl"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-black text-slate-900">{staff.name}</h3>
+                          <p className="text-sm font-bold text-slate-600 uppercase">{staff.position}</p>
+                          <p className="mt-2 text-sm text-slate-600 line-clamp-2">{staff.bio}</p>
+                        </div>
+                        <Link
+                          href={`/pages/SchoolTeam/${staff.id}/${generateSlug(staff.name, staff.id)}`}
+                          className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a2e] text-white font-bold text-sm h-fit"
+                        >
+                          View <FiChevronRight size={14} />
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Departments Section */}
+              {(selectedHierarchy === 'all' || selectedHierarchy !== 'leadership') && (
+                <>
+                  {[['CBC', departmentsByCategory.CBC], ['EIGHT_FOUR_FOUR', departmentsByCategory.EIGHT_FOUR_FOUR], ['TEACHING', departmentsByCategory.TEACHING], ['SUPPORT', departmentsByCategory.SUPPORT]].map(([category, depts]) => (
+                    depts && depts.length > 0 && (
+                      <section key={category}>
+                        <div className="flex items-center gap-3 mb-5">
+                          <div className="w-8 h-8 rounded-lg bg-[#1a1a2e] flex items-center justify-center">
+                            <FiLayers size={14} className="text-white" />
+                          </div>
+                          <h2 className="text-sm font-black text-[#1a1a2e] uppercase tracking-[0.15em]">
+                            {category === 'CBC' ? 'CBC' : category === 'EIGHT_FOUR_FOUR' ? '8-4-4' : category} Departments
+                          </h2>
+                          <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                            {depts.length}
+                          </span>
+                          <div className="flex-1 h-px bg-slate-100 ml-2" />
+                        </div>
+                        
+                        <div className="space-y-4">
+                          {depts.map((dept) => (
+                            <div key={dept.id} className="bg-white rounded-xl border border-slate-200 p-4">
+                              <h3 className="text-lg font-black text-slate-900">{dept.name}</h3>
+                              <p className="mt-1 text-sm text-slate-600">{dept.description}</p>
+                              <div className="mt-3 flex gap-2 text-xs">
+                                {dept.headName && <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">HOD: {dept.headName}</span>}
+                                <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-full">{dept.staffCount || 0} staff</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+                    )
+                  ))}
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-slate-500">No staff found</p>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-slate-100 bg-white mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Image src="/katz.jpeg" alt="Logo" width={24} height={24} className="opacity-40" />
+              <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Katwanyaa Senior School</span>
+            </div>
+            <p className="text-[10px] text-slate-300">Committed to Excellence &bull; Staff Directory &bull; &copy; {new Date().getFullYear()}</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
