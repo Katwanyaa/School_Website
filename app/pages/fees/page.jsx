@@ -407,89 +407,77 @@ export default function ModernFeesPage() {
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
         {/* Fee Cards - Day School & Boarding */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Day School Fees */}
-          <div className="bg-white rounded-2xl border-2 border-slate-200 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
-                <IoBusinessOutline size={24} />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Day Scholars</h2>
-                <p className="text-sm text-slate-500">Annual fees</p>
-              </div>
-            </div>
-            
-            <div className="bg-slate-50 rounded-xl p-4 mb-4">
-              <p className="text-5xl font-black text-slate-900">
-                KSh {(documentData?.feesDayAnnualAmount || 0).toLocaleString()}
-              </p>
-              <p className="text-sm text-slate-500 mt-2">
-                {documentData?.feesDayDescription || 'Total annual fees for day school'}
-              </p>
-            </div>
+ <div className="space-y-4">
+  {/* Day School Fees */}
+  <div className="bg-white rounded-xl border border-gray-200 p-5">
+    <div className="mb-3">
+      <h2 className="text-lg font-semibold text-gray-900">Day Scholars</h2>
+      <p className="text-xs text-gray-500">Annual fees</p>
+    </div>
 
-            {documentData?.feesDayDistributionPdf && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleViewPDF(documentData.feesDayDistributionPdf)}
-                  className="flex-1 py-2 px-3 sm:px-4 bg-blue-50 text-blue-600 rounded-lg font-bold text-xs sm:text-sm hover:bg-blue-100 transition-colors"
-                >
-                  View PDF
-                </button>
-                <button
-                  onClick={() => handleDownloadPDF(documentData.feesDayDistributionPdf, documentData.feesDayPdfName)}
-                  className="flex-1 py-2 px-3 sm:px-4 bg-blue-600 text-white rounded-lg font-bold text-xs sm:text-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-1 sm:gap-2"
-                >
-                  <FiDownload size={14} className="sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Download</span>
-                  <span className="sm:hidden">DL</span>
-                </button>
-              </div>
-            )}
-          </div>
+    <div className="mb-4">
+      <p className="text-3xl font-bold text-gray-900">
+        KSh {(documentData?.feesDayAnnualAmount || 0).toLocaleString()}
+      </p>
+      <p className="text-xs text-gray-500 mt-1">
+        {documentData?.feesDayDescription || 'Total annual fees for day school'}
+      </p>
+    </div>
 
-          {/* Boarding Fees */}
-          <div className="bg-white rounded-2xl border-2 border-slate-200 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
-                <IoBedOutline size={24} />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Boarders</h2>
-                <p className="text-sm text-slate-500">Annual fees</p>
-              </div>
-            </div>
-            
-            <div className="bg-slate-50 rounded-xl p-4 mb-4">
-              <p className="text-5xl font-black text-slate-900">
-                KSh {(documentData?.feesBoardingAnnualAmount || 0).toLocaleString()}
-              </p>
-              <p className="text-sm text-slate-500 mt-2">
-                {documentData?.feesBoardingDescription || 'Total annual fees for boarding school'}
-              </p>
-            </div>
+    {documentData?.feesDayDistributionPdf && (
+      <div className="flex gap-2">
+        <button
+          onClick={() => handleViewPDF(documentData.feesDayDistributionPdf)}
+          className="flex-1 py-2 px-3 bg-gray-100 text-gray-800 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+        >
+          View PDF
+        </button>
+        <button
+          onClick={() => handleDownloadPDF(documentData.feesDayDistributionPdf, documentData.feesDayPdfName)}
+          className="flex-1 py-2 px-3 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors flex items-center justify-center gap-1"
+        >
+          <FiDownload size={14} />
+          Download
+        </button>
+      </div>
+    )}
+  </div>
 
-            {documentData?.feesBoardingDistributionPdf && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleViewPDF(documentData.feesBoardingDistributionPdf)}
-                  className="flex-1 py-2 px-3 sm:px-4 bg-purple-50 text-purple-600 rounded-lg font-bold text-xs sm:text-sm hover:bg-purple-100 transition-colors"
-                >
-                  View PDF
-                </button>
-                <button
-                  onClick={() => handleDownloadPDF(documentData.feesBoardingDistributionPdf, documentData.feesBoardingPdfName)}
-                  className="flex-1 py-2 px-3 sm:px-4 bg-purple-600 text-white rounded-lg font-bold text-xs sm:text-sm hover:bg-purple-700 transition-colors flex items-center justify-center gap-1 sm:gap-2"
-                >
-                  <FiDownload size={14} className="sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Download</span>
-                  <span className="sm:hidden">DL</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+  {/* Boarding Fees */}
+  <div className="bg-white rounded-xl border border-gray-200 p-5">
+    <div className="mb-3">
+      <h2 className="text-lg font-semibold text-gray-900">Boarders</h2>
+      <p className="text-xs text-gray-500">Annual fees</p>
+    </div>
+
+    <div className="mb-4">
+      <p className="text-3xl font-bold text-gray-900">
+        KSh {(documentData?.feesBoardingAnnualAmount || 0).toLocaleString()}
+      </p>
+      <p className="text-xs text-gray-500 mt-1">
+        {documentData?.feesBoardingDescription || 'Total annual fees for boarding school'}
+      </p>
+    </div>
+
+    {documentData?.feesBoardingDistributionPdf && (
+      <div className="flex gap-2">
+        <button
+          onClick={() => handleViewPDF(documentData.feesBoardingDistributionPdf)}
+          className="flex-1 py-2 px-3 bg-gray-100 text-gray-800 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+        >
+          View PDF
+        </button>
+        <button
+          onClick={() => handleDownloadPDF(documentData.feesBoardingDistributionPdf, documentData.feesBoardingPdfName)}
+          className="flex-1 py-2 px-3 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors flex items-center justify-center gap-1"
+        >
+          <FiDownload size={14} />
+          Download
+        </button>
+      </div>
+    )}
+  </div>
+</div>
 
         {/* Latest Admission Letter */}
         {documentData?.admissionFeePdf && (
