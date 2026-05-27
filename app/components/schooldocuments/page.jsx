@@ -681,605 +681,6 @@ function FeeBreakdownModal({
   );
 }
 
-
-function AdmissionFeeBreakdownModal({ 
-  open, 
-  onClose, 
-  onSave, 
-  existingBreakdown = []
-}) {
-  // COMPLETE FIX: Completely separate initialization logic for admission fees
-  const [categories, setCategories] = useState(() => {
-    console.log('AdmissionFeeBreakdownModal initializing with:', existingBreakdown);
-    
-    // Only use existingBreakdown if it's specifically for admission
-    if (Array.isArray(existingBreakdown) && existingBreakdown.length > 0) {
-      // Validate that this is indeed admission data and not boarding data
-      const hasBoardingOnlyCategories = existingBreakdown.some(cat => cat.boardingOnly === true);
-      const hasAdmissionKeywords = existingBreakdown.some(cat => 
-        cat.name && (
-          cat.name.toLowerCase().includes('application') ||
-          cat.name.toLowerCase().includes('admission') ||
-          cat.name.toLowerCase().includes('registration') ||
-          cat.name.toLowerCase().includes('acceptance')
-        )
-      );
-      
-      // If it looks like boarding data, don't use it for admission
-      if (hasBoardingOnlyCategories && !hasAdmissionKeywords) {
-        console.log('⚠️ WARNING: Found boarding data in admission breakdown. Starting fresh.');
-        return [];
-      }
-      
-      console.log('✅ Edit Mode: Loading existing admission fee breakdown', existingBreakdown);
-      // Clean and transform existing data to ensure admission-specific structure
-      return existingBreakdown.map((cat, index) => ({
-        id: cat.id || `admission_cat_${Date.now()}_${index}`,
-        name: cat.name || '',
-        amount: parseFloat(cat.amount) || 0,
-        description: cat.description || '',
-        optional: Boolean(cat.optional || false),
-        boardingOnly: false, // Force false for ALL admission categories
-        order: cat.order || index,
-        // Add admission-specific flag
-        admissionOnly: true
-      }));
-    }
-    
-    console.log('➕ Add Mode: Starting with empty admission categories');
-    return [];
-  });
-  
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [errors, setErrors] = useState([]);
-  const [isEditMode, setIsEditMode] = useState(false);
-
-  useEffect(() => {
-    const total = Array.isArray(categories) 
-      ? categories.reduce((sum, cat) => sum + (parseFloat(cat.amount) || 0), 0) 
-      : 0;
-    setTotalAmount(total);
-  }, [categories]);
-
-  // FIXED: Proper edit mode detection with validation
-  useEffect(() => {
-    if (open) {
-      if (Array.isArray(existingBreakdown) && existingBreakdown.length > 0) {
-        // Additional validation to ensure it's admission data
-        const hasAdmissionKeywords = existingBreakdown.some(cat => 
-          cat.name && (
-            cat.name.toLowerCase().includes('application') ||
-            cat.name.toLowerCase().includes('admission') ||
-            cat.name.toLowerCase().includes('registration')
-          )
-        );
-        
-        if (hasAdmissionKeywords) {
-          setIsEditMode(true);
-          console.log('✅ Admission Edit Mode detected');
-        } else {
-          console.log('⚠️ Detected non-admission data, not entering edit mode');
-          setIsEditMode(false);
-          setCategories([]);
-        }
-      } else {
-        setIsEditMode(false);
-        setCategories([]);
-      }
-    }
-  }, [open, existingBreakdown]);
-
-  // FIXED: Admission-specific add category
-  const handleAddCategory = () => {
-    const newCategory = {
-      id: `admission_cat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      name: '',
-      amount: 0,
-      description: '',
-      optional: false,
-      boardingOnly: false, // Explicitly false
-      admissionOnly: true, // Explicitly true
-      order: categories.length
-    };
-    setCategories([...categories, newCategory]);
-  };
-
-  // FIXED: Ensure no boardingOnly can be set
-  const handleCategoryChange = (index, field, value) => {
-    const updated = [...categories];
-    
-    // Prevent setting boardingOnly for admission fees
-    if (field === 'boardingOnly') {
-      updated[index] = { ...updated[index], [field]: false };
-    } else {
-      updated[index] = { ...updated[index], [field]: value };
-    }
-    
-    setCategories(updated);
-  };
-
-  const handleRemoveCategory = (index) => {
-    if (categories.length <= 1) {
-      toast.warning('At least one fee category is required');
-      return;
-    }
-    const updated = categories.filter((_, i) => i !== index);
-    setCategories(updated);
-  };
-
-  // FIXED: Admission-specific validation
-  const handleSave = () => {
-    const validationErrors = [];
-    
-    // Validate all categories
-    categories.forEach((cat, index) => {
-      if (!cat.name?.trim()) {
-        validationErrors.push(`Category ${index + 1} requires a name`);
-      }
-      if (!cat.amount || cat.amount <= 0) {
-        validationErrors.push(`Category "${cat.name || index + 1}" requires a valid amount`);
-      }
-      
-      // Validate no boarding categories in admission
-      if (cat.boardingOnly === true) {
-        validationErrors.push(`Admission category "${cat.name}" cannot be marked as boarding-only`);
-      }
-    });
-
-    if (validationErrors.length > 0) {
-      setErrors(validationErrors);
-      toast.error('Please fix all validation errors');
-      return;
-    }
-
-    // Clean up data before saving - ensure admission-specific structure
-    const cleanedCategories = categories.map((cat, index) => ({
-      id: cat.id,
-      name: cat.name.trim(),
-      amount: parseFloat(cat.amount) || 0,
-      description: cat.description?.trim() || '',
-      optional: Boolean(cat.optional),
-      boardingOnly: false, // Force false for all admission categories
-      admissionOnly: true, // Mark as admission-specific
-      order: cat.order || index
-    }));
-
-    setErrors([]);
-    onSave(cleanedCategories);
-    onClose();
-  };
-
-  // FIXED: Admission-specific preset (completely separate from boarding)
-  const admissionPresetCategories = [
-    { 
-      name: 'Application Fee', 
-      amount: 0, 
-      description: 'Non-refundable application processing fee',
-      optional: false,
-      boardingOnly: false,
-      admissionOnly: true
-    },
-    { 
-      name: 'Registration Fee', 
-      amount: 0, 
-      description: 'Student registration and enrollment fee',
-      optional: false,
-      boardingOnly: false,
-      admissionOnly: true
-    },
-    { 
-      name: 'Acceptance Fee', 
-      amount: 0, 
-      description: 'Fee to secure admission spot',
-      optional: false,
-      boardingOnly: false,
-      admissionOnly: true
-    },
-    { 
-      name: 'Development Levy', 
-      amount: 0, 
-      description: 'School infrastructure development',
-      optional: false,
-      boardingOnly: false,
-      admissionOnly: true
-    },
-    { 
-      name: 'Uniform Deposit', 
-      amount: 0, 
-      description: 'Uniform purchase deposit (refundable)',
-      optional: true,
-      boardingOnly: false,
-      admissionOnly: true
-    },
-    { 
-      name: 'Medical Examination', 
-      amount: 0, 
-      description: 'Medical checkup and health records',
-      optional: false,
-      boardingOnly: false,
-      admissionOnly: true
-    }
-  ];
-
-  // FIXED: Prevent preset loading with any existing data
-  const loadPreset = () => {
-    // Only allow preset loading if there are NO existing categories at all
-    if (categories.length === 0 && !isEditMode) {
-      const loaded = admissionPresetCategories.map((cat, index) => ({
-        ...cat,
-        id: `admission_preset_${Date.now()}_${index}`,
-        order: index
-      }));
-      setCategories(loaded);
-      toast.success('Admission preset categories loaded. Update amounts as needed.');
-    } else {
-      toast.warning(isEditMode 
-        ? 'Cannot load preset when editing existing admission fees.' 
-        : 'Clear existing categories first to load preset.'
-      );
-    }
-  };
-
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
-    
-    const items = Array.from(categories);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    
-    const orderedItems = items.map((item, index) => ({ 
-      ...item, 
-      order: index,
-      boardingOnly: false, // Maintain admission-specific structure
-      admissionOnly: true
-    }));
-    setCategories(orderedItems);
-  };
-
-  return (
-    <Modal open={open} onClose={onClose}>
-      <Box sx={{
-        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-        width: '95vw',
-        maxWidth: '700px',
-        maxHeight: '85vh',
-        bgcolor: 'background.paper',
-        borderRadius: 2,
-        boxShadow: 24,
-        overflow: 'hidden',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
-      }}>
-        {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 via-green-700 to-indigo-700 p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
-                <FaUserCheck className="text-lg" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">Admission Fee Breakdown</h2>
-                <p className="text-white/90 text-sm mt-1 font-bold">
-                  Define admission-related fees and charges
-                </p>
-                {isEditMode ? (
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xs bg-white/30 px-2 py-1 rounded-full font-bold">
-                      📝 Edit Mode
-                    </span>
-                    <span className="text-xs text-white/80">
-                      Editing {categories.length} existing admission fee categories
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xs bg-green-500/30 px-2 py-1 rounded-full font-bold">
-                      ➕ Add Mode
-                    </span>
-                    <span className="text-xs text-white/80">
-                      Setting up new admission fees
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-            <button 
-              onClick={onClose}
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-all duration-200"
-            >
-              <FaTimes className="text-lg" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="max-h-[calc(85vh-180px)] overflow-y-auto p-6">
-          {errors.length > 0 && (
-            <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <FaExclamationTriangle className="text-red-600" />
-                <h4 className="text-sm font-bold text-red-700">Validation Errors</h4>
-              </div>
-              <ul className="space-y-1">
-                {errors.map((error, index) => (
-                  <li key={index} className="text-xs text-red-600 font-bold">• {error}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">Admission Fee Categories</h3>
-              <div className="flex gap-2">
-                {/* Show Load Preset only when NOT in edit mode and NO categories */}
-                {!isEditMode && categories.length === 0 && (
-                  <button
-                    type="button"
-                    onClick={loadPreset}
-                    className="px-4 py-2 text-sm font-bold bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-colors"
-                  >
-                    <FaFileAlt className="inline mr-2" /> Load Admission Preset
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={handleAddCategory}
-                  className="px-4 py-2 text-sm font-bold bg-gradient-to-r from-green-600 to-indigo-600 text-white rounded-xl hover:from-green-700 hover:to-indigo-700 transition-colors flex items-center gap-2"
-                >
-                  <FaPlus /> Add Category
-                </button>
-              </div>
-            </div>
-
-            {categories.length === 0 ? (
-              <div className="text-center py-12 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-dashed border-green-300">
-                <FaUserCheck className="mx-auto text-4xl text-green-400 mb-4" />
-                <h4 className="text-lg font-bold text-gray-700 mb-2">
-                  {isEditMode ? 'No Admission Fees Found' : 'Start Admission Fee Setup'}
-                </h4>
-                <p className="text-gray-600 text-sm mb-4 max-w-md mx-auto font-bold">
-                  {isEditMode 
-                    ? 'No existing admission fees found. Start by adding new categories.' 
-                    : 'Define the admission fees that new students need to pay. Start fresh with empty fields or load a preset.'}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  {!isEditMode && (
-                    <button
-                      onClick={loadPreset}
-                      className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-colors font-bold shadow-lg flex items-center justify-center gap-2"
-                    >
-                      <FaFileAlt /> Load Admission Preset
-                    </button>
-                  )}
-                  <button
-                    onClick={handleAddCategory}
-                    className="bg-gradient-to-r from-green-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-indigo-700 transition-colors font-bold shadow-lg flex items-center justify-center gap-2"
-                  >
-                    <FaPlus /> Add First Category
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="admission-fee-categories">
-                  {(provided) => (
-                    <div
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                      className="space-y-3"
-                    >
-                      {categories.map((category, index) => (
-                        <Draggable 
-                          key={category.id} 
-                          draggableId={category.id} 
-                          index={index}
-                        >
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              className="relative"
-                            >
-                              <div className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 cursor-move" {...provided.dragHandleProps}>
-                                <FaSort className="text-gray-400" />
-                              </div>
-                              <div className="ml-8">
-                                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-4 border-2 border-green-200">
-                                  <div className="flex items-center justify-between mb-3">
-                                    <div className="flex items-center gap-2">
-                                      <div className="p-2 bg-green-500 text-white rounded-xl">
-                                        <FaMoneyBillWave className="text-sm" />
-                                      </div>
-                                      <div>
-                                        <h4 className="text-sm font-bold text-gray-900">
-                                          {category.name || `Admission Fee ${index + 1}`}
-                                          {category.admissionOnly && (
-                                            <span className="text-xs text-green-600 ml-2 bg-green-100 px-2 py-0.5 rounded-full">
-                                              Admission
-                                            </span>
-                                          )}
-                                        </h4>
-                                        <p className="text-xs text-gray-600 font-bold">
-                                          Amount: KES {category.amount?.toLocaleString() || '0'}
-                                          {category.optional && <span className="text-gray-500 ml-2">(Optional)</span>}
-                                        </p>
-                                      </div>
-                                    </div>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRemoveCategory(index)}
-                                      className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                                      title="Remove category"
-                                    >
-                                      <FaTrash className="text-sm" />
-                                    </button>
-                                  </div>
-                                  
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div>
-                                      <label className="block text-xs font-bold text-gray-700 mb-2">Category Name *</label>
-                                      <input
-                                        type="text"
-                                        value={category.name || ''}
-                                        onChange={(e) => handleCategoryChange(index, 'name', e.target.value)}
-                                        placeholder="e.g., Application Fee, Registration Fee"
-                                        className="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-bold"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label className="block text-xs font-bold text-gray-700 mb-2">Amount (KES) *</label>
-                                      <input
-                                        type="number"
-                                        min="0"
-                                        step="100"
-                                        value={category.amount || ''}
-                                        onChange={(e) => handleCategoryChange(index, 'amount', parseFloat(e.target.value) || 0)}
-                                        placeholder="Enter amount"
-                                        className="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-bold"
-                                      />
-                                    </div>
-                                  </div>
-                                  
-                                  <div className="mt-3">
-                                    <label className="block text-xs font-bold text-gray-700 mb-2">Description</label>
-                                    <textarea
-                                      value={category.description || ''}
-                                      onChange={(e) => handleCategoryChange(index, 'description', e.target.value)}
-                                      placeholder="Description of this admission fee..."
-                                      rows="2"
-                                      className="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-bold resize-none"
-                                    />
-                                  </div>
-                                  
-                                  <div className="mt-3 flex items-center justify-between">
-                                    <label className="flex items-center gap-2 text-xs font-bold text-gray-700">
-                                      <input
-                                        type="checkbox"
-                                        checked={category.optional || false}
-                                        onChange={(e) => handleCategoryChange(index, 'optional', e.target.checked)}
-                                        className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-                                      />
-                                      Optional Fee (Not required for admission)
-                                    </label>
-                                    <div className="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded">
-                                      Admission Only
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            )}
-          </div>
-
-          {/* Summary Section */}
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-green-500 text-white rounded-xl">
-                  <FaCalculator className="text-lg" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">Admission Fee Summary</h3>
-                  <p className="text-sm text-gray-600 font-bold">
-                    {categories.length} admission fee categories
-                    {isEditMode ? <span className="text-teal-600 ml-2">(Editing existing)</span> : <span className="text-green-600 ml-2">(New setup)</span>}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-green-700">
-                  KES {totalAmount.toLocaleString()}
-                </div>
-                <p className="text-xs text-gray-600 font-bold mt-1">
-                  Total Admission Fees
-                </p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white p-4 rounded-xl border border-green-200">
-                <p className="text-xs text-gray-600 font-bold uppercase tracking-wider mb-1">Required Fees</p>
-                <p className="text-lg font-bold text-gray-900">
-                  KES {categories.filter(c => !c.optional).reduce((sum, cat) => sum + (cat.amount || 0), 0).toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-600 mt-1 font-bold">
-                  {categories.filter(c => !c.optional).length} categories
-                </p>
-              </div>
-              <div className="bg-white p-4 rounded-xl border border-green-200">
-                <p className="text-xs text-gray-600 font-bold uppercase tracking-wider mb-1">Optional Fees</p>
-                <p className="text-lg font-bold text-gray-900">
-                  KES {categories.filter(c => c.optional).reduce((sum, cat) => sum + (cat.amount || 0), 0).toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-600 mt-1 font-bold">
-                  {categories.filter(c => c.optional).length} categories
-                </p>
-              </div>
-            </div>
-            
-            <div className="mt-4 text-center">
-              <div className="text-xs text-green-600 font-bold bg-green-50 inline-block px-3 py-1 rounded-full">
-                💰 Admission fees are completely separate from boarding fees
-              </div>
-            </div>
-          </div>
-
-   
-
-
-
-        </div>
-             
-
-<div className="flex gap-3 w-full py-4 sm:w-auto ">
-  <button
-    type="button"
-    onClick={onClose}
-    className="px-5 py-2 border border-gray-200 text-gray-600 rounded-lg hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 font-medium text-sm tracking-wide w-full sm:w-auto"
-  >
-    Cancel
-  </button>
-  <button
-    type="button"
-    onClick={handleSave}
-    disabled={categories.length === 0}
-    className="px-5 py-2 bg-gradient-to-r from-green-600 to-indigo-600 text-white rounded-lg hover:from-green-700 hover:to-indigo-700 hover:shadow-md transition-all duration-200 font-medium text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
-  >
-    {isEditMode ? 'Update Fees' : 'Save Fees'}
-  </button>
-</div>
-   
-        {/* Footer Section */}
-        <div className="border-t border-gray-200 p-6 bg-white ">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-gray-600 font-bold">
-              <p>Total Admission Fees: <span className="text-green-700">KES {totalAmount.toLocaleString()}</span></p>
-              <p className="text-xs mt-1 font-bold">
-                {categories.length} admission fee categories configured
-                {isEditMode ? <span className="text-teal-600 ml-2">(Edit Mode)</span> : <span className="text-green-600 ml-2">(New Setup)</span>}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {isEditMode 
-                  ? 'Editing existing admission fee categories' 
-                  : 'All fields start empty to prevent autofill from other fee types'}
-              </p>
-            </div>
-       
-          </div>
-        </div>
-      </Box>
-    </Modal>
-  );
-}
-
 // Edit Document Metadata Modal for Exam Results
 function EditDocumentMetadataModal({ 
   open, 
@@ -1596,7 +997,6 @@ function ModernPdfUpload({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isReplacing, setIsReplacing] = useState(false);
   const [showFeeModal, setShowFeeModal] = useState(false);
-  const [showAdmissionFeeModal, setShowAdmissionFeeModal] = useState(false);
   const [localFeeBreakdown, setLocalFeeBreakdown] = useState(() => {
     // Use existingFeeBreakdown if provided (edit mode)
     if (existingFeeBreakdown && Array.isArray(existingFeeBreakdown) && existingFeeBreakdown.length > 0) {
@@ -1613,8 +1013,8 @@ function ModernPdfUpload({
   const [selectedFileForMetadata, setSelectedFileForMetadata] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // File size limit (0.5 MB individual file limit)
-  const MAX_INDIVIDUAL_SIZE = 0.5 * 1024 * 1024;
+  // File size limit (2 MB individual file limit)
+  const MAX_INDIVIDUAL_SIZE = 2 * 1024 * 1024;
   
   // Allowed file types
   const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx'];
@@ -1679,27 +1079,21 @@ function ModernPdfUpload({
       return;
     }
 
-    // Check if it's an exam result type
-    if (type === 'results') {
-      setSelectedFileForMetadata(file);
-      setShowMetadataModal(true);
-    } else {
-      // For non-exam files - preserve existing metadata in edit mode
-      const existingMetadata = existingPdf ? {
-        year: existingPdf.year || '',
-        description: existingPdf.description || '',
-        term: existingPdf.term || ''
-      } : {};
+    // For all files - just accept them directly without metadata prompts
+    const existingMetadata = existingPdf ? {
+      year: existingPdf.year || '',
+      description: existingPdf.description || '',
+      term: existingPdf.term || ''
+    } : {};
 
-      // Update parent with file and preserved metadata
-      onPdfChange(file, existingMetadata.year, existingMetadata.description, existingMetadata.term);
-      
-      // Update local state
-      setPreviewName(file.name);
-      setFileSelected(true);
-      
-      toast.success(isEditMode ? 'Replacement file selected' : 'File selected successfully');
-    }
+    // Update parent with file and preserved metadata
+    onPdfChange(file, existingMetadata.year, existingMetadata.description, existingMetadata.term);
+    
+    // Update local state
+    setPreviewName(file.name);
+    setFileSelected(true);
+    
+    toast.success(isEditMode ? 'File replaced successfully' : 'File selected successfully');
   };
 
   // FIXED: Enhanced metadata save handler for edit mode
@@ -1734,14 +1128,6 @@ function ModernPdfUpload({
       onFeeBreakdownChange(breakdown);
     }
     toast.success(isEditMode ? 'Fee breakdown updated successfully' : 'Fee breakdown saved successfully');
-  };
-
-  const handleAdmissionFeeSave = (breakdown) => {
-    setLocalFeeBreakdown(breakdown);
-    if (onFeeBreakdownChange) {
-      onFeeBreakdownChange(breakdown);
-    }
-    toast.success(isEditMode ? 'Admission fees updated successfully' : 'Admission fees saved successfully');
   };
 
   const calculateTotal = (breakdown) => {
@@ -1806,7 +1192,7 @@ function ModernPdfUpload({
       case 'boarding':
         return "Upload the fee structure for boarding students. This document should include accommodation, meals, and all boarding-related charges.";
       case 'admission':
-        return "Upload the admission fee document outlining all charges new students need to pay upon admission.";
+        return "Upload the admission letter document. Max size: 4.5MB total for admission documents.";
       case 'results':
         return "Upload the examination results document. Ensure it includes proper grading, subject scores, and student performance data.";
       default:
@@ -1840,7 +1226,7 @@ function ModernPdfUpload({
           <div className="flex items-center gap-2">
             <FaExclamationTriangle className="text-yellow-600" />
             <p className="text-sm font-bold text-yellow-800">
-              Each file must not exceed 500kB. Allowed types: PDF, DOC, DOCX
+              Each file must not exceed 2MB. Allowed types: PDF, DOC, DOCX
             </p>
           </div>
         </div>
@@ -1867,25 +1253,6 @@ function ModernPdfUpload({
               </span>
             )}
           </label>
-          
-          {(type === 'day' || type === 'boarding' || type === 'admission') && (
-            <button
-              type="button"
-              onClick={() => {
-                if (type === 'admission') {
-                  setShowAdmissionFeeModal(true);
-                } else {
-                  setShowFeeModal(true);
-                }
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 transition duration-200 font-bold text-sm shadow-lg"
-            >
-              <FaCalculator className="text-xs" />
-              {hasFeeBreakdown 
-                ? (isEditMode ? 'Edit Existing Breakdown' : 'Edit Breakdown') 
-                : 'Add Fee Breakdown'}
-            </button>
-          )}
         </div>
         
         {/* EXISTING METADATA DISPLAY IN EDIT MODE */}
@@ -1939,54 +1306,6 @@ function ModernPdfUpload({
             </div>
           </div>
         </div>
-
-        {hasFeeBreakdown && (type === 'day' || type === 'boarding' || type === 'admission') && (
-          <div className={`mb-4 bg-gradient-to-br ${type === 'admission' ? 'from-green-50 to-green-100 border-green-200' : type === 'boarding' ? 'from-teal-50 to-teal-100 border-teal-200' : 'from-green-50 to-green-100 border-green-200'} rounded-2xl p-4 border-2`}>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <FaMoneyBillWave className={type === 'admission' ? 'text-green-600' : type === 'boarding' ? 'text-teal-600' : 'text-green-600'} />
-                <h4 className="text-sm font-bold text-gray-900">
-                  {type === 'admission' ? 'Admission Fees' : `${type.charAt(0).toUpperCase() + type.slice(1)} School Fees`}
-                  {isEditMode && <span className="text-teal-600 text-xs ml-2">(Editing Existing)</span>}
-                </h4>
-              </div>
-              <span className={`text-lg font-bold ${type === 'admission' ? 'text-green-700' : type === 'boarding' ? 'text-teal-700' : 'text-green-700'}`}>
-                KES {totalAmount.toLocaleString()}
-              </span>
-            </div>
-            
-            <div className="space-y-2">
-              {localFeeBreakdown.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-100">
-                  <div className="flex-1">
-                    <span className="text-sm font-bold text-gray-800">{item.name}</span>
-                    {item.optional && (
-                      <span className="text-xs text-gray-500 ml-2 font-bold">(Optional)</span>
-                    )}
-                    {item.boardingOnly && (
-                      <span className="text-xs text-green-600 ml-2 font-bold">(Boarding)</span>
-                    )}
-                  </div>
-                  <span className="text-sm font-bold text-gray-700">
-                    KES {item.amount?.toLocaleString()}
-                  </span>
-                </div>
-              ))}
-              
-              {localFeeBreakdown.length > 3 && (
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    onClick={type === 'admission' ? () => setShowAdmissionFeeModal(true) : () => setShowFeeModal(true)}
-                    className={`text-sm font-bold ${type === 'admission' ? 'text-green-600 hover:text-green-700' : type === 'boarding' ? 'text-teal-600 hover:text-teal-700' : 'text-green-600 hover:text-green-700'}`}
-                  >
-                    + {localFeeBreakdown.length - 3} more categories
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* File Upload Section */}
@@ -2166,7 +1485,7 @@ function ModernPdfUpload({
               {dragOver ? '📄 Drop file here!' : isReplacing ? 'Select replacement file' : 'Click to upload file'}
             </p>
             <p className="text-xs text-gray-600 transition-colors duration-300 group-hover:text-gray-700 font-bold">
-              Max: 500KB • PDF, DOC, DOCX only
+              Max: 2MB • PDF, DOC, DOCX only
             </p>
             <input 
               ref={fileInputRef}
@@ -2179,41 +1498,7 @@ function ModernPdfUpload({
         )}
       </div>
 
-      {/* Modals */}
-      {(type === 'day' || type === 'boarding') && showFeeModal && (
-        <FeeBreakdownModal
-          open={showFeeModal}
-          onClose={() => setShowFeeModal(false)}
-          onSave={handleFeeBreakdownSave}
-          title={`${type === 'day' ? 'Day School' : 'Boarding School'} Fee Breakdown`}
-          existingBreakdown={localFeeBreakdown}
-          type={type}
-        />
-      )}
-
-      {type === 'admission' && showAdmissionFeeModal && (
-        <AdmissionFeeBreakdownModal
-          open={showAdmissionFeeModal}
-          onClose={() => setShowAdmissionFeeModal(false)}
-          onSave={handleAdmissionFeeSave}
-          existingBreakdown={localFeeBreakdown}
-        />
-      )}
-
-      {type === 'results' && showMetadataModal && selectedFileForMetadata && (
-        <DocumentMetadataModal
-          open={showMetadataModal}
-          onClose={() => {
-            setShowMetadataModal(false);
-            setSelectedFileForMetadata(null);
-            if (fileInputRef.current) {
-              fileInputRef.current.value = '';
-            }
-          }}
-          onSave={handleMetadataSave}
-          fileName={selectedFileForMetadata.name}
-        />
-      )}
+      {/* Modals - All fee breakdown modals removed for simplified document-only uploads */}
     </div>
   );
 }
@@ -2232,7 +1517,6 @@ function ModernDocumentCard({
   year = null,
   term = null,
   feeBreakdown = null,
-  admissionBreakdown = null,
   onReplace = null,
   onRemove = null,
   onEdit = null,
@@ -2242,14 +1526,9 @@ function ModernDocumentCard({
   fileSize = null,
   uploadDate = null
 }) {
-  const [showBreakdown, setShowBreakdown] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditMetadataModal, setShowEditMetadataModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  
-  const breakdown = feeBreakdown || admissionBreakdown;
-  const totalAmount = breakdown?.reduce((sum, item) => sum + (item.amount || 0), 0) || 0;
-  const categoriesCount = breakdown?.length || 0;
   const isExamResult = type === 'results';
 
   // Prepare document data for the details modal
@@ -2260,8 +1539,6 @@ function ModernDocumentCard({
     pdfName,
     year,
     term,
-    feeBreakdown,
-    admissionBreakdown,
     type,
     fileSize,
     uploadDate
@@ -2292,15 +1569,7 @@ function ModernDocumentCard({
                   )}
                 </div>
               )}
-              {breakdown && categoriesCount > 0 && (
-                <button
-                  onClick={() => setShowBreakdown(!showBreakdown)}
-                  className="mt-2 flex items-center gap-2 text-xs font-bold text-green-600 hover:text-green-700"
-                >
-                  <FaCalculator className="text-xs" />
-                  {showBreakdown ? 'Hide' : 'Show'} {type.includes('admission') ? 'Admission Fees' : 'Fee Breakdown'} ({categoriesCount} categories)
-                </button>
-              )}
+              {/* Fee breakdown display removed - documents only */}
             </div>
           </div>
           
@@ -2333,51 +1602,7 @@ function ModernDocumentCard({
           )}
         </div>
         
-        {showBreakdown && breakdown && categoriesCount > 0 && (
-          <div className={`mb-4 bg-gradient-to-br ${type.includes('admission') ? 'from-green-50 to-green-100 border-green-200' : type.includes('boarding') ? 'from-teal-50 to-teal-100 border-teal-200' : 'from-green-50 to-green-100 border-green-200'} rounded-xl p-4 border`}>
-            <div className="flex items-center justify-between mb-3">
-              <h5 className="text-sm font-bold text-gray-900">
-                {type.includes('admission') ? 'Admission Fee' : 'Fee'} Breakdown
-              </h5>
-              <span className={`text-lg font-bold ${type.includes('admission') ? 'text-green-700' : type.includes('boarding') ? 'text-teal-700' : 'text-green-700'}`}>
-                KES {totalAmount.toLocaleString()}
-              </span>
-            </div>
-            <div className="space-y-2">
-              {breakdown.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-gray-800">{item.name}</span>
-                      {item.optional && (
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded font-bold">Optional</span>
-                      )}
-                      {item.boardingOnly && (
-                        <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded font-bold">Boarding</span>
-                      )}
-                    </div>
-                    {item.description && (
-                      <p className="text-xs text-gray-600 mt-1 font-bold">{item.description}</p>
-                    )}
-                  </div>
-                  <span className="text-sm font-bold text-gray-700">
-                    KES {item.amount?.toLocaleString()}
-                  </span>
-                </div>
-              ))}
-              {breakdown.length > 3 && (
-                <div className="text-center pt-2">
-                  <button
-                    onClick={() => setShowDetailsModal(true)}
-                    className="text-xs text-green-600 hover:text-green-700 font-bold"
-                  >
-                    + {breakdown.length - 3} more categories (View all)
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        {/* Breakdown display removed - simplified document-only upload */}
         
         <div className="flex gap-2 mt-4">
           <button
@@ -2442,7 +1667,7 @@ function ModernDocumentCard({
                   <ul className="text-sm text-red-700 font-bold mt-2 ml-4 space-y-1">
                     <li>• The uploaded document file</li>
                     <li>• All associated metadata (year, term, description)</li>
-                    {feeBreakdown || admissionBreakdown ? <li>• Fee breakdown information</li> : null}
+                    {/* Fee breakdown info removed */}
                   </ul>
                 </div>
               </div>
@@ -2494,16 +1719,10 @@ function DocumentDetailsModal({
     pdfName, 
     year, 
     term,
-    feeBreakdown,
-    admissionBreakdown,
     type,
     fileSize,
     uploadDate
   } = documentData;
-
-  const breakdown = feeBreakdown || admissionBreakdown;
-  const categoriesCount = breakdown?.length || 0;
-  const totalAmount = breakdown?.reduce((sum, item) => sum + (item.amount || 0), 0) || 0;
 
   const getDocumentTypeIcon = () => {
     switch(type) {
@@ -2521,7 +1740,7 @@ function DocumentDetailsModal({
       case 'curriculum': return 'Curriculum Document';
       case 'day': return 'Day School Fees';
       case 'boarding': return 'Boarding School Fees';
-      case 'admission': return 'Admission Fees';
+      case 'admission': return 'Admission Letter';
       case 'results': return 'Examination Results';
       default: return 'Document';
     }
@@ -2629,61 +1848,7 @@ function DocumentDetailsModal({
             </div>
           </div>
 
-          {/* Fee Breakdown Section (if available) */}
-          {breakdown && categoriesCount > 0 && (
-            <div className={`mb-6 bg-gradient-to-br ${
-              type === 'admission' ? 'from-green-50 to-green-100 border-green-200' : 
-              type === 'boarding' ? 'from-teal-50 to-teal-100 border-teal-200' : 
-              type === 'day' ? 'from-green-50 to-green-100 border-green-200' : 
-              'from-gray-50 to-gray-100 border-gray-200'
-            } rounded-xl p-5 border`}>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">
-                  {type === 'admission' ? 'Admission Fee Breakdown' : 'Fee Structure Breakdown'}
-                </h3>
-                <div className="text-right">
-                  <div className={`text-2xl font-bold ${
-                    type === 'admission' ? 'text-green-700' : 
-                    type === 'boarding' ? 'text-teal-700' : 
-                    'text-green-700'
-                  }`}>
-                    KES {totalAmount.toLocaleString()}
-                  </div>
-                  <p className="text-xs text-gray-600 mt-1 font-bold">
-                    {categoriesCount} categories • {breakdown.filter(c => !c.optional).length} required
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {breakdown.map((item, index) => (
-                  <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-gray-900">{item.name}</span>
-                        {item.optional && (
-                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full font-bold">
-                            Optional
-                          </span>
-                        )}
-                        {item.boardingOnly && (
-                          <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full font-bold">
-                            Boarding Only
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-lg font-bold text-gray-900">
-                        KES {item.amount?.toLocaleString()}
-                      </span>
-                    </div>
-                    {item.description && (
-                      <p className="text-sm text-gray-600 mt-2 font-bold">{item.description}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Fee Breakdown Section Removed - Only Document Upload */}
 
           {/* File Information */}
           <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-5 border border-teal-200">
@@ -2809,47 +1974,7 @@ const [formData, setFormData] = useState(() => {
       descriptionField: 'admissionFeeDescription',
       termField: 'admissionFeeTerm'
     },
-    // Exam results
-    { 
-      key: 'form1ResultsPdf',
-      nameField: 'form1ResultsPdfName',
-      sizeField: 'form1ResultsPdfSize',
-      yearField: 'form1ResultsYear',
-      descriptionField: 'form1ResultsDescription',
-      termField: 'form1ResultsTerm'
-    },
-    { 
-      key: 'form2ResultsPdf',
-      nameField: 'form2ResultsPdfName',
-      sizeField: 'form2ResultsPdfSize',
-      yearField: 'form2ResultsYear',
-      descriptionField: 'form2ResultsDescription',
-      termField: 'form2ResultsTerm'
-    },
-    { 
-      key: 'form3ResultsPdf',
-      nameField: 'form3ResultsPdfName',
-      sizeField: 'form3ResultsPdfSize',
-      yearField: 'form3ResultsYear',
-      descriptionField: 'form3ResultsDescription',
-      termField: 'form3ResultsTerm'
-    },
-    { 
-      key: 'form4ResultsPdf',
-      nameField: 'form4ResultsPdfName',
-      sizeField: 'form4ResultsPdfSize',
-      yearField: 'form4ResultsYear',
-      descriptionField: 'form4ResultsDescription',
-      termField: 'form4ResultsTerm'
-    },
-    { 
-      key: 'mockExamsResultsPdf',
-      nameField: 'mockExamsPdfName',
-      sizeField: 'mockExamsPdfSize',
-      yearField: 'mockExamsYear',
-      descriptionField: 'mockExamsDescription',
-      termField: 'mockExamsTerm'
-    },
+    // Exam results - ONLY KCSE
     { 
       key: 'kcseResultsPdf',
       nameField: 'kcsePdfName',
@@ -2884,35 +2009,15 @@ const [formData, setFormData] = useState(() => {
   return baseFormData;
 });
 
-  // COMPLETE FIX: Preload existing fee breakdowns
+  // COMPLETE FIX: Preload existing fee breakdowns (REMOVED - no breakdowns for simplified uploads)
   const [feeBreakdowns, setFeeBreakdowns] = useState({
-    feesDay: Array.isArray(documents?.feesDayDistributionJson) ? documents.feesDayDistributionJson : [],
-    feesBoarding: Array.isArray(documents?.feesBoardingDistributionJson) ? documents.feesBoardingDistributionJson : [],
-    admissionFee: Array.isArray(documents?.admissionFeeDistribution) ? documents.admissionFeeDistribution : []
+    feesDay: [],
+    feesBoarding: [],
+    admissionFee: []
   });
 
-  // COMPLETE FIX: Preload existing exam metadata
+  // COMPLETE FIX: Preload existing exam metadata - ONLY KCSE (Form 1-4 and Mock Exams removed)
   const [examMetadata, setExamMetadata] = useState({
-    form1ResultsYear: documents?.form1ResultsYear?.toString() || '',
-    form1ResultsTerm: documents?.form1ResultsTerm || '',
-    form1ResultsDescription: documents?.form1ResultsDescription || '',
-    
-    form2ResultsYear: documents?.form2ResultsYear?.toString() || '',
-    form2ResultsTerm: documents?.form2ResultsTerm || '',
-    form2ResultsDescription: documents?.form2ResultsDescription || '',
-    
-    form3ResultsYear: documents?.form3ResultsYear?.toString() || '',
-    form3ResultsTerm: documents?.form3ResultsTerm || '',
-    form3ResultsDescription: documents?.form3ResultsDescription || '',
-    
-    form4ResultsYear: documents?.form4ResultsYear?.toString() || '',
-    form4ResultsTerm: documents?.form4ResultsTerm || '',
-    form4ResultsDescription: documents?.form4ResultsDescription || '',
-    
-    mockExamsYear: documents?.mockExamsYear?.toString() || '',
-    mockExamsTerm: documents?.mockExamsTerm || '',
-    mockExamsDescription: documents?.mockExamsDescription || '',
-    
     kcseYear: documents?.kcseYear?.toString() || '',
     kcseTerm: documents?.kcseTerm || '',
     kcseDescription: documents?.kcseDescription || ''
@@ -2936,9 +2041,9 @@ const [formData, setFormData] = useState(() => {
     },
     { 
       id: 'admission', 
-      label: 'Admission Fees', 
+      label: 'Admission Letter', 
       icon: FaUserCheck, 
-      description: 'Admission fee documents (separate from boarding)' 
+      description: 'Admission letter documents for new students' 
     },
     { 
       id: 'exams', 
@@ -3031,48 +2136,15 @@ const handleSubmitAfterReview = async () => {
       }
     });
     
-    // IMPORTANT: Append fee breakdowns as JSON strings (BOARDING SCHOOL ONLY - NO DAY FEES)
-    // Day fees are not appended because this is a boarding school
+    // IMPORTANT: No fee breakdowns are submitted - only the documents themselves
+    console.log('Submitting simplified documents - no fee breakdowns or metadata');
     
-    if (feeBreakdowns.feesBoarding && feeBreakdowns.feesBoarding.length > 0) {
-      data.append('feesBoardingDistributionJson', JSON.stringify(feeBreakdowns.feesBoarding));
-      console.log('✅ Appending feesBoardingDistributionJson:', feeBreakdowns.feesBoarding);
-    }
+    // Append year/term/description for boarding fee documents only if they exist
     
-    if (feeBreakdowns.admissionFee && feeBreakdowns.admissionFee.length > 0) {
-      data.append('admissionFeeDistribution', JSON.stringify(feeBreakdowns.admissionFee));
-      console.log('✅ Appending admissionFeeDistribution:', feeBreakdowns.admissionFee);
-    }
+    // KCSE Results - NO METADATA (just the document)
+    // Only KCSE results allowed - uploaded as pure documents without metadata
+    console.log('✅ KCSE results uploaded without metadata - only KCSE allowed in results tab');
     
-    // Append year/term/description for boarding fee documents only
-    // Day fees are not appended because this is a boarding school
-    
-    if (formData.feesBoardingDistributionPdf?.year) {
-      data.append('feesBoardingYear', formData.feesBoardingDistributionPdf.year);
-    }
-    if (formData.feesBoardingDistributionPdf?.term) {
-      data.append('feesBoardingTerm', formData.feesBoardingDistributionPdf.term);
-    }
-    if (formData.feesBoardingDistributionPdf?.description) {
-      data.append('feesBoardingDescription', formData.feesBoardingDistributionPdf.description);
-    }
-    
-    if (formData.admissionFeePdf?.year) {
-      data.append('admissionFeeYear', formData.admissionFeePdf.year);
-    }
-    if (formData.admissionFeePdf?.term) {
-      data.append('admissionFeeTerm', formData.admissionFeePdf.term);
-    }
-    if (formData.admissionFeePdf?.description) {
-      data.append('admissionFeeDescription', formData.admissionFeePdf.description);
-    }
-    
-    // Append exam metadata
-    Object.keys(examMetadata).forEach(key => {
-      if (examMetadata[key]) {
-        data.append(key, examMetadata[key]);
-      }
-    });
     
     // Send request with authentication
     const response = await fetch('/api/schooldocuments', {
@@ -3312,7 +2384,7 @@ const getExistingPdfData = (field) => {
               <div className="flex items-center gap-2">
                 <FaInfoCircle className="text-blue-600" />
                 <p className="text-sm font-bold text-blue-800">
-                  This is a boarding school. Day fees section has been removed. Only boarding fees are required.
+                  Upload only the boarding fees document - no metadata or fee breakdowns required. The document itself is sufficient.
                 </p>
               </div>
             </div>
@@ -3329,22 +2401,20 @@ const getExistingPdfData = (field) => {
                 existingPdf={getExistingPdfData('feesBoardingDistributionPdf')}
                 onCancelExisting={(existingFile) => handleCancelExisting('feesBoardingDistributionPdf', existingFile)}
                 onRemoveExisting={() => handleRemoveExisting('feesBoardingDistributionPdf')}
-                feeBreakdown={feeBreakdowns.feesBoarding}
-                onFeeBreakdownChange={(breakdown) => handleFeeBreakdownChange('feesBoarding', breakdown)}
                 type="boarding"
               />
             </div>
           </div>
         );
       
-      case 2: // Admission
+      case 2: // Admission Letter
         return (
           <div className="space-y-6">
             <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 mb-4">
               <div className="flex items-center gap-2">
                 <FaInfoCircle className="text-green-600" />
                 <p className="text-sm font-bold text-green-800">
-                  Admission fees are completely separate from boarding fees and start with empty fields.
+                  Upload admission letter documents (max 4.5MB total) - no metadata or fee breakdowns required.
                 </p>
               </div>
             </div>
@@ -3361,8 +2431,6 @@ const getExistingPdfData = (field) => {
                 existingPdf={getExistingPdfData('admissionFeePdf')}
                 onCancelExisting={(existingFile) => handleCancelExisting('admissionFeePdf', existingFile)}
                 onRemoveExisting={() => handleRemoveExisting('admissionFeePdf')}
-                feeBreakdown={feeBreakdowns.admissionFee}
-                onFeeBreakdownChange={(breakdown) => handleFeeBreakdownChange('admissionFee', breakdown)}
                 type="admission"
               />
             </div>
@@ -3372,40 +2440,29 @@ const getExistingPdfData = (field) => {
       case 3: // Exam Results  
         return (
           <div className="space-y-8">
+            <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-4 mb-4">
+              <div className="flex items-center gap-2">
+                <FaInfoCircle className="text-orange-600" />
+                <p className="text-sm font-bold text-orange-800">
+                  Upload KCSE results document only - no metadata or descriptions required. Pure document upload only.
+                </p>
+              </div>
+            </div>
+
             {[
-              { key: 'form1Results', label: 'Form 1 Results', field: 'form1ResultsPdf' },
-              { key: 'form2Results', label: 'Form 2 Results', field: 'form2ResultsPdf' },
-              { key: 'form3Results', label: 'Form 3 Results', field: 'form3ResultsPdf' },
-              { key: 'form4Results', label: 'Form 4 Results', field: 'form4ResultsPdf' },
-              { key: 'mockExams', label: 'Mock Exams Results', field: 'mockExamsResultsPdf' },
               { key: 'kcse', label: 'KCSE Results', field: 'kcseResultsPdf' }
             ].map((exam) => (
               <div key={exam.key} className="w-full max-w-2xl">
-                <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                    <FaAward className="text-orange-600" />
-                    <span className="text-base">{exam.label}</span>
-                  </label>
-                  
-                  {/* Display existing metadata if available */}
-                  {getExistingPdfData(exam.field) && (
-                    <div className="text-xs text-gray-600 font-bold">
-                      {examMetadata[`${exam.key}Year`] && `Year: ${examMetadata[`${exam.key}Year`]}`}
-                      {examMetadata[`${exam.key}Term`] && ` • Term: ${examMetadata[`${exam.key}Term`]}`}
-                    </div>
-                  )}
-                </div>
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-4">
+                  <FaAward className="text-orange-600" />
+                  <span className="text-base">{exam.label}</span>
+                </label>
                 
                 <ModernPdfUpload
                   pdfFile={formData[exam.field]?.file || null}
-                  onPdfChange={(file, year, description, term) => {
-                    handleFileChange(exam.field, file, year, description, term);
-                    if (year || description || term) {
-                      if (year) handleExamMetadataChange(`${exam.key}Year`, year);
-                      if (term) handleExamMetadataChange(`${exam.key}Term`, term);
-                      if (description) handleExamMetadataChange(`${exam.key}Description`, description);
-                    }
-                  }}
+                  onPdfChange={(file, year, description, term) => 
+                    handleFileChange(exam.field, file, year, description, term)
+                  }
                   onRemove={() => handleFileRemove(exam.field)}
                   label={`${exam.label} PDF`}
                   existingPdf={getExistingPdfData(exam.field)}
@@ -3464,12 +2521,7 @@ const getExistingPdfData = (field) => {
                       curriculumPDF: 'Curriculum Document',
                       feesDayDistributionPdf: 'Day School Fees',
                       feesBoardingDistributionPdf: 'Boarding School Fees',
-                      admissionFeePdf: 'Admission Fees',
-                      form1ResultsPdf: 'Form 1 Results',
-                      form2ResultsPdf: 'Form 2 Results',
-                      form3ResultsPdf: 'Form 3 Results',
-                      form4ResultsPdf: 'Form 4 Results',
-                      mockExamsResultsPdf: 'Mock Exams Results',
+                      admissionFeePdf: 'Admission Letter',
                       kcseResultsPdf: 'KCSE Results'
                     };
                     
@@ -3907,11 +2959,6 @@ const hasDocuments = documents && (
   documents.feesDayDistributionPdf ||
   documents.feesBoardingDistributionPdf ||
   documents.admissionFeePdf ||
-  documents.form1ResultsPdf ||
-  documents.form2ResultsPdf ||
-  documents.form3ResultsPdf ||
-  documents.form4ResultsPdf ||
-  documents.mockExamsResultsPdf ||
   documents.kcseResultsPdf
 );
 
@@ -4227,16 +3274,15 @@ const hasDocuments = documents && (
                 />
               )}
               
-              {/* ADMISSION FEES DOCUMENT */}
+              {/* ADMISSION LETTER DOCUMENT */}
               {documents.admissionFeePdf && (
                 <ModernDocumentCard
-                  title="Admission Fees"
-                  description="Admission and registration fees structure"
+                  title="Admission Letter"
+                  description="Admission letter for new students"
                   pdfUrl={documents.admissionFeePdf}
                   pdfName={documents.admissionFeePdfName || "admission-fees.pdf"}
                   year={documents.admissionFeeYear}
                   term={documents.admissionFeeTerm}
-                  admissionBreakdown={documents.admissionFeeDistribution || []}
                   type="admission"
                   fileSize={documents.admissionFeePdfSize}
                   uploadDate={documents.admissionFeeUploadDate}
@@ -4246,102 +3292,7 @@ const hasDocuments = documents && (
                 />
               )}
               
-              {/* EXAM RESULTS DOCUMENTS */}
-              {/* Form 1 Results */}
-              {documents.form1ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 1 Results"
-                  description={documents.form1ResultsDescription || "Form 1 examination results"}
-                  pdfUrl={documents.form1ResultsPdf}
-                  pdfName={documents.form1ResultsPdfName || "form1-results.pdf"}
-                  year={documents.form1ResultsYear}
-                  term={documents.form1ResultsTerm}
-                  type="results"
-                  fileSize={documents.form1ResultsPdfSize}
-                  uploadDate={documents.form1ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onEdit={(metadata) => handleUpdateExamMetadata('form1Results', metadata)}
-                  onDelete={() => handleDeleteIndividualDocument('form1ResultsPdf')}
-                />
-              )}
-              
-              {/* Form 2 Results */}
-              {documents.form2ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 2 Results"
-                  description={documents.form2ResultsDescription || "Form 2 examination results"}
-                  pdfUrl={documents.form2ResultsPdf}
-                  pdfName={documents.form2ResultsPdfName || "form2-results.pdf"}
-                  year={documents.form2ResultsYear}
-                  term={documents.form2ResultsTerm}
-                  type="results"
-                  fileSize={documents.form2ResultsPdfSize}
-                  uploadDate={documents.form2ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onEdit={(metadata) => handleUpdateExamMetadata('form2Results', metadata)}
-                  onDelete={() => handleDeleteIndividualDocument('form2ResultsPdf')}
-                />
-              )}
-              
-              {/* Form 3 Results */}
-              {documents.form3ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 3 Results"
-                  description={documents.form3ResultsDescription || "Form 3 examination results"}
-                  pdfUrl={documents.form3ResultsPdf}
-                  pdfName={documents.form3ResultsPdfName || "form3-results.pdf"}
-                  year={documents.form3ResultsYear}
-                  term={documents.form3ResultsTerm}
-                  type="results"
-                  fileSize={documents.form3ResultsPdfSize}
-                  uploadDate={documents.form3ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onEdit={(metadata) => handleUpdateExamMetadata('form3Results', metadata)}
-                  onDelete={() => handleDeleteIndividualDocument('form3ResultsPdf')}
-                />
-              )}
-              
-              {/* Form 4 Results */}
-              {documents.form4ResultsPdf && (
-                <ModernDocumentCard
-                  title="Form 4 Results"
-                  description={documents.form4ResultsDescription || "Form 4 examination results"}
-                  pdfUrl={documents.form4ResultsPdf}
-                  pdfName={documents.form4ResultsPdfName || "form4-results.pdf"}
-                  year={documents.form4ResultsYear}
-                  term={documents.form4ResultsTerm}
-                  type="results"
-                  fileSize={documents.form4ResultsPdfSize}
-                  uploadDate={documents.form4ResultsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onEdit={(metadata) => handleUpdateExamMetadata('form4Results', metadata)}
-                  onDelete={() => handleDeleteIndividualDocument('form4ResultsPdf')}
-                />
-              )}
-              
-              {/* Mock Exams Results */}
-              {documents.mockExamsResultsPdf && (
-                <ModernDocumentCard
-                  title="Mock Exams Results"
-                  description={documents.mockExamsDescription || "Mock examination results"}
-                  pdfUrl={documents.mockExamsResultsPdf}
-                  pdfName={documents.mockExamsPdfName || "mock-exams-results.pdf"}
-                  year={documents.mockExamsYear}
-                  term={documents.mockExamsTerm}
-                  type="results"
-                  fileSize={documents.mockExamsPdfSize}
-                  uploadDate={documents.mockExamsUploadDate}
-                  existing={true}
-                  onReplace={() => setShowModal(true)}
-                  onEdit={(metadata) => handleUpdateExamMetadata('mockExams', metadata)}
-                  onDelete={() => handleDeleteIndividualDocument('mockExamsResultsPdf')}
-                />
-              )}
-              
+              {/* EXAM RESULTS DOCUMENTS - ONLY KCSE */}
               {/* KCSE Results */}
               {documents.kcseResultsPdf && (
                 <ModernDocumentCard

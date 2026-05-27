@@ -510,6 +510,9 @@ model SchoolDocument {
   feesDayDescription     String?   @db.Text
   feesDayYear            Int?
   feesDayTerm            String?   @db.VarChar(50)
+  feesDayConfig          Json?
+  feesDayPublished       Boolean   @default(true)
+  feesDayArchived        Boolean   @default(false)
 
   // Boarding School Fees PDF
   feesBoardingDistributionPdf String?   @db.Text
@@ -519,6 +522,9 @@ model SchoolDocument {
   feesBoardingDescription     String?   @db.Text
   feesBoardingYear            Int?
   feesBoardingTerm            String?   @db.VarChar(50)
+  feesBoardingConfig          Json?
+  feesBoardingPublished       Boolean   @default(true)
+  feesBoardingArchived        Boolean   @default(false)
 
   // Legacy fields preserved to avoid data loss during schema push
   admissionFeeDistribution     String?   @db.Text

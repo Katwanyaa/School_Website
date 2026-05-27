@@ -221,6 +221,45 @@ const parseStringField = (value) => {
   return value.trim();
 };
 
+const parseJsonField = (value) => {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed;
+  } catch (error) {
+    console.warn('Unable to parse JSON field:', error);
+    return null;
+  }
+};
+
+const normalizeFeeConfig = (config) => {
+  if (!config || typeof config !== 'object') return null;
+  const normalized = {
+    academicYear: parseStringField(config.academicYear || config.year || ''),
+    annualFee: config.annualFee != null ? Number(config.annualFee) : null,
+    description: parseStringField(config.description || ''),
+    published: config.published === false ? false : true,
+    archived: config.archived === true,
+    termBreakdowns: Array.isArray(config.termBreakdowns)
+      ? config.termBreakdowns.map((item) => ({
+          term: parseStringField(item.term || item.name || ''),
+          amount: item.amount != null ? Number(item.amount) : 0,
+          notes: parseStringField(item.notes || item.note || ''),
+          optional: item.optional === true
+        }))
+      : [],
+    additionalCharges: Array.isArray(config.additionalCharges)
+      ? config.additionalCharges.map((item) => ({
+          name: parseStringField(item.name || ''),
+          amount: item.amount != null ? Number(item.amount) : 0,
+          notes: parseStringField(item.notes || item.note || '')
+        }))
+      : []
+  };
+
+  return normalized;
+};
+
 const cleanDocumentResponse = (document) => {
   if (!document) return null;
   
@@ -235,6 +274,9 @@ const cleanDocumentResponse = (document) => {
     feesDayDescription: document.feesDayDescription,
     feesDayYear: document.feesDayYear,
     feesDayTerm: document.feesDayTerm,
+    feesDayConfig: document.feesDayConfig || null,
+    feesDayPublished: document.feesDayPublished,
+    feesDayArchived: document.feesDayArchived,
 
     // Boarding School Fees PDF
     feesBoardingDistributionPdf: document.feesBoardingDistributionPdf,
@@ -244,6 +286,9 @@ const cleanDocumentResponse = (document) => {
     feesBoardingDescription: document.feesBoardingDescription,
     feesBoardingYear: document.feesBoardingYear,
     feesBoardingTerm: document.feesBoardingTerm,
+    feesBoardingConfig: document.feesBoardingConfig || null,
+    feesBoardingPublished: document.feesBoardingPublished,
+    feesBoardingArchived: document.feesBoardingArchived,
 
     // KCSE Results PDF
     kcseResultsPdf: document.kcseResultsPdf,
@@ -396,6 +441,31 @@ export async function POST(req) {
       updatedAt: new Date()
     };
 
+    // Parse structured fee configurations if provided
+    const feesDayConfigRaw = formData.get('feesDayConfig');
+    const feesBoardingConfigRaw = formData.get('feesBoardingConfig');
+    const parsedFeesDayConfig = parseJsonField(feesDayConfigRaw);
+    const parsedFeesBoardingConfig = parseJsonField(feesBoardingConfigRaw);
+
+    if (parsedFeesDayConfig) {
+      updateData.feesDayConfig = normalizeFeeConfig(parsedFeesDayConfig);
+      if (parsedFeesDayConfig.published !== undefined) {
+        updateData.feesDayPublished = parsedFeesDayConfig.published === true;
+      }
+      if (parsedFeesDayConfig.archived !== undefined) {
+        updateData.feesDayArchived = parsedFeesDayConfig.archived === true;
+      }
+    }
+
+    if (parsedFeesBoardingConfig) {
+      updateData.feesBoardingConfig = normalizeFeeConfig(parsedFeesBoardingConfig);
+      if (parsedFeesBoardingConfig.published !== undefined) {
+        updateData.feesBoardingPublished = parsedFeesBoardingConfig.published === true;
+      }
+      if (parsedFeesBoardingConfig.archived !== undefined) {
+        updateData.feesBoardingArchived = parsedFeesBoardingConfig.archived === true;
+      }
+    }
 
     // Process all fields (documents + exams)
     for (const field of allFields) {
