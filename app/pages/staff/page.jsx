@@ -662,7 +662,7 @@ export default function StaffDirectory() {
         </div>
 
         <h1 className="max-w-4xl text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-          The people behind our learning community.
+          The Educators behind our learning community.
         </h1>
 
         <p className="mt-5 max-w-2xl text-sm leading-7 text-blue-100/75 sm:text-base">
@@ -682,72 +682,6 @@ export default function StaffDirectory() {
         </div>
       </div>
 
-      {/* Right card */}
-      {!loading ? (
-        <div className="relative">
-          <div className="absolute -inset-3 rounded-[2rem] bg-[#38bdf8]/30 blur-xl" />
-
-          <div className="relative rounded-[2rem] border border-blue-200/15 bg-white/10 p-6 shadow-2xl backdrop-blur-md sm:p-8">
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-100/55">
-                  Staff Directory
-                </p>
-                <h2 className="mt-2 text-2xl font-black text-white">
-                  Overview
-                </h2>
-              </div>
-
-              <div className="rounded-2xl bg-[#1d4ed8] px-4 py-2 text-center shadow-lg shadow-blue-950/30">
-                <span className="block text-2xl font-black text-white">
-                  {staffData.length}
-                </span>
-                <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-white/70">
-                  Total
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-2xl border border-blue-200/15 bg-white/10 p-4">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#1d4ed8]">
-                  <FiShield className="h-5 w-5 text-[#38bdf8]" />
-                </div>
-                <p className="text-3xl font-black text-white">
-                  {staffByHierarchy.leadership.length}
-                </p>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/55">
-                  Leadership
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-blue-200/15 bg-white/10 p-4">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#1d4ed8]">
-                  <FiUsers className="h-5 w-5 text-[#38bdf8]" />
-                </div>
-                <p className="text-3xl font-black text-white">
-                  {totalDepartmentCount}
-                </p>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/55">
-                  Departments
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-2xl border border-blue-200/15 bg-white/10 p-4">
-              <p className="text-sm font-semibold leading-relaxed text-blue-100/70">
-                {`${staffData.length} staff members listed across leadership, teaching, and support departments.`}
-              </p>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="rounded-[2rem] border border-blue-200/15 bg-white/10 p-8 shadow-xl backdrop-blur">
-          <p className="text-sm font-semibold text-blue-100/60 animate-pulse">
-            Loading Katwanyaa staff directory...
-          </p>
-        </div>
-      )}
     </div>
   </div>
 </div>
