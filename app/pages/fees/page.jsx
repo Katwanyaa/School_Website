@@ -393,14 +393,14 @@ export default function ModernFeesPage() {
         </p>
       </div>
       
-      <button
-        onClick={refreshData}
-        disabled={refreshing}
-        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-white text-gray-900 font-medium text-sm hover:bg-gray-100 transition-all disabled:opacity-50"
-      >
-        {refreshing && <CircularProgress size={16} thickness={4} sx={{ color: "#111827" }} />}
-        <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
-      </button>
+  <button
+  onClick={refreshData}
+  disabled={refreshing}
+  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-white text-gray-900 font-medium text-sm hover:bg-gray-100 transition-all disabled:opacity-50 w-fit"
+>
+  {refreshing && <CircularProgress size={16} thickness={4} sx={{ color: "#111827" }} />}
+  <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
+</button>
     </div>
   </div>
 </div>
