@@ -380,30 +380,30 @@ export default function ModernFeesPage() {
     <div className="min-h-screen bg-white">
       <Toaster position="top-right" richColors />
 
-      {/* Hero Section */}
-      <div className="bg-slate-950 p-6 sm:p-10 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[1.1]">
-                School Fees
-              </h1>
-              <p className="text-slate-300 text-sm sm:text-lg mt-2 font-medium">
-                Transparent fee structure for Katwanyaa Senior School
-              </p>
-            </div>
-            
-            <button
-              onClick={refreshData}
-              disabled={refreshing}
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-lg bg-white hover:bg-slate-100 text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50"
-            >
-              {refreshing && <CircularProgress size={18} thickness={5} sx={{ color: "#0f172a" }} />}
-              <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
-            </button>
-          </div>
-        </div>
+{/* Hero Section */}
+<div className="bg-gray-900 p-5 sm:p-8">
+  <div className="max-w-7xl mx-auto">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h1 className="text-2xl sm:text-4xl font-bold text-white">
+          School Fees
+        </h1>
+        <p className="text-gray-300 text-sm sm:text-base mt-1">
+          Katwanyaa Senior School — Transparent fee structure
+        </p>
       </div>
+      
+      <button
+        onClick={refreshData}
+        disabled={refreshing}
+        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-white text-gray-900 font-medium text-sm hover:bg-gray-100 transition-all disabled:opacity-50"
+      >
+        {refreshing && <CircularProgress size={16} thickness={4} sx={{ color: "#111827" }} />}
+        <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
+      </button>
+    </div>
+  </div>
+</div>
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
         {/* Fee Cards - Day School & Boarding */}
