@@ -488,7 +488,7 @@ export default function ModernFeesPage() {
           </div>
         </div>
 
-        {/* Admission Letter */}
+        {/* Latest Admission Letter */}
         {documentData?.admissionFeePdf && (
           <div className="bg-white rounded-2xl border-2 border-slate-200 p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -496,8 +496,8 @@ export default function ModernFeesPage() {
                 <MdOutlineAdUnits size={24} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-900">Admission Letter</h2>
-                <p className="text-sm text-slate-500">New students</p>
+                <h2 className="text-xl font-bold text-slate-900">Latest Admission Letter</h2>
+                <p className="text-sm text-slate-500">For new students</p>
               </div>
             </div>
             

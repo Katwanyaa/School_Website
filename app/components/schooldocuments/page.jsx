@@ -2574,7 +2574,7 @@ const getExistingPdfData = (field) => {
                   handleFileChange('admissionFeePdf', file, year, description, term)
                 }
                 onRemove={() => handleFileRemove('admissionFeePdf')}
-                label="Admission Fee PDF"
+                label="Latest Admission Letter PDF"
                 required={false}
                 existingPdf={getExistingPdfData('admissionFeePdf')}
                 onCancelExisting={(existingFile) => handleCancelExisting('admissionFeePdf', existingFile)}
@@ -3427,10 +3427,10 @@ const hasDocuments = documents && (
               {/* ADMISSION LETTER DOCUMENT */}
               {documents.admissionFeePdf && (
                 <ModernDocumentCard
-                  title="Admission Letter"
+                  title="Latest Admission Letter"
                   description="Admission letter for new students"
                   pdfUrl={documents.admissionFeePdf}
-                  pdfName={documents.admissionFeePdfName || "admission-fees.pdf"}
+                  pdfName={documents.admissionFeePdfName || "admission-letter.pdf"}
                   year={documents.admissionFeeYear}
                   term={documents.admissionFeeTerm}
                   type="admission"
