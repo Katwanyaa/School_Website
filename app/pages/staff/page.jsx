@@ -32,7 +32,9 @@ import {
   FiGlobe,
   FiActivity,
   FiLayers,
-  FiShield
+  FiShield,
+  FiCrown,
+  FiTrendingUp
 } from 'react-icons/fi';
 import { toast } from 'sonner';
 import { SiGmail } from 'react-icons/si';
@@ -162,7 +164,7 @@ const getStaffHierarchy = (position) => {
   
   const positionLower = position.toLowerCase();
   if (positionLower.includes('senior teacher')) {
-    return 'leadership';
+    return 'teaching';
   }
   if (
     (positionLower.includes('principal') || positionLower.includes('deputy principal')) &&
@@ -220,6 +222,27 @@ const isPrincipalStaff = (staff) => {
     !role.includes('deputy') &&
     !position.includes('deputy')
   );
+};
+
+// Sort other leadership: Administration Deputy first, then Academic Deputy, then others by name
+const sortOtherLeadership = (leadershipArray) => {
+  return [...leadershipArray].sort((a, b) => {
+    const aPos = a.position?.toLowerCase() || '';
+    const bPos = b.position?.toLowerCase() || '';
+    
+    const aIsAdminDep = aPos.includes('administration') && aPos.includes('deputy');
+    const bIsAdminDep = bPos.includes('administration') && bPos.includes('deputy');
+    if (aIsAdminDep && !bIsAdminDep) return -1;
+    if (!aIsAdminDep && bIsAdminDep) return 1;
+    
+    const aIsAcademicDep = aPos.includes('academic') && aPos.includes('deputy');
+    const bIsAcademicDep = bPos.includes('academic') && bPos.includes('deputy');
+    if (aIsAcademicDep && !bIsAcademicDep) return -1;
+    if (!aIsAcademicDep && bIsAcademicDep) return 1;
+    
+    // If both are deputy principals but not specifically admin/academic, sort by name
+    return (a.name || '').localeCompare(b.name || '');
+  });
 };
 
 // ==========================================
@@ -427,7 +450,7 @@ export default function StaffDirectory() {
     const teaching = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'teaching');
     const support = filteredStaff.filter(staff => getStaffHierarchy(staff.position) === 'support');
     
-    // ✅ FIX: Principal always first in leadership
+    // Sort leadership with principal first
     const sortedLeadership = [...leadership].sort((a, b) => {
       const aIsPrincipal =
         a.position?.toLowerCase().includes('principal') &&
@@ -464,6 +487,11 @@ export default function StaffDirectory() {
     setSelectedHierarchy('all');
   };
 
+  // Extract principal and other leadership for special rendering
+  const leadershipStaff = staffByHierarchy.leadership;
+  const principalStaff = leadershipStaff.find(staff => isPrincipalStaff(staff));
+  const otherLeadershipStaff = sortOtherLeadership(leadershipStaff.filter(staff => !isPrincipalStaff(staff)));
+
   if (error) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-4">
@@ -491,7 +519,6 @@ export default function StaffDirectory() {
       <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/88 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-3 py-2 sm:gap-3 sm:px-6 sm:py-3 lg:flex-row lg:items-center lg:justify-between">
           
-          {/* ✅ FIX 1: "Katwanyaa Senior School" in header */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#244863] to-[#d7a73d] p-[1px] shadow-sm">
               <div className="flex h-full w-full items-center justify-center rounded-2xl bg-white">
@@ -552,77 +579,78 @@ export default function StaffDirectory() {
         </div>
       </header>
 
-      {/* ── Hero Banner ── */}
-      {/* ✅ FIX 2: Hero label updated to "Katwanyaa Senior School" */}
-      <div className="relative overflow-hidden bg-[#0f1724]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(215,167,61,0.24),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.22),_transparent_30%),linear-gradient(135deg,_rgba(255,255,255,0.05),_transparent_48%)]" />
-        <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-end">
+      {/* ── Hero Banner - Dark Blue Theme ── */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#0c1a2f] to-[#0f1f3a]">
+        {/* Premium dark blue gradient overlay with subtle pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(59,130,246,0.15),_transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(37,99,235,0.12),_transparent_55%),linear-gradient(145deg,_rgba(255,255,255,0.02)_0%,_transparent_45%)]" />
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" stroke-width="0.5"/%3E%3C/svg%3E")', backgroundSize: '30px 30px' }} />
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:py-20">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] lg:items-end">
             <div>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.34em] text-[#f8c95f]/80">
-                Katwanyaa Senior School
-              </p>
-              <h1 className="max-w-4xl text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl lg:text-5xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 mb-4 backdrop-blur-sm">
+                <FiStar className="text-[#f8c95f] w-3 h-3" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200/90">Excellence in Education</span>
+              </div>
+              <h1 className="max-w-3xl text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-6xl">
                 Meet the dedicated team shaping the next generation.
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/85 sm:text-base sm:leading-relaxed">
+              <p className="mt-5 max-w-2xl text-sm leading-6 text-blue-100/85 sm:text-base sm:leading-relaxed">
                 Explore school leadership and browse each department to see the teachers mapped to that learning area.
               </p>
-              <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
-                <div className="rounded-2xl border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm sm:rounded-full">
+              <div className="mt-8 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
+                <div className="rounded-full border border-white/15 bg-white/8 px-5 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm">
                   Departments first, leadership preserved
                 </div>
-                <div className="rounded-2xl border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm sm:rounded-full">
+                <div className="rounded-full border border-white/15 bg-white/8 px-5 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm">
                   Teachers grouped under valid departments
                 </div>
               </div>
             </div>
 
             {!loading ? (
-              <div className="rounded-[28px] border border-white/12 bg-white/7 p-4 shadow-2xl backdrop-blur-md sm:p-5">
+              <div className="rounded-2xl border border-white/15 bg-white/8 p-5 shadow-2xl backdrop-blur-md sm:p-6">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">Directory Snapshot</p>
-                    <p className="mt-1 text-lg font-black text-white">Staff overview</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-blue-200/50">Directory Snapshot</p>
+                    <p className="mt-1 text-xl font-black text-white">Staff overview</p>
                   </div>
-                  <div className="rounded-2xl bg-[#f8c95f] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#1a1a2e]">
+                  <div className="rounded-full bg-[#f8c95f] px-4 py-1 text-xs font-black uppercase tracking-[0.1em] text-[#0a1628] shadow-lg">
                     {staffData.length} Total
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-lg sm:rounded-2xl border border-white/12 bg-white/6 px-2.5 sm:px-4 py-2 sm:py-3 backdrop-blur-sm">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <FiShield size={12} className="text-[#f8c95f]" />
+                  <div className="rounded-xl border border-white/15 bg-white/6 px-3 py-3 backdrop-blur-sm">
+                    <div className="flex items-center gap-2">
+                      <FiShield size={14} className="text-[#f8c95f]" />
                       <div className="min-w-0">
-                        <span className="block text-sm sm:text-lg font-black text-white">{staffByHierarchy.leadership.length}</span>
-                        <span className="block text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.24em] text-white/45">Leadership</span>
+                        <span className="block text-xl font-black text-white">{staffByHierarchy.leadership.length}</span>
+                        <span className="block text-[8px] font-semibold uppercase tracking-[0.2em] text-blue-200/50">Leadership</span>
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-lg sm:rounded-2xl border border-white/12 bg-white/6 px-2.5 sm:px-4 py-2 sm:py-3 backdrop-blur-sm">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <FiUsers size={12} className="text-[#f8c95f]" />
+                  <div className="rounded-xl border border-white/15 bg-white/6 px-3 py-3 backdrop-blur-sm">
+                    <div className="flex items-center gap-2">
+                      <FiUsers size={14} className="text-[#f8c95f]" />
                       <div className="min-w-0">
-                        <span className="block text-sm sm:text-lg font-black text-white">
+                        <span className="block text-xl font-black text-white">
                           {(departmentsByCategory.CBC?.length || 0) +
                            (departmentsByCategory.EIGHT_FOUR_FOUR?.length || 0) +
                            (departmentsByCategory.TEACHING?.length || 0) +
                            (departmentsByCategory.SUPPORT?.length || 0)}
                         </span>
-                        <span className="block text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.24em] text-white/45">Departments</span>
+                        <span className="block text-[8px] font-semibold uppercase tracking-[0.2em] text-blue-200/50">Departments</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <p className="mt-4 text-xs leading-relaxed text-white/45">
+                <p className="mt-4 text-xs leading-relaxed text-blue-200/60">
                   {`${staffData.length} dedicated professionals shaping the future`}
                 </p>
               </div>
             ) : (
-              <p className="max-w-md text-sm text-white/50">
+              <p className="max-w-md text-sm text-blue-200/50 animate-pulse">
                 Discovering our talented educators...
               </p>
             )}
@@ -713,60 +741,141 @@ export default function StaffDirectory() {
               <p className="text-slate-500">Loading staff directory...</p>
             </div>
           ) : staffByHierarchy.leadership.length > 0 || Object.values(departmentsByCategory).some(d => d.length > 0) ? (
-            <div className="space-y-6">
+            <div className="space-y-10">
 
-              {/* ✅ FIX 3: Leadership section — parentheses fix operator precedence */}
+              {/* LEADERSHIP SECTION - Principal Card Special + Others in Grid */}
               {(selectedHierarchy === 'all' || selectedHierarchy === 'leadership') && (
                 <section>
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-[#1a1a2e] flex items-center justify-center">
-                      <FiShield size={14} className="text-white" />
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a1a2e] to-[#244863] flex items-center justify-center shadow-md">
+                      <FiCrown size={16} className="text-[#f8c95f]" />
                     </div>
                     <h2 className="text-sm font-black text-[#1a1a2e] uppercase tracking-[0.15em]">
                       School Leadership
                     </h2>
                     <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                      {staffByHierarchy.leadership.length}
+                      {leadershipStaff.length}
                     </span>
                     <div className="flex-1 h-px bg-slate-100 ml-2" />
                   </div>
                   
-                  {staffByHierarchy.leadership.length === 0 ? (
+                  {leadershipStaff.length === 0 ? (
                     <p className="text-sm text-slate-400 italic">No leadership profiles found.</p>
                   ) : (
-                    <div className="space-y-4">
-                      {staffByHierarchy.leadership.map((staff) => (
-                        <div key={staff.id} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col sm:flex-row gap-4 items-start">
-                          <div className="w-24 h-24 rounded-xl flex-shrink-0 overflow-hidden bg-slate-100">
-                            <Image
-                              src={getImageSrc(staff)}
-                              alt={staff.name}
-                              width={96}
-                              height={96}
-                              className="w-full h-full object-cover rounded-xl"
-                            />
+                    <div className="space-y-8">
+                      {/* ✨ SPECIAL PRINCIPAL CARD ✨ */}
+                      {principalStaff && (
+                        <div className="relative group">
+                          {/* Decorative glow behind principal card */}
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#1e3a8a] via-[#f8c95f]/40 to-[#1e3a8a] rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                          <div className="relative bg-white rounded-2xl overflow-hidden border-2 border-[#f8c95f]/60 shadow-2xl">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#f8c95f]/10 to-transparent rounded-bl-full pointer-events-none"></div>
+                            <div className="flex flex-col md:flex-row gap-6 p-6 md:p-8">
+                              {/* Large image area */}
+                              <div className="flex-shrink-0">
+                                <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden ring-4 ring-[#f8c95f]/40 shadow-xl">
+                                  <Image
+                                    src={getImageSrc(principalStaff)}
+                                    alt={principalStaff.name}
+                                    width={176}
+                                    height={176}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="mt-3 flex justify-center">
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-[#1a1a2e] px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-md">
+                                    <FiCrown size={10} /> Principal
+                                  </span>
+                                </div>
+                              </div>
+                              
+                              <div className="flex-1 space-y-3">
+                                <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{principalStaff.name}</h3>
+                                <p className="text-base font-bold text-[#1e3a8a] uppercase tracking-wide">{principalStaff.position || 'Principal'}</p>
+                                
+                                {principalStaff.bio && (
+                                  <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 md:line-clamp-none">
+                                    {principalStaff.bio}
+                                  </p>
+                                )}
+                                
+                                <div className="flex flex-wrap gap-3 pt-2">
+                                  {principalStaff.email && (
+                                    <a href={`mailto:${principalStaff.email}`} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#1e3a8a] transition-colors">
+                                      <FiMail size={14} /> {principalStaff.email}
+                                    </a>
+                                  )}
+                                  {principalStaff.phone && (
+                                    <a href={`tel:${principalStaff.phone}`} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#1e3a8a] transition-colors">
+                                      <FiPhone size={14} /> {principalStaff.phone}
+                                    </a>
+                                  )}
+                                </div>
+                                
+                                <div className="pt-2">
+                                  <Link
+                                    href={`/pages/SchoolTeam/${principalStaff.id}/${generateSlug(principalStaff.name, principalStaff.id)}`}
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#1a1a2e] to-[#244863] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
+                                  >
+                                    View Full Profile <FiChevronRight size={14} />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                            {/* Subtle accent bar */}
+                            <div className="h-1 w-full bg-gradient-to-r from-[#f8c95f] via-[#1a1a2e] to-[#f8c95f]"></div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-black text-slate-900">{staff.name}</h3>
-                            <p className="text-sm font-bold text-slate-600 uppercase tracking-wide">{staff.position}</p>
-                            {staff.bio && (
-                              <p className="mt-2 text-sm text-slate-600 line-clamp-2">{staff.bio}</p>
-                            )}
-                          </div>
-                          <Link
-                            href={`/pages/SchoolTeam/${staff.id}/${generateSlug(staff.name, staff.id)}`}
-                            className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a2e] text-white font-bold text-sm h-fit flex-shrink-0 hover:bg-[#2d2d44] transition-colors"
-                          >
-                            View <FiChevronRight size={14} />
-                          </Link>
                         </div>
-                      ))}
+                      )}
+
+                      {/* OTHER LEADERSHIP: Deputy Principals in ordered grid (Admin Deputy first, then Academic Deputy, then others) */}
+                      {otherLeadershipStaff.length > 0 && (
+                        <div className="mt-6">
+                          <div className="flex items-center gap-2 mb-4">
+                            <FiTrendingUp size={14} className="text-slate-400" />
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Leadership Team</h4>
+                            <div className="flex-1 h-px bg-slate-100"></div>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {otherLeadershipStaff.map((staff) => (
+                              <div key={staff.id} className="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+                                <div className="flex items-start gap-4">
+                                  <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100 ring-1 ring-slate-200 group-hover:ring-[#f8c95f]/50 transition-all">
+                                    <Image
+                                      src={getImageSrc(staff)}
+                                      alt={staff.name}
+                                      width={64}
+                                      height={64}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="text-base font-black text-slate-900 truncate">{staff.name}</h3>
+                                    <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mt-0.5">
+                                      {staff.position}
+                                    </p>
+                                    {staff.bio && (
+                                      <p className="mt-2 text-xs text-slate-500 line-clamp-2">{staff.bio}</p>
+                                    )}
+                                    <Link
+                                      href={`/pages/SchoolTeam/${staff.id}/${generateSlug(staff.name, staff.id)}`}
+                                      className="inline-flex items-center gap-1 mt-3 text-xs font-bold text-[#1e3a8a] hover:gap-2 transition-all"
+                                    >
+                                      View profile <FiChevronRight size={12} />
+                                    </Link>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </section>
               )}
 
-              {/* ✅ FIX 4: Departments section — correct condition, covers teaching + support filters */}
+              {/* DEPARTMENTS SECTION */}
               {(selectedHierarchy === 'all' || selectedHierarchy === 'teaching' || selectedHierarchy === 'support') && (
                 <>
                   {[
@@ -795,20 +904,20 @@ export default function StaffDirectory() {
                           <div className="flex-1 h-px bg-slate-100 ml-2" />
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                           {depts.map((dept) => (
-                            <div key={dept.id} className="bg-white rounded-xl border border-slate-200 p-4">
+                            <div key={dept.id} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-all">
                               <h3 className="text-lg font-black text-slate-900">{dept.name}</h3>
                               {dept.description && (
-                                <p className="mt-1 text-sm text-slate-600">{dept.description}</p>
+                                <p className="mt-1 text-sm text-slate-600 line-clamp-2">{dept.description}</p>
                               )}
-                              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                              <div className="mt-4 flex flex-wrap gap-2 text-xs">
                                 {dept.headName && (
-                                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+                                  <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium">
                                     HOD: {dept.headName}
                                   </span>
                                 )}
-                                <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-full">
+                                <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full font-medium">
                                   {dept.staffCount || 0} staff
                                 </span>
                               </div>
