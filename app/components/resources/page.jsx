@@ -1569,187 +1569,187 @@ export default function ResourcesManager() {
 
 
   const getAuthHeaders = () => {
-  const adminToken = localStorage.getItem('admin_token');
-  const deviceToken = localStorage.getItem('device_token');
-  
-  console.log('🔐 Getting auth headers:', {
-    hasAdminToken: !!adminToken,
-    hasDeviceToken: !!deviceToken
-  });
-  
-  if (!adminToken || !deviceToken) {
-    throw new Error('Authentication required. Please login to perform this action.');
-  }
-  
-  return {
-    'x-admin-token': adminToken,
-    'x-device-token': deviceToken
+    const adminToken = localStorage.getItem('admin_token');
+    const deviceToken = localStorage.getItem('device_token');
+    
+    console.log('🔐 Getting auth headers:', {
+      hasAdminToken: !!adminToken,
+      hasDeviceToken: !!deviceToken
+    });
+    
+    if (!adminToken || !deviceToken) {
+      throw new Error('Authentication required. Please login to perform this action.');
+    }
+    
+    return {
+      'x-admin-token': adminToken,
+      'x-device-token': deviceToken
+    };
   };
-};
 
-const fetchResourceDeliveryRecipients = async (resourceId) => {
-  const response = await fetch(`/api/resources/delivery?resourceId=${resourceId}`);
-  const result = await response.json();
+  const fetchResourceDeliveryRecipients = async (resourceId) => {
+    const response = await fetch(`/api/resources/delivery?resourceId=${resourceId}`);
+    const result = await response.json();
 
-  if (!response.ok || !result.success) {
-    throw new Error(result.error || 'Could not load resource delivery recipients');
-  }
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Could not load resource delivery recipients');
+    }
 
-  return result.data || [];
-};
+    return result.data || [];
+  };
 
-const sendResourceDeliveryBatch = async (resourceId, recipients, headers) => {
-  deliveryCancelRef.current = false;
-  deliveryAbortRef.current = null;
+  const sendResourceDeliveryBatch = async (resourceId, recipients, headers) => {
+    deliveryCancelRef.current = false;
+    deliveryAbortRef.current = null;
 
-  const deliverableRecipients = recipients
-    .map((recipient) => ({
-      ...recipient,
-      id: recipient.id || recipient.recipientId
-    }))
-    .filter((recipient) => recipient.id);
+    const deliverableRecipients = recipients
+      .map((recipient) => ({
+        ...recipient,
+        id: recipient.id || recipient.recipientId
+      }))
+      .filter((recipient) => recipient.id);
 
-  const totalRecipients = deliverableRecipients.length;
-  const failedRecipients = [];
-  let sentCount = 0;
-  let failedCount = 0;
+    const totalRecipients = deliverableRecipients.length;
+    const failedRecipients = [];
+    let sentCount = 0;
+    let failedCount = 0;
 
-  setDeliveryProgress({
-    isOpen: true,
-    totalRecipients,
-    sentCount: 0,
-    failedCount: 0,
-    currentRecipient: totalRecipients ? 'Preparing email delivery...' : 'No recipients found',
-    isComplete: totalRecipients === 0,
-    failedRecipients: [],
-    isLoading: totalRecipients > 0,
-    itemId: resourceId,
-  });
+    setDeliveryProgress({
+      isOpen: true,
+      totalRecipients,
+      sentCount: 0,
+      failedCount: 0,
+      currentRecipient: totalRecipients ? 'Preparing email delivery...' : 'No recipients found',
+      isComplete: totalRecipients === 0,
+      failedRecipients: [],
+      isLoading: totalRecipients > 0,
+      itemId: resourceId,
+    });
 
-  if (totalRecipients === 0) {
-    return { successCount: 0, failureCount: 0, totalRecipients: 0, failedRecipients: [] };
-  }
+    if (totalRecipients === 0) {
+      return { successCount: 0, failureCount: 0, totalRecipients: 0, failedRecipients: [] };
+    }
 
-  for (let index = 0; index < deliverableRecipients.length; index += 1) {
-    if (deliveryCancelRef.current) break;
+    for (let index = 0; index < deliverableRecipients.length; index += 1) {
+      if (deliveryCancelRef.current) break;
 
-    const recipient = deliverableRecipients[index];
-    const recipientLabel = recipient.studentName || recipient.email || recipient.admissionNumber || `Recipient ${index + 1}`;
+      const recipient = deliverableRecipients[index];
+      const recipientLabel = recipient.studentName || recipient.email || recipient.admissionNumber || `Recipient ${index + 1}`;
 
-    setDeliveryProgress(prev => ({
-      ...prev,
-      currentRecipient: `${index + 1} of ${totalRecipients}: ${recipientLabel}`,
-      isLoading: true,
-      isComplete: false,
-    }));
-
-    try {
-      const controller = new AbortController();
-      deliveryAbortRef.current = controller;
-      const timeoutId = setTimeout(() => controller.abort(), 90000);
-      let deliveryResponse;
+      setDeliveryProgress(prev => ({
+        ...prev,
+        currentRecipient: `${index + 1} of ${totalRecipients}: ${recipientLabel}`,
+        isLoading: true,
+        isComplete: false,
+      }));
 
       try {
-        deliveryResponse = await fetch('/api/resources/delivery', {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ resourceId, recipientIds: [recipient.id] }),
-          signal: controller.signal,
-        });
-      } finally {
-        clearTimeout(timeoutId);
-        deliveryAbortRef.current = null;
-      }
+        const controller = new AbortController();
+        deliveryAbortRef.current = controller;
+        const timeoutId = setTimeout(() => controller.abort(), 90000);
+        let deliveryResponse;
 
-      const deliveryResult = await deliveryResponse.json().catch(() => ({}));
-      const resultItem = deliveryResult.data?.results?.[0];
-      const delivered = deliveryResponse.ok && deliveryResult.success && (deliveryResult.data?.successCount > 0 || resultItem?.success);
+        try {
+          deliveryResponse = await fetch('/api/resources/delivery', {
+            method: 'POST',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ resourceId, recipientIds: [recipient.id] }),
+            signal: controller.signal,
+          });
+        } finally {
+          clearTimeout(timeoutId);
+          deliveryAbortRef.current = null;
+        }
 
-      if (delivered) {
-        sentCount += 1;
-      } else {
+        const deliveryResult = await deliveryResponse.json().catch(() => ({}));
+        const resultItem = deliveryResult.data?.results?.[0];
+        const delivered = deliveryResponse.ok && deliveryResult.success && (deliveryResult.data?.successCount > 0 || resultItem?.success);
+
+        if (delivered) {
+          sentCount += 1;
+        } else {
+          failedCount += 1;
+          failedRecipients.push({
+            ...recipient,
+            recipientId: recipient.id,
+            email: resultItem?.email || recipient.email,
+            error: resultItem?.error || deliveryResult.error || 'Email could not be delivered',
+          });
+        }
+      } catch (error) {
+        if (deliveryCancelRef.current) {
+          setDeliveryProgress(prev => ({
+            ...prev,
+            isLoading: false,
+            isComplete: true,
+            currentRecipient: 'Delivery cancelled by user.',
+          }));
+          break;
+        }
+
         failedCount += 1;
         failedRecipients.push({
           ...recipient,
           recipientId: recipient.id,
-          email: resultItem?.email || recipient.email,
-          error: resultItem?.error || deliveryResult.error || 'Email could not be delivered',
+          error: error.name === 'AbortError'
+            ? 'Delivery timed out. Check the connection and retry this recipient.'
+            : error.message || 'Network error while sending email',
         });
       }
-    } catch (error) {
-      if (deliveryCancelRef.current) {
-        setDeliveryProgress(prev => ({
-          ...prev,
-          isLoading: false,
-          isComplete: true,
-          currentRecipient: 'Delivery cancelled by user.',
-        }));
-        break;
-      }
 
-      failedCount += 1;
-      failedRecipients.push({
-        ...recipient,
-        recipientId: recipient.id,
-        error: error.name === 'AbortError'
-          ? 'Delivery timed out. Check the connection and retry this recipient.'
-          : error.message || 'Network error while sending email',
-      });
+      setDeliveryProgress(prev => ({
+        ...prev,
+        sentCount,
+        failedCount,
+        failedRecipients: [...failedRecipients],
+        isLoading: index < deliverableRecipients.length - 1,
+        isComplete: index === deliverableRecipients.length - 1,
+        currentRecipient: index === deliverableRecipients.length - 1 ? '' : prev.currentRecipient,
+        itemId: resourceId,
+      }));
     }
 
+    return { successCount: sentCount, failureCount: failedCount, totalRecipients, failedRecipients };
+  };
+
+  const cancelResourceDelivery = () => {
+    deliveryCancelRef.current = true;
+    deliveryAbortRef.current?.abort();
     setDeliveryProgress(prev => ({
       ...prev,
-      sentCount,
-      failedCount,
-      failedRecipients: [...failedRecipients],
-      isLoading: index < deliverableRecipients.length - 1,
-      isComplete: index === deliverableRecipients.length - 1,
-      currentRecipient: index === deliverableRecipients.length - 1 ? '' : prev.currentRecipient,
-      itemId: resourceId,
+      isLoading: false,
+      isComplete: true,
+      currentRecipient: 'Delivery cancelled by user.',
     }));
-  }
+    showNotification('warning', 'Delivery Cancelled', 'Email delivery was stopped. Already processed recipients are unchanged.');
+  };
 
-  return { successCount: sentCount, failureCount: failedCount, totalRecipients, failedRecipients };
-};
+  const retryFailedResourceDelivery = async (resourceId, failedRecipients) => {
+    if (!resourceId || failedRecipients.length === 0) return;
 
-const cancelResourceDelivery = () => {
-  deliveryCancelRef.current = true;
-  deliveryAbortRef.current?.abort();
-  setDeliveryProgress(prev => ({
-    ...prev,
-    isLoading: false,
-    isComplete: true,
-    currentRecipient: 'Delivery cancelled by user.',
-  }));
-  showNotification('warning', 'Delivery Cancelled', 'Email delivery was stopped. Already processed recipients are unchanged.');
-};
+    try {
+      const headers = getAuthHeaders();
+      const result = await sendResourceDeliveryBatch(resourceId, failedRecipients, headers);
 
-const retryFailedResourceDelivery = async (resourceId, failedRecipients) => {
-  if (!resourceId || failedRecipients.length === 0) return;
-
-  try {
-    const headers = getAuthHeaders();
-    const result = await sendResourceDeliveryBatch(resourceId, failedRecipients, headers);
-
-    if (result.failureCount === 0) {
-      showNotification('success', 'Delivery Complete', `Retried and delivered ${result.successCount} resource email(s).`);
-    } else {
+      if (result.failureCount === 0) {
+        showNotification('success', 'Delivery Complete', `Retried and delivered ${result.successCount} resource email(s).`);
+      } else {
+        showNotification(
+          'warning',
+          'Retry Incomplete',
+          `${result.successCount} delivered, ${result.failureCount} still failed.`,
+          { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, result.failedRecipients) }
+        );
+      }
+    } catch (error) {
       showNotification(
-        'warning',
-        'Retry Incomplete',
-        `${result.successCount} delivered, ${result.failureCount} still failed.`,
-        { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, result.failedRecipients) }
+        'error',
+        'Retry Failed',
+        error.message || 'Could not retry failed resource emails.',
+        { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, failedRecipients) }
       );
     }
-  } catch (error) {
-    showNotification(
-      'error',
-      'Retry Failed',
-      error.message || 'Could not retry failed resource emails.',
-      { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, failedRecipients) }
-    );
-  }
-};
+  };
 
   // NEW: Bulk delete function
   const handleBulkDelete = () => {

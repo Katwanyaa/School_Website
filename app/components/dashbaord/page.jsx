@@ -996,6 +996,12 @@ const currentMonthGallery = countRecordsByMonth(galleryItems, 0);
 const previousMonthGallery = countRecordsByMonth(galleryItems, 1);
 const galleryGrowth = calculateMonthOverMonthGrowth(currentMonthGallery, previousMonthGallery);
 
+// Calculate assignment growth with safe defaults
+const assignmentItems = assignments.assignments || [];
+const currentMonthAssignments = countRecordsByMonth(assignmentItems, 0);
+const previousMonthAssignments = countRecordsByMonth(assignmentItems, 1);
+const assignmentGrowth = calculateMonthOverMonthGrowth(currentMonthAssignments, previousMonthAssignments);
+
 // Set growth metrics with proper fallback values
 setGrowthMetrics({
   guidanceGrowth: isNaN(guidanceGrowth) ? 0 : (guidanceGrowth || 0),
@@ -1018,11 +1024,6 @@ setGrowthMetrics({
       // ========== PERFORMANCE METRICS (excluding engagement) ==========
       const studentGrowth = calculateMonthOverMonthGrowth(
         updatedStats.totalStudents,
-        0
-      );
-      
-      const assignmentGrowth = calculateMonthOverMonthGrowth(
-        updatedStats.completedAssignments,
         0
       );
       
@@ -1441,10 +1442,6 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value) => {
-                      const percentage = totalStaff > 0 ? ((value / totalStaff) * 100).toFixed(1) : 0;
-                      return [`${value} staff (${percentage}%)`, 'Department'];
-                    }}
                     contentStyle={{
                       borderRadius: '12px',
                       padding: '12px',
@@ -1454,6 +1451,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
+                    cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -1653,11 +1651,15 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value, name, props) => {
-                    const form = props.payload?.form || '';
-                    const count = studentPopulation.byForm[form] || 0;
-                    return [`${value.toFixed(1)}% (${count} students)`, 'Percentage'];
+                  contentStyle={{
+                    borderRadius: '12px',
+                    padding: '12px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.97)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                    border: '1px solid #e5e7eb',
+                    fontSize: '12px'
                   }}
+                  cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -1904,11 +1906,6 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
                       ))}
                     </Pie>
                     <Tooltip 
-                      formatter={(value, name, props) => {
-                        const total = staffDistribution.reduce((sum, item) => sum + item.value, 0);
-                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                        return [`${value} staff (${percentage}%)`, 'Department'];
-                      }}
                       contentStyle={{
                         borderRadius: '12px',
                         padding: '12px',
@@ -1918,6 +1915,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
                         fontSize: '8px',
                         fontWeight: 'bold'
                       }}
+                      cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
