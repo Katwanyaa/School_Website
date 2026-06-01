@@ -754,8 +754,8 @@ model StudentStats {
   grade12       Int      @default(0)
   form1         Int?     // Legacy column - kept for data preservation
   form2         Int?     // Legacy column - kept for data preservation
-  form3         Int?     // Legacy column - kept for data preservation
-  form4         Int?     // Legacy column - kept for data preservation
+  form3         Int      @default(0)
+  form4         Int      @default(0)
   updatedAt     DateTime @updatedAt
 
   @@map("student_stats")

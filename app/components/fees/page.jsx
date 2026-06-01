@@ -2779,15 +2779,15 @@ if (loading && view === 'fees' && schoolFees.length === 0) {
       <CustomToaster />
 
       {/* Header */}
-      <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-2xl p-8 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-r from-slate-950 via-indigo-950 to-blue-950 rounded-2xl p-8 text-white overflow-hidden shadow-2xl shadow-slate-900/20 border border-white/10">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-white/20 rounded-2xl">
+            <div className="p-2 bg-white/10 rounded-2xl border border-white/10">
               <IoCash className="text-2xl text-yellow-300" />
             </div>
             <div>
               <h1 className="text-3xl font-bold">School Fees Management System</h1>
-              <p className="text-blue-100 text-lg mt-2 max-w-2xl">
+              <p className="text-slate-200 text-lg mt-2 max-w-2xl">
                 Comprehensive fee tracking, management, and analytics with structured upload strategy
               </p>
             </div>
@@ -2801,7 +2801,7 @@ if (loading && view === 'fees' && schoolFees.length === 0) {
                 loadSchoolFees();
               }}
               disabled={loading}
-              className="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold text-base flex items-center gap-2 shadow-lg disabled:opacity-60 hover:shadow-xl transition-all duration-300"
+              className="bg-white text-slate-950 px-6 py-3 rounded-xl font-bold text-base flex items-center gap-2 shadow-lg disabled:opacity-60 hover:shadow-xl transition-all duration-300"
             >
               {loading ? (
                 <CircularProgress size={16} color="inherit" thickness={6} />

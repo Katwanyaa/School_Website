@@ -95,8 +95,38 @@ import { IoSchool } from 'react-icons/io5';
 import { IoDocumentText } from 'react-icons/io5';
 import { IoPeopleCircle, IoNewspaper, IoClose, IoStatsChart } from 'react-icons/io5';
 
-const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12'];
+const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
+const GRADE_STAT_KEYS = {
+  'Grade 10': 'grade10',
+  'Grade 11': 'grade11',
+  'Grade 12': 'grade12',
+  'Form 3': 'form3',
+  'Form 4': 'form4'
+};
+const GRADE_CHART_COLORS = {
+  'Grade 10': '#3B82F6',
+  'Grade 11': '#10B981',
+  'Grade 12': '#8B5CF6',
+  'Form 3': '#F59E0B',
+  'Form 4': '#EF4444'
+};
 const STUDENT_TEMPLATE_HEADERS = ['Admission Number', 'Full Name', 'Grade/Class', 'Stream', 'Parent Email'];
+
+const getGradeStatsTotal = (stats = {}) => GRADE_LEVELS.reduce(
+  (sum, grade) => sum + (stats[GRADE_STAT_KEYS[grade]] || 0),
+  0
+);
+
+const buildGradeDistribution = (stats = {}) => GRADE_LEVELS.reduce((acc, grade) => {
+  acc[grade] = stats[GRADE_STAT_KEYS[grade]] || 0;
+  return acc;
+}, {});
+
+const buildGradeChartData = (stats = {}) => GRADE_LEVELS.map((grade) => ({
+  name: grade,
+  value: stats[GRADE_STAT_KEYS[grade]] || 0,
+  color: GRADE_CHART_COLORS[grade]
+}));
 
 const getStudentName = (student) => (
   student?.fullName ||
@@ -113,6 +143,8 @@ function getFormColor(form) {
     case 'Grade 10': return 'from-blue-500 to-blue-700';
     case 'Grade 11': return 'from-emerald-500 to-emerald-700';
     case 'Grade 12': return 'from-purple-500 to-purple-700';
+    case 'Form 3': return 'from-amber-500 to-orange-600';
+    case 'Form 4': return 'from-rose-500 to-red-700';
     default: return 'from-gray-400 to-gray-600';
   }
 }
@@ -123,6 +155,8 @@ function getFormBadgeColor(form) {
     case 'Grade 10': return 'bg-gradient-to-r from-blue-500 to-blue-700 text-white';
     case 'Grade 11': return 'bg-gradient-to-r from-emerald-500 to-emerald-700 text-white';
     case 'Grade 12': return 'bg-gradient-to-r from-purple-500 to-purple-700 text-white';
+    case 'Form 3': return 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
+    case 'Form 4': return 'bg-gradient-to-r from-rose-500 to-red-700 text-white';
     default: return 'bg-gradient-to-r from-gray-400 to-gray-600 text-white';
   }
 }
@@ -133,6 +167,8 @@ function getFormTextColor(form) {
     case 'Grade 10': return 'text-blue-700';
     case 'Grade 11': return 'text-emerald-700';
     case 'Grade 12': return 'text-purple-700';
+    case 'Form 3': return 'text-amber-700';
+    case 'Form 4': return 'text-rose-700';
     default: return 'text-gray-700';
   }
 }
@@ -175,7 +211,35 @@ const Spinner = ({
   color = "primary",
   variant = "indeterminate",
   value = 0,
+  message = '',
+  subtitle = 'Please wait while the records are prepared.'
 }) => {
+  if (message) {
+    return (
+      <div className="flex min-h-[280px] w-full items-center justify-center rounded-[2rem] border border-slate-200 bg-white/80 p-8 shadow-xl shadow-blue-100/40 backdrop-blur">
+        <div className="text-center">
+          <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-purple-500/20 blur-xl" />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-blue-100 bg-white shadow-lg">
+              <CircularProgress size={36} color={color} variant={variant} value={variant === "determinate" ? value : undefined} thickness={4.5} />
+            </div>
+          </div>
+          <p className="text-lg font-black text-slate-900">{message}</p>
+          <p className="mt-2 text-sm font-semibold text-slate-500">{subtitle}</p>
+          <div className="mt-5 flex justify-center gap-1.5">
+            {[0, 1, 2].map((dot) => (
+              <span
+                key={dot}
+                className="h-2 w-2 animate-bounce rounded-full bg-blue-500"
+                style={{ animationDelay: `${dot * 0.12}s` }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -1144,11 +1208,11 @@ function StatisticsSummaryCard({ stats, demographics, onRefresh }) {
           <div className="flex items-center justify-between">
             <span className="text-gray-700 font-bold">Data Consistency Check</span>
             <span className={`px-3 py-1 rounded-lg font-bold text-sm ${
-              stats.totalStudents === (stats.globalStats.grade10 + stats.globalStats.grade11 + stats.globalStats.grade12)
+              stats.totalStudents === getGradeStatsTotal(stats.globalStats)
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
             }`}>
-              {stats.totalStudents === (stats.globalStats.grade10 + stats.globalStats.grade11 + stats.globalStats.grade12)
+              {stats.totalStudents === getGradeStatsTotal(stats.globalStats)
                 ? '✓ Consistent'
                 : '⚠ Inconsistent'}
             </span>
@@ -1853,7 +1917,7 @@ export default function ModernStudentBulkUpload() {
     totalStudents: 0,
     formStats: {},
     streamStats: {},
-    globalStats: { totalStudents: 0, grade10: 0, grade11: 0, grade12: 0 },
+    globalStats: { totalStudents: 0, grade10: 0, grade11: 0, grade12: 0, form3: 0, form4: 0 },
     validation: { isValid: true }
   });
 
@@ -1937,6 +2001,8 @@ const getAuthHeaders = (isProtected = false) => {
           grade10: 0,
           grade11: 0,
           grade12: 0,
+          form3: 0,
+          form4: 0,
           updatedAt: new Date()
         };
         
@@ -1958,20 +2024,8 @@ const getAuthHeaders = (isProtected = false) => {
             statusDistribution[status] = (statusDistribution[status] || 0) + 1;
           });
           
-          const formDistribution = {
-            'Grade 10': apiStats.grade10 || 0,
-            'Grade 11': apiStats.grade11 || 0,
-            'Grade 12': apiStats.grade12 || 0
-          };
-
-          const formChartData = Object.entries(formDistribution).map(([name, value]) => ({
-            name,
-            value,
-            color: 
-              name === 'Grade 10' ? '#3B82F6' :
-              name === 'Grade 11' ? '#10B981' :
-              '#8B5CF6'
-          }));
+          const formDistribution = buildGradeDistribution(apiStats);
+          const formChartData = buildGradeChartData(apiStats);
           
           const streamChartData = Object.entries(streamDistribution)
             .sort((a, b) => b[1] - a[1])
@@ -2000,7 +2054,7 @@ const getAuthHeaders = (isProtected = false) => {
             streamStats: streamDistribution,
             statusStats: statusDistribution,
             validation: {
-              isValid: totalStudents === (apiStats.grade10 + apiStats.grade11 + apiStats.grade12)
+              isValid: totalStudents === getGradeStatsTotal(apiStats)
             }
           });
           
@@ -2053,11 +2107,7 @@ const handleAuthError = (error) => {
             totalStudents: apiStats.totalStudents || prev.totalStudents
           }));
           
-          const formChartData = [
-            { name: 'Grade 10', value: apiStats.grade10 || 0, color: '#3B82F6' },
-            { name: 'Grade 11', value: apiStats.grade11 || 0, color: '#10B981' },
-            { name: 'Grade 12', value: apiStats.grade12 || 0, color: '#8B5CF6' }
-          ];
+          const formChartData = buildGradeChartData(apiStats);
           
           setDemographics(prev => ({
             ...prev,
@@ -2073,17 +2123,17 @@ const handleAuthError = (error) => {
     }
   };
 
-  const loadStudents = async (page = 1) => {
+  const loadStudents = async (page = 1, nextFilters = filters) => {
     setLoading(true);
     try {
       let url = `/api/studentupload?page=${page}&limit=${pagination.limit}&includeStats=false`;
       
-      if (filters.search) url += `&search=${encodeURIComponent(filters.search)}`;
-      if (filters.form) url += `&form=${encodeURIComponent(filters.form)}`;
-      if (filters.stream) url += `&stream=${encodeURIComponent(filters.stream)}`;
-      if (filters.status) url += `&status=${encodeURIComponent(filters.status)}`;
-      if (filters.sortBy) url += `&sortBy=${encodeURIComponent(filters.sortBy)}`;
-      if (filters.sortOrder) url += `&sortOrder=${encodeURIComponent(filters.sortOrder)}`;
+      if (nextFilters.search?.trim()) url += `&search=${encodeURIComponent(nextFilters.search.trim())}`;
+      if (nextFilters.form) url += `&form=${encodeURIComponent(nextFilters.form)}`;
+      if (nextFilters.stream) url += `&stream=${encodeURIComponent(nextFilters.stream)}`;
+      if (nextFilters.status) url += `&status=${encodeURIComponent(nextFilters.status)}`;
+      if (nextFilters.sortBy) url += `&sortBy=${encodeURIComponent(nextFilters.sortBy)}`;
+      if (nextFilters.sortOrder) url += `&sortOrder=${encodeURIComponent(nextFilters.sortOrder)}`;
       
       const res = await fetch(url);
       const data = await res.json();
@@ -2152,30 +2202,47 @@ const loadUploadHistory = async (page = 1) => {
     loadUploadHistory();
   }, []);
 
+  useEffect(() => {
+    if (view !== 'students') return;
+
+    const timeoutId = setTimeout(() => {
+      loadStudents(1, filters);
+    }, 350);
+
+    return () => clearTimeout(timeoutId);
+  }, [filters.search, view]);
+
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    const nextFilters = { ...filters, [key]: value };
+    setFilters(nextFilters);
+
+    if (key !== 'search') {
+      loadStudents(1, nextFilters);
+    }
   };
 
   const handleClearFilters = () => {
-    setFilters({
+    const clearedFilters = {
       search: '',
       form: '',
       stream: '',
       status: '',
       sortBy: 'createdAt',
       sortOrder: 'desc'
-    });
-    loadStudents(1);
+    };
+    setFilters(clearedFilters);
+    loadStudents(1, clearedFilters);
   };
 
   const handleSort = (field) => {
     const newSortOrder = filters.sortBy === field && filters.sortOrder === 'desc' ? 'asc' : 'desc';
-    setFilters(prev => ({
-      ...prev,
+    const nextFilters = {
+      ...filters,
       sortBy: field,
       sortOrder: newSortOrder
-    }));
-    loadStudents(pagination.page);
+    };
+    setFilters(nextFilters);
+    loadStudents(pagination.page, nextFilters);
   };
 
   const handleDrag = useCallback((active) => {
@@ -2545,7 +2612,7 @@ const downloadExcelTemplate = () => {
 
   const handleSearch = (e) => {
     if (e.key === 'Enter' || e.type === 'click') {
-      loadStudents(1);
+      loadStudents(1, filters);
     }
   };
 
@@ -2583,29 +2650,27 @@ const downloadExcelTemplate = () => {
     'Grade 10': 'bg-gradient-to-b from-emerald-500 to-green-500',
     'Grade 11': 'bg-gradient-to-b from-blue-500 to-indigo-500',
     'Grade 12': 'bg-gradient-to-b from-indigo-500 to-purple-500',
+    'Form 3': 'bg-gradient-to-b from-amber-500 to-orange-500',
+    'Form 4': 'bg-gradient-to-b from-rose-500 to-red-600',
   };
   return themes[form] || 'bg-gradient-to-b from-slate-500 to-gray-500';
 };
 
-
-  if (loading && students.length === 0 && view !== 'upload' && view !== 'demographics') {
-    return <Spinner  />;
-  }
 
   return (
     <div className="p-6 space-y-6">
       <CustomToaster />
 
       {/* Welcome Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-2xl p-8 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-r from-slate-950 via-indigo-950 to-blue-950 rounded-2xl p-8 text-white overflow-hidden shadow-2xl shadow-slate-900/20 border border-white/10">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-white/20 rounded-2xl">
+            <div className="p-2 bg-white/10 rounded-2xl border border-white/10">
               <IoSparkles className="text-2xl text-yellow-300" />
             </div>
             <div>
               <h1 className="text-3xl font-bold">Student Bulk Upload & Analytics</h1>
-              <p className="text-blue-100 text-lg mt-2 max-w-2xl">
+              <p className="text-slate-200 text-lg mt-2 max-w-2xl">
                 Comprehensive student management with structured upload strategy, 
                 duplicate prevention, and real-time analytics.
               </p>
@@ -2619,7 +2684,7 @@ const downloadExcelTemplate = () => {
                 loadStats();
               }}
               disabled={loading}
-              className="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold text-base flex items-center gap-2 shadow-lg disabled:opacity-60 hover:shadow-xl transition-all duration-300"
+              className="bg-white text-slate-950 px-6 py-3 rounded-xl font-bold text-base flex items-center gap-2 shadow-lg disabled:opacity-60 hover:shadow-xl transition-all duration-300"
             >
               {loading ? (
                 <CircularProgress size={16} color="inherit" thickness={6} />
@@ -2713,8 +2778,8 @@ const downloadExcelTemplate = () => {
                 trend={8.5}
               />
               <StudentStatisticsCard
-                title="Grade 10 Students"
-                value={stats.globalStats?.grade10 || 0}
+                title="Grade/Class Records"
+                value={getGradeStatsTotal(stats.globalStats)}
                 icon={IoSchool}
                 color="from-blue-500 to-blue-700"
                 trend={5.2}
@@ -3547,8 +3612,8 @@ const downloadExcelTemplate = () => {
                 trend={12.3}
               />
               <StudentStatisticsCard
-                title="Grade 10"
-                value={stats.globalStats?.grade10 || 0}
+                title="Grade/Class Records"
+                value={getGradeStatsTotal(stats.globalStats)}
                 icon={IoSchool}
                 color="from-blue-500 to-blue-700"
                 trend={5.2}

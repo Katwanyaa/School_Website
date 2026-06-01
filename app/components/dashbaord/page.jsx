@@ -1385,6 +1385,110 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
       </div>
     </div>
   );
+
+  const StaffDistributionCard = () => {
+    const colors = ['#2563EB', '#059669', '#D97706', '#7C3AED', '#E11D48', '#4F46E5'];
+    const totalStaff = staffDistribution.reduce((sum, item) => sum + Number(item.value || 0), 0);
+
+    return (
+      <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5">
+          <div>
+            <h3 className="text-lg font-black text-slate-800 tracking-tight">Staff Distribution</h3>
+            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Department Breakdown</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Total Staff</p>
+              <p className="text-2xl font-black text-slate-900">{totalStaff || stats.totalStaff}</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 shadow-sm">
+              <FiUsers className="text-xl" />
+            </div>
+          </div>
+        </div>
+
+        {staffDistribution.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(260px,0.8fr)_1.2fr] gap-6 items-center">
+            <div className="w-full min-h-[260px] h-64">
+              <ResponsiveContainer width="100%" height="100%" minHeight={260}>
+                <PieChart>
+                  <Pie
+                    data={staffDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={58}
+                    outerRadius={92}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    {staffDistribution.map((entry, index) => (
+                      <Cell
+                        key={`staff-cell-${entry.name}-${index}`}
+                        fill={colors[index % colors.length]}
+                        stroke="#fff"
+                        strokeWidth={3}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value) => {
+                      const percentage = totalStaff > 0 ? ((value / totalStaff) * 100).toFixed(1) : 0;
+                      return [`${value} staff (${percentage}%)`, 'Department'];
+                    }}
+                    contentStyle={{
+                      borderRadius: '12px',
+                      padding: '12px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.97)',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                      border: '1px solid #e5e7eb',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {staffDistribution.map((dept, index) => {
+                const currentColor = colors[index % colors.length];
+                const count = Number(dept.value || 0);
+                const percentage = totalStaff > 0 ? Math.round((count / totalStaff) * 100) : 0;
+
+                return (
+                  <div
+                    key={`${dept.name}-${index}`}
+                    className="flex items-center justify-between gap-3 p-3 bg-slate-50/70 border border-slate-100 rounded-2xl"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span
+                        className="h-3 w-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: currentColor }}
+                      />
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-slate-700 truncate">{dept.name}</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{percentage}%</p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-lg bg-white text-[11px] font-black tabular-nums text-slate-900 border border-slate-100">
+                      {count.toLocaleString()}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="h-64 flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/40">
+            <FiUsers className="text-4xl text-gray-300 mb-3" />
+            <p className="text-gray-500 font-medium">No staff data available</p>
+            <p className="text-gray-400 text-sm mt-1">Staff departments will appear here</p>
+          </div>
+        )}
+      </div>
+    );
+  };
   
   // Student Population Card Component
   const StudentPopulationCard = () => {
@@ -2080,10 +2184,11 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             </div>
           </div>
         </div>
+
+        <StaffDistributionCard />
         
-        {/* Additional Statistics Dashboard - All Other Metrics */}
+        {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Row 2: Core Academic Metrics */}
           <StatCard 
             icon={FiBriefcase}
             label="Total Careers"
@@ -2119,67 +2224,6 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             trend={parseFloat(growthMetrics.newsGrowth) >= 0 ? "up" : "down"}
             color="amber" 
             subtitle="Published news" 
-          />
-
-          {/* Row 3: Community Metrics */}
-          <StatCard 
-            icon={FiGlobe}
-            label="School Hub"
-            value={stats.totalSubscribers}
-            change={parseFloat(growthMetrics.subscriberGrowth || 5)}
-            trend={parseFloat(growthMetrics.subscriberGrowth || 5) >= 0 ? "up" : "down"}
-            color="indigo"
-            subtitle="Active subscribers"
-          />
-
-          <StatCard 
-            icon={FiCalendar}
-            label="Events & Activities"
-            value={stats.totalCareers > 0 ? Math.round((stats.totalCareers * 1.5)) : 0}
-            change={12}
-            trend="up"
-            color="orange"
-            subtitle="Scheduled events"
-          />
-
-          <StatCard 
-            icon={FiCheckCircle}
-            label="Pending Tasks"
-            value={stats.pendingEmails}
-            change={-3}
-            trend="down"
-            color="blue"
-            subtitle="To be processed"
-          />
-
-          <StatCard 
-            icon={FiTarget}
-            label="Applications"
-            value={stats.underReviewApplications}
-            change={parseFloat(growthMetrics.admissionGrowth || 7)}
-            trend={parseFloat(growthMetrics.admissionGrowth || 7) >= 0 ? "up" : "down"}
-            color="red"
-            subtitle="Under review"
-          />
-
-          <StatCard 
-            icon={FiActivity}
-            label="User Activity"
-            value={stats.totalStaff + stats.totalStudents}
-            change={15}
-            trend="up"
-            color="cyan"
-            subtitle="Total active users"
-          />
-
-          <StatCard 
-            icon={FiZap}
-            label="System Status"
-            value={100}
-            change={0}
-            trend="up"
-            color="yellow"
-            subtitle="Operational &amp; stable"
           />
         </div>
         

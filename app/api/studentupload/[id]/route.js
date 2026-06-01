@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../libs/prisma';
 
-const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12'];
+const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
 const GRADE_STAT_KEYS = {
   'Grade 10': 'grade10',
   'Grade 11': 'grade11',
-  'Grade 12': 'grade12'
+  'Grade 12': 'grade12',
+  'Form 3': 'form3',
+  'Form 4': 'form4'
 };
 
 const cleanText = (value) => String(value ?? '').replace(/\u00a0/g, ' ').trim();
@@ -39,7 +41,19 @@ const normalizeGrade = (value) => {
     class12: 'Grade 12',
     'class 12': 'Grade 12',
     g12: 'Grade 12',
-    '12': 'Grade 12'
+    '12': 'Grade 12',
+    form3: 'Form 3',
+    'form 3': 'Form 3',
+    class3: 'Form 3',
+    'class 3': 'Form 3',
+    f3: 'Form 3',
+    '3': 'Form 3',
+    form4: 'Form 4',
+    'form 4': 'Form 4',
+    class4: 'Form 4',
+    'class 4': 'Form 4',
+    f4: 'Form 4',
+    '4': 'Form 4'
   };
   return map[normalized] || cleanText(value);
 };

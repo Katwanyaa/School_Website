@@ -6,11 +6,13 @@ import { prisma } from '../../../libs/prisma';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
-const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12'];
+const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
 const GRADE_STAT_KEYS = {
   'Grade 10': 'grade10',
   'Grade 11': 'grade11',
-  'Grade 12': 'grade12'
+  'Grade 12': 'grade12',
+  'Form 3': 'form3',
+  'Form 4': 'form4'
 };
 const REQUIRED_STUDENT_FIELDS = ['admissionNumber', 'fullName', 'form', 'stream', 'parentEmail'];
 const REQUIRED_STUDENT_FIELD_LABELS = 'Admission Number, Full Name, Grade/Class, Stream, Parent Email';
@@ -308,11 +310,13 @@ const calculateStatistics = async (whereClause = {}) => {
       grade10: formStatsObj['Grade 10'] || 0,
       grade11: formStatsObj['Grade 11'] || 0,
       grade12: formStatsObj['Grade 12'] || 0,
+      form3: formStatsObj['Form 3'] || 0,
+      form4: formStatsObj['Form 4'] || 0,
       updatedAt: new Date()
     };
 
     // Validate consistency
-    const formSum = stats.grade10 + stats.grade11 + stats.grade12;
+    const formSum = GRADE_LEVELS.reduce((sum, form) => sum + (stats[GRADE_STAT_KEYS[form]] || 0), 0);
     const isValid = formSum === totalStudents;
 
     return {
@@ -341,6 +345,8 @@ const updateCachedStats = async (stats) => {
         grade10: stats.grade10,
         grade11: stats.grade11,
         grade12: stats.grade12,
+        form3: stats.form3,
+        form4: stats.form4,
         updatedAt: new Date()
       },
       create: {
@@ -383,7 +389,19 @@ const validateFormSelection = (forms) => {
       class12: 'Grade 12',
       'class 12': 'Grade 12',
       g12: 'Grade 12',
-      '12': 'Grade 12'
+      '12': 'Grade 12',
+      form3: 'Form 3',
+      'form 3': 'Form 3',
+      class3: 'Form 3',
+      'class 3': 'Form 3',
+      f3: 'Form 3',
+      '3': 'Form 3',
+      form4: 'Form 4',
+      'form 4': 'Form 4',
+      class4: 'Form 4',
+      'class 4': 'Form 4',
+      f4: 'Form 4',
+      '4': 'Form 4'
     };
     
     const normalized = formMap[trimmed.toLowerCase()] || trimmed;
@@ -807,7 +825,19 @@ const normalizeFormValue = (value) => {
     class12: 'Grade 12',
     'class 12': 'Grade 12',
     g12: 'Grade 12',
-    '12': 'Grade 12'
+    '12': 'Grade 12',
+    form3: 'Form 3',
+    'form 3': 'Form 3',
+    class3: 'Form 3',
+    'class 3': 'Form 3',
+    f3: 'Form 3',
+    '3': 'Form 3',
+    form4: 'Form 4',
+    'form 4': 'Form 4',
+    class4: 'Form 4',
+    'class 4': 'Form 4',
+    f4: 'Form 4',
+    '4': 'Form 4'
   };
 
   return formMap[formValue] || cleanText(value);
@@ -2024,7 +2054,9 @@ export async function DELETE(request) {
               totalStudents: { decrement: batchStudents.length },
               grade10: { decrement: formCounts['Grade 10'] || 0 },
               grade11: { decrement: formCounts['Grade 11'] || 0 },
-              grade12: { decrement: formCounts['Grade 12'] || 0 }
+              grade12: { decrement: formCounts['Grade 12'] || 0 },
+              form3: { decrement: formCounts['Form 3'] || 0 },
+              form4: { decrement: formCounts['Form 4'] || 0 }
             }
           });
         }
@@ -2197,7 +2229,9 @@ export async function PATCH(request) {
             totalStudents: { increment: updated.count },
             grade10: { increment: formCounts['Grade 10'] || 0 },
             grade11: { increment: formCounts['Grade 11'] || 0 },
-            grade12: { increment: formCounts['Grade 12'] || 0 }
+            grade12: { increment: formCounts['Grade 12'] || 0 },
+            form3: { increment: formCounts['Form 3'] || 0 },
+            form4: { increment: formCounts['Form 4'] || 0 }
           }
         });
 

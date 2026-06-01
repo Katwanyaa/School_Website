@@ -2594,7 +2594,7 @@ export default function AssignmentsManager() {
 
       {/* Filters Section */}
       <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-lg border border-gray-200">
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4">
           <div>
             <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">
               <FiFilter className="text-teal-700" />
@@ -2602,17 +2602,8 @@ export default function AssignmentsManager() {
             </p>
             <h2 className="mt-1 text-lg font-black text-slate-950">Refine assignment records</h2>
           </div>
-          <button
-            type="button"
-            onClick={clearAssignmentFilters}
-            disabled={!hasActiveAssignmentFilters}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black text-slate-700 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <FiFilter />
-            Clear All Filters
-          </button>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-7 gap-4">
           <div className="lg:col-span-2 relative">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -2669,8 +2660,18 @@ export default function AssignmentsManager() {
               <option key={className} value={className}>
                 {className}
               </option>
-            ))}
+              ))}
           </select>
+
+          <button
+            type="button"
+            onClick={clearAssignmentFilters}
+            disabled={!hasActiveAssignmentFilters}
+            className="inline-flex h-full min-h-[48px] items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black text-slate-700 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <FiFilter />
+            Clear
+          </button>
         </div>
       </div>
 
