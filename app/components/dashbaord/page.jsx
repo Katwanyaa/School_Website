@@ -1482,9 +1482,9 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
         </div>
         
         {/* Form Distribution Pie Chart */}
-        <div className="h-40 mb-6">
+        <div className="w-full min-h-[160px] h-40 mb-6" style={{ minHeight: '160px' }}>
           {studentPopulation.total > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={160}>
               <PieChart>
                 <Pie
                   data={formPercentages}
@@ -1728,8 +1728,8 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
               <FiUsers className="text-2xl text-blue-600" />
             </div>
             {staffDistribution.length > 0 ? (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
+              <div className="w-full min-h-[256px] h-64" style={{ minHeight: '256px' }}>
+                <ResponsiveContainer width="100%" height="100%" minHeight={256}>
                   <PieChart>
                     <Pie
                       data={staffDistribution}
