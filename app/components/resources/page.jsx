@@ -2626,7 +2626,7 @@ const handleSubmit = async (formData, id) => {
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800  uppercase tracking-[0.2em]">
                       <div className="flex items-center gap-2">
                         <FiLock className="w-4 h-4 text-amber-500" />
-                        Access 
+                        Info
                       </div>
                     </th>
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800  uppercase tracking-[0.2em]">
@@ -2664,145 +2664,116 @@ const handleSubmit = async (formData, id) => {
                       </td>
 
                       {/* Resource Details Column */}
-                      <td className="py-5 px-8 cursor-pointer"  onClick={() => handleView(resource)}
->
+                      <td className="py-5 px-8 cursor-pointer"  onClick={() => handleView(resource)}>
                         <div className="flex items-start gap-4">
-                          <div className={`relative p-3.5 rounded-2xl transition-all duration-300 group-hover:scale-105 ${
+                          <div className={`relative p-3 rounded-xl transition-all duration-300 group-hover:scale-105 ${
                             safeText(resource.type).toLowerCase() === 'pdf'
-                              ? 'bg-gradient-to-br from-red-50 to-pink-50 border border-red-100 shadow-sm shadow-red-500/10'
+                              ? 'bg-red-50 border border-red-100 shadow-sm shadow-red-500/10'
                               : safeText(resource.type).toLowerCase() === 'video'
-                              ? 'bg-gradient-to-br from-teal-50 to-green-50 border border-teal-100 shadow-sm shadow-teal-500/10'
+                              ? 'bg-teal-50 border border-teal-100 shadow-sm shadow-teal-500/10'
                               : safeText(resource.type).toLowerCase() === 'image'
-                              ? 'bg-gradient-to-br from-green-50 to-violet-50 border border-green-100 shadow-sm shadow-green-500/10'
+                              ? 'bg-green-50 border border-green-100 shadow-sm shadow-green-500/10'
                               : safeText(resource.type).toLowerCase() === 'document'
-                              ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm shadow-emerald-500/10'
-                              : 'bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-100 shadow-sm shadow-slate-500/10'
+                              ? 'bg-emerald-50 border border-emerald-100 shadow-sm shadow-emerald-500/10'
+                              : 'bg-slate-50 border border-slate-100 shadow-sm shadow-slate-500/10'
                           }`}>
                             {safeText(resource.type).toLowerCase() === 'pdf' ? (
-                              <HiOutlineDocumentText className="text-xl text-red-600" />
+                              <HiOutlineDocumentText className="text-lg text-red-600" />
                             ) : safeText(resource.type).toLowerCase() === 'video' ? (
-                              <FiVideo className="text-xl text-teal-600" />
+                              <FiVideo className="text-lg text-teal-600" />
                             ) : safeText(resource.type).toLowerCase() === 'image' ? (
-                              <HiOutlinePhotograph className="text-xl text-green-600" />
-                            ) : safeText(resource.type).toLowerCase() === 'presentation' ? (
-                              <HiOutlinePresentationChartBar className="text-xl text-amber-600" />
+                              <HiOutlinePhotograph className="text-lg text-green-600" />
                             ) : (
-                              <FiFileText className="text-xl text-emerald-600" />
+                              <FiFileText className="text-lg text-emerald-600" />
                             )}
                             {resource.isFeatured && (
-                              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
-                                <FiStar className="w-2.5 h-2.5 text-white" />
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
+                                <FiStar className="w-2 h-2 text-white" />
                               </div>
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2 mb-2">
-                              <h4 className="font-bold text-slate-900 text-md  leading-tight group-hover:text-teal-600 transition-colors">
-                                {resource.title || 'Untitled Resource'}
-                              </h4>
-              
-                            </div>
-                            <p className="text-slate-900 text-xs line-clamp-2 mb-3">
-                              {resource.description || 'No description provided'}
+                            <h4 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-teal-600 transition-colors line-clamp-1">
+                              {resource.title || 'Untitled Resource'}
+                            </h4>
+                            <p className="text-slate-700 text-xs line-clamp-1 mt-1">
+                              {resource.description || 'No description'}
                             </p>
-                            <div className="flex items-center gap-4 text-xs text-slate-800 ">
-                              <span className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 rounded-lg">
-                                <FiFile className="w-3 h-3" />
-                                {resource.files?.length || 0} files
-                              </span>
-                            </div>
                           </div>
                         </div>
                       </td>
 
                       {/* Subject & Class Column */}
                       <td className="py-5 px-8">
-                        <div className="space-y-3">
-                          <div className="inline-flex flex-col gap-1.5">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-green-50 text-teal-700 text-xs font-bold rounded-xl border border-teal-100">
-                              <FiUsers className="w-3 h-3" />
-                              {resource.className || 'All Classes'}
-                            </span>
-                            <span className="inline-block px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-100">
-                              {resource.subject || 'General Studies'}
-                            </span>
-                          </div>
-                          {resource.students && (
-                            <p className="text-xs text-slate-800  font-medium">
-                              {resource.students} students enrolled
-                            </p>
-                          )}
+                        <div className="flex flex-col gap-2">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 text-teal-700 text-xs font-bold rounded-lg border border-teal-100 w-fit">
+                            <FiUsers className="w-3 h-3" />
+                            {resource.className || 'All Classes'}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg border border-emerald-100 w-fit">
+                            <FiBookOpen className="w-3 h-3" />
+                            {resource.subject || 'General'}
+                          </span>
                         </div>
                       </td>
 
                       {/* Type & Access Column */}
                       <td className="py-5 px-8">
-                        <div className="space-y-3">
-                          <div className="flex flex-col gap-2">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${
-                                safeText(resource.type).toLowerCase() === 'pdf' ? 'bg-gradient-to-r from-red-500 to-pink-500' :
-                                safeText(resource.type).toLowerCase() === 'video' ? 'bg-gradient-to-r from-teal-500 to-green-500' :
-                                safeText(resource.type).toLowerCase() === 'image' ? 'bg-gradient-to-r from-green-500 to-violet-500' :
-                                safeText(resource.type).toLowerCase() === 'document' ? 'bg-gradient-to-r from-emerald-500 to-teal-500' :
-                                'bg-gradient-to-r from-slate-500 to-gray-500'
-                              }`} />
-                              <span className="text-xs font-bold text-slate-900 capitalize">
-                                {resource.type || 'File'}
-                              </span>
-                            </div>
-                            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                              resource.accessLevel === 'student' 
-                                ? 'bg-gradient-to-r from-teal-50 to-green-50 text-teal-700 border-teal-100' 
-                                : resource.accessLevel === 'teacher' 
-                                ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 border-emerald-100'
-                                : resource.accessLevel === 'admin' 
-                                ? 'bg-gradient-to-r from-green-50 to-violet-50 text-green-700 border-green-100'
-                                : 'bg-gradient-to-r from-slate-50 to-gray-50 text-slate-700 border-slate-100'
-                            }`}>
-                              {resource.accessLevel === 'admin' ? <FiLock className="w-3 h-3" /> : <FiUnlock className="w-3 h-3" />}
-                              {resource.accessLevel || 'student'} access
-                            </div>
+                        <div className="flex flex-col gap-2">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold bg-slate-50 text-slate-700 border-slate-200 w-fit">
+                            <div className={`w-1.5 h-1.5 rounded-full ${
+                              safeText(resource.type).toLowerCase() === 'pdf' ? 'bg-red-500' :
+                              safeText(resource.type).toLowerCase() === 'video' ? 'bg-teal-500' :
+                              safeText(resource.type).toLowerCase() === 'image' ? 'bg-green-500' :
+                              safeText(resource.type).toLowerCase() === 'document' ? 'bg-emerald-500' :
+                              'bg-slate-500'
+                            }`} />
+                            {safeText(resource.type).toLowerCase() || 'File'}
+                          </div>
+                          <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold w-fit ${
+                            resource.accessLevel === 'student' 
+                              ? 'bg-teal-50 text-teal-700 border-teal-100' 
+                              : resource.accessLevel === 'teacher' 
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                              : 'bg-red-50 text-red-700 border-red-100'
+                          }`}>
+                            {resource.accessLevel === 'admin' ? <FiLock className="w-3 h-3" /> : <FiUnlock className="w-3 h-3" />}
+                            {resource.accessLevel || 'student'}
                           </div>
                         </div>
                       </td>
 
                       {/* Teacher Column */}
                       <td className="py-5 px-8">
-                        <div className="flex items-center gap-3 group/author">
-                          <div className="relative">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-green-600 flex items-center justify-center text-white font-bold text-md  shadow-md shadow-teal-500/25">
-                              {resource.teacher?.split(' ').map(n => n[0]).join('') || 'A'}
-                            </div>
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-teal-500/0 to-green-600/0 group-hover/author:from-teal-500/20 group-hover/author:to-green-600/20 transition-all duration-300"></div>
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center flex-shrink-0">
+                            <FiUser className="w-5 h-5 text-white" />
                           </div>
-                          <div className="flex flex-col">
-                            <span className="text-md  font-bold text-slate-900 group-hover/author:text-teal-600 transition-colors">
-                              {resource.teacher || 'System Admin'}
-                            </span>
-                            <span className="text-xs text-slate-800  font-medium">
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-slate-900 truncate">
+                              {resource.teacher || 'Admin'}
+                            </p>
+                            <p className="text-xs text-slate-600 truncate">
                               {resource.role || 'Teacher'}
-                            </span>
+                            </p>
                           </div>
                         </div>
                       </td>
 
                       {/* Status Column */}
                       <td className="py-5 px-8">
-                        <div className="relative">
-                          <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 ${
-                            resource.isActive === true
-                              ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 border-emerald-200 group-hover:shadow-lg group-hover:shadow-emerald-500/20'
-                              : 'bg-gradient-to-r from-slate-50 to-gray-50 text-slate-600 border-slate-200'
-                          }`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${
-                              resource.isActive === true 
-                                ? 'bg-gradient-to-r from-emerald-500 to-teal-500 animate-pulse' 
-                                : 'bg-slate-400'
-                            }`}></div>
-                            {resource.isActive === true ? 'Active' : 'Inactive'}
-                          </span>
-                        </div>
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border ${
+                          resource.isActive === true
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-slate-50 text-slate-600 border-slate-200'
+                        }`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${
+                            resource.isActive === true 
+                              ? 'bg-emerald-500' 
+                              : 'bg-slate-400'
+                          }`}></div>
+                          {resource.isActive === true ? 'Active' : 'Inactive'}
+                        </span>
                       </td>
 
             <td className="py-5 px-8 text-right">

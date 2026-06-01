@@ -2721,7 +2721,7 @@ export default function AssignmentsManager() {
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800 uppercase tracking-[0.2em]">
                       <div className="flex items-center gap-2">
                         <FiUserCheck className="w-4 h-4 text-amber-500" />
-                        Teacher & Priority
+                        Teacher
                       </div>
                     </th>
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800 uppercase tracking-[0.2em]">
@@ -2786,123 +2786,94 @@ export default function AssignmentsManager() {
                         {/* Assignment Details Column */}
                         <td className="py-5 px-8 cursor-pointer" onClick={() => handleView(assignment)}>
                           <div className="flex items-start gap-4">
-                            <div className={`relative p-3.5 rounded-2xl transition-all duration-300 group-hover:scale-105 ${
-                              assignment.priority === 'high' 
+                            <div className={`relative p-3 rounded-xl transition-all duration-300 group-hover:scale-105 ${
+                              assignment.status === 'completed' 
+                                ? 'bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 shadow-sm shadow-green-500/10' 
+                                : assignment.status === 'in progress' 
+                                ? 'bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-100 shadow-sm shadow-teal-500/10'
+                                : assignment.status === 'overdue' 
                                 ? 'bg-gradient-to-br from-red-50 to-pink-50 border border-red-100 shadow-sm shadow-red-500/10' 
-                                : assignment.priority === 'medium' 
-                                ? 'bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 shadow-sm shadow-orange-500/10'
-                                : assignment.priority === 'low' 
-                                ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border border-teal-100 shadow-sm shadow-teal-500/10'
-                                : 'bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-100 shadow-sm shadow-slate-500/10'
+                                : assignment.status === 'pending' 
+                                ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-100 shadow-sm shadow-yellow-500/10'
+                                : 'bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm shadow-emerald-500/10'
                             }`}>
-                              <IoDocumentTextOutline className={`text-xl ${
-                                assignment.priority === 'high' ? 'text-red-600' :
-                                assignment.priority === 'medium' ? 'text-orange-600' :
-                                assignment.priority === 'low' ? 'text-teal-700' :
-                                'text-gray-600'
+                              <IoDocumentTextOutline className={`text-lg ${
+                                assignment.status === 'completed' ? 'text-green-600' :
+                                assignment.status === 'in progress' ? 'text-teal-600' :
+                                assignment.status === 'overdue' ? 'text-red-600' :
+                                assignment.status === 'pending' ? 'text-yellow-600' :
+                                'text-emerald-600'
                               }`} />
                               {assignment.status === 'overdue' && (
-                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-400 to-pink-400 rounded-full flex items-center justify-center">
-                                  <FiAlertTriangle className="w-2.5 h-2.5 text-white" />
+                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-red-400 to-pink-400 rounded-full flex items-center justify-center">
+                                  <FiAlertTriangle className="w-2 h-2 text-white" />
                                 </div>
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2 mb-2">
-                                <h4 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-teal-700 transition-colors">
-                                  {assignment.title || 'Untitled Assignment'}
-                                </h4>
-                              </div>
-                              <p className="text-slate-900 text-xs line-clamp-2 mb-3">
-                                {assignment.description || 'No description provided'}
+                              <h4 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-teal-700 transition-colors line-clamp-1">
+                                {assignment.title || 'Untitled Assignment'}
+                              </h4>
+                              <p className="text-slate-700 text-xs line-clamp-1 mt-1">
+                                {assignment.description || 'No description'}
                               </p>
-                              <div className="flex items-center gap-4 text-xs text-slate-800">
-                                <span className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 rounded-lg">
-                                  <FiClock className="w-3 h-3" />
-                                  {assignment.estimatedTime || 'No time estimate'}
-                                </span>
-                              </div>
                             </div>
                           </div>
                         </td>
 
                         {/* Subject & Class Column */}
                         <td className="py-5 px-8">
-                          <div className="space-y-3">
-                            <div className="inline-flex flex-col gap-1.5">
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-100">
-                                <FiBookOpen className="w-3 h-3" />
-                                {assignment.subject || 'General Studies'}
-                              </span>
-                              <span className="inline-block px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-teal-800 text-xs font-bold rounded-xl border border-teal-100">
-                                <FiUsers className="w-3 h-3" />
-                                {assignment.className || 'All Classes'}
-                              </span>
-                            </div>
+                          <div className="flex flex-col gap-2">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 text-xs font-bold rounded-lg border border-emerald-100 w-fit">
+                              <FiBookOpen className="w-3 h-3" />
+                              {assignment.subject || 'General'}
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-teal-700 text-xs font-bold rounded-lg border border-teal-100 w-fit">
+                              <FiUsers className="w-3 h-3" />
+                              {assignment.className || 'All Classes'}
+                            </span>
                           </div>
                         </td>
 
                         {/* Due Date & Status Column */}
                         <td className="py-5 px-8">
-                          <div className="space-y-3">
+                          <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
-                              <FiCalendar className="text-teal-700" />
+                              <FiCalendar className="text-teal-600 w-4 h-4" />
                               <span className="text-sm font-medium text-slate-900">
                                 {new Date(assignment.dueDate).toLocaleDateString('en-GB', {
                                   day: 'numeric',
-                                  month: 'short',
-                                  year: 'numeric'
+                                  month: 'short'
                                 })}
                               </span>
                             </div>
-                            <div className="flex flex-col gap-2">
-                              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${getStatusColor(assignment.status)}`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${
-                                  assignment.status === 'completed' ? 'bg-green-500' :
-                                  assignment.status === 'in progress' ? 'bg-teal-600' :
-                                  assignment.status === 'pending' ? 'bg-yellow-500' :
-                                  assignment.status === 'overdue' ? 'bg-red-500' :
-                                  assignment.status === 'assigned' ? 'bg-emerald-600' :
-                                  'bg-gray-500'
-                                }`}></div>
-                                {assignment.status?.charAt(0).toUpperCase() + assignment.status?.slice(1) || 'Pending'}
-                              </span>
-                              {daysRemaining !== null && (
-                                <span className={`text-xs font-medium ${
-                                  daysRemaining <= 0 ? 'text-red-500' : 
-                                  daysRemaining <= 3 ? 'text-orange-500' : 'text-green-500'
-                                }`}>
-                                  {daysRemaining <= 0 ? 'Overdue' : `${daysRemaining}d left`}
-                                </span>
-                              )}
-                            </div>
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold w-fit ${getStatusColor(assignment.status)}`}>
+                              <div className={`w-1.5 h-1.5 rounded-full ${
+                                assignment.status === 'completed' ? 'bg-green-500' :
+                                assignment.status === 'in progress' ? 'bg-teal-600' :
+                                assignment.status === 'pending' ? 'bg-yellow-500' :
+                                assignment.status === 'overdue' ? 'bg-red-500' :
+                                assignment.status === 'assigned' ? 'bg-emerald-600' :
+                                'bg-gray-500'
+                              }`}></div>
+                              {assignment.status?.charAt(0).toUpperCase() + assignment.status?.slice(1) || 'Pending'}
+                            </span>
                           </div>
                         </td>
 
-                        {/* Teacher & Priority Column */}
+                        {/* Teacher Column */}
                         <td className="py-5 px-8">
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2 group/author">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-amber-500/25">
-                                {assignment.teacher?.split(' ').map(n => n[0]).join('') || 'A'}
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-900 group-hover/author:text-emerald-700 transition-colors">
-                                  {assignment.teacher || 'System Admin'}
-                                </span>
-                                <span className="text-xs text-slate-800 font-medium">
-                                  Teacher
-                                </span>
-                              </div>
+                          <div className="flex items-center gap-3 group/author">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-amber-500/25">
+                              {assignment.teacher?.split(' ').map(n => n[0]).join('') || 'A'}
                             </div>
-                            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold ${getPriorityColor(assignment.priority)}`}>
-                              <FiTarget className={`w-3 h-3 ${
-                                assignment.priority === 'high' ? 'text-red-600' :
-                                assignment.priority === 'medium' ? 'text-orange-600' :
-                                assignment.priority === 'low' ? 'text-teal-700' :
-                                'text-gray-600'
-                              }`} />
-                              {assignment.priority || 'medium'} priority
+                            <div className="flex flex-col">
+                              <span className="text-sm font-bold text-slate-900 group-hover/author:text-emerald-700 transition-colors">
+                                {assignment.teacher || 'System Admin'}
+                              </span>
+                              <span className="text-xs text-slate-600 font-medium">
+                                Assigned
+                              </span>
                             </div>
                           </div>
                         </td>
