@@ -1870,7 +1870,7 @@ export default function AssignmentsManager() {
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(assignment =>
-        assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (assignment.title && assignment.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (assignment.description && assignment.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (assignment.subject && assignment.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (assignment.teacher && assignment.teacher.toLowerCase().includes(searchTerm.toLowerCase()))

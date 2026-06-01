@@ -1852,7 +1852,7 @@ const retryFailedResourceDelivery = async (resourceId, failedRecipients) => {
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(resource =>
-        resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (resource.title && resource.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (resource.description && resource.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (resource.subject && resource.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (resource.teacher && resource.teacher.toLowerCase().includes(searchTerm.toLowerCase()))
