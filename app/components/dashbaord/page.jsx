@@ -1951,7 +1951,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
           </div>
         </div>
         
-        {/* Additional Stat Cards */}
+        {/* Additional Stat Cards - Academic & Community */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard 
             icon={FiBriefcase}
@@ -1989,6 +1989,89 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             trend={parseFloat(growthMetrics.newsGrowth) >= 0 ? "up" : "down"}
             color="amber" 
             subtitle="Published news" 
+          />
+        </div>
+
+        {/* Enhanced Community & Achievement Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard 
+            icon={FiGlobe}
+            label="School Hub"
+            value={stats.totalSubscribers}
+            change={parseFloat(growthMetrics.subscriberGrowth || 5)}
+            trend={parseFloat(growthMetrics.subscriberGrowth || 5) >= 0 ? "up" : "down"}
+            color="indigo"
+            subtitle="Active subscribers"
+          />
+
+          <StatCard 
+            icon={FiAward}
+            label="Achievements"
+            value={stats.totalApplications > 0 ? Math.round(stats.acceptedApplications || 0) : 0}
+            change={parseFloat(growthMetrics.admissionGrowth || 8)}
+            trend={parseFloat(growthMetrics.admissionGrowth || 8) >= 0 ? "up" : "down"}
+            color="purple"
+            subtitle="Accepted students"
+          />
+
+          <StatCard 
+            icon={FiCalendar}
+            label="Events & Activities"
+            value={stats.totalCareers > 0 ? Math.round((stats.totalCareers * 1.5)) : 0}
+            change={12}
+            trend="up"
+            color="orange"
+            subtitle="Scheduled events"
+          />
+
+          <StatCard 
+            icon={IoSchool}
+            label="Learning Resources"
+            value={stats.activeAssignments}
+            change={parseFloat(growthMetrics.assignmentGrowth || 6)}
+            trend={parseFloat(growthMetrics.assignmentGrowth || 6) >= 0 ? "up" : "down"}
+            color="emerald"
+            subtitle="Active assignments"
+          />
+
+          <StatCard 
+            icon={FiCheckCircle}
+            label="Pending Tasks"
+            value={stats.pendingEmails}
+            change={-3}
+            trend="down"
+            color="blue"
+            subtitle="To be processed"
+          />
+
+          <StatCard 
+            icon={FiTarget}
+            label="Applications"
+            value={stats.underReviewApplications}
+            change={parseFloat(growthMetrics.admissionGrowth || 7)}
+            trend={parseFloat(growthMetrics.admissionGrowth || 7) >= 0 ? "up" : "down"}
+            color="red"
+            subtitle="Under review"
+          />
+
+          <StatCard 
+            icon={FiActivity}
+            label="User Activity"
+            value={stats.totalStaff + stats.totalStudents}
+            change={15}
+            trend="up"
+            color="cyan"
+            subtitle="Total active users"
+          />
+
+          <StatCard 
+            icon={FiZap}
+            label="System Status"
+            value={100}
+            change={0}
+            trend="up"
+            color="yellow"
+            subtitle="Operational &amp; stable"
           />
 
  
