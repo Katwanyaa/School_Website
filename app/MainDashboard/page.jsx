@@ -455,6 +455,18 @@ export default function AdminDashboard() {
   const fetchRealCounts = async () => {
     try {
       const studentCount = await fetchStudentCount();
+      const readJson = async (settledResponse, fallback) => {
+        if (settledResponse.status !== 'fulfilled' || !settledResponse.value?.ok) {
+          return fallback;
+        }
+
+        try {
+          return await settledResponse.value.json();
+        } catch (error) {
+          console.warn('Dashboard count API returned invalid JSON:', error);
+          return fallback;
+        }
+      };
       
       const [
         staffRes,
@@ -487,19 +499,19 @@ export default function AdminDashboard() {
 
       ]);
 
-      const staff = staffRes.status === 'fulfilled' ? await staffRes.value.json() : { staff: [] };
-      const subscribers = subscribersRes.status === 'fulfilled' ? await subscribersRes.value.json() : { subscribers: [] };
-      const events = eventsRes.status === 'fulfilled' ? await eventsRes.value.json() : { events: [] };
-      const news = newsRes.status === 'fulfilled' ? await newsRes.value.json() : { news: [] };
-      const assignments = assignmentsRes.status === 'fulfilled' ? await assignmentsRes.value.json() : { assignments: [] };
-      const gallery = galleryRes.status === 'fulfilled' ? await galleryRes.value.json() : { galleries: [] };
-      const guidance = guidanceRes.status === 'fulfilled' ? await guidanceRes.value.json() : { events: [] };
-      const admissions = admissionsRes.status === 'fulfilled' ? await admissionsRes.value.json() : { applications: [] };
-      const resources = resourcesRes.status === 'fulfilled' ? await resourcesRes.value.json() : { resources: [] };
-      const careers = careersRes.status === 'fulfilled' ? await careersRes.value.json() : { careers: [] };
-      const fees = feesRes.status === 'fulfilled' ? await feesRes.value.json() : { feebalances: [] };
-      const schoolDocs = schooldocumentsRes.status === 'fulfilled' ? await schooldocumentsRes.value.json() : { documents: [] };
-      const achievements = achievementsRes.status === 'fulfilled' ? await achievementsRes.value.json() : { achievements: [] };
+      const staff = await readJson(staffRes, { staff: [] });
+      const subscribers = await readJson(subscribersRes, { subscribers: [] });
+      const events = await readJson(eventsRes, { events: [] });
+      const news = await readJson(newsRes, { news: [] });
+      const assignments = await readJson(assignmentsRes, { assignments: [] });
+      const gallery = await readJson(galleryRes, { galleries: [] });
+      const guidance = await readJson(guidanceRes, { events: [] });
+      const admissions = await readJson(admissionsRes, { applications: [] });
+      const resources = await readJson(resourcesRes, { resources: [] });
+      const careers = await readJson(careersRes, { careers: [] });
+      const fees = await readJson(feesRes, { feebalances: [] });
+      const schoolDocs = await readJson(schooldocumentsRes, { documents: [] });
+      const achievements = await readJson(achievementsRes, { achievements: [] });
 
       
       const upcomingEvents = events.events?.filter(e => new Date(e.eventDate) >= new Date()).length || 0;

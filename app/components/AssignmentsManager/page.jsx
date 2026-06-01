@@ -86,7 +86,17 @@ import DeliveryProgressIndicator from '../DeliveryProgressIndicator';
 import { Modal, Box, CircularProgress } from '@mui/material';
 
 const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
-const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4', 'Form 1', 'Form 2'];
+const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12'];
+
+const safeText = (value) => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  if (Array.isArray(value)) return value.map(safeText).filter(Boolean).join(' ');
+  if (value && typeof value === 'object') {
+    return String(value.name || value.label || value.title || value.subject || value.value || '');
+  }
+  return '';
+};
 
 // Modern Loading Spinner Component
 const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'indeterminate', value = 0 }) => {
@@ -384,7 +394,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
 
   // Status colors
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
+    switch (safeText(status).toLowerCase()) {
       case 'completed': return { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', icon: 'bg-green-500' };
       case 'in progress': return { bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200', icon: 'bg-teal-600' };
       case 'pending': return { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200', icon: 'bg-yellow-500' };
@@ -396,7 +406,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
 
   // Priority colors
   const getPriorityColor = (priority) => {
-    switch (priority?.toLowerCase()) {
+    switch (safeText(priority).toLowerCase()) {
       case 'high': return { bg: 'bg-red-100', text: 'text-red-800' };
       case 'medium': return { bg: 'bg-orange-100', text: 'text-orange-800' };
       case 'low': return { bg: 'bg-teal-100', text: 'text-teal-800' };
@@ -409,7 +419,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
 
   const getFileIcon = (type) => {
     if (!type) return <FiFile />;
-    switch (type.toLowerCase()) {
+    switch (safeText(type).toLowerCase()) {
       case 'pdf': return <FiFileText />;
       case 'video': return <FiVideo />;
       case 'image': return <FiImage />;
@@ -1869,11 +1879,12 @@ export default function AssignmentsManager() {
 
     // Search filter
     if (searchTerm) {
+      const search = safeText(searchTerm).toLowerCase();
       filtered = filtered.filter(assignment =>
-        (assignment.title && assignment.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (assignment.description && assignment.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (assignment.subject && assignment.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (assignment.teacher && assignment.teacher.toLowerCase().includes(searchTerm.toLowerCase()))
+        safeText(assignment.title).toLowerCase().includes(search) ||
+        safeText(assignment.description).toLowerCase().includes(search) ||
+        safeText(assignment.subject).toLowerCase().includes(search) ||
+        safeText(assignment.teacher).toLowerCase().includes(search)
       );
     }
 
@@ -2759,7 +2770,7 @@ export default function AssignmentsManager() {
                     
                     // Status colors
                     const getStatusColor = (status) => {
-                      switch (status?.toLowerCase()) {
+                      switch (safeText(status).toLowerCase()) {
                         case 'completed': return 'bg-green-100 text-green-800';
                         case 'in progress': return 'bg-teal-100 text-teal-800';
                         case 'pending': return 'bg-yellow-100 text-yellow-800';
@@ -2771,7 +2782,7 @@ export default function AssignmentsManager() {
                     
                     // Priority colors
                     const getPriorityColor = (priority) => {
-                      switch (priority?.toLowerCase()) {
+                      switch (safeText(priority).toLowerCase()) {
                         case 'high': return 'bg-red-100 text-red-700';
                         case 'medium': return 'bg-orange-100 text-orange-700';
                         case 'low': return 'bg-teal-100 text-teal-700';

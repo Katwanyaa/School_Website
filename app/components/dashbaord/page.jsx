@@ -1,8 +1,14 @@
 'use client';
+
+// ========== CORE DEPENDENCIES ==========
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  FiUsers, 
-  FiBook, 
+import { CircularProgress } from '@mui/material';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+
+// ========== FEATHER ICONS (react-icons/fi) ==========
+import {
+  FiUsers,
+  FiBook,
   FiCalendar,
   FiFileText,
   FiTrendingUp,
@@ -41,8 +47,12 @@ import {
   FiTrendingDown as FiTrendingDownSolid,
   FiActivity as FiActivitySolid,
   FiBriefcase,
+  FiLayers,
+  FiSend,
 } from 'react-icons/fi';
-import { 
+
+// ========== IONICONS (react-icons/io5) ==========
+import {
   IoPeopleCircle,
   IoNewspaper,
   IoSparkles,
@@ -52,30 +62,37 @@ import {
   IoSchool,
   IoDocumentText
 } from 'react-icons/io5';
-import { CircularProgress } from '@mui/material';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 
-// Decode JWT token
-const decodeToken = () => {
-  if (typeof window === 'undefined') return null;
-  const token = localStorage.getItem('token');
+
+// ========== UTILITY & DECODING FUNCTIONS ==========
+
+/** Decode JWT token from localStorage */
+const decodeJWTToken = (token) => {
   if (!token) return null;
-  
+
   try {
     const base64Url = token.split('.')[1];
+    if (!base64Url) return null;
+
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
     
     return JSON.parse(jsonPayload);
   } catch (error) {
-    console.error('Error decoding token:', error);
+    console.error('Error decoding JWT token:', error);
     return null;
   }
 };
 
-// ========== HELPER FUNCTIONS ==========
+// ========== CALCULATION HELPER FUNCTIONS ==========
+
+/** Calculate month-over-month growth percentage */
 const calculateMonthOverMonthGrowth = (currentCount, previousCount) => {
   if (!previousCount || previousCount === 0) {
     return currentCount > 0 ? 100 : 0;
@@ -83,8 +100,8 @@ const calculateMonthOverMonthGrowth = (currentCount, previousCount) => {
   return ((currentCount - previousCount) / previousCount) * 100;
 };
 
+/** Count records created in a specific month */
 const countRecordsByMonth = (dataArray, monthOffset = 0) => {
-  // Add this guard clause at the beginning
   if (!dataArray || !Array.isArray(dataArray) || dataArray.length === 0) {
     return 0;
   }
@@ -104,7 +121,9 @@ const countRecordsByMonth = (dataArray, monthOffset = 0) => {
   }).length;
 };
 
-// Improved relative time function
+// ========== TIME FORMATTING FUNCTIONS ==========
+
+/** Format date as relative time (e.g., "2 hours ago") */
 const getRelativeTime = (dateString) => {
   if (!dateString) return 'Recently';
   
@@ -132,7 +151,7 @@ const getRelativeTime = (dateString) => {
   }
 };
 
-// Format activity date for display
+/** Format date as readable string for activity display */
 const formatActivityDate = (dateString) => {
   if (!dateString) return 'Unknown date';
   
@@ -165,6 +184,8 @@ const formatActivityDate = (dateString) => {
 };
 
 // ========== RECENT ACTIVITY FETCHER ==========
+
+/** Fetch and aggregate recent activity from multiple endpoints */
 const listenForRecentActivity = async () => {
   try {
     console.log('📊 Fetching recent activity data...');
@@ -387,8 +408,8 @@ const listenForRecentActivity = async () => {
   }
 };
 
-// ========== DASHBOARD COMPONENT ==========
-function ModernLoadingSpinner({ message = "Loading sessions from the database…", size = "medium" }) {
+// ========== LOADING SPINNER COMPONENT ==========
+function ModernLoadingSpinner({ message = 'Loading...', size = 'medium' }) {
   const sizes = {
     small: { outer: 48, inner: 24 },
     medium: { outer: 64, inner: 32 },
@@ -442,31 +463,9 @@ function ModernLoadingSpinner({ message = "Loading sessions from the database…
   );
 }
 
-// Decode JWT token helper
-const decodeJWTToken = (token) => {
-  if (!token) return null;
-  
-  try {
-    const base64Url = token.split('.')[1];
-    if (!base64Url) return null;
-    
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error('Error decoding JWT token:', error);
-    return null;
-  }
-};
+// ========== COMPONENT DEFINITIONS ==========
 
-// ========== MAIN DASHBOARD COMPONENT ==========
+// StatCard Component - Reusable stat display card
 export default function DashboardOverview() {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState({
@@ -678,7 +677,8 @@ const [admissionGrowth, setAdmissionGrowth] = useState({});
         adminsRes,
         admissionsRes,
         resourcesRes,
-        emailCampaignsRes
+        emailCampaignsRes,
+        schoolStatsRes
       ] = await Promise.allSettled([
         fetch('/api/studentupload?includeStats=true&limit=1000'),
         fetch('/api/staff'),
@@ -695,18 +695,29 @@ const [admissionGrowth, setAdmissionGrowth] = useState({});
         fetch('/api/emails'),
         fetch('/api/school-stats')
       ]);
+
+      const readJson = async (settledResponse, fallback) => {
+        if (settledResponse.status !== 'fulfilled' || !settledResponse.value?.ok) {
+          return fallback;
+        }
+
+        try {
+          return await settledResponse.value.json();
+        } catch (error) {
+          console.warn('Dashboard API returned invalid JSON:', error);
+          return fallback;
+        }
+      };
       
       // Process responses
-      const studentsData = studentsRes.status === 'fulfilled' 
-        ? await studentsRes.value.json() 
-        : { success: false, data: { students: [] } };
+      const studentsData = await readJson(studentsRes, { success: false, data: { students: [] } });
       
-      const staff = staffRes.status === 'fulfilled' ? await staffRes.value.json() : { staff: [] };
-      const subscribers = subscribersRes.status === 'fulfilled' ? await subscribersRes.value.json() : { subscribers: [] };
-      const assignments = assignmentsRes.status === 'fulfilled' ? await assignmentsRes.value.json() : { assignments: [] };
-      const careersData = careersRes.status === 'fulfilled' ? await careersRes.value.json() : { jobs: [] };
-      const gallery = galleryRes.status === 'fulfilled' ? await galleryRes.value.json() : { galleries: [] };
-      const guidance = guidanceRes.status === 'fulfilled' ? await guidanceRes.value.json() : { events: [] };
+      const staff = await readJson(staffRes, { staff: [] });
+      const subscribers = await readJson(subscribersRes, { subscribers: [] });
+      const assignments = await readJson(assignmentsRes, { assignments: [] });
+      const careersData = await readJson(careersRes, { jobs: [] });
+      const gallery = await readJson(galleryRes, { galleries: [] });
+      const guidance = await readJson(guidanceRes, { events: [] });
 // Process news - FIXED VERSION
 // Process news - FIXED VERSION
 let newsArticles = [];
@@ -741,12 +752,12 @@ if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
 }
 
 
-     const schoolInfo = schoolInfoRes.status === 'fulfilled' ? await schoolInfoRes.value.json() : { school: {} };
-      const admins = adminsRes.status === 'fulfilled' ? await adminsRes.value.json() : { users: [] };
-      const admissions = admissionsRes.status === 'fulfilled' ? await admissionsRes.value.json() : { applications: [] };
-      const resources = resourcesRes.status === 'fulfilled' ? await resourcesRes.value.json() : { resources: [] };
-      const emailCampaignsData = emailCampaignsRes.status === 'fulfilled' ? await emailCampaignsRes.value.json() : { campaigns: [] };
-      const schoolStatsData = schoolStatsRes.status === 'fulfilled' ? await schoolStatsRes.value.json() : { stats: null };
+     const schoolInfo = await readJson(schoolInfoRes, { school: {} });
+      const admins = await readJson(adminsRes, { users: [] });
+      const admissions = await readJson(admissionsRes, { applications: [] });
+      const resources = await readJson(resourcesRes, { resources: [] });
+      const emailCampaignsData = await readJson(emailCampaignsRes, { campaigns: [] });
+      const schoolStatsData = await readJson(schoolStatsRes, { stats: null });
       
       // Set school stats if available
       if (schoolStatsData.stats) {
@@ -989,7 +1000,9 @@ const galleryGrowth = calculateMonthOverMonthGrowth(currentMonthGallery, previou
 setGrowthMetrics({
   guidanceGrowth: isNaN(guidanceGrowth) ? 0 : (guidanceGrowth || 0),
   newsGrowth: isNaN(newsGrowth) ? 0 : (newsGrowth || 0),
-  galleryGrowth: isNaN(galleryGrowth) ? 0 : (galleryGrowth || 0)
+  galleryGrowth: isNaN(galleryGrowth) ? 0 : (galleryGrowth || 0),
+  assignmentGrowth: isNaN(assignmentGrowth) ? 0 : (assignmentGrowth || 0),
+  admissionGrowth: isNaN(applicationGrowth) ? 0 : (applicationGrowth || 0)
 });
 
       setAdmissionGrowth({
@@ -1594,6 +1607,8 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
       />
     );
   }
+
+  const showLegacyDashboardSections = false;
   
   return (
     <>
@@ -1673,6 +1688,8 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
           </div>
         </div>
         
+        {showLegacyDashboardSections && (
+        <>
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {quickStats.map((stat, index) => {
@@ -1971,6 +1988,8 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             </div>
           </div>
         </div>
+        </>
+        )}
         
         {/* Unified Statistics Dashboard - Top Row: Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">

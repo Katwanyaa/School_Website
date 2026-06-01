@@ -3,6 +3,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiX, FiSearch, FiChevronDown } from 'react-icons/fi';
 
+const optionToText = (option) => {
+  if (typeof option === 'string') return option;
+  if (typeof option === 'number') return String(option);
+  if (!option || typeof option !== 'object') return '';
+  return String(option.label || option.name || option.subject || option.value || '');
+};
+
 /**
  * SearchableSubjectDropdown
  * A reusable dropdown component with real-time search/filter functionality
@@ -33,7 +40,7 @@ export const SearchableSubjectDropdown = ({
   // Filter options based on search term
   useEffect(() => {
     const filtered = options.filter(option =>
-      option.toLowerCase().includes(searchTerm.toLowerCase())
+      optionToText(option).toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredOptions(filtered);
   }, [searchTerm, options]);
@@ -58,7 +65,7 @@ export const SearchableSubjectDropdown = ({
   }, [isOpen]);
 
   const handleSelect = (option) => {
-    onChange(option);
+    onChange(optionToText(option));
     setIsOpen(false);
     setSearchTerm('');
   };
@@ -69,7 +76,7 @@ export const SearchableSubjectDropdown = ({
     setSearchTerm('');
   };
 
-  const displayValue = value && value !== 'all' ? value : placeholder;
+  const displayValue = value && value !== 'all' ? optionToText(value) : placeholder;
 
   return (
     <div ref={dropdownRef} className={`relative w-full ${className}`}>
@@ -139,25 +146,28 @@ export const SearchableSubjectDropdown = ({
           {/* Options List */}
           <div className="max-h-60 overflow-y-auto">
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
+              filteredOptions.map((option, index) => {
+                const optionText = optionToText(option);
+                return (
                 <button
                   type="button"
-                  key={option}
+                  key={`${optionText}-${index}`}
                   onClick={() => handleSelect(option)}
                   className={`w-full px-4 py-3 text-left hover:bg-gray-100 transition-colors border-b border-gray-100 last:border-b-0 ${
-                    value === option
+                    optionToText(value) === optionText
                       ? 'bg-green-50 text-green-700 font-semibold'
                       : 'text-gray-800'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span>{option}</span>
-                    {value === option && (
+                    <span>{optionText}</span>
+                    {optionToText(value) === optionText && (
                       <span className="text-green-600 font-bold">✓</span>
                     )}
                   </div>
                 </button>
-              ))
+              );
+              })
             ) : (
               <div className="px-4 py-6 text-center text-gray-500">
                 No subjects match "{searchTerm}"

@@ -92,7 +92,17 @@ import DeliveryProgressIndicator from '../DeliveryProgressIndicator';
 // Rest of your component logic goes here...
 
 const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
-const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4', 'Form 1', 'Form 2'];
+const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12'];
+
+const safeText = (value) => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  if (Array.isArray(value)) return value.map(safeText).filter(Boolean).join(' ');
+  if (value && typeof value === 'object') {
+    return String(value.name || value.label || value.title || value.subject || value.value || '');
+  }
+  return '';
+};
 
 // Modern Loading Spinner Component
 const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'indeterminate', value = 0 }) => {
@@ -390,7 +400,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
 
   // Modern Color Palette
   const getFileTypeColor = (type) => {
-    switch (type?.toLowerCase()) {
+    switch (safeText(type).toLowerCase()) {
       case 'pdf': return { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-100', icon: 'bg-rose-500' };
       case 'video': return { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100', icon: 'bg-indigo-500' };
       default: return { bg: 'bg-slate-50', text: 'text-slate-600', border: 'border-slate-100', icon: 'bg-slate-500' };
@@ -400,7 +410,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
   const typeColor = getFileTypeColor(resource.type);
 
   const getFileIcon = (type) => {
-    switch (type?.toLowerCase()) {
+    switch (safeText(type).toLowerCase()) {
       case 'pdf': return <FiFileText />;
       case 'video': return <FiVideo />;
       case 'image': return <FiImage />;
@@ -1851,11 +1861,12 @@ const retryFailedResourceDelivery = async (resourceId, failedRecipients) => {
 
     // Search filter
     if (searchTerm) {
+      const search = safeText(searchTerm).toLowerCase();
       filtered = filtered.filter(resource =>
-        (resource.title && resource.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (resource.description && resource.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (resource.subject && resource.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (resource.teacher && resource.teacher.toLowerCase().includes(searchTerm.toLowerCase()))
+        safeText(resource.title).toLowerCase().includes(search) ||
+        safeText(resource.description).toLowerCase().includes(search) ||
+        safeText(resource.subject).toLowerCase().includes(search) ||
+        safeText(resource.teacher).toLowerCase().includes(search)
       );
     }
 
@@ -2689,23 +2700,23 @@ const handleSubmit = async (formData, id) => {
 >
                         <div className="flex items-start gap-4">
                           <div className={`relative p-3.5 rounded-2xl transition-all duration-300 group-hover:scale-105 ${
-                            resource.type?.toLowerCase() === 'pdf' 
-                              ? 'bg-gradient-to-br from-red-50 to-pink-50 border border-red-100 shadow-sm shadow-red-500/10' 
-                              : resource.type?.toLowerCase() === 'video' 
+                            safeText(resource.type).toLowerCase() === 'pdf'
+                              ? 'bg-gradient-to-br from-red-50 to-pink-50 border border-red-100 shadow-sm shadow-red-500/10'
+                              : safeText(resource.type).toLowerCase() === 'video'
                               ? 'bg-gradient-to-br from-teal-50 to-green-50 border border-teal-100 shadow-sm shadow-teal-500/10'
-                              : resource.type?.toLowerCase() === 'image' 
+                              : safeText(resource.type).toLowerCase() === 'image'
                               ? 'bg-gradient-to-br from-green-50 to-violet-50 border border-green-100 shadow-sm shadow-green-500/10'
-                              : resource.type?.toLowerCase() === 'document' 
+                              : safeText(resource.type).toLowerCase() === 'document'
                               ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm shadow-emerald-500/10'
                               : 'bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-100 shadow-sm shadow-slate-500/10'
                           }`}>
-                            {resource.type?.toLowerCase() === 'pdf' ? (
+                            {safeText(resource.type).toLowerCase() === 'pdf' ? (
                               <HiOutlineDocumentText className="text-xl text-red-600" />
-                            ) : resource.type?.toLowerCase() === 'video' ? (
+                            ) : safeText(resource.type).toLowerCase() === 'video' ? (
                               <FiVideo className="text-xl text-teal-600" />
-                            ) : resource.type?.toLowerCase() === 'image' ? (
+                            ) : safeText(resource.type).toLowerCase() === 'image' ? (
                               <HiOutlinePhotograph className="text-xl text-green-600" />
-                            ) : resource.type?.toLowerCase() === 'presentation' ? (
+                            ) : safeText(resource.type).toLowerCase() === 'presentation' ? (
                               <HiOutlinePresentationChartBar className="text-xl text-amber-600" />
                             ) : (
                               <FiFileText className="text-xl text-emerald-600" />
@@ -2762,10 +2773,10 @@ const handleSubmit = async (formData, id) => {
                           <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
                               <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${
-                                resource.type?.toLowerCase() === 'pdf' ? 'bg-gradient-to-r from-red-500 to-pink-500' :
-                                resource.type?.toLowerCase() === 'video' ? 'bg-gradient-to-r from-teal-500 to-green-500' :
-                                resource.type?.toLowerCase() === 'image' ? 'bg-gradient-to-r from-green-500 to-violet-500' :
-                                resource.type?.toLowerCase() === 'document' ? 'bg-gradient-to-r from-emerald-500 to-teal-500' :
+                                safeText(resource.type).toLowerCase() === 'pdf' ? 'bg-gradient-to-r from-red-500 to-pink-500' :
+                                safeText(resource.type).toLowerCase() === 'video' ? 'bg-gradient-to-r from-teal-500 to-green-500' :
+                                safeText(resource.type).toLowerCase() === 'image' ? 'bg-gradient-to-r from-green-500 to-violet-500' :
+                                safeText(resource.type).toLowerCase() === 'document' ? 'bg-gradient-to-r from-emerald-500 to-teal-500' :
                                 'bg-gradient-to-r from-slate-500 to-gray-500'
                               }`} />
                               <span className="text-xs font-bold text-slate-900 capitalize">
