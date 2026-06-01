@@ -8,6 +8,7 @@ import {
   FiPlus,
   FiSearch,
   FiCalendar,
+  FiUser,
   FiUsers,
   FiClock,
   FiChevronLeft,
