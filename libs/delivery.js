@@ -126,17 +126,25 @@ export const prepareAssignmentDelivery = async (txOrPrisma, assignmentId, criter
       where: { assignmentId },
     });
 
-    // Create delivery records for each student
-    const deliveryRecords = await Promise.all(
-      students.map(student =>
-        prisma.assignmentDeliveryRecipient.create({
-          data: {
-            assignmentId: assignmentId,
-            ...buildRecipientData(student, criteria),
-          },
-        })
-      )
-    );
+    if (students.length > 0) {
+      await prisma.assignmentDeliveryRecipient.createMany({
+        data: students.map(student => ({
+          assignmentId: assignmentId,
+          ...buildRecipientData(student, criteria),
+        })),
+      });
+    }
+
+    const deliveryRecords = await prisma.assignmentDeliveryRecipient.findMany({
+      where: { assignmentId },
+      select: {
+        id: true,
+        admissionNumber: true,
+        studentName: true,
+        status: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
 
     return {
       channel: 'email',
@@ -179,17 +187,25 @@ export const prepareResourceDelivery = async (txOrPrisma, resourceId, criteria) 
       where: { resourceId },
     });
 
-    // Create delivery records for each student
-    const deliveryRecords = await Promise.all(
-      students.map(student =>
-        prisma.resourceDeliveryRecipient.create({
-          data: {
-            resourceId: resourceId,
-            ...buildRecipientData(student, criteria),
-          },
-        })
-      )
-    );
+    if (students.length > 0) {
+      await prisma.resourceDeliveryRecipient.createMany({
+        data: students.map(student => ({
+          resourceId: resourceId,
+          ...buildRecipientData(student, criteria),
+        })),
+      });
+    }
+
+    const deliveryRecords = await prisma.resourceDeliveryRecipient.findMany({
+      where: { resourceId },
+      select: {
+        id: true,
+        admissionNumber: true,
+        studentName: true,
+        status: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
 
     return {
       channel: 'email',

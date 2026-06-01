@@ -560,22 +560,19 @@ async function handleFormUpdate(request, id, existingResource) {
 
     console.log("💾 Saving to database...");
 
-    const resource = await prisma.$transaction(async (tx) => {
-      const savedResource = await tx.resource.update({
-        where: { id: id },
-        data: updateData,
-      });
+    const savedResource = await prisma.resource.update({
+      where: { id: id },
+      data: updateData,
+    });
 
-      const deliverySummary = await prepareResourceDelivery(tx, savedResource.id, deliveryCriteria);
-
-      return tx.resource.update({
-        where: { id: savedResource.id },
-        data: {
-          deliverySummary,
-          deliveryStatus: deliverySummary.status,
-          updatedAt: new Date()
-        }
-      });
+    const deliverySummary = await prepareResourceDelivery(prisma, savedResource.id, deliveryCriteria);
+    const resource = await prisma.resource.update({
+      where: { id: savedResource.id },
+      data: {
+        deliverySummary,
+        deliveryStatus: deliverySummary.status,
+        updatedAt: new Date()
+      }
     });
 
     console.log("✅ Update successful");

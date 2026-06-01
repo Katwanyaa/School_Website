@@ -665,43 +665,40 @@ export async function PUT(request, { params }) {
       attachments: updatedAttachments.length
     });
     
-    const updatedAssignment = await prisma.$transaction(async (tx) => {
-      const savedAssignment = await tx.assignment.update({
-        where: { id: assignmentId },
-        data: { 
-          title,
-          subject,
-          className,
-          teacher,
-          dueDate: dueDate ? new Date(dueDate) : existingAssignment.dueDate,
-          dateAssigned: dateAssigned ? new Date(dateAssigned) : existingAssignment.dateAssigned, // FIX: Added dateAssigned
-          status,
-          description,
-          instructions,
-          priority,
-          estimatedTime,
-          additionalWork,
-          teacherRemarks,
-          assignmentFiles: updatedAssignmentFiles,
-          attachments: updatedAttachments,
-          learningObjectives: learningObjectivesArray,
-          targetCriteria: deliveryCriteria,
-          senderReference: deliveryCriteria.senderReference,
-          deliveryStatus: 'preparing',
-          updatedAt: new Date()
-        },
-      });
+    const savedAssignment = await prisma.assignment.update({
+      where: { id: assignmentId },
+      data: {
+        title,
+        subject,
+        className,
+        teacher,
+        dueDate: dueDate ? new Date(dueDate) : existingAssignment.dueDate,
+        dateAssigned: dateAssigned ? new Date(dateAssigned) : existingAssignment.dateAssigned, // FIX: Added dateAssigned
+        status,
+        description,
+        instructions,
+        priority,
+        estimatedTime,
+        additionalWork,
+        teacherRemarks,
+        assignmentFiles: updatedAssignmentFiles,
+        attachments: updatedAttachments,
+        learningObjectives: learningObjectivesArray,
+        targetCriteria: deliveryCriteria,
+        senderReference: deliveryCriteria.senderReference,
+        deliveryStatus: 'preparing',
+        updatedAt: new Date()
+      },
+    });
 
-      const deliverySummary = await prepareAssignmentDelivery(tx, savedAssignment.id, deliveryCriteria);
-
-      return tx.assignment.update({
-        where: { id: savedAssignment.id },
-        data: {
-          deliverySummary,
-          deliveryStatus: deliverySummary.status,
-          updatedAt: new Date()
-        }
-      });
+    const deliverySummary = await prepareAssignmentDelivery(prisma, savedAssignment.id, deliveryCriteria);
+    const updatedAssignment = await prisma.assignment.update({
+      where: { id: savedAssignment.id },
+      data: {
+        deliverySummary,
+        deliveryStatus: deliverySummary.status,
+        updatedAt: new Date()
+      }
     });
 
     console.log('✅ Update successful:', updatedAssignment.id);

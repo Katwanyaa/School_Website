@@ -571,43 +571,40 @@ export async function POST(request) {
     }
 
     // FIX: Create assignment with dateAssigned field
-    const assignment = await prisma.$transaction(async (tx) => {
-      const createdAssignment = await tx.assignment.create({
-        data: {
-          title,
-          subject,
-          className,
-          teacher,
-          dueDate: calculatedDueDate,
-          dateAssigned: dateAssignedDate,
-          status,
-          description,
-          instructions,
-          priority,
-          estimatedTime,
-          additionalWork,
-          teacherRemarks,
-          assignmentFiles,
-          attachments,
-          learningObjectives: learningObjectivesArray,
-          targetCriteria: deliveryCriteria,
-          senderReference: deliveryCriteria.senderReference,
-          deliveryStatus: 'preparing',
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-      });
+    const createdAssignment = await prisma.assignment.create({
+      data: {
+        title,
+        subject,
+        className,
+        teacher,
+        dueDate: calculatedDueDate,
+        dateAssigned: dateAssignedDate,
+        status,
+        description,
+        instructions,
+        priority,
+        estimatedTime,
+        additionalWork,
+        teacherRemarks,
+        assignmentFiles,
+        attachments,
+        learningObjectives: learningObjectivesArray,
+        targetCriteria: deliveryCriteria,
+        senderReference: deliveryCriteria.senderReference,
+        deliveryStatus: 'preparing',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+    });
 
-      const deliverySummary = await prepareAssignmentDelivery(tx, createdAssignment.id, deliveryCriteria);
-
-      return tx.assignment.update({
-        where: { id: createdAssignment.id },
-        data: {
-          deliverySummary,
-          deliveryStatus: deliverySummary.status,
-          updatedAt: new Date()
-        }
-      });
+    const deliverySummary = await prepareAssignmentDelivery(prisma, createdAssignment.id, deliveryCriteria);
+    const assignment = await prisma.assignment.update({
+      where: { id: createdAssignment.id },
+      data: {
+        deliverySummary,
+        deliveryStatus: deliverySummary.status,
+        updatedAt: new Date()
+      }
     });
 
     console.log(`✅ Assignment created with ID: ${assignment.id}`);

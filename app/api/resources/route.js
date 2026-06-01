@@ -464,37 +464,34 @@ export async function POST(request) {
     const mainType = determineMainTypeFromFiles(uploadedFiles);
 
     // Create resource in database
-    const resource = await prisma.$transaction(async (tx) => {
-      const createdResource = await tx.resource.create({
-        data: {
-          title,
-          subject,
-          teacher,
-          className,
-          description,
-          category,
-          type: mainType,
-          files: uploadedFiles,
-          accessLevel,
-          uploadedBy,
-          downloads: 0,
-          isActive: true,
-          targetCriteria: deliveryCriteria,
-          senderReference: deliveryCriteria.senderReference,
-          deliveryStatus: 'preparing'
-        },
-      });
+    const createdResource = await prisma.resource.create({
+      data: {
+        title,
+        subject,
+        teacher,
+        className,
+        description,
+        category,
+        type: mainType,
+        files: uploadedFiles,
+        accessLevel,
+        uploadedBy,
+        downloads: 0,
+        isActive: true,
+        targetCriteria: deliveryCriteria,
+        senderReference: deliveryCriteria.senderReference,
+        deliveryStatus: 'preparing'
+      },
+    });
 
-      const deliverySummary = await prepareResourceDelivery(tx, createdResource.id, deliveryCriteria);
-
-      return tx.resource.update({
-        where: { id: createdResource.id },
-        data: {
-          deliverySummary,
-          deliveryStatus: deliverySummary.status,
-          updatedAt: new Date()
-        }
-      });
+    const deliverySummary = await prepareResourceDelivery(prisma, createdResource.id, deliveryCriteria);
+    const resource = await prisma.resource.update({
+      where: { id: createdResource.id },
+      data: {
+        deliverySummary,
+        deliveryStatus: deliverySummary.status,
+        updatedAt: new Date()
+      }
     });
 
     console.log(`✅ Resource created with ID: ${resource.id}`);
