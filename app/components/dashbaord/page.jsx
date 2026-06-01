@@ -1951,8 +1951,9 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
           </div>
         </div>
         
-        {/* Additional Stat Cards - Academic & Community */}
+        {/* Unified Statistics Dashboard - All Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Row 1: Core Academic Metrics */}
           <StatCard 
             icon={FiBriefcase}
             label="Total Careers"
@@ -1980,7 +1981,6 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             color="pink" 
             subtitle="Media content" 
           />
-
           <StatCard 
             icon={IoNewspaper} 
             label="News Articles" 
@@ -1990,10 +1990,8 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             color="amber" 
             subtitle="Published news" 
           />
-        </div>
 
-        {/* Enhanced Community & Achievement Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Row 2: Community & Achievement Metrics */}
           <StatCard 
             icon={FiGlobe}
             label="School Hub"
@@ -2034,6 +2032,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             subtitle="Active assignments"
           />
 
+          {/* Row 3: Operations & Status Metrics */}
           <StatCard 
             icon={FiCheckCircle}
             label="Pending Tasks"
@@ -2073,8 +2072,6 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             color="yellow"
             subtitle="Operational &amp; stable"
           />
-
- 
         </div>
         
         {/* Email Campaigns with Student Population Cards */}
