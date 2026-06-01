@@ -1324,6 +1324,29 @@ const processStudentUpload = async (tx, {
     updatedStudents: []
   };
 
+  await tx.studentBulkUpload.create({
+    data: {
+      id: uploadBatchId,
+      fileName: file.name,
+      fileType: fileExtension,
+      uploadedBy: auth.user.name || auth.user.email || 'Admin',
+      status: 'processing',
+      totalRows: stats.totalRows,
+      validRows: 0,
+      skippedRows: skippedByForm.length,
+      errorRows: 0,
+      metadata: {
+        uploadType,
+        selectedForms,
+        targetForm: uploadType === 'update' ? targetForm : null,
+        duplicateAction,
+        uploadedBy: auth.user.name,
+        userRole: auth.user.role,
+        startedAt: new Date().toISOString()
+      }
+    }
+  });
+
   const admissionNumbers = [...new Set(students.map((student) => student.admissionNumber))];
   
   // ============ RETURNING STUDENT DETECTION ============
@@ -1453,12 +1476,9 @@ const processStudentUpload = async (tx, {
     ...updateRows.map((row) => row.student)
   ]);
 
-  await tx.studentBulkUpload.create({
+  await tx.studentBulkUpload.update({
+    where: { id: uploadBatchId },
     data: {
-      id: uploadBatchId,
-      fileName: file.name,
-      fileType: fileExtension,
-      uploadedBy: auth.user.name || auth.user.email || 'Admin',
       status: 'completed',
       processedDate: new Date(),
       totalRows: stats.totalRows,

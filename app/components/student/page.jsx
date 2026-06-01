@@ -121,6 +121,7 @@ const formatUploadError = (data, fallback = 'Upload failed') => {
     Array.isArray(data.errors) && data.errors.length > 0
       ? data.errors.slice(0, 3).join(' | ')
       : '',
+    data.details,
     data.errorCount ? `${data.errorCount} row issue${data.errorCount === 1 ? '' : 's'} found.` : '',
     data.suggestion
   ].filter(Boolean);
