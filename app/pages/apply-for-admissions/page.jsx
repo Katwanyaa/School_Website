@@ -1694,7 +1694,7 @@ kjseaGrade: '',         // Changed from meanGrade
         © {new Date().getFullYear()} Katwanyaa  High School
       </p>
       <p className="text-blue-600 text-[9px] md:text-xs font-medium italic">
-        "Excellence Through Discipline"
+        "Education is light"
       </p>
     </div>
     
