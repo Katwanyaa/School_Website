@@ -70,6 +70,9 @@ const getStudentName = (recipient) =>
     : '') ||
   'Student';
 
+const getRecipientEmail = (recipient) =>
+  normalizeEmailAddress(recipient.student?.parentEmail || recipient.student?.email);
+
 const buildResourceEmail = (resource, studentName) => {
   const subject = `New learning resource: ${resource.title}`;
   const text = [
@@ -237,6 +240,7 @@ export async function POST(req) {
       include: {
         student: {
           select: {
+            parentEmail: true,
             email: true,
             firstName: true,
             lastName: true,
@@ -277,7 +281,7 @@ export async function POST(req) {
 
     for (let recipientIndex = 0; recipientIndex < recipients.length; recipientIndex++) {
       const recipient = recipients[recipientIndex];
-      const parentEmail = normalizeEmailAddress(recipient.student?.email);
+      const parentEmail = getRecipientEmail(recipient);
       const studentName = getStudentName(recipient);
 
       if (!parentEmail) {
@@ -404,6 +408,7 @@ export async function PUT(req) {
       include: {
         student: {
           select: {
+            parentEmail: true,
             email: true,
             firstName: true,
             lastName: true,
@@ -416,7 +421,7 @@ export async function PUT(req) {
     let successCount = 0;
 
     for (const recipient of recipients) {
-      const parentEmail = normalizeEmailAddress(recipient.student?.email);
+      const parentEmail = getRecipientEmail(recipient);
       const studentName = getStudentName(recipient);
 
       if (!parentEmail) {

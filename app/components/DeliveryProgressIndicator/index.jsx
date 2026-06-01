@@ -44,6 +44,8 @@ export const DeliveryProgressIndicator = ({
   if (!isOpen) return null;
 
   const processedCount = Math.min(totalRecipients, sentCount + failedCount);
+  const remainingCount = Math.max(0, totalRecipients - sentCount - failedCount);
+  const hasRecipients = totalRecipients > 0;
   const activeRecipientNumber = isLoading && !isComplete
     ? Math.min(totalRecipients, processedCount + 1)
     : processedCount;
@@ -61,6 +63,7 @@ export const DeliveryProgressIndicator = ({
 
   const getStatusColor = () => {
     if (!isComplete) return 'text-blue-600';
+    if (!hasRecipients) return 'text-amber-600';
     if (failedCount === 0) return 'text-green-600';
     if (sentCount === 0) return 'text-red-600';
     return 'text-orange-600';
@@ -68,6 +71,7 @@ export const DeliveryProgressIndicator = ({
 
   const getStatusMessage = () => {
     if (!isComplete) return `Sending to ${activeRecipientNumber} of ${totalRecipients} recipients...`;
+    if (!hasRecipients) return 'No parent email recipients were found for this selection.';
     if (failedCount === 0) return '✓ Successfully delivered to all recipients!';
     if (sentCount === 0) return '✗ Failed to deliver to any recipients';
     return `✓ Delivered to ${sentCount} recipient(s), ${failedCount} failed`;
@@ -75,6 +79,7 @@ export const DeliveryProgressIndicator = ({
 
   const getProgressBarColor = () => {
     if (!isComplete) return 'bg-blue-500';
+    if (!hasRecipients) return 'bg-amber-500';
     if (failedCount === 0) return 'bg-green-500';
     if (sentCount === 0) return 'bg-red-500';
     return 'bg-orange-500';
@@ -130,7 +135,7 @@ export const DeliveryProgressIndicator = ({
             {/* Remaining */}
             <div className="bg-blue-50 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {totalRecipients - sentCount - failedCount}
+                {remainingCount}
               </div>
               <div className="text-xs text-gray-600">Remaining</div>
             </div>
@@ -148,6 +153,19 @@ export const DeliveryProgressIndicator = ({
           <div className={`text-center text-sm font-semibold ${getStatusColor()}`}>
             {getStatusMessage()}
           </div>
+
+          {/* No Recipients Message */}
+          {isComplete && !hasRecipients && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
+              <FiAlertCircle className="text-2xl text-amber-600 flex-shrink-0" />
+              <div>
+                <div className="font-semibold text-amber-800">No Recipients Found</div>
+                <div className="text-sm text-amber-700">
+                  Check that uploaded students in this class have parent email addresses.
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Failed Recipients List (if complete and has failures) */}
           {isComplete && hasFailures && (
@@ -194,7 +212,7 @@ export const DeliveryProgressIndicator = ({
           )}
 
           {/* Success Message */}
-          {isComplete && failedCount === 0 && (
+          {isComplete && hasRecipients && failedCount === 0 && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
               <FiCheck className="text-2xl text-green-600 flex-shrink-0" />
               <div>

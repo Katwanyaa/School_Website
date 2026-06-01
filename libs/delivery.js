@@ -34,6 +34,85 @@ export const buildDeliveryCriteriaFromFormData = (formData, className, category 
   return criteria;
 };
 
+const uploadedStudentSelect = {
+  id: true,
+  admissionNumber: true,
+  fullName: true,
+  firstName: true,
+  middleName: true,
+  lastName: true,
+  form: true,
+  stream: true,
+  email: true,
+  parentEmail: true,
+};
+
+const getStudentName = (student) =>
+  student.fullName ||
+  [student.firstName, student.middleName, student.lastName].filter(Boolean).join(' ') ||
+  'Student';
+
+const getParentEmail = (student) => String(student.parentEmail || student.email || '').trim();
+
+const hasParentEmail = (student) => getParentEmail(student).length > 0;
+
+const getUploadedStudentsForCriteria = async (prisma, criteria) => {
+  if (criteria.type === 'class' && criteria.className) {
+    const students = await prisma.databaseStudent.findMany({
+      where: {
+        form: criteria.className,
+        status: 'active',
+      },
+      select: uploadedStudentSelect,
+      orderBy: { admissionNumber: 'asc' },
+    });
+
+    return students.filter(hasParentEmail);
+  }
+
+  if (criteria.type === 'all') {
+    const students = await prisma.databaseStudent.findMany({
+      where: { status: 'active' },
+      select: uploadedStudentSelect,
+      orderBy: [{ form: 'asc' }, { admissionNumber: 'asc' }],
+    });
+
+    return students.filter(hasParentEmail);
+  }
+
+  if (criteria.type === 'specific' && criteria.specificRecipients?.length > 0) {
+    const requestedEmails = new Set(
+      criteria.specificRecipients.map(email => String(email).trim().toLowerCase()).filter(Boolean)
+    );
+    const students = await prisma.databaseStudent.findMany({
+      where: { status: 'active' },
+      select: uploadedStudentSelect,
+      orderBy: { admissionNumber: 'asc' },
+    });
+
+    return students.filter((student) => {
+      const parentEmail = String(student.parentEmail || '').trim().toLowerCase();
+      const studentEmail = String(student.email || '').trim().toLowerCase();
+      return requestedEmails.has(parentEmail) || requestedEmails.has(studentEmail);
+    });
+  }
+
+  return [];
+};
+
+const buildRecipientData = (student, criteria) => ({
+  studentId: student.id,
+  admissionNumber: student.admissionNumber,
+  studentName: getStudentName(student),
+  className: student.form,
+  gradeLevel: student.form,
+  uploadedCategory: criteria.category || null,
+  whatsappPhone: SCHOOL_COMMUNICATION_NUMBER,
+  senderReference: criteria.senderReference || 'email_delivery',
+  channel: 'email',
+  status: 'prepared',
+});
+
 /**
  * Prepare assignment delivery - creates delivery records for recipients
  */
@@ -41,48 +120,11 @@ export const prepareAssignmentDelivery = async (txOrPrisma, assignmentId, criter
   try {
     const prisma = txOrPrisma;
 
-    // Get all students in the target class
-    let students = [];
-    
-    if (criteria.type === 'class' && criteria.className) {
-      students = await prisma.student.findMany({
-        where: { 
-          className: criteria.className,
-          isActive: true 
-        },
-        select: {
-          id: true,
-          admissionNumber: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      });
-    } else if (criteria.type === 'all') {
-      students = await prisma.student.findMany({
-        where: { isActive: true },
-        select: {
-          id: true,
-          admissionNumber: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      });
-    } else if (criteria.type === 'specific' && criteria.specificRecipients?.length > 0) {
-      students = await prisma.student.findMany({
-        where: { 
-          email: { in: criteria.specificRecipients }
-        },
-        select: {
-          id: true,
-          admissionNumber: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      });
-    }
+    const students = await getUploadedStudentsForCriteria(prisma, criteria);
+
+    await prisma.assignmentDeliveryRecipient.deleteMany({
+      where: { assignmentId },
+    });
 
     // Create delivery records for each student
     const deliveryRecords = await Promise.all(
@@ -90,11 +132,7 @@ export const prepareAssignmentDelivery = async (txOrPrisma, assignmentId, criter
         prisma.assignmentDeliveryRecipient.create({
           data: {
             assignmentId: assignmentId,
-            studentId: student.id,
-            admissionNumber: student.admissionNumber,
-            studentName: `${student.firstName} ${student.lastName}`,
-            email: student.email,
-            status: 'prepared',
+            ...buildRecipientData(student, criteria),
           },
         })
       )
@@ -135,48 +173,11 @@ export const prepareResourceDelivery = async (txOrPrisma, resourceId, criteria) 
   try {
     const prisma = txOrPrisma;
 
-    // Get all students in the target class or category
-    let students = [];
-    
-    if (criteria.type === 'class' && criteria.className) {
-      students = await prisma.student.findMany({
-        where: { 
-          className: criteria.className,
-          isActive: true 
-        },
-        select: {
-          id: true,
-          admissionNumber: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      });
-    } else if (criteria.type === 'all') {
-      students = await prisma.student.findMany({
-        where: { isActive: true },
-        select: {
-          id: true,
-          admissionNumber: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      });
-    } else if (criteria.type === 'specific' && criteria.specificRecipients?.length > 0) {
-      students = await prisma.student.findMany({
-        where: { 
-          email: { in: criteria.specificRecipients }
-        },
-        select: {
-          id: true,
-          admissionNumber: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      });
-    }
+    const students = await getUploadedStudentsForCriteria(prisma, criteria);
+
+    await prisma.resourceDeliveryRecipient.deleteMany({
+      where: { resourceId },
+    });
 
     // Create delivery records for each student
     const deliveryRecords = await Promise.all(
@@ -184,11 +185,7 @@ export const prepareResourceDelivery = async (txOrPrisma, resourceId, criteria) 
         prisma.resourceDeliveryRecipient.create({
           data: {
             resourceId: resourceId,
-            studentId: student.id,
-            admissionNumber: student.admissionNumber,
-            studentName: `${student.firstName} ${student.lastName}`,
-            email: student.email,
-            status: 'prepared',
+            ...buildRecipientData(student, criteria),
           },
         })
       )

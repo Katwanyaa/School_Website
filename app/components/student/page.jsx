@@ -129,6 +129,10 @@ const formatUploadError = (data, fallback = 'Upload failed') => {
   return parts.length > 0 ? parts.join(' ') : fallback;
 };
 
+const getUploadStatusLabel = (status = '') => (
+  status === 'completed' ? 'SUCCESSFUL' : String(status || 'UNKNOWN').toUpperCase()
+);
+
 const getGradeStatsTotal = (stats = {}) => GRADE_LEVELS.reduce(
   (sum, grade) => sum + (stats[GRADE_STAT_KEYS[grade]] || 0),
   0
@@ -2179,11 +2183,10 @@ const handleAuthError = (error) => {
 const loadUploadHistory = async (page = 1) => {
   setHistoryLoading(true);
   try {
-    // Add status=completed to the API call
     const res = await fetch(`/api/studentupload?action=uploads&page=${page}&limit=30`);
     const data = await res.json();
     if (data.success) {
-      setUploadHistory(data.uploads || []);
+      setUploadHistory((data.uploads || []).filter(upload => upload.status !== 'processing'));
     } else {
       sooner.error('Failed to load upload history');
     }
@@ -3828,7 +3831,7 @@ const downloadExcelTemplate = () => {
                                 ? 'bg-yellow-100 text-yellow-800'
                                 : 'bg-red-100 text-red-800'
                             }`}>
-                              {upload.status.toUpperCase()}
+                              {getUploadStatusLabel(upload.status)}
                             </span>
                           </td>
                           <td className="px-8 py-6">

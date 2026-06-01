@@ -1529,7 +1529,9 @@ export async function GET(request) {
     const where = buildWhereClause(filters);
 
 if (action === 'uploads') {
+  const uploadWhere = { status: 'completed' };
   const uploads = await prisma.studentBulkUpload.findMany({
+    where: uploadWhere,
     orderBy: { uploadDate: 'desc' },
     skip: (page - 1) * limit,
     take: limit,
@@ -1545,11 +1547,12 @@ if (action === 'uploads') {
       validRows: true,
       skippedRows: true,
       errorRows: true,
-      errorLog: true
+      errorLog: true,
+      metadata: true
     }
   });
 
-  const total = await prisma.studentBulkUpload.count();
+  const total = await prisma.studentBulkUpload.count({ where: uploadWhere });
   
   return NextResponse.json({
     success: true,
