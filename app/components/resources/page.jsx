@@ -2260,82 +2260,49 @@ const handleSubmit = async (formData, id) => {
       />
 
 
-{/* Modern Responsive Header with Bronze Gradient */}
-{/* Modern Responsive Header – Resources Theme */}
-<div className="relative mb-6 sm:mb-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem]
-                bg-gradient-to-br from-indigo-700 via-green-700 to-violet-700
-                p-4 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl">
-
-  {/* Abstract Gradient Orbs - green/Indigo Theme */}
-  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] 
-                  bg-gradient-to-br from-indigo-500/30 via-green-500/20 to-violet-500/30 
-                  rounded-full blur-[100px] pointer-events-none animate-pulse" />
-  
-  <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] 
-                  bg-gradient-to-tr from-green-500/20 via-indigo-500/10 to-violet-500/20 
-                  rounded-full blur-[80px] pointer-events-none" />
-  
-  {/* Central Floating Orb */}
-  <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] 
-                  bg-gradient-to-r from-indigo-500/20 to-green-500/20 
-                  rounded-full blur-[70px] pointer-events-none animate-pulse" />
-  
-  {/* Subtle Grid Pattern */}
-  <div className="absolute inset-0 opacity-[0.02]" 
-       style={{ 
-         backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-         backgroundSize: '40px 40px'
-       }} />
-  
-  {/* Shine Effect Overlay */}
-  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 
-                  bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full 
-                  group-hover:translate-x-full" 
-       style={{ transform: 'skewX(-20deg)' }} />
-{/* ── Clean Responsive Resources Header ── */}
-<div className="relative z-10 rounded-2xl bg-[#071527] p-4 sm:p-6 shadow-sm">
-  <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+{/* Modern Clean Resources Header */}
+<div className="w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[#0b1329] md:p-6">
+  <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
     
     {/* Left Content */}
-    <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
+    <div className="flex min-w-0 flex-1 items-start gap-4">
       {/* Icon */}
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10">
-        <FiFolder className="h-6 w-6 text-white" />
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+        <FiFolder className="h-6 w-6" />
       </div>
 
       {/* Text */}
       <div className="min-w-0 flex-1">
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-200/80">
-         Katwanyaa senior school
+        <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Katwanyaa Senior School
         </p>
 
-        <h1 className="text-2xl font-black leading-tight text-white sm:text-3xl md:text-4xl">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
           Resources Manager
         </h1>
 
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-blue-100/75 sm:text-base">
+        <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-500 dark:text-slate-400">
           Upload, organize, and manage school learning resources and documents in one place.
         </p>
 
-        {/* Simple Stats */}
+        {/* Minimal Tags */}
         <div className="mt-4 flex flex-wrap gap-2">
-          <div className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/85">
+          <span className="inline-flex items-center rounded-md bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10 dark:bg-slate-400/10 dark:text-slate-400 dark:ring-slate-400/20">
             {stats?.total || 0} Resources
-          </div>
-
-          <div className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/85">
+          </span>
+          <span className="inline-flex items-center rounded-md bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10 dark:bg-slate-400/10 dark:text-slate-400 dark:ring-slate-400/20">
             {stats?.totalFiles || 0} Files
-          </div>
+          </span>
         </div>
       </div>
     </div>
 
     {/* Right Actions */}
-    <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto lg:justify-end">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center lg:w-auto">
       <button
         onClick={() => fetchResources(true)}
         disabled={refreshing}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
       >
         {refreshing ? (
           <>
@@ -2352,14 +2319,14 @@ const handleSubmit = async (formData, id) => {
 
       <button
         onClick={handleCreate}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-95 sm:w-auto"
+        className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
       >
         <FiPlus className="h-4 w-4" />
         <span>Upload Resource</span>
       </button>
     </div>
+
   </div>
-</div>
 </div>
 
 
