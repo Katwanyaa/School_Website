@@ -527,9 +527,14 @@ const [admissionGrowth, setAdmissionGrowth] = useState({});
   const [resourcesDistribution, setResourcesDistribution] = useState([]);
   const [careers, setCareers] = useState([]);
   const [emailCampaigns, setEmailCampaigns] = useState([]);
-  
-
-
+  const [schoolStats, setSchoolStats] = useState({
+    meanScore: 0,
+    lastYearMean: 0,
+    targetMean: 0,
+    slogan: '',
+    sloganDescription: '',
+    sloganAuthor: ''
+  });
   
   // Student Population & Distribution state
   const [studentPopulation, setStudentPopulation] = useState({
@@ -687,7 +692,8 @@ const [admissionGrowth, setAdmissionGrowth] = useState({});
         fetch('/api/register'),
         fetch('/api/applyadmission'),
         fetch('/api/resources'),
-        fetch('/api/emails')
+        fetch('/api/emails'),
+        fetch('/api/school-stats')
       ]);
       
       // Process responses
@@ -740,6 +746,19 @@ if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
       const admissions = admissionsRes.status === 'fulfilled' ? await admissionsRes.value.json() : { applications: [] };
       const resources = resourcesRes.status === 'fulfilled' ? await resourcesRes.value.json() : { resources: [] };
       const emailCampaignsData = emailCampaignsRes.status === 'fulfilled' ? await emailCampaignsRes.value.json() : { campaigns: [] };
+      const schoolStatsData = schoolStatsRes.status === 'fulfilled' ? await schoolStatsRes.value.json() : { stats: null };
+      
+      // Set school stats if available
+      if (schoolStatsData.stats) {
+        setSchoolStats({
+          meanScore: schoolStatsData.stats.meanScore || 0,
+          lastYearMean: schoolStatsData.stats.lastYearMean || 0,
+          targetMean: schoolStatsData.stats.targetMean || 0,
+          slogan: schoolStatsData.stats.slogan || '',
+          sloganDescription: schoolStatsData.stats.sloganDescription || '',
+          sloganAuthor: schoolStatsData.stats.sloganAuthor || ''
+        });
+      }
       
       // Store school video for quick tour
       if (schoolInfo.school?.videoTour) {
@@ -882,10 +901,12 @@ if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
         totalSubscribers: subscribers.subscribers?.length || 0,
         pendingEmails: 0,
         activeAssignments,
+        totalAssignments: assignments.assignments?.length || 0,
+        totalResources: resources.resources?.length || 0,
         totalCareers,
         galleryItems: gallery.galleries?.length || 0,
         guidanceSessions: guidanceSessionsCount,
-totalNews: newsArticles.length || 0,    
+        totalNews: newsArticles.length || 0,    
     completedAssignments,
         totalAssignments,
         
@@ -1951,9 +1972,99 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
           </div>
         </div>
         
-        {/* Unified Statistics Dashboard - All Metrics */}
+        {/* Unified Statistics Dashboard - Top Row: Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
+          {/* Assignments Card */}
+          <StatCard 
+            icon={FiBook}
+            label="Assignments"
+            value={stats.totalAssignments}
+            change={parseFloat(growthMetrics.assignmentGrowth || 0)}
+            trend={parseFloat(growthMetrics.assignmentGrowth || 0) >= 0 ? "up" : "down"}
+            color="blue"
+            subtitle="Active assignments"
+          />
+
+          {/* Resources Card */}
+          <StatCard 
+            icon={FiFileText}
+            label="Resources"
+            value={stats.totalResources}
+            change={8}
+            trend="up"
+            color="emerald"
+            subtitle="Learning materials"
+          />
+
+          {/* Admission Growth Card */}
+          <StatCard 
+            icon={FiTrendingUp}
+            label="Admission Growth"
+            value={parseFloat(growthMetrics.admissionGrowth || 0).toFixed(1)}
+            change={parseFloat(growthMetrics.admissionGrowth || 0)}
+            trend={parseFloat(growthMetrics.admissionGrowth || 0) >= 0 ? "up" : "down"}
+            color="indigo"
+            subtitle="Monthly growth %"
+          />
+
+          {/* Achievements Card */}
+          <StatCard 
+            icon={FiAward}
+            label="Achievements"
+            value={stats.acceptedApplications || 0}
+            change={parseFloat(growthMetrics.admissionGrowth || 0)}
+            trend={parseFloat(growthMetrics.admissionGrowth || 0) >= 0 ? "up" : "down"}
+            color="purple"
+            subtitle="Accepted students"
+          />
+
+          {/* School Stats Card */}
+          <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden group">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">School Stats</h3>
+                <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Performance Metrics</p>
+              </div>
+              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-100 text-amber-600 shadow-sm transition-transform group-hover:scale-110">
+                <FiBarChart2 className="text-xl" />
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              {/* Mean Score */}
+              <div className="bg-gradient-to-r from-blue-50 to-transparent p-3 rounded-xl border border-blue-100">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs font-bold text-slate-600">Mean Score</p>
+                  <span className="text-sm font-black text-blue-600">{schoolStats.meanScore.toFixed(1)}</span>
+                </div>
+                <p className="text-[10px] text-slate-400">Current performance</p>
+              </div>
+
+              {/* Target Mean */}
+              <div className="bg-gradient-to-r from-purple-50 to-transparent p-3 rounded-xl border border-purple-100">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs font-bold text-slate-600">Target</p>
+                  <span className="text-sm font-black text-purple-600">{schoolStats.targetMean.toFixed(1)}</span>
+                </div>
+                <p className="text-[10px] text-slate-400">Goal to achieve</p>
+              </div>
+
+              {/* Slogan */}
+              {schoolStats.slogan && (
+                <div className="bg-gradient-to-r from-amber-50 to-transparent p-3 rounded-xl border border-amber-100">
+                  <p className="text-[10px] font-bold text-slate-700 italic">"{schoolStats.slogan}"</p>
+                  {schoolStats.sloganAuthor && (
+                    <p className="text-[9px] text-slate-500 mt-1">— {schoolStats.sloganAuthor}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        {/* Additional Statistics Dashboard - All Other Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Row 1: Core Academic Metrics */}
+          {/* Row 2: Core Academic Metrics */}
           <StatCard 
             icon={FiBriefcase}
             label="Total Careers"
@@ -1991,7 +2102,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             subtitle="Published news" 
           />
 
-          {/* Row 2: Community & Achievement Metrics */}
+          {/* Row 3: Community Metrics */}
           <StatCard 
             icon={FiGlobe}
             label="School Hub"
@@ -2000,16 +2111,6 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             trend={parseFloat(growthMetrics.subscriberGrowth || 5) >= 0 ? "up" : "down"}
             color="indigo"
             subtitle="Active subscribers"
-          />
-
-          <StatCard 
-            icon={FiAward}
-            label="Achievements"
-            value={stats.totalApplications > 0 ? Math.round(stats.acceptedApplications || 0) : 0}
-            change={parseFloat(growthMetrics.admissionGrowth || 8)}
-            trend={parseFloat(growthMetrics.admissionGrowth || 8) >= 0 ? "up" : "down"}
-            color="purple"
-            subtitle="Accepted students"
           />
 
           <StatCard 
@@ -2022,17 +2123,6 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             subtitle="Scheduled events"
           />
 
-          <StatCard 
-            icon={IoSchool}
-            label="Learning Resources"
-            value={stats.activeAssignments}
-            change={parseFloat(growthMetrics.assignmentGrowth || 6)}
-            trend={parseFloat(growthMetrics.assignmentGrowth || 6) >= 0 ? "up" : "down"}
-            color="emerald"
-            subtitle="Active assignments"
-          />
-
-          {/* Row 3: Operations & Status Metrics */}
           <StatCard 
             icon={FiCheckCircle}
             label="Pending Tasks"
