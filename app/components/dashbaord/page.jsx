@@ -1207,8 +1207,9 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
   const safeChange = typeof change === 'number' && !isNaN(change) ? change : 0;
   const isPositive = trend === 'up' || safeChange > 0;
   
-  // Safely handle value - ensure it's a number for toLocaleString
-  const safeValue = typeof value === 'number' && !isNaN(value) ? value : 0;
+  const displayValue = typeof value === 'number' && !isNaN(value)
+    ? value.toLocaleString()
+    : (value ?? 0);
   
   const colorMap = {
     blue: {
@@ -1220,6 +1221,14 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
       iconText: 'text-blue-600'
     },
     green: {
+      gradient: 'from-emerald-500/10 to-emerald-500/5',
+      text: 'text-emerald-600',
+      border: 'border-emerald-100',
+      iconBg: 'bg-emerald-50',
+      iconBorder: 'border-emerald-100',
+      iconText: 'text-emerald-600'
+    },
+    emerald: {
       gradient: 'from-emerald-500/10 to-emerald-500/5',
       text: 'text-emerald-600',
       border: 'border-emerald-100',
@@ -1302,20 +1311,20 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
   };
   
   return (
-    <div className="group relative bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:scale-[1.02] overflow-hidden">
+    <div className="group relative min-h-[188px] bg-white rounded-[2rem] p-5 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:scale-[1.02] overflow-hidden">
       
       {/* Background Decorative Glow */}
       <div className={`absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br ${selectedColorScheme.gradient} blur-2xl opacity-20 group-hover:opacity-40 transition-opacity`} />
       
-      <div className="flex justify-between items-start relative z-10">
-        <div className="space-y-3">
+      <div className="relative z-10 flex h-full items-start justify-between gap-4">
+        <div className="min-w-0 flex-1 space-y-4">
           {/* Label Section */}
           <div>
-            <span className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400">
+            <span className="block text-xs font-black uppercase leading-snug text-slate-500">
               {label}
             </span>
-            <h3 className="text-3xl font-black text-slate-900 tracking-tight mt-1">
-              {safeValue.toLocaleString()}
+            <h3 className="mt-2 max-w-full text-[clamp(1.8rem,4vw,2.55rem)] font-black leading-none text-slate-950 tabular-nums break-words">
+              {displayValue}
             </h3>
           </div>
           
@@ -1337,9 +1346,9 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             )}
             
             {subtitle && (
-              <span className="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-                <span className="h-1 w-1 rounded-full bg-slate-300" />
-                {subtitle}
+              <span className="flex items-start gap-1.5 text-[13px] font-semibold leading-snug text-slate-500">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
+                <span>{subtitle}</span>
               </span>
             )}
           </div>
@@ -1347,11 +1356,11 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
         
         {/* Modern Icon Container */}
         <div className={`
-          p-4 rounded-2xl bg-gradient-to-br border shadow-sm transition-all duration-300 
+          shrink-0 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br border shadow-sm transition-all duration-300
           group-hover:scale-110 group-hover:rotate-3
           ${selectedColorScheme.iconBg} ${selectedColorScheme.iconBorder} ${selectedColorScheme.iconText}
         `}>
-          <Icon className="text-2xl" />
+          <Icon className="text-xl sm:text-2xl" />
         </div>
       </div>
       
