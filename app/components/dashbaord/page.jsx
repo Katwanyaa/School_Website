@@ -1993,7 +1993,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
         </div>
 
         {/* Enhanced Community & Achievement Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard 
             icon={FiGlobe}
             label="School Hub"
