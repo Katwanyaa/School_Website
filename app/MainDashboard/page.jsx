@@ -25,7 +25,6 @@ import {
   FiSmartphone,
   FiArrowLeft,
   FiArchive,
-  FiMessageSquare,
 } from 'react-icons/fi';
 import { 
   IoStatsChart,
@@ -56,7 +55,6 @@ import Student from "../components/student/page";
 import StudentPasswordRequests from "../components/passwordrequests/page";
 import Fees from "../components/fees/page";
 import SchoolDocs from "../components/schooldocuments/page";
-import SMSManager from "../components/sms/page";
 import AchievementsManager from "../components/Achievements/page";
 import SchoolHubManager from "../components/schoolhub/page";
 export default function AdminDashboard() {
@@ -471,7 +469,6 @@ export default function AdminDashboard() {
         careersRes,
         feesRes,
         schooldocumentsRes,
-        smsRes,
         achievementsRes
       ] = await Promise.allSettled([
         fetch('/api/staff'),
@@ -486,7 +483,6 @@ export default function AdminDashboard() {
         fetch('/api/career'),
         fetch('/api/feebalances'),
         fetch('/api/schooldocuments'),
-        fetch('/api/sms'),
         fetch('/api/achievements')
 
       ]);
@@ -503,7 +499,6 @@ export default function AdminDashboard() {
       const careers = careersRes.status === 'fulfilled' ? await careersRes.value.json() : { careers: [] };
       const fees = feesRes.status === 'fulfilled' ? await feesRes.value.json() : { feebalances: [] };
       const schoolDocs = schooldocumentsRes.status === 'fulfilled' ? await schooldocumentsRes.value.json() : { documents: [] };
-      const sms = smsRes.status === 'fulfilled' ? await smsRes.value.json() : { sms: [] };
       const achievements = achievementsRes.status === 'fulfilled' ? await achievementsRes.value.json() : { achievements: [] };
 
       
@@ -525,7 +520,6 @@ export default function AdminDashboard() {
         totalApplications: admissionsData.length || 0,
         pendingApplications: pendingApps,
         Resources: resources.resources?.length || 0,
-        sms: sms.sms?.length || 0,
         Careers: careers.careers?.length || 0,
         totalStudent: studentCount,
         totalFees: fees.feebalances?.length || 0,
@@ -884,10 +878,6 @@ const handleLogout = () => {
         return <GalleryManager />;
       case 'careers':
         return <Careers />; 
-        case 'sms':      
-          return <SMSManager />;
-
-
       case 'achievements':
         return <AchievementsManager />;    
 
@@ -987,12 +977,6 @@ const handleLogout = () => {
       label: 'Careers',
       icon: FiCalendar,
       badge: 'lime'
-    },
-    { 
-      id: 'sms',
-      label: 'SMS Management',
-      icon: FiMessageSquare,
-      badge: 'orange'
     },
     { 
       id: 'newsevents', 

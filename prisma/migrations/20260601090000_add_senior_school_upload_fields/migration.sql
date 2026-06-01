@@ -1,0 +1,15 @@
+ALTER TABLE `students`
+  ADD COLUMN `fullName` VARCHAR(255) NULL,
+  ADD COLUMN `parentEmail` VARCHAR(100) NULL;
+
+ALTER TABLE `student_portal_accounts`
+  ADD COLUMN `parentEmail` VARCHAR(100) NULL;
+
+ALTER TABLE `student_stats`
+  ADD COLUMN `grade10` INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN `grade11` INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN `grade12` INTEGER NOT NULL DEFAULT 0,
+  DROP COLUMN `form1`,
+  DROP COLUMN `form2`,
+  DROP COLUMN `form3`,
+  DROP COLUMN `form4`;

@@ -5,11 +5,11 @@ import nodemailer from 'nodemailer';
 
 // Constants
 
-const SCHOOL_NAME = 'Katwanyaa senior school';
+const SCHOOL_NAME = 'Katwanyaa Senior School';
 const SCHOOL_LOCATION = 'Matungulu, Machakos County';
 const SCHOOL_MOTTO = 'Strive to Excel';
 const CONTACT_PHONE = '+254720123456';
-const CONTACT_EMAIL = 'matungulugirls@gmail.com';
+const CONTACT_EMAIL = 'katzict@gmail.com';
 
 // Email Transporter
 const transporter = nodemailer.createTransport({

@@ -1,6 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../libs/prisma";
 import cloudinary from "../../../../libs/cloudinary";
+import {
+  buildDeliveryCriteriaFromFormData,
+  prepareResourceDelivery,
+  SCHOOL_COMMUNICATION_NUMBER
+} from "../../../../libs/delivery";
+
+const decodeJwtPayload = (token) => {
+  const payload = token.split('.')[1];
+  const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+  const paddedPayload = normalizedPayload.padEnd(
+    normalizedPayload.length + ((4 - normalizedPayload.length % 4) % 4),
+    '='
+  );
+
+  return JSON.parse(Buffer.from(paddedPayload, 'base64').toString('utf-8'));
+};
 
 // ==================== AUTHENTICATION ====================
 class DeviceTokenManager {
@@ -33,7 +49,7 @@ class DeviceTokenManager {
 
       let adminPayload;
       try {
-        adminPayload = JSON.parse(atob(adminParts[1]));
+        adminPayload = decodeJwtPayload(adminToken);
         
         const currentTime = Date.now() / 1000;
         if (adminPayload.exp && adminPayload.exp < currentTime) {
@@ -41,7 +57,7 @@ class DeviceTokenManager {
         }
         
         const userRole = adminPayload.role || adminPayload.userRole || '';
-        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'administrator', 'PRINCIPAL', 'TEACHER', 'teacher'];
+        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'ADMINISTRATOR', 'PRINCIPAL', 'TEACHER'];
         
         if (!validRoles.includes(userRole.toUpperCase())) {
           return { 
@@ -318,6 +334,10 @@ const cleanResourceResponse = (resource) => {
     uploadedBy: resource.uploadedBy,
     downloads: resource.downloads,
     isActive: resource.isActive,
+    senderReference: resource.senderReference || SCHOOL_COMMUNICATION_NUMBER,
+    deliveryStatus: resource.deliveryStatus || resource.deliverySummary?.status || 'prepared',
+    deliverySummary: resource.deliverySummary || null,
+    targetCriteria: resource.targetCriteria || null,
     createdAt: resource.createdAt,
     updatedAt: resource.updatedAt
   };
@@ -464,6 +484,10 @@ async function handleFormUpdate(request, id, existingResource) {
     if (accessLevel !== null && accessLevel !== undefined) updateData.accessLevel = accessLevel;
     if (uploadedBy !== null && uploadedBy !== undefined) updateData.uploadedBy = uploadedBy;
     if (isActive !== null && isActive !== undefined) updateData.isActive = isActive === "true";
+    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className || existingResource.className, category || existingResource.category);
+    updateData.targetCriteria = deliveryCriteria;
+    updateData.senderReference = deliveryCriteria.senderReference;
+    updateData.deliveryStatus = 'preparing';
 
     // Handle file updates
     const existingFilesStr = formData.get("existingFiles");
@@ -536,9 +560,22 @@ async function handleFormUpdate(request, id, existingResource) {
 
     console.log("💾 Saving to database...");
 
-    const resource = await prisma.resource.update({
-      where: { id: id },
-      data: updateData,
+    const resource = await prisma.$transaction(async (tx) => {
+      const savedResource = await tx.resource.update({
+        where: { id: id },
+        data: updateData,
+      });
+
+      const deliverySummary = await prepareResourceDelivery(tx, savedResource.id, deliveryCriteria);
+
+      return tx.resource.update({
+        where: { id: savedResource.id },
+        data: {
+          deliverySummary,
+          deliveryStatus: deliverySummary.status,
+          updatedAt: new Date()
+        }
+      });
     });
 
     console.log("✅ Update successful");

@@ -475,7 +475,6 @@ export default function ContactPage() {
       >
         <option value="email">Email</option>
         <option value="phone">Phone Call</option>
-        <option value="sms">SMS</option>
       </select>
     </div>
   </div>

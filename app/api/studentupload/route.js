@@ -6,6 +6,25 @@ import { prisma } from '../../../libs/prisma';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
+const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12'];
+const GRADE_STAT_KEYS = {
+  'Grade 10': 'grade10',
+  'Grade 11': 'grade11',
+  'Grade 12': 'grade12'
+};
+const REQUIRED_STUDENT_FIELDS = ['admissionNumber', 'fullName', 'form', 'stream', 'parentEmail'];
+const REQUIRED_STUDENT_FIELD_LABELS = 'Admission Number, Full Name, Grade/Class, Stream, Parent Email';
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+
+const splitFullName = (fullName = '') => {
+  const parts = String(fullName).trim().replace(/\s+/g, ' ').split(' ').filter(Boolean);
+  return {
+    firstName: parts[0] || '',
+    middleName: parts.length > 2 ? parts.slice(1, -1).join(' ') : null,
+    lastName: parts.length > 1 ? parts[parts.length - 1] : parts[0] || ''
+  };
+};
+
 // ==================== AUTHENTICATION UTILITIES ====================
 
 // Device Token Manager
@@ -239,12 +258,11 @@ const parseDate = (dateStr) => {
 
 // Build WHERE clause from query parameters
 const buildWhereClause = (params) => {
-  const { form, stream, gender, status, search } = params;
+  const { form, stream, status, search } = params;
   const where = {};
   
   if (form && form !== 'all') where.form = form;
   if (stream && stream !== 'all') where.stream = stream;
-  if (gender && gender !== 'all') where.gender = gender;
   if (status && status !== 'all') where.status = status;
   
   if (search && search.trim()) {
@@ -252,11 +270,12 @@ const buildWhereClause = (params) => {
     
     where.OR = [
       { admissionNumber: { contains: searchTerm } },
+      { fullName: { contains: searchTerm } },
       { firstName: { contains: searchTerm } },
       { middleName: { contains: searchTerm } },
       { lastName: { contains: searchTerm } },
       { email: { contains: searchTerm } },
-      { parentPhone: { contains: searchTerm } }
+      { parentEmail: { contains: searchTerm } }
     ];
   }
   
@@ -286,15 +305,14 @@ const calculateStatistics = async (whereClause = {}) => {
 
     const stats = {
       totalStudents,
-      form1: formStatsObj['Form 1'] || 0,
-      form2: formStatsObj['Form 2'] || 0,
-      form3: formStatsObj['Form 3'] || 0,
-      form4: formStatsObj['Form 4'] || 0,
+      grade10: formStatsObj['Grade 10'] || 0,
+      grade11: formStatsObj['Grade 11'] || 0,
+      grade12: formStatsObj['Grade 12'] || 0,
       updatedAt: new Date()
     };
 
     // Validate consistency
-    const formSum = stats.form1 + stats.form2 + stats.form3 + stats.form4;
+    const formSum = stats.grade10 + stats.grade11 + stats.grade12;
     const isValid = formSum === totalStudents;
 
     return {
@@ -320,10 +338,9 @@ const updateCachedStats = async (stats) => {
       where: { id: 'global_stats' },
       update: {
         totalStudents: stats.totalStudents,
-        form1: stats.form1,
-        form2: stats.form2,
-        form3: stats.form3,
-        form4: stats.form4,
+        grade10: stats.grade10,
+        grade11: stats.grade11,
+        grade12: stats.grade12,
         updatedAt: new Date()
       },
       create: {
@@ -341,37 +358,42 @@ const updateCachedStats = async (stats) => {
 // Validate and normalize form selection
 const validateFormSelection = (forms) => {
   if (!forms || forms.length === 0) {
-    throw new Error('Please select at least one form to upload');
+    throw new Error('Please select at least one grade to upload');
   }
   
-  const validForms = ['Form 1', 'Form 2', 'Form 3', 'Form 4'];
   const normalizedForms = [];
   
   forms.forEach(form => {
     const trimmed = form.trim();
     const formMap = {
-      'form1': 'Form 1',
-      'form 1': 'Form 1',
-      '1': 'Form 1',
-      'form2': 'Form 2',
-      'form 2': 'Form 2',
-      '2': 'Form 2',
-      'form3': 'Form 3',
-      'form 3': 'Form 3',
-      '3': 'Form 3',
-      'form4': 'Form 4',
-      'form 4': 'Form 4',
-      '4': 'Form 4'
+      grade10: 'Grade 10',
+      'grade 10': 'Grade 10',
+      class10: 'Grade 10',
+      'class 10': 'Grade 10',
+      g10: 'Grade 10',
+      '10': 'Grade 10',
+      grade11: 'Grade 11',
+      'grade 11': 'Grade 11',
+      class11: 'Grade 11',
+      'class 11': 'Grade 11',
+      g11: 'Grade 11',
+      '11': 'Grade 11',
+      grade12: 'Grade 12',
+      'grade 12': 'Grade 12',
+      class12: 'Grade 12',
+      'class 12': 'Grade 12',
+      g12: 'Grade 12',
+      '12': 'Grade 12'
     };
     
     const normalized = formMap[trimmed.toLowerCase()] || trimmed;
-    if (validForms.includes(normalized)) {
+    if (GRADE_LEVELS.includes(normalized)) {
       normalizedForms.push(normalized);
     }
   });
   
   if (normalizedForms.length === 0) {
-    throw new Error('Please select valid forms (Form 1, Form 2, Form 3, Form 4)');
+    throw new Error(`Please select valid grades (${GRADE_LEVELS.join(', ')})`);
   }
   
   return normalizedForms;
@@ -716,10 +738,6 @@ const processUpdateUpload = async (students, uploadBatchId, targetForm) => {
   return stats;
 };
 
-// ========== STUDENT FILE PARSING ==========
-const REQUIRED_STUDENT_FIELDS = ['admissionNumber', 'firstName', 'lastName', 'form'];
-const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
-
 const normalizeHeader = (header) => String(header || '')
   .trim()
   .toLowerCase()
@@ -735,45 +753,30 @@ const mapStudentHeader = (header) => {
     admnumber: 'admissionNumber',
     adm: 'admissionNumber',
     studentid: 'admissionNumber',
-    firstname: 'firstName',
-    fname: 'firstName',
-    middlename: 'middleName',
-    mname: 'middleName',
-    lastname: 'lastName',
-    surname: 'lastName',
-    lname: 'lastName',
+    fullname: 'fullName',
+    fullnames: 'fullName',
+    name: 'fullName',
+    studentname: 'fullName',
+    nameofstudent: 'fullName',
+    studentfullname: 'fullName',
     form: 'form',
     class: 'form',
     grade: 'form',
-    status: 'status',
+    gradeclass: 'form',
+    classgrade: 'form',
     stream: 'stream',
-    dateofbirth: 'dateOfBirth',
-    dob: 'dateOfBirth',
-    birthdate: 'dateOfBirth',
-    gender: 'gender',
-    sex: 'gender',
-    parentphone: 'parentPhone',
-    guardianphone: 'parentPhone',
-    phone: 'parentPhone',
-    phonenumber: 'parentPhone',
-    email: 'email',
-    address: 'address',
-    uploadbatchid: 'uploadBatchId'
+    parentemail: 'parentEmail',
+    guardianemail: 'parentEmail',
+    parentguardianemail: 'parentEmail',
+    email: 'parentEmail'
   };
 
   if (exactMap[normalized]) return exactMap[normalized];
   if (normalized.includes('admission')) return 'admissionNumber';
-  if (normalized.includes('first')) return 'firstName';
-  if (normalized.includes('middle')) return 'middleName';
-  if (normalized.includes('last') || normalized.includes('surname')) return 'lastName';
+  if (normalized.includes('name')) return 'fullName';
   if (normalized.includes('form') || normalized.includes('class') || normalized.includes('grade')) return 'form';
   if (normalized.includes('stream')) return 'stream';
-  if (normalized.includes('birth') || normalized === 'dob') return 'dateOfBirth';
-  if (normalized.includes('gender') || normalized.includes('sex')) return 'gender';
-  if (normalized.includes('phone')) return 'parentPhone';
-  if (normalized.includes('email')) return 'email';
-  if (normalized.includes('address')) return 'address';
-  if (normalized.includes('status')) return 'status';
+  if (normalized.includes('email')) return 'parentEmail';
 
   return normalized;
 };
@@ -787,22 +790,24 @@ const normalizeAdmissionNumber = (value) => cleanText(value).toUpperCase();
 const normalizeFormValue = (value) => {
   const formValue = cleanText(value).toLowerCase();
   const formMap = {
-    form1: 'Form 1',
-    'form 1': 'Form 1',
-    one: 'Form 1',
-    '1': 'Form 1',
-    form2: 'Form 2',
-    'form 2': 'Form 2',
-    two: 'Form 2',
-    '2': 'Form 2',
-    form3: 'Form 3',
-    'form 3': 'Form 3',
-    three: 'Form 3',
-    '3': 'Form 3',
-    form4: 'Form 4',
-    'form 4': 'Form 4',
-    four: 'Form 4',
-    '4': 'Form 4'
+    grade10: 'Grade 10',
+    'grade 10': 'Grade 10',
+    class10: 'Grade 10',
+    'class 10': 'Grade 10',
+    g10: 'Grade 10',
+    '10': 'Grade 10',
+    grade11: 'Grade 11',
+    'grade 11': 'Grade 11',
+    class11: 'Grade 11',
+    'class 11': 'Grade 11',
+    g11: 'Grade 11',
+    '11': 'Grade 11',
+    grade12: 'Grade 12',
+    'grade 12': 'Grade 12',
+    class12: 'Grade 12',
+    'class 12': 'Grade 12',
+    g12: 'Grade 12',
+    '12': 'Grade 12'
   };
 
   return formMap[formValue] || cleanText(value);
@@ -820,35 +825,35 @@ const normalizeStudentRow = (row, index) => {
     normalizedRow[mapStudentHeader(key)] = value;
   });
 
+  const fullName = cleanText(normalizedRow.fullName);
+  const names = splitFullName(fullName);
+
   return {
     __rowNumber: normalizedRow.__rowNumber || index + 2,
     admissionNumber: normalizeAdmissionNumber(normalizedRow.admissionNumber),
-    firstName: cleanText(normalizedRow.firstName),
-    middleName: cleanText(normalizedRow.middleName) || null,
-    lastName: cleanText(normalizedRow.lastName),
+    fullName,
+    firstName: names.firstName,
+    middleName: names.middleName,
+    lastName: names.lastName,
     form: normalizeFormValue(normalizedRow.form),
-    status: normalizeStatus(normalizedRow.status),
+    status: 'active',
     stream: cleanText(normalizedRow.stream) || null,
-    dateOfBirth: normalizedRow.dateOfBirth ? parseDate(normalizedRow.dateOfBirth) : null,
-    gender: cleanText(normalizedRow.gender) || null,
-    parentPhone: cleanText(normalizedRow.parentPhone) || null,
-    email: cleanText(normalizedRow.email) || null,
-    address: cleanText(normalizedRow.address) || null
+    dateOfBirth: null,
+    gender: null,
+    parentPhone: null,
+    email: cleanText(normalizedRow.parentEmail) || null,
+    parentEmail: cleanText(normalizedRow.parentEmail) || null,
+    address: null
   };
 };
 
 const rowHasAnyStudentData = (student) => (
   [
     student.admissionNumber,
-    student.firstName,
-    student.middleName,
-    student.lastName,
+    student.fullName,
     student.form,
     student.stream,
-    student.gender,
-    student.parentPhone,
-    student.email,
-    student.address
+    student.parentEmail
   ].some((value) => cleanText(value))
 );
 
@@ -857,7 +862,7 @@ const ensureRequiredHeaders = (headers) => {
   const missing = REQUIRED_STUDENT_FIELDS.filter((field) => !mappedHeaders.includes(field));
 
   if (missing.length > 0) {
-    throw new Error(`Missing required columns: ${missing.join(', ')}. Required columns are admissionNumber, firstName, lastName, and form.`);
+    throw new Error(`Missing required columns: ${missing.join(', ')}. Required columns are ${REQUIRED_STUDENT_FIELD_LABELS}.`);
   }
 };
 
@@ -957,91 +962,38 @@ const validateStudent = (student, index) => {
     errors.push(`Row ${rowNumber}: Admission number must be 2-50 letters/numbers (got: ${student.admissionNumber})`);
   }
   
-  // Names
-  if (!student.firstName) {
-    errors.push(`Row ${rowNumber}: First name is required`);
-  } else if (student.firstName.length > 100) {
-    errors.push(`Row ${rowNumber}: First name too long (max 100 chars)`);
+  // Full name
+  if (!student.fullName) {
+    errors.push(`Row ${rowNumber}: Student full name is required`);
+  } else if (student.fullName.length > 255) {
+    errors.push(`Row ${rowNumber}: Student full name too long (max 255 chars)`);
   }
   
-  if (!student.lastName) {
-    errors.push(`Row ${rowNumber}: Last name is required`);
-  } else if (student.lastName.length > 100) {
-    errors.push(`Row ${rowNumber}: Last name too long (max 100 chars)`);
-  }
-  
-  // Form validation
+  // Grade/Class validation
   const formValue = student.form.trim();
-  const validForms = ['Form 1', 'Form 2', 'Form 3', 'Form 4'];
   
-  if (!validForms.includes(formValue)) {
-    errors.push(`Row ${rowNumber}: Form must be one of: ${validForms.join(', ')} (got: ${formValue || 'empty'})`);
+  if (!GRADE_LEVELS.includes(formValue)) {
+    errors.push(`Row ${rowNumber}: Grade/Class must be one of: ${GRADE_LEVELS.join(', ')} (got: ${formValue || 'empty'})`);
   }
   
   // Update student with normalized form
   student.form = formValue;
   
-  // Date of birth
-  if (student.dateOfBirth) {
-    const dob = new Date(student.dateOfBirth);
-    if (isNaN(dob.getTime())) {
-      errors.push(`Row ${rowNumber}: Invalid date of birth format`);
-    } else {
-      const year = dob.getFullYear();
-      const currentYear = new Date().getFullYear();
-      
-      if (dob > new Date()) {
-        errors.push(`Row ${rowNumber}: Date of birth cannot be in the future`);
-      }
-      
-      if (year < 1900) {
-        errors.push(`Row ${rowNumber}: Date of birth year must be after 1900`);
-      }
-      
-      const age = currentYear - year;
-      if (age < 4) {
-        errors.push(`Row ${rowNumber}: Student appears to be too young (${age} years old)`);
-      }
-      
-      if (age > 30) {
-        errors.push(`Row ${rowNumber}: Student appears to be too old (${age} years old)`);
-      }
-    }
-  }
-  
-  // Optional fields
-  if (student.middleName && student.middleName.length > 100) {
-    errors.push(`Row ${rowNumber}: Middle name too long (max 100 chars)`);
-  }
-  
-  if (student.stream && student.stream.length > 50) {
+  if (!student.stream) {
+    errors.push(`Row ${rowNumber}: Stream is required`);
+  } else if (student.stream.length > 50) {
     errors.push(`Row ${rowNumber}: Stream too long (max 50 chars)`);
   }
   
-  if (student.gender && student.gender.length > 20) {
-    errors.push(`Row ${rowNumber}: Gender too long (max 20 chars)`);
-  }
-  
-  if (student.parentPhone) {
-    const phoneRegex = /^[+]?[0-9\s\-()]{10,20}$/;
-    if (!phoneRegex.test(student.parentPhone)) {
-      errors.push(`Row ${rowNumber}: Parent phone number is invalid`);
-    } else if (student.parentPhone.length > 20) {
-      errors.push(`Row ${rowNumber}: Parent phone too long (max 20 chars)`);
-    }
-  }
-  
-  if (student.email) {
+  if (!student.parentEmail) {
+    errors.push(`Row ${rowNumber}: Parent email is required`);
+  } else {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(student.email)) {
-      errors.push(`Row ${rowNumber}: Email is invalid`);
-    } else if (student.email.length > 100) {
-      errors.push(`Row ${rowNumber}: Email too long (max 100 chars)`);
+    if (!emailRegex.test(student.parentEmail)) {
+      errors.push(`Row ${rowNumber}: Parent email is invalid`);
+    } else if (student.parentEmail.length > 100) {
+      errors.push(`Row ${rowNumber}: Parent email too long (max 100 chars)`);
     }
-  }
-  
-  if (student.address && student.address.length > 255) {
-    errors.push(`Row ${rowNumber}: Address too long (max 255 chars)`);
   }
   
   return { isValid: errors.length === 0, errors };
@@ -1056,37 +1008,51 @@ class UploadValidationError extends Error {
   }
 }
 
-const toStudentCreateData = (student, uploadBatchId, formOverride = null) => ({
-  admissionNumber: student.admissionNumber,
-  firstName: student.firstName,
-  middleName: student.middleName || null,
-  lastName: student.lastName,
-  form: formOverride || student.form,
-  stream: student.stream || null,
-  dateOfBirth: student.dateOfBirth ? new Date(student.dateOfBirth) : null,
-  gender: student.gender || null,
-  parentPhone: student.parentPhone || null,
-  email: student.email || null,
-  address: student.address || null,
-  uploadBatchId,
-  status: student.status || 'active'
-});
+const toStudentCreateData = (student, uploadBatchId, formOverride = null) => {
+  const fullName = cleanText(student.fullName);
+  const names = splitFullName(fullName);
 
-const toStudentUpdateData = (student, uploadBatchId, formOverride = null) => ({
-  firstName: student.firstName,
-  middleName: student.middleName || null,
-  lastName: student.lastName,
-  form: formOverride || student.form,
-  stream: student.stream || null,
-  dateOfBirth: student.dateOfBirth ? new Date(student.dateOfBirth) : null,
-  gender: student.gender || null,
-  parentPhone: student.parentPhone || null,
-  email: student.email || null,
-  address: student.address || null,
-  uploadBatchId,
-  status: student.status || 'active',
-  updatedAt: new Date()
-});
+  return {
+    admissionNumber: student.admissionNumber,
+    fullName,
+    firstName: names.firstName,
+    middleName: names.middleName,
+    lastName: names.lastName,
+    form: formOverride || student.form,
+    stream: student.stream || null,
+    dateOfBirth: null,
+    gender: null,
+    parentPhone: null,
+    email: student.parentEmail || null,
+    parentEmail: student.parentEmail || null,
+    address: null,
+    uploadBatchId,
+    status: student.status || 'active'
+  };
+};
+
+const toStudentUpdateData = (student, uploadBatchId, formOverride = null) => {
+  const fullName = cleanText(student.fullName);
+  const names = splitFullName(fullName);
+
+  return {
+    fullName,
+    firstName: names.firstName,
+    middleName: names.middleName,
+    lastName: names.lastName,
+    form: formOverride || student.form,
+    stream: student.stream || null,
+    dateOfBirth: null,
+    gender: null,
+    parentPhone: null,
+    email: student.parentEmail || null,
+    parentEmail: student.parentEmail || null,
+    address: null,
+    uploadBatchId,
+    status: student.status || 'active',
+    updatedAt: new Date()
+  };
+};
 
 const chunkArray = (items, size = 500) => {
   const chunks = [];
@@ -1236,10 +1202,11 @@ const syncPortalAccountSnapshots = async (tx, students) => {
         firstName: student.firstName,
         middleName: student.middleName || null,
         lastName: student.lastName,
-        fullName: [student.firstName, student.middleName, student.lastName].filter(Boolean).join(' '),
+        fullName: student.fullName || [student.firstName, student.middleName, student.lastName].filter(Boolean).join(' '),
         form: student.form,
         stream: student.stream || null,
         email: student.email || null,
+        parentEmail: student.parentEmail || student.email || null,
         parentPhone: student.parentPhone || null,
         status: 'active', // Always set to active when re-uploaded
         // CRITICAL: passwordHash and passwordSetAt are NOT updated here
@@ -1270,10 +1237,11 @@ const syncPortalAccountAfterStudentMutation = async (tx, previousStudent, update
           firstName: updatedStudent.firstName,
           middleName: updatedStudent.middleName || null,
           lastName: updatedStudent.lastName,
-          fullName: [updatedStudent.firstName, updatedStudent.middleName, updatedStudent.lastName].filter(Boolean).join(' '),
+          fullName: updatedStudent.fullName || [updatedStudent.firstName, updatedStudent.middleName, updatedStudent.lastName].filter(Boolean).join(' '),
           form: updatedStudent.form,
           stream: updatedStudent.stream || null,
           email: updatedStudent.email || null,
+          parentEmail: updatedStudent.parentEmail || updatedStudent.email || null,
           parentPhone: updatedStudent.parentPhone || null,
           status: 'active',
         }
@@ -1498,7 +1466,6 @@ export async function GET(request) {
     const action = url.searchParams.get('action');
     const form = url.searchParams.get('form') || '';
     const stream = url.searchParams.get('stream') || '';
-    const gender = url.searchParams.get('gender') || '';
     const status = url.searchParams.get('status') || 'active';
     const search = url.searchParams.get('search') || '';
     const sortBy = url.searchParams.get('sortBy') || 'createdAt';
@@ -1508,7 +1475,7 @@ export async function GET(request) {
     const includeStats = url.searchParams.get('includeStats') !== 'false';
 
     // Build filters
-    const filters = { form, stream, gender, status, search };
+    const filters = { form, stream, status, search };
     const where = buildWhereClause(filters);
 
 if (action === 'uploads') {
@@ -1578,16 +1545,14 @@ if (action === 'uploads') {
         select: {
           id: true,
           admissionNumber: true,
+          fullName: true,
           firstName: true,
           middleName: true,
           lastName: true,
           form: true,
           stream: true,
-          dateOfBirth: true,
-          gender: true,
-          parentPhone: true,
           email: true,
-          address: true,
+          parentEmail: true,
           status: true,
           createdAt: true,
           updatedAt: true,
@@ -1721,10 +1686,10 @@ export async function POST(request) {
     const fileName = cleanText(file.name).toLowerCase();
     const fileExtension = fileName.split('.').pop();
 
-    if (!['csv', 'xlsx', 'xls'].includes(fileExtension)) {
+    if (!['csv', 'xlsx', 'xls', 'xlsm'].includes(fileExtension)) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid file type. Upload a CSV, XLSX, or XLS student file.',
+        error: 'Invalid file type. Upload a CSV or Excel student file.',
         authenticated: true
       }, { status: 400 });
     }
@@ -1837,7 +1802,7 @@ export async function POST(request) {
       errors: error.details?.slice?.(0, 100) || undefined,
       details: error instanceof UploadValidationError ? undefined : error.message,
       authenticated: true,
-      suggestion: 'Use the current student spreadsheet columns: admissionNumber, firstName, middleName, lastName, form, status, stream, dateOfBirth, gender, parentPhone, email, address.'
+      suggestion: `Use only these student spreadsheet columns: ${REQUIRED_STUDENT_FIELD_LABELS}.`
     }, { status });
   }
 }
@@ -1890,25 +1855,47 @@ export async function PUT(request) {
         }
       }
 
-      // Parse date if provided
-      if (updateData.dateOfBirth) {
-        try {
-          updateData.dateOfBirth = new Date(updateData.dateOfBirth);
-          if (isNaN(updateData.dateOfBirth.getTime())) {
-            throw new Error('Invalid date format');
-          }
-        } catch (dateError) {
-          throw new Error('Invalid date format');
-        }
+      const fullName = cleanText(updateData.fullName || [updateData.firstName, updateData.middleName, updateData.lastName].filter(Boolean).join(' '));
+      if (!fullName) {
+        throw new Error('Student full name is required');
       }
+
+      const grade = normalizeFormValue(updateData.form);
+      if (!GRADE_LEVELS.includes(grade)) {
+        throw new Error(`Grade/Class must be one of: ${GRADE_LEVELS.join(', ')}`);
+      }
+
+      const stream = cleanText(updateData.stream);
+      if (!stream) {
+        throw new Error('Stream is required');
+      }
+
+      const parentEmail = cleanText(updateData.parentEmail || updateData.email);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail)) {
+        throw new Error('Parent email is required and must be valid');
+      }
+
+      const names = splitFullName(fullName);
 
       // Update student with audit info
       const updatedStudent = await tx.databaseStudent.update({
         where: { id },
         data: {
-          ...updateData,
-          updatedAt: new Date(),
-          
+          admissionNumber: updateData.admissionNumber || currentStudent.admissionNumber,
+          fullName,
+          firstName: names.firstName,
+          middleName: names.middleName,
+          lastName: names.lastName,
+          form: grade,
+          stream,
+          parentEmail,
+          email: parentEmail,
+          status: updateData.status || 'active',
+          dateOfBirth: null,
+          gender: null,
+          parentPhone: null,
+          address: null,
+          updatedAt: new Date()
         }
       });
 
@@ -1920,10 +1907,7 @@ export async function PUT(request) {
         await tx.studentStats.update({
           where: { id: 'global_stats' },
           data: {
-            ...(currentStudent.form === 'Form 1' && { form1: { decrement: 1 } }),
-            ...(currentStudent.form === 'Form 2' && { form2: { decrement: 1 } }),
-            ...(currentStudent.form === 'Form 3' && { form3: { decrement: 1 } }),
-            ...(currentStudent.form === 'Form 4' && { form4: { decrement: 1 } })
+            ...(GRADE_STAT_KEYS[currentStudent.form] && { [GRADE_STAT_KEYS[currentStudent.form]]: { decrement: 1 } })
           }
         });
 
@@ -1931,10 +1915,7 @@ export async function PUT(request) {
         await tx.studentStats.update({
           where: { id: 'global_stats' },
           data: {
-            ...(updateData.form === 'Form 1' && { form1: { increment: 1 } }),
-            ...(updateData.form === 'Form 2' && { form2: { increment: 1 } }),
-            ...(updateData.form === 'Form 3' && { form3: { increment: 1 } }),
-            ...(updateData.form === 'Form 4' && { form4: { increment: 1 } })
+            ...(GRADE_STAT_KEYS[grade] && { [GRADE_STAT_KEYS[grade]]: { increment: 1 } })
           }
         });
       }
@@ -2041,10 +2022,9 @@ export async function DELETE(request) {
             where: { id: 'global_stats' },
             data: {
               totalStudents: { decrement: batchStudents.length },
-              form1: { decrement: formCounts['Form 1'] || 0 },
-              form2: { decrement: formCounts['Form 2'] || 0 },
-              form3: { decrement: formCounts['Form 3'] || 0 },
-              form4: { decrement: formCounts['Form 4'] || 0 }
+              grade10: { decrement: formCounts['Grade 10'] || 0 },
+              grade11: { decrement: formCounts['Grade 11'] || 0 },
+              grade12: { decrement: formCounts['Grade 12'] || 0 }
             }
           });
         }
@@ -2098,10 +2078,7 @@ export async function DELETE(request) {
             where: { id: 'global_stats' },
             data: {
               totalStudents: { decrement: 1 },
-              ...(student.form === 'Form 1' && { form1: { decrement: 1 } }),
-              ...(student.form === 'Form 2' && { form2: { decrement: 1 } }),
-              ...(student.form === 'Form 3' && { form3: { decrement: 1 } }),
-              ...(student.form === 'Form 4' && { form4: { decrement: 1 } })
+              ...(GRADE_STAT_KEYS[student.form] && { [GRADE_STAT_KEYS[student.form]]: { decrement: 1 } })
             }
           });
         } else {
@@ -2218,10 +2195,9 @@ export async function PATCH(request) {
           where: { id: 'global_stats' },
           data: {
             totalStudents: { increment: updated.count },
-            form1: { increment: formCounts['Form 1'] || 0 },
-            form2: { increment: formCounts['Form 2'] || 0 },
-            form3: { increment: formCounts['Form 3'] || 0 },
-            form4: { increment: formCounts['Form 4'] || 0 }
+            grade10: { increment: formCounts['Grade 10'] || 0 },
+            grade11: { increment: formCounts['Grade 11'] || 0 },
+            grade12: { increment: formCounts['Grade 12'] || 0 }
           }
         });
 
@@ -2259,10 +2235,7 @@ export async function PATCH(request) {
           where: { id: 'global_stats' },
           data: {
             totalStudents: { increment: updated.count },
-            ...(form === 'Form 1' && { form1: { increment: updated.count } }),
-            ...(form === 'Form 2' && { form2: { increment: updated.count } }),
-            ...(form === 'Form 3' && { form3: { increment: updated.count } }),
-            ...(form === 'Form 4' && { form4: { increment: updated.count } })
+            ...(GRADE_STAT_KEYS[form] && { [GRADE_STAT_KEYS[form]]: { increment: updated.count } })
           }
         });
 

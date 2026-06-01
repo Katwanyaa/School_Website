@@ -20,7 +20,6 @@ import {
   FiDollarSign,
   FiFolder, 
   FiArchive,
-  FiMessageSquare,
   FiGrid
 } from 'react-icons/fi';
 import {FiAward } from "react-icons/fi"
@@ -247,13 +246,6 @@ const handleLogout = () => {
       label: 'Careers',
       icon: FiCalendar,
       badge: 'lime'
-    },
-
-   { 
-      id: 'sms',
-      label: 'SMS Management',
-      icon: FiMessageSquare,
-      badge: 'orange'
     },
     { 
       id: 'resources', 

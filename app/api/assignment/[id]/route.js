@@ -1,6 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../libs/prisma";
 import cloudinary from "../../../../libs/cloudinary";
+import {
+  buildDeliveryCriteriaFromFormData,
+  prepareAssignmentDelivery,
+  SCHOOL_COMMUNICATION_NUMBER
+} from "../../../../libs/delivery";
+
+const decodeJwtPayload = (token) => {
+  const payload = token.split('.')[1];
+  const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+  const paddedPayload = normalizedPayload.padEnd(
+    normalizedPayload.length + ((4 - normalizedPayload.length % 4) % 4),
+    '='
+  );
+
+  return JSON.parse(Buffer.from(paddedPayload, 'base64').toString('utf-8'));
+};
 
 // ==================== TOKEN VERIFICATION ====================
 class DeviceTokenManager {
@@ -33,7 +49,7 @@ class DeviceTokenManager {
 
       let adminPayload;
       try {
-        adminPayload = JSON.parse(atob(adminParts[1]));
+        adminPayload = decodeJwtPayload(adminToken);
         
         const currentTime = Date.now() / 1000;
         if (adminPayload.exp && adminPayload.exp < currentTime) {
@@ -41,7 +57,7 @@ class DeviceTokenManager {
         }
         
         const userRole = adminPayload.role || adminPayload.userRole || '';
-        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'administrator', 'PRINCIPAL', 'TEACHER', 'teacher'];
+        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'ADMINISTRATOR', 'PRINCIPAL', 'TEACHER'];
         
         if (!validRoles.includes(userRole.toUpperCase())) {
           return { 
@@ -432,7 +448,11 @@ const cleanAssignmentResponse = (assignment) => {
   return {
     ...assignment,
     assignmentFileAttachments,
-    attachmentAttachments
+    attachmentAttachments,
+    senderReference: assignment.senderReference || SCHOOL_COMMUNICATION_NUMBER,
+    deliveryStatus: assignment.deliveryStatus || assignment.deliverySummary?.status || 'prepared',
+    deliverySummary: assignment.deliverySummary || null,
+    targetCriteria: assignment.targetCriteria || null
   };
 };
 
@@ -525,6 +545,7 @@ export async function PUT(request, { params }) {
     const teacherRemarks = formData.get("teacherRemarks")?.toString().trim() || existingAssignment.teacherRemarks;
     const learningObjectives = formData.get("learningObjectives")?.toString();
     const dateAssigned = formData.get("dateAssigned")?.toString() || existingAssignment.dateAssigned;
+    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className);
     
     console.log('📝 Fields extracted:', { title, subject, className, teacher, dueDate });
 
@@ -644,27 +665,43 @@ export async function PUT(request, { params }) {
       attachments: updatedAttachments.length
     });
     
-    const updatedAssignment = await prisma.assignment.update({
-      where: { id: assignmentId },
-      data: { 
-        title,
-        subject,
-        className,
-        teacher,
-        dueDate: dueDate ? new Date(dueDate) : existingAssignment.dueDate,
-        dateAssigned: dateAssigned ? new Date(dateAssigned) : existingAssignment.dateAssigned, // FIX: Added dateAssigned
-        status,
-        description,
-        instructions,
-        priority,
-        estimatedTime,
-        additionalWork,
-        teacherRemarks,
-        assignmentFiles: updatedAssignmentFiles,
-        attachments: updatedAttachments,
-        learningObjectives: learningObjectivesArray,
-        updatedAt: new Date()
-      },
+    const updatedAssignment = await prisma.$transaction(async (tx) => {
+      const savedAssignment = await tx.assignment.update({
+        where: { id: assignmentId },
+        data: { 
+          title,
+          subject,
+          className,
+          teacher,
+          dueDate: dueDate ? new Date(dueDate) : existingAssignment.dueDate,
+          dateAssigned: dateAssigned ? new Date(dateAssigned) : existingAssignment.dateAssigned, // FIX: Added dateAssigned
+          status,
+          description,
+          instructions,
+          priority,
+          estimatedTime,
+          additionalWork,
+          teacherRemarks,
+          assignmentFiles: updatedAssignmentFiles,
+          attachments: updatedAttachments,
+          learningObjectives: learningObjectivesArray,
+          targetCriteria: deliveryCriteria,
+          senderReference: deliveryCriteria.senderReference,
+          deliveryStatus: 'preparing',
+          updatedAt: new Date()
+        },
+      });
+
+      const deliverySummary = await prepareAssignmentDelivery(tx, savedAssignment.id, deliveryCriteria);
+
+      return tx.assignment.update({
+        where: { id: savedAssignment.id },
+        data: {
+          deliverySummary,
+          deliveryStatus: deliverySummary.status,
+          updatedAt: new Date()
+        }
+      });
     });
 
     console.log('✅ Update successful:', updatedAssignment.id);

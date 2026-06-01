@@ -1,6 +1,49 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../libs/prisma';
 
+const GRADE_LEVELS = ['Grade 10', 'Grade 11', 'Grade 12'];
+const GRADE_STAT_KEYS = {
+  'Grade 10': 'grade10',
+  'Grade 11': 'grade11',
+  'Grade 12': 'grade12'
+};
+
+const cleanText = (value) => String(value ?? '').replace(/\u00a0/g, ' ').trim();
+
+const splitFullName = (fullName = '') => {
+  const parts = cleanText(fullName).replace(/\s+/g, ' ').split(' ').filter(Boolean);
+  return {
+    firstName: parts[0] || '',
+    middleName: parts.length > 2 ? parts.slice(1, -1).join(' ') : null,
+    lastName: parts.length > 1 ? parts[parts.length - 1] : parts[0] || ''
+  };
+};
+
+const normalizeGrade = (value) => {
+  const normalized = cleanText(value).toLowerCase();
+  const map = {
+    grade10: 'Grade 10',
+    'grade 10': 'Grade 10',
+    class10: 'Grade 10',
+    'class 10': 'Grade 10',
+    g10: 'Grade 10',
+    '10': 'Grade 10',
+    grade11: 'Grade 11',
+    'grade 11': 'Grade 11',
+    class11: 'Grade 11',
+    'class 11': 'Grade 11',
+    g11: 'Grade 11',
+    '11': 'Grade 11',
+    grade12: 'Grade 12',
+    'grade 12': 'Grade 12',
+    class12: 'Grade 12',
+    'class 12': 'Grade 12',
+    g12: 'Grade 12',
+    '12': 'Grade 12'
+  };
+  return map[normalized] || cleanText(value);
+};
+
 // ==================== AUTHENTICATION UTILITIES ====================
 
 // Device Token Manager
@@ -143,7 +186,7 @@ const authenticateRequest = (req) => {
 };
 
 const fullNameFromStudent = (student) => (
-  [student?.firstName, student?.middleName, student?.lastName]
+  [student?.fullName || [student?.firstName, student?.middleName, student?.lastName].filter(Boolean).join(' ')]
     .filter(Boolean)
     .join(' ')
     .replace(/\s+/g, ' ')
@@ -162,6 +205,7 @@ const syncPortalAccountAfterStudentUpdate = async (previousStudent, updatedStude
     form: updatedStudent.form,
     stream: updatedStudent.stream || null,
     email: updatedStudent.email || null,
+    parentEmail: updatedStudent.parentEmail || updatedStudent.email || null,
     parentPhone: updatedStudent.parentPhone || null,
     status: updatedStudent.status || 'active'
   };
@@ -241,28 +285,41 @@ export async function PUT(request, { params }) {
     const data = await request.json();
 
     // Validate required fields
-    if (!data.firstName || !data.lastName || !data.form) {
+    const fullName = cleanText(data.fullName || [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' '));
+    const grade = normalizeGrade(data.form);
+    const stream = cleanText(data.stream);
+    const parentEmail = cleanText(data.parentEmail || data.email);
+
+    if (!fullName || !grade || !stream || !parentEmail) {
       return NextResponse.json(
         { 
           success: false, 
-          message: 'First name, last name, and form are required',
+          message: 'Full name, grade/class, stream, and parent email are required',
           authenticated: true 
         },
         { status: 400 }
       );
     }
 
-    const validForms = ['Form 1', 'Form 2', 'Form 3', 'Form 4'];
-    if (!validForms.includes(data.form)) {
+    if (!GRADE_LEVELS.includes(grade)) {
       return NextResponse.json(
         { 
           success: false, 
-          message: `Form must be one of: ${validForms.join(', ')}`,
+          message: `Grade/Class must be one of: ${GRADE_LEVELS.join(', ')}`,
           authenticated: true 
         },
         { status: 400 }
       );
     }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail)) {
+      return NextResponse.json(
+        { success: false, message: 'Parent email must be valid', authenticated: true },
+        { status: 400 }
+      );
+    }
+
+    const names = splitFullName(fullName);
 
     // Check if admission number is being changed and if it already exists
     if (data.admissionNumber) {
@@ -294,16 +351,18 @@ export async function PUT(request, { params }) {
       where: { id },
       data: {
         admissionNumber: data.admissionNumber,
-        firstName: data.firstName,
-        middleName: data.middleName || null,
-        lastName: data.lastName,
-        form: data.form,
-        stream: data.stream || null,
-        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-        gender: data.gender || null,
-        parentPhone: data.parentPhone || null,
-        email: data.email || null,
-        address: data.address || null,
+        fullName,
+        firstName: names.firstName,
+        middleName: names.middleName,
+        lastName: names.lastName,
+        form: grade,
+        stream,
+        dateOfBirth: null,
+        gender: null,
+        parentPhone: null,
+        email: parentEmail,
+        parentEmail,
+        address: null,
         status: data.status || 'active',
         updatedAt: new Date(),
         lastUpdatedBy: auth.user.id,
@@ -315,26 +374,20 @@ export async function PUT(request, { params }) {
     await syncPortalAccountAfterStudentUpdate(oldStudent, updatedStudent);
 
     // Update stats if form changed
-    if (oldStudent && oldStudent.form !== data.form) {
+    if (oldStudent && oldStudent.form !== grade) {
       // Decrement old form count
       await prisma.studentStats.update({
-        where: { id: 'global_stats' },
-        data: {
-          ...(oldStudent.form === 'Form 1' && { form1: { decrement: 1 } }),
-          ...(oldStudent.form === 'Form 2' && { form2: { decrement: 1 } }),
-          ...(oldStudent.form === 'Form 3' && { form3: { decrement: 1 } }),
-          ...(oldStudent.form === 'Form 4' && { form4: { decrement: 1 } })
+          where: { id: 'global_stats' },
+          data: {
+          ...(GRADE_STAT_KEYS[oldStudent.form] && { [GRADE_STAT_KEYS[oldStudent.form]]: { decrement: 1 } })
         }
       });
 
       // Increment new form count
       await prisma.studentStats.update({
-        where: { id: 'global_stats' },
-        data: {
-          ...(data.form === 'Form 1' && { form1: { increment: 1 } }),
-          ...(data.form === 'Form 2' && { form2: { increment: 1 } }),
-          ...(data.form === 'Form 3' && { form3: { increment: 1 } }),
-          ...(data.form === 'Form 4' && { form4: { increment: 1 } })
+          where: { id: 'global_stats' },
+          data: {
+          ...(GRADE_STAT_KEYS[grade] && { [GRADE_STAT_KEYS[grade]]: { increment: 1 } })
         }
       });
     }
@@ -397,10 +450,7 @@ export async function DELETE(request, { params }) {
       where: { id: 'global_stats' },
       data: {
         totalStudents: { decrement: 1 },
-        ...(deletedStudent.form === 'Form 1' && { form1: { decrement: 1 } }),
-        ...(deletedStudent.form === 'Form 2' && { form2: { decrement: 1 } }),
-        ...(deletedStudent.form === 'Form 3' && { form3: { decrement: 1 } }),
-        ...(deletedStudent.form === 'Form 4' && { form4: { decrement: 1 } })
+        ...(GRADE_STAT_KEYS[deletedStudent.form] && { [GRADE_STAT_KEYS[deletedStudent.form]]: { decrement: 1 } })
       }
     });
 

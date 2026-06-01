@@ -15,7 +15,7 @@ import Header from "../../components/apply/page.jsx";
 // Kenya administrative data
 import kenyaData from '../../../public/data.json';
 
-const MatunguluGirlAdmission = () => {
+const KatwanyaAdmission = () => {
   const [formData, setFormData] = useState({
     // Personal Information
     firstName: '',
@@ -1715,4 +1715,4 @@ kjseaGrade: '',         // Changed from meanGrade
   );
 };
 
-export default MatunguluGirlAdmission;
+export default KatwanyaAdmission;

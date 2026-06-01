@@ -95,7 +95,7 @@ model Subscriber {
 }
 
 model Assignment {
-  id                 Int      @id @default(autoincrement())
+  id                 Int                           @id @default(autoincrement())
   title              String
   subject            String
   className          String
@@ -103,36 +103,46 @@ model Assignment {
   dueDate            DateTime
   dateAssigned       DateTime
   status             String
-  description        String   @db.Text
-  instructions       String?  @db.Text
+  description        String                        @db.Text
+  instructions       String?                       @db.Text
   assignmentFiles    Json
   attachments        Json
   priority           String
   estimatedTime      String?
-  additionalWork     String?  @db.Text
-  teacherRemarks     String?  @db.Text
-  feedback           String?  @db.Text
+  additionalWork     String?                       @db.Text
+  teacherRemarks     String?                       @db.Text
+  feedback           String?                       @db.Text
   learningObjectives Json
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  targetCriteria     Json?
+  senderReference    String                        @default("0793472960") @db.VarChar(20)
+  deliveryStatus     String                        @default("prepared") @db.VarChar(50)
+  deliverySummary    Json?
+  deliveryRecipients AssignmentDeliveryRecipient[]
+  createdAt          DateTime                      @default(now())
+  updatedAt          DateTime                      @updatedAt
 }
 
 model Resource {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(400)
-  subject     String   @db.VarChar(100)
-  teacher     String   @db.VarChar(100)
-  className   String   @db.VarChar(50)
-  description String?  @db.Text
-  category    String   @default("general") @db.VarChar(100)
-  type        String   @default("document") @db.VarChar(50)
-  files       Json // Array of file objects (like assignmentFiles)
-  accessLevel String   @default("student") @db.VarChar(20)
-  uploadedBy  String   @default("System") @db.VarChar(100)
-  downloads   Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                 Int                         @id @default(autoincrement())
+  title              String                      @db.VarChar(400)
+  subject            String                      @db.VarChar(100)
+  teacher            String                      @db.VarChar(100)
+  className          String                      @db.VarChar(50)
+  description        String?                     @db.Text
+  category           String                      @default("general") @db.VarChar(100)
+  type               String                      @default("document") @db.VarChar(50)
+  files              Json // Array of file objects (like assignmentFiles)
+  accessLevel        String                      @default("student") @db.VarChar(20)
+  uploadedBy         String                      @default("System") @db.VarChar(100)
+  downloads          Int                         @default(0)
+  isActive           Boolean                     @default(true)
+  targetCriteria     Json?
+  senderReference    String                      @default("0793472960") @db.VarChar(20)
+  deliveryStatus     String                      @default("prepared") @db.VarChar(50)
+  deliverySummary    Json?
+  deliveryRecipients ResourceDeliveryRecipient[]
+  createdAt          DateTime                    @default(now())
+  updatedAt          DateTime                    @updatedAt
 
   @@index([subject])
   @@index([className])
@@ -141,6 +151,58 @@ model Resource {
   @@index([accessLevel])
   @@index([createdAt])
   @@map("resources")
+}
+
+model AssignmentDeliveryRecipient {
+  id               String           @id @default(cuid())
+  assignmentId     Int
+  studentId        String?
+  admissionNumber  String           @db.VarChar(50)
+  studentName      String           @db.VarChar(255)
+  className        String?          @db.VarChar(100)
+  gradeLevel       String?          @db.VarChar(50)
+  uploadedCategory String?          @db.VarChar(100)
+  whatsappPhone    String           @db.VarChar(20)
+  senderReference  String           @default("0793472960") @db.VarChar(20)
+  channel          String           @default("whatsapp") @db.VarChar(30)
+  status           String           @default("prepared") @db.VarChar(50)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  assignment       Assignment       @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student          databaseStudent? @relation("StudentAssignmentDeliveries", fields: [studentId], references: [id], onDelete: SetNull)
+
+  @@unique([assignmentId, admissionNumber])
+  @@index([assignmentId])
+  @@index([studentId])
+  @@index([whatsappPhone])
+  @@index([status])
+  @@map("assignment_delivery_recipients")
+}
+
+model ResourceDeliveryRecipient {
+  id               String           @id @default(cuid())
+  resourceId       Int
+  studentId        String?
+  admissionNumber  String           @db.VarChar(50)
+  studentName      String           @db.VarChar(255)
+  className        String?          @db.VarChar(100)
+  gradeLevel       String?          @db.VarChar(50)
+  uploadedCategory String?          @db.VarChar(100)
+  whatsappPhone    String           @db.VarChar(20)
+  senderReference  String           @default("0793472960") @db.VarChar(20)
+  channel          String           @default("whatsapp") @db.VarChar(30)
+  status           String           @default("prepared") @db.VarChar(50)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  resource         Resource         @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  student          databaseStudent? @relation("StudentResourceDeliveries", fields: [studentId], references: [id], onDelete: SetNull)
+
+  @@unique([resourceId, admissionNumber])
+  @@index([resourceId])
+  @@index([studentId])
+  @@index([whatsappPhone])
+  @@index([status])
+  @@map("resource_delivery_recipients")
 }
 
 model CounselingEvent {
@@ -330,42 +392,6 @@ model EmailCampaign {
   attachments   String?   @db.Text
 
   @@map("email_campaigns")
-}
-
-model SmsCampaign {
-  id             String    @id @default(cuid())
-  title          String
-  message        String
-  recipients     String // Comma-separated phone numbers
-  recipientType  String?   @default("all")
-  status         String    @default("draft") // "draft" or "sent"
-  sentAt         DateTime?
-  sentCount      Int?      @default(0)
-  failedCount    Int?      @default(0)
-  lowCreditSaved Boolean   @default(false) // Add this line
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  // Relations
-  logs SmsLog[]
-
-  @@map("sms_campaigns")
-}
-
-model SmsLog {
-  id                String   @id @default(cuid())
-  campaignId        String
-  userId            String? // optional, if you track users
-  phoneNumber       String // <-- Make sure this is String, not Int
-  message           String   @db.Text
-  providerMessageId String? // Africa's Talking messageId
-  status            String // success, failed
-  errorMessage      String?
-  timestamp         DateTime @default(now())
-
-  campaign SmsCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-
-  @@map("sms_logs")
 }
 
 model GalleryImage {
@@ -690,6 +716,7 @@ model StudentBulkUpload {
 model databaseStudent {
   id              String       @id @default(cuid())
   admissionNumber String       @unique @db.VarChar(50)
+  fullName        String?      @db.VarChar(255)
   firstName       String       @db.VarChar(100)
   middleName      String?      @db.VarChar(100)
   lastName        String       @db.VarChar(100)
@@ -700,10 +727,13 @@ model databaseStudent {
   gender          String?      @db.VarChar(20)
   parentPhone     String?      @db.VarChar(20)
   email           String?      @db.VarChar(100)
+  parentEmail     String?      @db.VarChar(100)
   address         String?      @db.VarChar(255)
   uploadBatchId   String?
   createdAt       DateTime     @default(now())
   feeBalances     FeeBalance[] @relation("StudentFeeBalances")
+  assignmentDeliveries AssignmentDeliveryRecipient[] @relation("StudentAssignmentDeliveries")
+  resourceDeliveries   ResourceDeliveryRecipient[]   @relation("StudentResourceDeliveries")
 
   results StudentResult[]
 
@@ -719,10 +749,13 @@ model databaseStudent {
 model StudentStats {
   id            String   @id @default("global_stats")
   totalStudents Int      @default(0)
-  form1         Int      @default(0)
-  form2         Int      @default(0)
-  form3         Int      @default(0)
-  form4         Int      @default(0)
+  grade10       Int      @default(0)
+  grade11       Int      @default(0)
+  grade12       Int      @default(0)
+  form1         Int?     // Legacy column - kept for data preservation
+  form2         Int?     // Legacy column - kept for data preservation
+  form3         Int?     // Legacy column - kept for data preservation
+  form4         Int?     // Legacy column - kept for data preservation
   updatedAt     DateTime @updatedAt
 
   @@map("student_stats")
@@ -793,6 +826,7 @@ model StudentPortalAccount {
   form            String?   @db.VarChar(20)
   stream          String?   @db.VarChar(50)
   email           String?   @db.VarChar(100)
+  parentEmail     String?   @db.VarChar(100)
   parentPhone     String?   @db.VarChar(20)
   status          String    @default("active") @db.VarChar(50)
   passwordSetAt   DateTime  @default(now())

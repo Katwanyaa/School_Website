@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   FiPlus,
   FiSearch,
@@ -55,7 +55,9 @@ import {
   FiCopy,
   FiShare2,
   FiInfo, 
-  FiHeart
+  FiFilter,
+  FiHeart,
+  FiMessageCircle
 } from 'react-icons/fi';
 
 import {
@@ -75,7 +77,16 @@ import {
   IoChevronForwardOutline,
   IoCheckmarkCircleOutline
 } from 'react-icons/io5';
+
+// Import subject list and components
+import { ALL_SUBJECTS } from '../../constants/subjects';
+import SearchableSubjectDropdown from '../SearchableSubjectDropdown';
+import DeliveryProgressIndicator from '../DeliveryProgressIndicator';
+
 import { Modal, Box, CircularProgress } from '@mui/material';
+
+const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
+const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4', 'Form 1', 'Form 2'];
 
 // Modern Loading Spinner Component
 const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'indeterminate', value = 0 }) => {
@@ -99,7 +110,7 @@ const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'ind
               r="20"
             />
             <circle 
-              className="text-blue-600" 
+              className="text-teal-600" 
               stroke="currentColor" 
               strokeWidth={thickness} 
               strokeLinecap="round" 
@@ -114,7 +125,7 @@ const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'ind
           </>
         ) : (
           <circle 
-            className="text-blue-600" 
+            className="text-teal-600" 
             stroke="currentColor" 
             strokeWidth={thickness} 
             strokeLinecap="round" 
@@ -244,6 +255,8 @@ function Notification({
   type = 'success', 
   title, 
   message, 
+  actionLabel,
+  onAction,
   duration = 5000 
 }) {
   const [progress, setProgress] = useState(100);
@@ -297,12 +310,12 @@ function Notification({
         };
       case 'info':
         return {
-          bg: 'from-blue-50 to-cyan-50',
-          border: 'border-blue-200',
-          icon: 'text-blue-600',
-          iconBg: 'bg-blue-100',
-          progress: 'bg-blue-500',
-          title: 'text-blue-800'
+          bg: 'from-emerald-50 to-teal-50',
+          border: 'border-teal-200',
+          icon: 'text-teal-700',
+          iconBg: 'bg-teal-100',
+          progress: 'bg-teal-600',
+          title: 'text-teal-800'
         };
       default:
         return {
@@ -341,6 +354,16 @@ function Notification({
             <div className="flex-1">
               <h4 className={`font-bold ${styles.title} mb-1`}>{title}</h4>
               <p className="text-gray-700 text-sm">{message}</p>
+              {actionLabel && onAction && (
+                <button
+                  type="button"
+                  onClick={onAction}
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-bold text-slate-800 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50"
+                >
+                  <FiRotateCw size={14} />
+                  {actionLabel}
+                </button>
+              )}
             </div>
             <button 
               onClick={onClose}
@@ -363,10 +386,10 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'completed': return { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', icon: 'bg-green-500' };
-      case 'in progress': return { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', icon: 'bg-blue-500' };
+      case 'in progress': return { bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200', icon: 'bg-teal-600' };
       case 'pending': return { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200', icon: 'bg-yellow-500' };
       case 'overdue': return { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', icon: 'bg-red-500' };
-      case 'assigned': return { bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200', icon: 'bg-indigo-500' };
+      case 'assigned': return { bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-200', icon: 'bg-emerald-600' };
       default: return { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200', icon: 'bg-gray-500' };
     }
   };
@@ -376,7 +399,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
     switch (priority?.toLowerCase()) {
       case 'high': return { bg: 'bg-red-100', text: 'text-red-800' };
       case 'medium': return { bg: 'bg-orange-100', text: 'text-orange-800' };
-      case 'low': return { bg: 'bg-blue-100', text: 'text-blue-800' };
+      case 'low': return { bg: 'bg-teal-100', text: 'text-teal-800' };
       default: return { bg: 'bg-gray-100', text: 'text-gray-800' };
     }
   };
@@ -415,10 +438,10 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="bg-indigo-600 text-white p-1.5 rounded-lg">
+                <span className="bg-teal-700 text-white p-1.5 rounded-lg">
                   <FiClipboard size={16} />
                 </span>
-                <span className="text-xs font-black uppercase tracking-widest text-indigo-600/70">Academic Assignment</span>
+                <span className="text-xs font-black uppercase tracking-widest text-teal-700/70">Academic Assignment</span>
               </div>
               <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                 {assignment.title}
@@ -439,7 +462,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
               {assignment.status?.charAt(0).toUpperCase() + assignment.status?.slice(1) || 'Pending'}
             </div>
             {assignment.priority && (
-              <div className="px-4 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-purple-50 to-pink-50 text-purple-600 border border-purple-100">
+              <div className="px-4 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-50 to-teal-50 text-teal-700 border border-teal-100">
                 {assignment.priority} Priority
               </div>
             )}
@@ -451,6 +474,12 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
             {assignment.className && (
               <div className="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-white">
                 {assignment.className}
+              </div>
+            )}
+            {assignment.deliverySummary && (
+              <div className="flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-100">
+                <FiSend className="w-3 h-3" />
+                {assignment.deliverySummary.recipientCount || 0} prepared
               </div>
             )}
           </div>
@@ -466,7 +495,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
               {/* Description Section */}
               <section className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
                     <IoDocumentTextOutline />
                   </div>
                   <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Assignment Description</h3>
@@ -482,12 +511,12 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
               {assignment.instructions && (
                 <section className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                    <div className="w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center text-teal-700">
                       <FiBookOpen />
                     </div>
                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Instructions</h3>
                   </div>
-                  <div className="bg-blue-50/50 p-6 rounded-[24px] border border-blue-100">
+                  <div className="bg-teal-50/50 p-6 rounded-[24px] border border-teal-100">
                     <p className="text-slate-600 leading-relaxed text-base">
                       {assignment.instructions}
                     </p>
@@ -512,8 +541,8 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
                       const fileExt = fileName.split('.').pop()?.toLowerCase();
                       
                       return (
-                        <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 group">
-                          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 hover:border-teal-500/30 hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-300 group">
+                          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 group-hover:bg-teal-700 group-hover:text-white transition-colors">
                             {getFileIcon(fileExt)}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -542,7 +571,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
                     {/* Teacher */}
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center">
-                        <FiUserCheck className="text-blue-400" />
+                        <FiUserCheck className="text-teal-400" />
                       </div>
                       <div>
                         <p className="text-[10px] font-bold text-white/40 uppercase">Teacher</p>
@@ -600,20 +629,20 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
 
                 {/* Learning Objectives Card */}
                 {assignment.learningObjectives?.length > 0 && (
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-[24px] p-6 border border-purple-100">
+                  <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[24px] p-6 border border-teal-100">
                     <div className="flex items-center gap-2 mb-4">
-                      <FiTarget className="text-purple-600" />
-                      <h3 className="text-sm font-bold text-purple-900">Learning Objectives</h3>
+                      <FiTarget className="text-teal-700" />
+                      <h3 className="text-sm font-bold text-teal-900">Learning Objectives</h3>
                     </div>
                     <div className="space-y-3">
                       {assignment.learningObjectives.slice(0, 3).map((objective, idx) => (
                         <div key={idx} className="flex items-start gap-2">
-                          <FiCheck className="text-purple-500 mt-1 flex-shrink-0" size={12} />
-                          <p className="text-xs text-purple-800 font-medium">{objective}</p>
+                          <FiCheck className="text-teal-600 mt-1 flex-shrink-0" size={12} />
+                          <p className="text-xs text-teal-800 font-medium">{objective}</p>
                         </div>
                       ))}
                       {assignment.learningObjectives.length > 3 && (
-                        <p className="text-[10px] font-bold text-purple-600/70 uppercase tracking-wider mt-2">
+                        <p className="text-[10px] font-bold text-teal-700/70 uppercase tracking-wider mt-2">
                           +{assignment.learningObjectives.length - 3} more objectives
                         </p>
                       )}
@@ -633,12 +662,12 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
           >
             Dismiss
           </button>
-          <button 
-            onClick={() => onEdit(assignment)}
-            className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black transition-all duration-300 shadow-lg shadow-slate-200"
-          >
-            <FiEdit size={18} /> Edit Assignment
-          </button>
+            <button 
+              onClick={() => onEdit(assignment)}
+              className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-teal-700 text-white px-10 py-4 rounded-2xl font-black transition-all duration-300 shadow-lg shadow-slate-200"
+            >
+              <FiEdit size={18} /> Edit Assignment
+            </button>
         </div>
       </Box>
     </Modal>
@@ -650,17 +679,14 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
   const [formData, setFormData] = useState({
     title: assignment?.title || '',
     description: assignment?.description || '',
-    dueDate: assignment?.dueDate ? new Date(assignment.dueDate).toISOString().split('T')[0] : '',
-    dateAssigned: assignment?.dateAssigned ? new Date(assignment.dateAssigned).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
     subject: assignment?.subject || '',
+    dueDate: '',
     className: assignment?.className || '',
     teacher: assignment?.teacher || '',
-    status: assignment?.status || 'pending',
-    priority: assignment?.priority || 'medium',
-    estimatedTime: assignment?.estimatedTime || '',
-    instructions: assignment?.instructions || '',
-    additionalWork: assignment?.additionalWork || '',
-    teacherRemarks: assignment?.teacherRemarks || '',
+    targetGrades: assignment?.targetCriteria?.grades || [],
+    targetClasses: assignment?.targetCriteria?.classes || (assignment?.className ? [assignment.className] : []),
+    targetCategories: assignment?.targetCriteria?.categories || [],
+    deliveryCategoryInput: '',
   });
 
   // File states with size tracking
@@ -679,29 +705,10 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
   
   // Class options
   const classOptions = [
-    'Form 1',
-    'Form 2', 
-    'Form 3',
-    'Form 4',
-    'Form 5',
-    'Form 6'
+    ...DELIVERY_LEVEL_OPTIONS
   ];
 
-  // Subject options
-  const subjectOptions = [
-    'Mathematics',
-    'Science',
-    'English',
-    'History',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Computer Science',
-    'Art',
-    'Music',
-    'Physical Education',
-    'Geography'
-  ];
+  // Subject options intentionally removed to simplify the form
 
   // Initialize with assignment data
   useEffect(() => {
@@ -936,6 +943,18 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const toggleTargetValue = (field, value) => {
+    setFormData(prev => {
+      const selected = prev[field] || [];
+      return {
+        ...prev,
+        [field]: selected.includes(value)
+          ? selected.filter(item => item !== value)
+          : [...selected, value]
+      };
+    });
+  };
+
   // Get size color based on current usage
   const getSizeColor = () => {
     if (totalSizeMB > 4.5) return 'text-red-600';
@@ -960,24 +979,24 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
       return;
     }
     
-    if (!formData.subject) {
-      alert('Please select a subject');
-      return;
-    }
-    
     if (!formData.className) {
       alert('Please select a class');
       return;
     }
     
-    if (!formData.dueDate) {
-      alert('Please select a due date');
-      return;
-    }
-    
+    const deliveryReadyData = {
+      ...formData,
+      targetClasses: formData.targetClasses.length > 0
+        ? formData.targetClasses
+        : (formData.targetGrades.length > 0 || formData.targetCategories.length > 0 ? [] : [formData.className].filter(Boolean)),
+      targetGrades: formData.targetGrades.length > 0 ? formData.targetGrades : [],
+      targetCategories: formData.targetCategories,
+      senderReference: SCHOOL_COMMUNICATION_NUMBER
+    };
+
     // Call parent's onSave with all data
     await onSave(
-      formData, 
+      deliveryReadyData, 
       assignment?.id, 
       assignmentFiles, 
       attachments, 
@@ -998,111 +1017,55 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
         borderRadius: 3,
         boxShadow: 24,
         overflow: 'hidden',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #faf5ff 100%)'
+        background: 'linear-gradient(135deg, #f8fafc 0%, #ecfdf5 100%)'
       }}>
-   {/* Modern Assignment Modal Header */}
-<div className="group relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-6 text-white overflow-hidden">
+   {/* Simple Assignment Modal Header */}
+ <div className="bg-slate-950 p-6 text-white overflow-hidden border-b border-slate-800">
+  <div className="h-1 -mx-6 -mt-6 bg-gradient-to-r from-teal-500 via-emerald-400 to-slate-400 mb-6" />
   
-  {/* Animated Gradient Orbs */}
-  <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-3xl animate-pulse" />
-  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-pink-400/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000" />
-  
-  {/* Floating Particles */}
-  <div className="absolute inset-0 opacity-10">
-    <div className="absolute top-4 left-1/4 w-1 h-1 bg-white rounded-full animate-ping" />
-    <div className="absolute bottom-8 right-1/3 w-1.5 h-1.5 bg-white rounded-full animate-ping delay-300" />
-    <div className="absolute top-12 right-1/4 w-1 h-1 bg-white rounded-full animate-ping delay-700" />
-  </div>
-  
-  {/* Subtle Grid Pattern */}
-  <div className="absolute inset-0 opacity-[0.03]" style={{ 
-    backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-    backgroundSize: '30px 30px'
-  }} />
-  
-  {/* Shine Effect Overlay */}
-  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full" style={{ transform: 'skewX(-20deg)' }} />
-  
-  <div className="relative z-10">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-5">
-        
-        {/* Icon Container with Enhanced Animation */}
-        <div className="relative">
-          {/* Multi-layer Glow Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-2xl blur-xl opacity-50 group-hover:opacity-80 transition-opacity" />
-          <div className="absolute inset-0 bg-white/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-          
-          {/* Main Icon */}
-          <div className="relative p-3.5 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
-            <IoDocumentTextOutline className="text-2xl" />
-          </div>
-          
-          {/* Animated Ring */}
-          <div className="absolute -inset-1 border-2 border-white/30 rounded-2xl opacity-0 group-hover:opacity-100 animate-ping" />
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-4">
+      {/* Simple Icon */}
+      <div className="p-2 bg-slate-800 rounded-xl">
+        <IoDocumentTextOutline className="text-2xl text-teal-400" />
+      </div>
+      
+      {/* Text Content */}
+      <div>
+        {/* Badge */}
+        <div className="flex items-center gap-2 mb-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800 rounded-full text-[10px] font-black uppercase tracking-wider border border-slate-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+            {assignment ? 'EDIT MODE' : 'CREATE MODE'}
+          </span>
         </div>
         
-        {/* Text Content */}
-        <div>
-          {/* Action Badge */}
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-wider border border-white/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-              {assignment ? 'EDIT MODE' : 'CREATE MODE'}
-            </span>
-          </div>
-          
-          {/* Title with Gradient */}
-          <h2 className="text-2xl md:text-3xl font-black tracking-tight leading-tight">
-            {assignment ? 'Edit' : 'Create'}{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-100">
-              Assignment
-            </span>
-          </h2>
-          
-          {/* Description with Icon */}
-          <div className="flex items-center gap-2 mt-2">
-            <FiInfo className="w-3.5 h-3.5 text-white/70" />
-            <p className="text-white/80 text-sm font-medium">
-              {assignment ? 'Update assignment information and files' : 'Fill in the details to create a new assignment'}
-            </p>
-          </div>
+        {/* Title */}
+        <h2 className="text-2xl md:text-3xl font-black tracking-tight">
+          {assignment ? 'Edit' : 'Create'} Assignment
+        </h2>
+        
+        {/* Description */}
+        <div className="flex items-center gap-2 mt-2">
+          <FiInfo className="w-3.5 h-3.5 text-slate-400" />
+          <p className="text-slate-300 text-sm font-medium">
+            {assignment ? 'Update assignment information and files' : 'Fill in the details to create a new assignment'}
+          </p>
+        </div>
         </div>
       </div>
       
-      {/* Close Button - Enhanced */}
+      {/* Close Button - Simple */}
       {!loading && (
         <button 
           onClick={onClose} 
-          className="group/btn relative p-3 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl border border-white/20 transition-all duration-300 active:scale-90 overflow-hidden"
+          className="p-2 bg-slate-800 hover:bg-red-600/20 rounded-xl border border-slate-700 hover:border-red-600/50 transition-colors"
         >
-          {/* Button Shine Effect */}
-          <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-          
-          <FiX className="text-xl relative z-10 group-hover/btn:rotate-90 transition-transform duration-300" />
-          
-          {/* Tooltip */}
-          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[9px] font-bold bg-slate-900 text-white px-2 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
-            Close
-          </span>
+          <FiX className="text-xl text-slate-300 hover:text-red-400" />
         </button>
       )}
     </div>
-    
-    {/* Progress Steps - Optional Enhancement for Multi-step Forms */}
-    {!assignment && (
-      <div className="mt-6 flex items-center gap-2">
-        <div className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
-          <div className="w-1/3 h-full bg-white rounded-full animate-pulse" />
-        </div>
-        <span className="text-[10px] font-bold text-white/60 uppercase tracking-wider">Step 1 of 3</span>
-      </div>
-    )}
   </div>
-  
-  {/* Bottom Accent */}
-  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-</div>
 
         <div className="max-h-[calc(95vh-150px)] overflow-y-auto">
           <form onSubmit={handleFormSubmit} className="p-6 space-y-6">
@@ -1125,7 +1088,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
             <div>
               <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="text-red-500">*</span>
-                <FiTag className="text-indigo-500" />
+                <FiTag className="text-emerald-600" />
                 Assignment Title
               </label>
               <input
@@ -1133,34 +1096,13 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                 required
                 value={formData.title}
                 onChange={(e) => handleChange('title', e.target.value)}
-                className="w-full font-bold px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                className="w-full font-bold px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 bg-gray-50"
                 placeholder="Enter assignment title"
                 disabled={loading}
               />
             </div>
 
             {/* Subject and Class in Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <span className="text-red-500">*</span>
-                  <FiBookOpen className="text-purple-500" />
-                  Subject
-                </label>
-                <select
-                  required
-                  value={formData.subject}
-                  onChange={(e) => handleChange('subject', e.target.value)}
-                  className="w-full  px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50"
-                  disabled={loading}
-                >
-                  <option value="">Select Subject</option>
-                  {subjectOptions.map(subject => (
-                    <option key={subject} value={subject}>{subject}</option>
-                  ))}
-                </select>
-              </div>
-
               <div>
                 <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
                   <span className="text-red-500">*</span>
@@ -1179,6 +1121,39 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                     <option key={className} value={className}>{className}</option>
                   ))}
                 </select>
+              </div>
+
+            {/* Subject selection with search */}
+            <div>
+              <label className="block text-base font-bold text-gray-800 mb-3">Subject</label>
+              <SearchableSubjectDropdown
+                value={formData.subject}
+                onChange={(value) => handleChange('subject', value)}
+                options={ALL_SUBJECTS}
+                placeholder="Select or search subject..."
+                className="w-full"
+              />
+            </div>
+
+            <div className="rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#0f5b4c,#d4b15f)] text-white">
+                  <FiSend className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-slate-500">Delivery Desk</p>
+                  <h3 className="mt-1 text-lg font-black text-slate-950">Email Delivery</h3>
+                  <p className="mt-1 text-sm text-slate-600">Select recipient grades and optional categories. Contacts previewed on save.</p>
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-xs font-black text-teal-800">
+                  <FiMessageCircle />
+                  Preview on save
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <p className="mb-2 text-sm font-bold text-slate-700">Delivery</p>
+                <p className="text-sm text-slate-600">Assignment notices will be sent to parent email addresses for the selected class.</p>
               </div>
             </div>
 
@@ -1202,7 +1177,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
             <div>
               <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="text-red-500">*</span>
-                <FiFileText className="text-blue-500" />
+                <FiFileText className="text-teal-700" />
                 Description
               </label>
               <textarea
@@ -1210,204 +1185,20 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
                 rows="4"
-                className="w-full font-bold px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                className="w-full font-bold px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 bg-gray-50"
                 placeholder="Describe the assignment..."
                 disabled={loading}
               />
             </div>
 
-            {/* Dates in Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <span className="text-red-500">*</span>
-                  <FiCalendar className="text-indigo-500" />
-                  Due Date
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={formData.dueDate}
-                  onChange={(e) => handleChange('dueDate', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
-                  disabled={loading}
-                />
-              </div>
-              
-              <div>
-                <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <FiCalendar className="text-indigo-500" />
-                  Date Assigned
-                </label>
-                <input
-                  type="date"
-                  value={formData.dateAssigned}
-                  onChange={(e) => handleChange('dateAssigned', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            {/* Status and Priority in Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <FiCheckCircle className="text-green-500" />
-                  Status
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleChange('status', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-gray-50"
-                  disabled={loading}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="in progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                  <option value="overdue">Overdue</option>
-                  <option value="assigned">Assigned</option>
-                </select>
-              </div>
-
-              <div>
-                <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <FiTarget className="text-orange-500" />
-                  Priority
-                </label>
-                <select
-                  value={formData.priority}
-                  onChange={(e) => handleChange('priority', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-50"
-                  disabled={loading}
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Estimated Time - Full Width */}
-            <div>
-              <label className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <FiClock className="text-amber-500" />
-                Estimated Time
-              </label>
-              <input
-                type="text"
-                value={formData.estimatedTime}
-                onChange={(e) => handleChange('estimatedTime', e.target.value)}
-                className="w-full font-bold  px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-gray-50"
-                placeholder="e.g., 2 Weeks, 5 Months"
-                disabled={loading}
-              />
-            </div>
-
-            {/* Learning Objectives */}
-            <div>
-              <label className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <FiTarget className="text-purple-500" />
-                Learning Objectives
-              </label>
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newObjective}
-                    onChange={(e) => setNewObjective(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddObjective())}
-                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50"
-                    placeholder="Enter learning objective..."
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddObjective}
-                    disabled={loading || !newObjective.trim()}
-                    className="px-4 py-3 bg-purple-600 text-white rounded-xl font-bold disabled:opacity-50"
-                  >
-                    Add
-                  </button>
-                </div>
-                
-                {learningObjectives.length > 0 && (
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {learningObjectives.map((objective, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-purple-50 rounded-xl border border-purple-200">
-                        <div className="flex items-center gap-2">
-                          <FiCheckCircle className="text-purple-500" />
-                          <span className="text-sm font-medium text-gray-800">{objective}</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveObjective(index)}
-                          className="text-red-500 hover:text-red-700 p-1"
-                          disabled={loading}
-                        >
-                          <FiX />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Instructions - Full Width */}
-            <div>
-              <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <FiBookOpen className="text-green-500" />
-                Instructions
-              </label>
-              <textarea
-                value={formData.instructions}
-                onChange={(e) => handleChange('instructions', e.target.value)}
-                rows="3"
-                className="w-full px-4 py-3 border-2 font-bold  border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-gray-50"
-                placeholder="Provide detailed instructions..."
-                disabled={loading}
-              />
-            </div>
-
-            {/* Additional Work - Full Width */}
-            <div>
-              <label className=" text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <FiFileText className="text-blue-500" />
-                Additional Work
-              </label>
-              <textarea
-                value={formData.additionalWork}
-                onChange={(e) => handleChange('additionalWork', e.target.value)}
-                rows="3"
-                className="w-full px-4 py-3 font-bold border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
-                placeholder="Any additional work or extra credit..."
-                disabled={loading}
-              />
-            </div>
-
-            {/* Teacher Remarks - Full Width */}
-            <div>
-              <label className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <FiEdit className="text-amber-500" />
-                Teacher Remarks
-              </label>
-              <textarea
-                value={formData.teacherRemarks}
-                onChange={(e) => handleChange('teacherRemarks', e.target.value)}
-                rows="2"
-                className="w-full px-4 py-3 border-2 font-bold border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-gray-50"
-                placeholder="Teacher's remarks or notes..."
-                disabled={loading}
-              />
-            </div>
+            {/* Dates removed - simplified form per request */}
 
             {/* File Upload Section */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 border-2 border-teal-200">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
-                    <FiUpload className="text-blue-500" />
+                    <FiUpload className="text-teal-700" />
                     <span>File Upload</span>
                   </h3>
                   <p className="text-sm text-gray-600">
@@ -1451,9 +1242,9 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
 
                 {/* Vercel Size Warning */}
                 {totalSizeMB > 4.5 && (
-                  <div className="p-4 bg-red-50/50 border border-red-100 rounded-2xl animate-in fade-in zoom-in duration-300">
+                  <div className="p-4 bg-red-50/50 border border-red-100 rounded-2xl">
                     <div className="flex items-center gap-4">
-                      <div className="p-2 bg-red-500 text-white rounded-lg shadow-lg shadow-red-200">
+                      <div className="p-2 bg-red-500 text-white rounded-lg">
                         <FiAlertCircle size={20} />
                       </div>
                       <div className="flex-1">
@@ -1462,7 +1253,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                       </div>
                       <button
                         onClick={() => { setAssignmentFiles([]); setAttachments([]); }}
-                        className="px-4 py-2 bg-white text-red-600 text-xs font-black uppercase tracking-wider rounded-xl border border-red-100 shadow-sm hover:bg-red-50 transition-all"
+                        className="px-4 py-2 bg-white text-red-600 text-xs font-black uppercase tracking-wider rounded-xl border border-red-100 hover:bg-red-50"
                       >
                         Reset
                       </button>
@@ -1473,8 +1264,8 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                 {/* Size Progress Bar */}
                 <div className="relative w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div 
-                    className={`absolute top-0 left-0 h-full transition-all duration-500 ease-out ${
-                      totalSizeMB > 4.5 ? 'bg-red-500' : totalSizeMB > 3.5 ? 'bg-amber-500' : 'bg-indigo-600'
+                    className={`absolute top-0 left-0 h-full ${
+                      totalSizeMB > 4.5 ? 'bg-red-500' : totalSizeMB > 3.5 ? 'bg-amber-500' : 'bg-teal-700'
                     }`}
                     style={{ width: `${Math.min((totalSizeMB / 4.5) * 100, 100)}%` }}
                   />
@@ -1495,13 +1286,13 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                     className={`cursor-pointer w-full py-12 border-2 border-dashed rounded-[32px] flex flex-col items-center justify-center text-center px-6 transition-all duration-300 ${
                       totalSizeMB > 4.5
                         ? 'border-slate-200 bg-slate-50/50 opacity-50 cursor-not-allowed'
-                        : 'border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/30'
+                        : 'border-slate-200 bg-white hover:border-teal-400 hover:bg-teal-50/30'
                     }`}
                   >
                     <div className={`p-5 rounded-3xl mb-4 transition-all duration-300 ${
                       totalSizeMB > 4.5 
                         ? 'bg-slate-100 text-slate-400' 
-                        : 'bg-slate-50 text-indigo-600 group-hover:scale-110 group-hover:bg-white group-hover:shadow-xl group-hover:shadow-indigo-100'
+                        : 'bg-slate-50 text-teal-700 group-hover:scale-110 group-hover:bg-white group-hover:shadow-xl group-hover:shadow-teal-100'
                     }`}>
                       <FiUpload size={32} />
                     </div>
@@ -1532,11 +1323,11 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                         return (
                           <div 
                             key={file.id || idx} 
-                            className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-200"
+                            className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-emerald-200 hover:shadow-md hover:shadow-emerald-50/50 transition-all duration-200"
                           >
                             <div className="flex items-center gap-4 min-w-0">
                               <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                file.isExisting ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'
+                                file.isExisting ? 'bg-teal-50 text-teal-700' : 'bg-emerald-50 text-emerald-700'
                               }`}>
                                 <FiFileText size={20} />
                               </div>
@@ -1546,7 +1337,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                                 </p>
                                 <div className="flex items-center gap-2 mt-1">
                                   <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                                    file.isExisting ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'
+                                    file.isExisting ? 'bg-teal-100 text-teal-800' : 'bg-emerald-100 text-emerald-800'
                                   }`}>
                                     {file.isExisting ? 'Cloud' : 'New'}
                                   </span>
@@ -1574,11 +1365,11 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                         return (
                           <div 
                             key={`attach-${file.id || idx}`} 
-                            className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-blue-200 hover:shadow-md hover:shadow-blue-50/50 transition-all duration-200"
+                            className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-teal-200 hover:shadow-md hover:shadow-teal-50/50 transition-all duration-200"
                           >
                             <div className="flex items-center gap-4 min-w-0">
                               <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                file.isExisting ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
+                                file.isExisting ? 'bg-teal-50 text-teal-700' : 'bg-amber-50 text-amber-700'
                               }`}>
                                 <FiPaperclip size={20} />
                               </div>
@@ -1588,7 +1379,7 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
                                 </p>
                                 <div className="flex items-center gap-2 mt-1">
                                   <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                                    file.isExisting ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
+                                    file.isExisting ? 'bg-teal-100 text-teal-800' : 'bg-amber-100 text-amber-800'
                                   }`}>
                                     {file.isExisting ? 'Cloud' : 'New'}
                                   </span>
@@ -1628,8 +1419,8 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
               
               <button 
                 type="submit"
-                disabled={loading || totalSizeMB > 4.5 || !formData.title.trim() || !formData.subject || !formData.className || !formData.dueDate}
-                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-sm hover:from-indigo-700 hover:to-purple-700 transition-all"
+                disabled={loading || totalSizeMB > 4.5 || !formData.title.trim() || !formData.className}
+                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-teal-700 to-emerald-700 text-sm hover:from-teal-800 hover:to-emerald-800 transition-all"
               >
                 {loading ? (
                   <>
@@ -1672,6 +1463,8 @@ export default function AssignmentsManager() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [stats, setStats] = useState(null);
+  const deliveryCancelRef = useRef(false);
+  const deliveryAbortRef = useRef(null);
   
   // Bulk delete states
   const [selectedAssignments, setSelectedAssignments] = useState(new Set());
@@ -1684,7 +1477,21 @@ export default function AssignmentsManager() {
     open: false,
     type: 'success',
     title: '',
-    message: ''
+    message: '',
+    actionLabel: '',
+    onAction: null
+  });
+
+  // Delivery progress state
+  const [deliveryProgress, setDeliveryProgress] = useState({
+    isOpen: false,
+    totalRecipients: 0,
+    sentCount: 0,
+    failedCount: 0,
+    currentRecipient: '',
+    isComplete: false,
+    failedRecipients: [],
+    isLoading: false,
   });
 
   // Status options
@@ -1703,39 +1510,20 @@ export default function AssignmentsManager() {
     { value: 'high', label: 'High', color: 'red' }
   ];
 
-  // Subject options
-  const subjectOptions = [
-    'Mathematics',
-    'Science',
-    'English',
-    'History',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Computer Science',
-    'Art',
-    'Music',
-    'Physical Education',
-    'Geography'
-  ];
-
   // Class options
   const classOptions = [
-    'Form 1',
-    'Form 2', 
-    'Form 3',
-    'Form 4',
-    'Form 5',
-    'Form 6'
+    ...DELIVERY_LEVEL_OPTIONS
   ];
 
   // Notification handler
-  const showNotification = (type, title, message) => {
+  const showNotification = (type, title, message, action = {}) => {
     setNotification({
       open: true,
       type,
       title,
-      message
+      message,
+      actionLabel: action.label || '',
+      onAction: action.onClick || null
     });
   };
 
@@ -1779,6 +1567,10 @@ export default function AssignmentsManager() {
       teacherRemarks: apiAssignment.teacherRemarks || '',
       feedback: apiAssignment.feedback || null,
       learningObjectives: apiAssignment.learningObjectives || [],
+      targetCriteria: apiAssignment.targetCriteria || null,
+      deliverySummary: apiAssignment.deliverySummary || null,
+      deliveryStatus: apiAssignment.deliveryStatus || 'prepared',
+      senderReference: apiAssignment.senderReference || SCHOOL_COMMUNICATION_NUMBER,
       createdAt: apiAssignment.createdAt || new Date().toISOString(),
       updatedAt: apiAssignment.updatedAt || new Date().toISOString(),
       
@@ -1820,12 +1612,13 @@ export default function AssignmentsManager() {
       avgCompletion: assignmentsList.reduce((acc, a) => acc + (a.completionRate || 0), 0) / (assignmentsList.length || 1),
       
       // Class stats
+      grade10: assignmentsList.filter(a => a.className === 'Grade 10').length,
+      grade11: assignmentsList.filter(a => a.className === 'Grade 11').length,
+      grade12: assignmentsList.filter(a => a.className === 'Grade 12').length,
       form1: assignmentsList.filter(a => a.className === 'Form 1').length,
       form2: assignmentsList.filter(a => a.className === 'Form 2').length,
       form3: assignmentsList.filter(a => a.className === 'Form 3').length,
-      form4: assignmentsList.filter(a => a.className === 'Form 4').length,
-      form5: assignmentsList.filter(a => a.className === 'Form 5').length,
-      form6: assignmentsList.filter(a => a.className === 'Form 6').length
+      form4: assignmentsList.filter(a => a.className === 'Form 4').length
     };
     setStats(stats);
   };
@@ -1843,6 +1636,170 @@ export default function AssignmentsManager() {
       'Authorization': `Bearer ${adminToken}`,
       'x-device-token': deviceToken
     };
+  };
+
+  const fetchAssignmentDeliveryRecipients = async (assignmentId) => {
+    const response = await fetch(`/api/assignment/delivery?assignmentId=${assignmentId}`);
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Could not load assignment delivery recipients');
+    }
+
+    return result.data || [];
+  };
+
+  const sendAssignmentDeliveryBatch = async (assignmentId, recipients, headers) => {
+    deliveryCancelRef.current = false;
+    deliveryAbortRef.current = null;
+
+    const deliverableRecipients = recipients
+      .map((recipient) => ({
+        ...recipient,
+        id: recipient.id || recipient.recipientId
+      }))
+      .filter((recipient) => recipient.id);
+
+    const totalRecipients = deliverableRecipients.length;
+    const failedRecipients = [];
+    let sentCount = 0;
+    let failedCount = 0;
+
+    setDeliveryProgress({
+      isOpen: true,
+      totalRecipients,
+      sentCount: 0,
+      failedCount: 0,
+      currentRecipient: totalRecipients ? 'Preparing email delivery...' : 'No recipients found',
+      isComplete: totalRecipients === 0,
+      failedRecipients: [],
+      isLoading: totalRecipients > 0,
+      itemId: assignmentId,
+    });
+
+    if (totalRecipients === 0) {
+      return { successCount: 0, failureCount: 0, totalRecipients: 0, failedRecipients: [] };
+    }
+
+    for (let index = 0; index < deliverableRecipients.length; index += 1) {
+      if (deliveryCancelRef.current) break;
+
+      const recipient = deliverableRecipients[index];
+      const recipientLabel = recipient.studentName || recipient.email || recipient.admissionNumber || `Recipient ${index + 1}`;
+
+      setDeliveryProgress(prev => ({
+        ...prev,
+        currentRecipient: `${index + 1} of ${totalRecipients}: ${recipientLabel}`,
+        isLoading: true,
+        isComplete: false,
+      }));
+
+      try {
+        const controller = new AbortController();
+        deliveryAbortRef.current = controller;
+        const timeoutId = setTimeout(() => controller.abort(), 90000);
+        let deliveryResponse;
+
+        try {
+          deliveryResponse = await fetch('/api/assignment/delivery', {
+            method: 'POST',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ assignmentId, recipientIds: [recipient.id] }),
+            signal: controller.signal,
+          });
+        } finally {
+          clearTimeout(timeoutId);
+          deliveryAbortRef.current = null;
+        }
+
+        const deliveryResult = await deliveryResponse.json().catch(() => ({}));
+        const resultItem = deliveryResult.data?.results?.[0];
+        const delivered = deliveryResponse.ok && deliveryResult.success && (deliveryResult.data?.successCount > 0 || resultItem?.success);
+
+        if (delivered) {
+          sentCount += 1;
+        } else {
+          failedCount += 1;
+          failedRecipients.push({
+            ...recipient,
+            recipientId: recipient.id,
+            email: resultItem?.email || recipient.email,
+            error: resultItem?.error || deliveryResult.error || 'Email could not be delivered',
+          });
+        }
+      } catch (error) {
+        if (deliveryCancelRef.current) {
+          setDeliveryProgress(prev => ({
+            ...prev,
+            isLoading: false,
+            isComplete: true,
+            currentRecipient: 'Delivery cancelled by user.',
+          }));
+          break;
+        }
+
+        failedCount += 1;
+        failedRecipients.push({
+          ...recipient,
+          recipientId: recipient.id,
+          error: error.name === 'AbortError'
+            ? 'Delivery timed out. Check the connection and retry this recipient.'
+            : error.message || 'Network error while sending email',
+        });
+      }
+
+      setDeliveryProgress(prev => ({
+        ...prev,
+        sentCount,
+        failedCount,
+        failedRecipients: [...failedRecipients],
+        isLoading: index < deliverableRecipients.length - 1,
+        isComplete: index === deliverableRecipients.length - 1,
+        currentRecipient: index === deliverableRecipients.length - 1 ? '' : prev.currentRecipient,
+        itemId: assignmentId,
+      }));
+    }
+
+    return { successCount: sentCount, failureCount: failedCount, totalRecipients, failedRecipients };
+  };
+
+  const cancelAssignmentDelivery = () => {
+    deliveryCancelRef.current = true;
+    deliveryAbortRef.current?.abort();
+    setDeliveryProgress(prev => ({
+      ...prev,
+      isLoading: false,
+      isComplete: true,
+      currentRecipient: 'Delivery cancelled by user.',
+    }));
+    showNotification('warning', 'Delivery Cancelled', 'Email delivery was stopped. Already processed recipients are unchanged.');
+  };
+
+  const retryFailedAssignmentDelivery = async (assignmentId, failedRecipients) => {
+    if (!assignmentId || failedRecipients.length === 0) return;
+
+    try {
+      const headers = getAuthHeaders();
+      const result = await sendAssignmentDeliveryBatch(assignmentId, failedRecipients, headers);
+
+      if (result.failureCount === 0) {
+        showNotification('success', 'Delivery Complete', `Retried and delivered ${result.successCount} assignment email(s).`);
+      } else {
+        showNotification(
+          'warning',
+          'Retry Incomplete',
+          `${result.successCount} delivered, ${result.failureCount} still failed.`,
+          { label: 'Retry Failed', onClick: () => retryFailedAssignmentDelivery(assignmentId, result.failedRecipients) }
+        );
+      }
+    } catch (error) {
+      showNotification(
+        'error',
+        'Retry Failed',
+        error.message || 'Could not retry failed assignment emails.',
+        { label: 'Retry Failed', onClick: () => retryFailedAssignmentDelivery(assignmentId, failedRecipients) }
+      );
+    }
   };
 
   // Fetch assignments with refresh support
@@ -1951,6 +1908,19 @@ export default function AssignmentsManager() {
   const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const hasActiveAssignmentFilters = searchTerm ||
+    selectedStatus !== 'all' ||
+    selectedSubject !== 'all' ||
+    selectedPriority !== 'all' ||
+    selectedClass !== 'all';
+
+  const clearAssignmentFilters = () => {
+    setSearchTerm('');
+    setSelectedStatus('all');
+    setSelectedSubject('all');
+    setSelectedPriority('all');
+    setSelectedClass('all');
+  };
 
   // View assignment
   const handleView = (assignment) => {
@@ -2136,6 +2106,10 @@ export default function AssignmentsManager() {
       formDataToSend.append('instructions', formData.instructions);
       formDataToSend.append('additionalWork', formData.additionalWork);
       formDataToSend.append('teacherRemarks', formData.teacherRemarks);
+      (formData.targetGrades || []).forEach(level => formDataToSend.append('targetGrades', level));
+      (formData.targetClasses || []).forEach(className => formDataToSend.append('targetClasses', className));
+      (formData.targetCategories || []).forEach(category => formDataToSend.append('targetCategories', category));
+      formDataToSend.append('senderReference', formData.senderReference || SCHOOL_COMMUNICATION_NUMBER);
       
       // Handle learning objectives
       const learningObjectivesString = JSON.stringify(learningObjectives || []);
@@ -2236,14 +2210,48 @@ export default function AssignmentsManager() {
       const result = await response.json();
 
       if (result.success) {
+        let deliveryResult = null;
+        let deliveryInterrupted = false;
+        const savedAssignmentId = result.assignment?.id;
+        if (savedAssignmentId) {
+          try {
+            const recipients = await fetchAssignmentDeliveryRecipients(savedAssignmentId);
+            deliveryResult = await sendAssignmentDeliveryBatch(savedAssignmentId, recipients, headers);
+
+            if (deliveryResult.failureCount > 0) {
+              showNotification(
+                deliveryResult.successCount > 0 ? 'warning' : 'error',
+                deliveryResult.successCount > 0 ? 'Partial Delivery' : 'Delivery Failed',
+                `${deliveryResult.successCount} assignment email(s) delivered, ${deliveryResult.failureCount} failed.`,
+                { label: 'Retry Failed', onClick: () => retryFailedAssignmentDelivery(savedAssignmentId, deliveryResult.failedRecipients) }
+              );
+            }
+          } catch (deliveryError) {
+            console.error('Assignment email delivery failed:', deliveryError);
+            deliveryInterrupted = true;
+            showNotification(
+              'error',
+              'Delivery Interrupted',
+              deliveryError.message || 'Network or timeout error while sending assignment emails.',
+              { label: 'Retry', onClick: async () => {
+                const recipients = await fetchAssignmentDeliveryRecipients(savedAssignmentId);
+                await sendAssignmentDeliveryBatch(savedAssignmentId, recipients, headers);
+              }}
+            );
+          }
+        }
+
         // Refresh the list
         await fetchAssignments();
         setShowModal(false);
-        showNotification(
-          'success',
-          id ? 'Updated' : 'Created',
-          `Assignment ${id ? 'updated' : 'created'} successfully!`
-        );
+        const recipientCount = result.assignment?.deliverySummary?.recipientCount;
+        if (!deliveryInterrupted && (!deliveryResult || deliveryResult.failureCount === 0)) {
+          showNotification(
+            'success',
+            id ? 'Updated' : 'Created',
+            `Assignment ${id ? 'updated' : 'created'} successfully!${deliveryResult ? ` ${deliveryResult.successCount} email(s) delivered.` : Number.isFinite(recipientCount) ? ` ${recipientCount} email recipient(s) prepared.` : ''}`
+          );
+        }
       } else {
         throw new Error(result.error || 'Failed to save assignment');
       }
@@ -2301,7 +2309,7 @@ export default function AssignmentsManager() {
                 onClick={() => paginate(page)}
                 className={`px-3 py-2 rounded-xl font-bold ${
                   currentPage === page
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg'
                     : 'text-gray-700'
                 }`}
               >
@@ -2325,7 +2333,7 @@ export default function AssignmentsManager() {
   // Loading state
   if (loading && assignments.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-emerald-50 to-teal-50">
         <div className="text-center">
           <Spinner size={48} />
           <p className="text-gray-700 text-lg mt-4 font-medium">
@@ -2340,7 +2348,7 @@ export default function AssignmentsManager() {
   }
 
   return (
-    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50">
+    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50 to-teal-50">
       {/* Custom Notification */}
       <Notification
         open={notification.open}
@@ -2348,6 +2356,8 @@ export default function AssignmentsManager() {
         type={notification.type}
         title={notification.title}
         message={notification.message}
+        actionLabel={notification.actionLabel}
+        onAction={notification.onAction}
       />
 
       {/* Delete Confirmation Modal */}
@@ -2362,255 +2372,80 @@ export default function AssignmentsManager() {
         loading={deleting || bulkDeleting}
       />
 
- {/* Modern Responsive Header – Assignments Theme */}
-<div className="relative mb-6 sm:mb-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem]
-                bg-gradient-to-br from-indigo-700 via-purple-700 to-violet-700
-                p-4 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl">
-
-  {/* Abstract Gradient Orbs - Purple/Blue Theme */}
-  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] 
-                  bg-gradient-to-br from-purple-500/30 via-indigo-500/20 to-violet-500/30 
-                  rounded-full blur-[100px] pointer-events-none animate-pulse" />
-  
-  <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] 
-                  bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-violet-500/20 
-                  rounded-full blur-[80px] pointer-events-none" />
-  
-  {/* Central Floating Orb */}
-  <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] 
-                  bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
-                  rounded-full blur-[70px] pointer-events-none animate-pulse" />
-  
-  {/* Subtle Grid Pattern */}
-  <div className="absolute inset-0 opacity-[0.02]" 
-       style={{ 
-         backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-         backgroundSize: '40px 40px'
-       }} />
-  
-  {/* Shine Effect Overlay */}
-  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 
-                  bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full 
-                  group-hover:translate-x-full" 
-       style={{ transform: 'skewX(-20deg)' }} />
-
-  <div className="relative z-10">
-    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 sm:gap-6">
-
-      {/* Left Content */}
-      <div className="flex-1 min-w-0">
-        
-        {/* Premium Institution Badge */}
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-purple-400 via-indigo-400 to-violet-400 
-                          rounded-full shadow-[0_0_15px_rgba(139,92,246,0.5)]" />
-          <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-200">
-              Katwanyaa Senior School
-            </h2>
-            <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
-              Academic Tasks
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-
-          {/* Icon with Multi-layer Glow */}
-          <div className="relative shrink-0 self-start">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-500
-                            rounded-xl sm:rounded-2xl blur-md sm:blur-lg opacity-70" />
-            <div className="relative p-3 sm:p-4 bg-gradient-to-br from-indigo-600 to-purple-600
-                            rounded-xl sm:rounded-2xl shadow-2xl transform group-hover:scale-105 
-                            group-hover:rotate-3 transition-all duration-500">
-              <FiClipboard className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-          </div>
-
-          {/* Text */}
-          <div className="flex-1 min-w-0">
-
-            {/* Security Badge */}
-            <div className="hidden xs:inline-flex items-center gap-1.5 px-2.5 py-1 
-                            bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
-                            backdrop-blur-sm rounded-full mb-2 sm:mb-3 max-w-max 
-                            border border-white/10">
-              <FiShield className="w-2.5 h-2.5 text-indigo-300" />
-              <span className="text-[9px] font-bold text-indigo-300 uppercase tracking-wider">
-                Academic Portal
-              </span>
-            </div>
-
-            {/* Title */}
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl
-                           font-black text-white tracking-tight leading-tight">
-              Assignments <span className="block sm:inline">& </span>
-              <span className="text-transparent bg-clip-text
-                               bg-gradient-to-r from-purple-200 to-indigo-200">
-                Manager
-              </span>
-            </h1>
-
-            {/* Description */}
-            <p className="mt-2 sm:mt-3 text-sm xs:text-base sm:text-lg
-                          text-indigo-100/90 font-medium
-                          max-w-2xl leading-relaxed
-                          line-clamp-2 sm:line-clamp-none">
-              Create, organize, distribute, and track student assignments across classes and subjects.
-            </p>
-
-            {/* Quick Stats Pills */}
-            <div className="flex flex-wrap items-center gap-2 mt-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                  Service: Active
-                </span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <FiClipboard className="w-3 h-3 text-indigo-400" />
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                  {stats?.total || 0} Assignments
-                </span>
-              </div>
-              {stats?.overdue > 0 && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-rose-500/20 backdrop-blur-sm rounded-full border border-rose-500/20">
-                  <FiAlertTriangle className="w-3 h-3 text-rose-400" />
-                  <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">
-                    {stats.overdue} Overdue
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+{/* ── Clean Responsive Assignments Header ── */}
+<div className="relative mb-6 overflow-hidden rounded-2xl bg-[#064e3b] p-4 shadow-sm sm:mb-8 sm:p-6">
+  <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+    
+    {/* Left Content */}
+    <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
+      {/* Icon */}
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10">
+        <FiClipboard className="h-6 w-6 text-white" />
       </div>
 
-      {/* Right Content */}
-      <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between
-                      lg:flex-col lg:items-end gap-3 sm:gap-4">
+      {/* Text */}
+      <div className="min-w-0 flex-1">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-100/80">
+          Katwanyaa Senior School
+        </p>
 
-        {/* Actions */}
-        <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 w-full xs:w-auto">
-          
-          {/* Refresh Button - Glass Effect */}
-          <button
-            onClick={() => fetchAssignments(true)}
-            disabled={refreshing}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
-                       px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-white/10 backdrop-blur-sm border border-white/20
-                       rounded-xl sm:rounded-2xl text-white font-semibold
-                       hover:bg-white/15 active:scale-95 transition-all
-                       disabled:opacity-60 w-full xs:w-auto min-w-[120px]"
-          >
-            {/* Button Shine Effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full 
-                            transition-transform duration-1000 
-                            bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            
-            {refreshing ? (
-              <>
-                <CircularProgress size={16} color="inherit" />
-                <span className="text-xs sm:text-sm">Refreshing...</span>
-              </>
-            ) : (
-              <>
-                <FiRotateCw className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" />
-                <span className="text-xs sm:text-sm">Refresh</span>
-              </>
-            )}
-            
-            {/* Live Badge */}
-            <span className="hidden sm:inline-block ml-1 px-1.5 py-0.5 
-                             rounded-md bg-white/10 text-[9px] font-black 
-                             text-white/60 border border-white/10">
-              LIVE
-            </span>
-          </button>
+        <h1 className="text-2xl font-black leading-tight text-white sm:text-3xl md:text-4xl">
+          Assignments Manager
+        </h1>
 
-          {/* Create Button - Gradient Primary */}
-          <button
-            onClick={handleCreate}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
-                       px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500
-                       hover:from-indigo-600 hover:via-purple-600 hover:to-violet-600
-                       text-white rounded-xl sm:rounded-2xl font-semibold
-                       active:scale-95 transition-all
-                       shadow-[0_8px_20px_rgba(139,92,246,0.3)] 
-                       hover:shadow-[0_12px_30px_rgba(139,92,246,0.4)]
-                       w-full xs:w-auto"
-          >
-            {/* Button Shine Effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full 
-                            transition-transform duration-1000 
-                            bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            
-            <FiPlus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-300" />
-            <span className="text-xs sm:text-sm whitespace-nowrap">Create Assignment</span>
-            
-            {/* Pulse Indicator */}
-            <span className="relative flex h-2 w-2 ml-1">
-              <span className="animate-ping absolute inline-flex h-full w-full 
-                               rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-            </span>
-          </button>
-        </div>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/75 sm:text-base">
+          Create, organize, and manage student assignments across classes and subjects.
+        </p>
 
-        {/* Today's Stats - Desktop */}
-        <div className="hidden lg:flex flex-col items-end">
-          <span className="text-[9px] font-bold text-indigo-300/70 uppercase tracking-widest">
-            Due This Week
-          </span>
-          <span className="text-2xl font-black text-white">
-            {stats?.thisWeek || 0}
-          </span>
+        {/* Simple Stats */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          <div className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/85">
+            {stats?.total || 0} Assignments
+          </div>
+
+          <div className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/85">
+            {stats?.thisWeek || 0} Due This Week
+          </div>
+
+          {stats?.overdue > 0 && (
+            <div className="rounded-full bg-rose-500/20 px-3 py-1.5 text-xs font-semibold text-rose-100">
+              {stats.overdue} Overdue
+            </div>
+          )}
         </div>
       </div>
     </div>
-    
-    {/* Enhanced Status Bar */}
-    <div className="mt-6 pt-4 border-t border-white/10 
-                    flex flex-wrap items-center gap-4 sm:gap-6 
-                    text-[10px] font-bold uppercase tracking-wider">
-      
-      {/* Service Status */}
-      <div className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-white/40">Status:</span>
-        <span className="text-emerald-400">Operational</span>
-      </div>
-      
-      {/* Security Badge */}
-      <div className="flex items-center gap-2">
-        <FiShield className="w-3 h-3 text-indigo-400" />
-        <span className="text-white/40">Security:</span>
-        <span className="text-indigo-400">Encrypted</span>
-      </div>
-      
-      {/* Total Assignments */}
-      <div className="flex items-center gap-2">
-        <FiClipboard className="w-3 h-3 text-purple-400" />
-        <span className="text-white/40">Total:</span>
-        <span className="text-purple-400 font-black">{stats?.total || 0} Tasks</span>
-      </div>
-      
-      {/* Last Updated */}
-      <div className="flex items-center gap-2 ml-auto">
-        <FiClock className="w-3 h-3 text-white/30" />
-        <span className="text-white/40">
-          Updated: {new Date().toLocaleTimeString()}
-        </span>
-      </div>
+
+    {/* Right Actions */}
+    <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto lg:justify-end">
+      <button
+        onClick={() => fetchAssignments(true)}
+        disabled={refreshing}
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+      >
+        {refreshing ? (
+          <>
+            <CircularProgress size={16} color="inherit" />
+            <span>Refreshing...</span>
+          </>
+        ) : (
+          <>
+            <FiRotateCw className="h-4 w-4" />
+            <span>Refresh</span>
+          </>
+        )}
+      </button>
+
+      <button
+        onClick={handleCreate}
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 active:scale-95 sm:w-auto"
+      >
+        <FiPlus className="h-4 w-4" />
+        <span>Create Assignment</span>
+      </button>
     </div>
   </div>
 </div>
-
       {/* Bulk Actions Section */}
       {selectedAssignments.size > 0 && (
         <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-4 shadow-lg">
@@ -2666,7 +2501,7 @@ export default function AssignmentsManager() {
                 <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Total</p>
                 <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl">
+              <div className="p-3 bg-teal-100 text-teal-700 rounded-2xl">
                 <IoDocumentTextOutline className="text-lg" />
               </div>
             </div>
@@ -2678,7 +2513,7 @@ export default function AssignmentsManager() {
                 <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">This Week</p>
                 <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.thisWeek}</p>
               </div>
-              <div className="p-3 bg-cyan-100 text-cyan-600 rounded-2xl">
+              <div className="p-3 bg-emerald-100 text-emerald-700 rounded-2xl">
                 <IoCalendarOutline className="text-lg" />
               </div>
             </div>
@@ -2687,10 +2522,10 @@ export default function AssignmentsManager() {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Form 1</p>
-                <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.form1 || 0}</p>
+                <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Grade 10</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.grade10 || 0}</p>
               </div>
-              <div className="p-3 bg-blue-100 text-blue-600 rounded-2xl">
+              <div className="p-3 bg-teal-100 text-teal-700 rounded-2xl">
                 <FiUsers className="text-lg" />
               </div>
             </div>
@@ -2699,10 +2534,22 @@ export default function AssignmentsManager() {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Form 2</p>
-                <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.form2 || 0}</p>
+                <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Grade 11</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.grade11 || 0}</p>
               </div>
               <div className="p-3 bg-green-100 text-green-600 rounded-2xl">
+                <FiUsers className="text-lg" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Grade 12</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.grade12 || 0}</p>
+              </div>
+              <div className="p-3 bg-emerald-100 text-emerald-700 rounded-2xl">
                 <FiUsers className="text-lg" />
               </div>
             </div>
@@ -2714,7 +2561,7 @@ export default function AssignmentsManager() {
                 <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1">Form 3</p>
                 <p className="text-xl lg:text-2xl font-bold text-gray-900">{stats.form3 || 0}</p>
               </div>
-              <div className="p-3 bg-purple-100 text-purple-600 rounded-2xl">
+              <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl">
                 <FiUsers className="text-lg" />
               </div>
             </div>
@@ -2736,6 +2583,24 @@ export default function AssignmentsManager() {
 
       {/* Filters Section */}
       <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-lg border border-gray-200">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">
+              <FiFilter className="text-teal-700" />
+              Filters
+            </p>
+            <h2 className="mt-1 text-lg font-black text-slate-950">Refine assignment records</h2>
+          </div>
+          <button
+            type="button"
+            onClick={clearAssignmentFilters}
+            disabled={!hasActiveAssignmentFilters}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black text-slate-700 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <FiFilter />
+            Clear All Filters
+          </button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
           <div className="lg:col-span-2 relative">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -2744,14 +2609,14 @@ export default function AssignmentsManager() {
               placeholder="Search assignments by title, description, or subject..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-gray-50"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 text-sm bg-gray-50"
             />
           </div>
 
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 cursor-pointer text-sm"
+            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 bg-gray-50 cursor-pointer text-sm"
           >
             <option value="all">All Status</option>
             {statusOptions.map(option => (
@@ -2761,18 +2626,13 @@ export default function AssignmentsManager() {
             ))}
           </select>
 
-          <select
+          <SearchableSubjectDropdown
             value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50 cursor-pointer text-sm"
-          >
-            <option value="all">All Subjects</option>
-            {subjectOptions.map(subject => (
-              <option key={subject} value={subject}>
-                {subject}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => setSelectedSubject(value)}
+            options={ALL_SUBJECTS}
+            placeholder="Search subjects..."
+            className="w-full"
+          />
 
           <select
             value={selectedPriority}
@@ -2806,9 +2666,9 @@ export default function AssignmentsManager() {
       {/* Modern Assignments Table - Using ResourcesManager Style */}
       {filteredAssignments.length > 0 ? (
         <>
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-indigo-500/5 border border-slate-200/50 overflow-hidden relative">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-teal-500/5 border border-slate-200/50 overflow-hidden relative">
             {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent pointer-events-none"></div>
             
             {/* Enhanced Table Header */}
             <div className="border-b border-slate-200/50">
@@ -2829,13 +2689,13 @@ export default function AssignmentsManager() {
                           setSelectedAssignments(newSelection);
                         }
                       }}
-                      className="w-5 h-5 rounded-xl border-2 border-slate-300 bg-white checked:bg-gradient-to-r checked:from-indigo-500 checked:to-purple-600 checked:border-0 focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all duration-200"
+                      className="w-5 h-5 rounded-xl border-2 border-slate-300 bg-white checked:bg-gradient-to-r checked:from-teal-500 checked:to-emerald-600 checked:border-0 focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all duration-200"
                     />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-900">
                       Academic Assignments
-                      <span className="ml-2 px-2.5 py-0.5 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 text-xs font-semibold rounded-full">
+                      <span className="ml-2 px-2.5 py-0.5 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-xs font-semibold rounded-full">
                         {filteredAssignments.length} items
                       </span>
                     </h3>
@@ -2857,7 +2717,7 @@ export default function AssignmentsManager() {
                     </th>
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800 uppercase tracking-[0.2em] min-w-[300px]">
                       <div className="flex items-center gap-2">
-                        <HiOutlineSparkles className="w-4 h-4 text-indigo-500" />
+                        <HiOutlineSparkles className="w-4 h-4 text-emerald-600" />
                         Assignment
                       </div>
                     </th>
@@ -2881,7 +2741,7 @@ export default function AssignmentsManager() {
                     </th>
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800 uppercase tracking-[0.2em]">
                       <div className="flex items-center gap-2">
-                        <FiPaperclip className="w-4 h-4 text-blue-500" />
+                        <FiPaperclip className="w-4 h-4 text-teal-700" />
                         Resources
                       </div>
                     </th>
@@ -2901,10 +2761,10 @@ export default function AssignmentsManager() {
                     const getStatusColor = (status) => {
                       switch (status?.toLowerCase()) {
                         case 'completed': return 'bg-green-100 text-green-800';
-                        case 'in progress': return 'bg-blue-100 text-blue-800';
+                        case 'in progress': return 'bg-teal-100 text-teal-800';
                         case 'pending': return 'bg-yellow-100 text-yellow-800';
                         case 'overdue': return 'bg-red-100 text-red-800';
-                        case 'assigned': return 'bg-indigo-100 text-indigo-800';
+                        case 'assigned': return 'bg-emerald-100 text-emerald-800';
                         default: return 'bg-gray-100 text-gray-800';
                       }
                     };
@@ -2914,7 +2774,7 @@ export default function AssignmentsManager() {
                       switch (priority?.toLowerCase()) {
                         case 'high': return 'bg-red-100 text-red-700';
                         case 'medium': return 'bg-orange-100 text-orange-700';
-                        case 'low': return 'bg-blue-100 text-blue-700';
+                        case 'low': return 'bg-teal-100 text-teal-700';
                         default: return 'bg-gray-100 text-gray-700';
                       }
                     };
@@ -2922,8 +2782,8 @@ export default function AssignmentsManager() {
                     return (
                       <tr 
                         key={assignment.id} 
-                        className={`group hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-purple-50/20 transition-all duration-300  ${
-                          selectedAssignments.has(assignment.id) ? 'bg-gradient-to-r from-indigo-50/50 to-purple-50/30' : ''
+                        className={`group hover:bg-gradient-to-r hover:from-emerald-50/30 hover:to-teal-50/20 transition-all duration-300  ${
+                          selectedAssignments.has(assignment.id) ? 'bg-gradient-to-r from-emerald-50/50 to-teal-50/30' : ''
                         }`}
                       >
                         {/* Checkbox Column */}
@@ -2933,7 +2793,7 @@ export default function AssignmentsManager() {
                               type="checkbox"
                               checked={selectedAssignments.has(assignment.id)}
                               onChange={(e) => handleAssignmentSelect(assignment.id, e.target.checked)}
-                              className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-colors"
+                              className="w-5 h-5 rounded border-gray-300 text-teal-700 focus:ring-teal-600 cursor-pointer transition-colors"
                             />
                           </div>
                         </td>
@@ -2947,13 +2807,13 @@ export default function AssignmentsManager() {
                                 : assignment.priority === 'medium' 
                                 ? 'bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 shadow-sm shadow-orange-500/10'
                                 : assignment.priority === 'low' 
-                                ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 shadow-sm shadow-blue-500/10'
+                                ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border border-teal-100 shadow-sm shadow-teal-500/10'
                                 : 'bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-100 shadow-sm shadow-slate-500/10'
                             }`}>
                               <IoDocumentTextOutline className={`text-xl ${
                                 assignment.priority === 'high' ? 'text-red-600' :
                                 assignment.priority === 'medium' ? 'text-orange-600' :
-                                assignment.priority === 'low' ? 'text-blue-600' :
+                                assignment.priority === 'low' ? 'text-teal-700' :
                                 'text-gray-600'
                               }`} />
                               {assignment.status === 'overdue' && (
@@ -2964,7 +2824,7 @@ export default function AssignmentsManager() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2 mb-2">
-                                <h4 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-indigo-600 transition-colors">
+                                <h4 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-teal-700 transition-colors">
                                   {assignment.title || 'Untitled Assignment'}
                                 </h4>
                               </div>
@@ -2989,7 +2849,7 @@ export default function AssignmentsManager() {
                                 <FiBookOpen className="w-3 h-3" />
                                 {assignment.subject || 'General Studies'}
                               </span>
-                              <span className="inline-block px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 text-xs font-bold rounded-xl border border-blue-100">
+                              <span className="inline-block px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-teal-800 text-xs font-bold rounded-xl border border-teal-100">
                                 <FiUsers className="w-3 h-3" />
                                 {assignment.className || 'All Classes'}
                               </span>
@@ -3001,7 +2861,7 @@ export default function AssignmentsManager() {
                         <td className="py-5 px-8">
                           <div className="space-y-3">
                             <div className="flex items-center gap-2">
-                              <FiCalendar className="text-indigo-500" />
+                              <FiCalendar className="text-teal-700" />
                               <span className="text-sm font-medium text-slate-900">
                                 {new Date(assignment.dueDate).toLocaleDateString('en-GB', {
                                   day: 'numeric',
@@ -3014,10 +2874,10 @@ export default function AssignmentsManager() {
                               <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${getStatusColor(assignment.status)}`}>
                                 <div className={`w-1.5 h-1.5 rounded-full ${
                                   assignment.status === 'completed' ? 'bg-green-500' :
-                                  assignment.status === 'in progress' ? 'bg-blue-500' :
+                                  assignment.status === 'in progress' ? 'bg-teal-600' :
                                   assignment.status === 'pending' ? 'bg-yellow-500' :
                                   assignment.status === 'overdue' ? 'bg-red-500' :
-                                  assignment.status === 'assigned' ? 'bg-indigo-500' :
+                                  assignment.status === 'assigned' ? 'bg-emerald-600' :
                                   'bg-gray-500'
                                 }`}></div>
                                 {assignment.status?.charAt(0).toUpperCase() + assignment.status?.slice(1) || 'Pending'}
@@ -3042,7 +2902,7 @@ export default function AssignmentsManager() {
                                 {assignment.teacher?.split(' ').map(n => n[0]).join('') || 'A'}
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-900 group-hover/author:text-indigo-600 transition-colors">
+                                <span className="text-xs font-bold text-slate-900 group-hover/author:text-emerald-700 transition-colors">
                                   {assignment.teacher || 'System Admin'}
                                 </span>
                                 <span className="text-xs text-slate-800 font-medium">
@@ -3054,7 +2914,7 @@ export default function AssignmentsManager() {
                               <FiTarget className={`w-3 h-3 ${
                                 assignment.priority === 'high' ? 'text-red-600' :
                                 assignment.priority === 'medium' ? 'text-orange-600' :
-                                assignment.priority === 'low' ? 'text-blue-600' :
+                                assignment.priority === 'low' ? 'text-teal-700' :
                                 'text-gray-600'
                               }`} />
                               {assignment.priority || 'medium'} priority
@@ -3067,7 +2927,7 @@ export default function AssignmentsManager() {
                           <div className="flex items-center gap-2">
                             <div className={`p-2 rounded-lg ${
                               (assignment.assignmentFiles?.length || 0) + (assignment.attachments?.length || 0) > 0 
-                                ? 'bg-blue-50 text-blue-600' 
+                                ? 'bg-teal-50 text-teal-700' 
                                 : 'bg-slate-50 text-slate-400'
                             }`}>
                               <FiPaperclip className="w-4 h-4" />
@@ -3088,7 +2948,7 @@ export default function AssignmentsManager() {
                           <div className="flex items-center justify-end gap-4">
                             <button
                               onClick={() => handleView(assignment)}
-                              className="flex items-center gap-1.5 text-indigo-600 font-bold text-sm cursor-pointer"
+                              className="flex items-center gap-1.5 text-emerald-700 font-bold text-sm cursor-pointer"
                             >
                               <FiEye className="w-4 h-4" />
                               <span>View</span>
@@ -3121,9 +2981,9 @@ export default function AssignmentsManager() {
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
                   >
-                    <FiChevronLeft className="w-5 h-5 text-slate-800 group-hover:text-indigo-600" />
+                    <FiChevronLeft className="w-5 h-5 text-slate-800 group-hover:text-emerald-700" />
                   </button>
                   
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -3137,7 +2997,7 @@ export default function AssignmentsManager() {
                           onClick={() => paginate(page)}
                           className={`px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 ${
                             currentPage === page 
-                              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25' 
+                              ? 'bg-gradient-to-r from-teal-700 to-emerald-700 text-white shadow-lg shadow-teal-500/25' 
                               : 'text-slate-700 hover:bg-slate-100'
                           }`}
                         >
@@ -3149,9 +3009,9 @@ export default function AssignmentsManager() {
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-teal-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
                   >
-                    <FiChevronRight className="w-5 h-5 text-slate-800 group-hover:text-indigo-600" />
+                    <FiChevronRight className="w-5 h-5 text-slate-800 group-hover:text-teal-700" />
                   </button>
                 </div>
               </div>
@@ -3160,15 +3020,15 @@ export default function AssignmentsManager() {
         </>
       ) : (
         /* Modern Empty State */
-        <div className="relative bg-gradient-to-br from-white/90 to-indigo-50/50 backdrop-blur-xl rounded-3xl shadow-2xl shadow-indigo-500/5 border border-indigo-100/50 text-center py-16 px-8 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-white/90 to-emerald-50/50 backdrop-blur-xl rounded-3xl shadow-2xl shadow-teal-500/5 border border-teal-100/50 text-center py-16 px-8 overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-400"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-400 to-emerald-400"></div>
           </div>
           
           <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/10">
-              <IoDocumentTextOutline className="text-4xl text-gradient-to-r from-indigo-500 to-purple-500" />
+            <div className="w-24 h-24 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-teal-500/10">
+              <IoDocumentTextOutline className="text-4xl text-gradient-to-r from-teal-500 to-emerald-500" />
             </div>
             
             <h3 className="text-2xl font-bold text-slate-900 mb-3">
@@ -3186,20 +3046,15 @@ export default function AssignmentsManager() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button 
                 onClick={handleCreate} 
-                className="group relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-indigo-500/25 hover:shadow-2xl hover:shadow-indigo-500/30 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
+                className="group relative bg-gradient-to-r from-teal-700 to-emerald-700 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-teal-500/25 hover:shadow-2xl hover:shadow-teal-500/30 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
               >
                 <FiPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Create Assignment
               </button>
               
               <button 
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedStatus('all');
-                  setSelectedSubject('all');
-                  setSelectedClass('all');
-                }}
-                className="px-6 py-3.5 rounded-2xl font-semibold border-2 border-slate-200 text-slate-700 hover:border-indigo-300 hover:text-indigo-600 hover:bg-white transition-all duration-300"
+                onClick={clearAssignmentFilters}
+                className="px-6 py-3.5 rounded-2xl font-semibold border-2 border-slate-200 text-slate-700 hover:border-teal-300 hover:text-teal-700 hover:bg-white transition-all duration-300"
               >
                 Clear Filters
               </button>
@@ -3226,6 +3081,25 @@ export default function AssignmentsManager() {
           onEdit={handleEdit}
         />
       )}
+
+      {/* Delivery Progress Indicator */}
+      <DeliveryProgressIndicator
+        isOpen={deliveryProgress.isOpen}
+        totalRecipients={deliveryProgress.totalRecipients}
+        sentCount={deliveryProgress.sentCount}
+        failedCount={deliveryProgress.failedCount}
+        currentRecipient={deliveryProgress.currentRecipient}
+        isComplete={deliveryProgress.isComplete}
+        failedRecipients={deliveryProgress.failedRecipients}
+        isLoading={deliveryProgress.isLoading}
+        onCancel={cancelAssignmentDelivery}
+        onClose={() => setDeliveryProgress(prev => ({ ...prev, isOpen: false }))}
+        onRetry={async () => {
+          if (deliveryProgress.itemId && deliveryProgress.failedRecipients.length > 0) {
+            await retryFailedAssignmentDelivery(deliveryProgress.itemId, deliveryProgress.failedRecipients);
+          }
+        }}
+      />
     </div>
   );
 }

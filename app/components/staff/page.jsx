@@ -1977,8 +1977,9 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
       ? department.images.map((image) => image.url).filter(isAllowedDepartmentImage)
       : [department?.image].filter(isAllowedDepartmentImage)
   );
+  const [removedImages, setRemovedImages] = useState([]);
   const [imageError, setImageError] = useState('');
-  const hasDepartmentImage = imageFiles.length > 0 || imagePreviews.length > 0 || Boolean(getDepartmentImage(department));
+  const hasDepartmentImage = imageFiles.length > 0 || imagePreviews.length > 0;
 
   const updateField = (field, value) => {
     setFormData((previous) => ({ ...previous, [field]: value }));
@@ -1997,9 +1998,32 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
     setImageError('');
     setImageFiles(selectedFiles);
     setImagePreviews([
-      ...(department?.images?.map((image) => image.url) || []),
+      ...(department?.images?.map((image) => image.url).filter((url) => !removedImages.includes(url)) || []),
       ...selectedFiles.map((file) => URL.createObjectURL(file)),
     ]);
+  };
+
+  const removeDepartmentPreview = (preview, index) => {
+    const existingUrls = [
+      ...(department?.images?.map((image) => image.url) || []),
+      department?.image
+    ].filter(Boolean);
+
+    if (existingUrls.includes(preview)) {
+      setRemovedImages((previous) => (
+        previous.includes(preview) ? previous : [...previous, preview]
+      ));
+    } else {
+      const visibleExistingCount = imagePreviews.filter((url) => existingUrls.includes(url)).length;
+      const fileIndex = index - visibleExistingCount;
+      if (fileIndex >= 0) {
+        setImageFiles((previous) => previous.filter((_, currentIndex) => currentIndex !== fileIndex));
+      }
+      URL.revokeObjectURL(preview);
+    }
+
+    setImagePreviews((previous) => previous.filter((url) => url !== preview));
+    setImageError('');
   };
 
   const toList = (value) => value
@@ -2032,11 +2056,14 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
 
     if (imageFiles.length > 0) {
       imageFiles.forEach((file) => payload.append('images', file));
-    } else if (department?.image) {
+    } else if (department?.image && !removedImages.includes(department.image)) {
       payload.append('image', department.image);
-    } else if (department?.images?.[0]?.url) {
-      payload.append('image', department.images[0].url);
+    } else {
+      const retainedImage = department?.images?.find((image) => !removedImages.includes(image.url))?.url;
+      if (retainedImage) payload.append('image', retainedImage);
     }
+
+    removedImages.forEach((url) => payload.append('imagesToRemove', url));
 
     onSave(payload, department?.id);
   };
@@ -2173,7 +2200,17 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
                   {imagePreviews.length > 0 && (
                     <div className="mb-3 grid grid-cols-2 gap-2">
                       {imagePreviews.map((preview, index) => (
-                        <img key={`${preview}-${index}`} src={preview} alt="Department preview" className="h-28 w-full rounded-xl object-cover" />
+                        <div key={`${preview}-${index}`} className="group relative overflow-hidden rounded-xl">
+                          <img src={preview} alt="Department preview" className="h-28 w-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeDepartmentPreview(preview, index)}
+                            className="absolute right-2 top-2 rounded-full bg-red-600 p-2 text-white shadow-lg transition hover:bg-red-700"
+                            aria-label="Remove department image"
+                          >
+                            <FiX className="h-4 w-4" />
+                          </button>
+                        </div>
                       ))}
                     </div>
                   )}

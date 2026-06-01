@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Modal, Box, CircularProgress } from '@mui/material';
 
 // Consolidated Feather Icons (Fi) - All Duplicates Removed
@@ -35,6 +35,7 @@ import {
   FiBarChart,
   FiPercent,
   FiStar,
+  FiBook,
   FiBookOpen,
   FiArchive,
   FiTag,
@@ -59,7 +60,8 @@ import {
   FiMoreVertical,
   FiCopy,
   FiShare2,
-  FiHeart
+  FiHeart,
+  FiMessageCircle
 } from 'react-icons/fi';
 
 // Consolidated Heroicons (Hi)
@@ -81,7 +83,16 @@ import {
   IoChevronForwardOutline,
   IoCheckmarkCircleOutline
 } from 'react-icons/io5';
+
+// Import subject list and components
+import { ALL_SUBJECTS } from '../../constants/subjects';
+import SearchableSubjectDropdown from '../SearchableSubjectDropdown';
+import DeliveryProgressIndicator from '../DeliveryProgressIndicator';
+
 // Rest of your component logic goes here...
+
+const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
+const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4', 'Form 1', 'Form 2'];
 
 // Modern Loading Spinner Component
 const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'indeterminate', value = 0 }) => {
@@ -105,7 +116,7 @@ const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'ind
               r="20"
             />
             <circle 
-              className="text-blue-600" 
+              className="text-teal-600" 
               stroke="currentColor" 
               strokeWidth={thickness} 
               strokeLinecap="round" 
@@ -120,7 +131,7 @@ const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'ind
           </>
         ) : (
           <circle 
-            className="text-blue-600" 
+            className="text-teal-600" 
             stroke="currentColor" 
             strokeWidth={thickness} 
             strokeLinecap="round" 
@@ -250,6 +261,8 @@ function Notification({
   type = 'success', 
   title, 
   message, 
+  actionLabel,
+  onAction,
   duration = 5000 
 }) {
   const [progress, setProgress] = useState(100);
@@ -303,12 +316,12 @@ function Notification({
         };
       case 'info':
         return {
-          bg: 'from-blue-50 to-cyan-50',
-          border: 'border-blue-200',
-          icon: 'text-blue-600',
-          iconBg: 'bg-blue-100',
-          progress: 'bg-blue-500',
-          title: 'text-blue-800'
+          bg: 'from-teal-50 to-green-50',
+          border: 'border-teal-200',
+          icon: 'text-teal-600',
+          iconBg: 'bg-teal-100',
+          progress: 'bg-teal-500',
+          title: 'text-teal-800'
         };
       default:
         return {
@@ -347,6 +360,16 @@ function Notification({
             <div className="flex-1">
               <h4 className={`font-bold ${styles.title} mb-1`}>{title}</h4>
               <p className="text-gray-700 text-md ">{message}</p>
+              {actionLabel && onAction && (
+                <button
+                  type="button"
+                  onClick={onAction}
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-bold text-slate-800 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50"
+                >
+                  <FiRotateCw size={14} />
+                  {actionLabel}
+                </button>
+              )}
             </div>
             <button 
               onClick={onClose}
@@ -400,153 +423,91 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
         flexDirection: 'column',
         outline: 'none'
       }}>
-{/* Modern Header - Educational Resource */}
-<div className="group relative bg-gradient-to-br from-slate-50 to-white rounded-t-[2rem] overflow-hidden border-b border-slate-200/50">
-  
-  {/* Subtle Background Pattern */}
-  <div className="absolute inset-0 opacity-[0.02]" style={{ 
-    backgroundImage: `radial-gradient(circle at 20px 20px, #3B82F6 1px, transparent 1px)`,
-    backgroundSize: '40px 40px'
-  }} />
-  
-  {/* Decorative Gradient Orbs */}
-  <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
-  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-emerald-200/30 to-cyan-200/30 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
-  
-  {/* Floating Icon Elements */}
-  <div className="absolute top-10 right-20 opacity-5 group-hover:opacity-10 transition-opacity">
-    <FiBookOpen size={60} className="text-slate-400" />
-  </div>
-  <div className="absolute bottom-5 left-10 opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
-    <FiFileText size={40} className="text-slate-400" />
-  </div>
-  
-  <div className="relative p-8 pb-6 z-10">
-    <div className="flex justify-between items-start gap-6">
-      {/* Left Content */}
-      <div className="flex-1 space-y-4">
-        
-        {/* Premium Category Badge */}
-        <div className="flex items-center gap-3">
-          {/* Icon Container with Glow */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity" />
-            <div className="relative p-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl shadow-lg transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
-              <FiFolder className="text-white" size={18} />
-            </div>
-          </div>
-          
-          {/* Animated Badge */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-md" />
-            <span className="relative text-[10px] font-black uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              Educational Resource
-            </span>
-          </div>
-        </div>
-        
-        {/* Title with Gradient */}
-        <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight group-hover:translate-x-1 transition-transform duration-300">
+{/* Simple Header - Educational Resource */}
+<div className="bg-slate-950 rounded-t-[2rem] overflow-hidden border-b border-slate-800">
+  <div className="h-1 bg-gradient-to-r from-teal-500 via-emerald-400 to-slate-400" />
+  <div className="p-6 sm:p-8 text-white">
+    <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex-1">
+        <p className="text-[11px] font-black uppercase tracking-[0.28em] text-slate-400">
+          Educational Resource
+        </p>
+        <h1 className="mt-2 text-3xl md:text-4xl font-black tracking-tight leading-tight">
           {resource.title}
         </h1>
-        
-        {/* Quick Stats */}
-        <div className="flex items-center gap-4 text-xs">
-          <div className="flex items-center gap-1.5 text-slate-500">
-            <FiClock size={14} className="text-slate-400" />
-            <span className="font-medium">Updated {new Date(resource.updatedAt || Date.now()).toLocaleDateString()}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-slate-500">
-            <FiEye size={14} className="text-slate-400" />
-            <span className="font-medium">{resource.views || 0} views</span>
-          </div>
-        </div>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+          {resource.description || "No detailed description provided."}
+        </p>
       </div>
-      
-      {/* Close Button - Enhanced */}
       <button 
         onClick={onClose} 
-        className="group/btn relative flex-shrink-0 p-3 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-2xl border border-slate-200/80 hover:border-red-200/80 shadow-sm hover:shadow-md transition-all duration-300 active:scale-90 overflow-hidden"
+        className="flex-shrink-0 p-3 bg-slate-800 hover:bg-red-500/20 text-slate-300 hover:text-red-400 rounded-2xl border border-slate-700 hover:border-red-500/30 transition-all"
       >
-        {/* Button Shine Effect */}
-        <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-red-100/30 to-transparent" />
-        
-        <FiX size={22} className="relative z-10" />
-        
-        {/* Tooltip */}
-        <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-slate-900 text-white px-2 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap">
-          Close
-        </span>
+        <FiX size={22} />
       </button>
     </div>
 
-    {/* Tags Bar - Enhanced with Animations */}
-    <div className="flex flex-wrap gap-2 mt-8">
+    {/* Simple Tags Bar */}
+    <div className="flex flex-wrap gap-2 mt-6">
       {/* Resource Type Tag */}
-      <div className={`group/tag relative overflow-hidden flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 hover:scale-105 hover:shadow-md ${typeColor.bg} ${typeColor.text} border ${typeColor.border}`}>
-        {/* Tag Shine Effect */}
-        <div className="absolute inset-0 -translate-x-full group-hover/tag:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-        
-        <span className={`relative w-2 h-2 rounded-full ${typeColor.icon} group-hover/tag:animate-pulse`} />
-        <span className="relative">{resource.type || 'Resource'}</span>
-      </div>
+      <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold ${typeColor.bg} ${typeColor.text} border ${typeColor.border}`}>
+        <span className={`w-2 h-2 rounded-full ${typeColor.icon}`} />
+        {resource.type || 'Resource'}
+      </span>
       
       {/* Category Tag */}
       {resource.category && (
-        <div className="group/tag relative overflow-hidden flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-purple-50 to-purple-100/50 text-purple-700 border border-purple-200 hover:border-purple-300 transition-all duration-300 hover:scale-105 hover:shadow-md">
-          <div className="absolute inset-0 -translate-x-full group-hover/tag:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-          
-          <Hash size={12} className="relative text-purple-500" />
-          <span className="relative">{resource.category}</span>
-        </div>
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-green-900/40 text-green-300 border border-green-700">
+          <FiTag size={12} />
+          {resource.category}
+        </span>
       )}
       
       {/* Class Tag */}
       {resource.className && (
-        <div className="group/tag relative overflow-hidden flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-slate-800 to-slate-900 text-white border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-          <div className="absolute inset-0 -translate-x-full group-hover/tag:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          
-          <GraduationCap size={12} className="relative text-slate-300" />
-          <span className="relative">{resource.className}</span>
-        </div>
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-600">
+          <FiUsers size={12} />
+          {resource.className}
+        </span>
       )}
-      
-      {/* Additional Metadata Tags */}
+
+      {/* Subject Tag */}
       {resource.subject && (
-        <div className="group/tag relative overflow-hidden flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-50 to-teal-100/50 text-emerald-700 border border-emerald-200 hover:border-emerald-300 transition-all duration-300 hover:scale-105 hover:shadow-md">
-          <div className="absolute inset-0 -translate-x-full group-hover/tag:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-          
-          <FiBook size={12} className="relative text-emerald-500" />
-          <span className="relative">{resource.subject}</span>
-        </div>
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-teal-900/40 text-teal-300 border border-teal-700">
+          <FiBook size={12} />
+          {resource.subject}
+        </span>
       )}
       
+      {/* Difficulty Tag */}
       {resource.difficulty && (
-        <div className="group/tag relative overflow-hidden flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-amber-50 to-orange-100/50 text-amber-700 border border-amber-200 hover:border-amber-300 transition-all duration-300 hover:scale-105 hover:shadow-md">
-          <div className="absolute inset-0 -translate-x-full group-hover/tag:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-          
-          <FiTrendingUp size={12} className="relative text-amber-500" />
-          <span className="relative capitalize">{resource.difficulty}</span>
-        </div>
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300 border border-amber-700">
+          <FiTrendingUp size={12} />
+          {resource.difficulty.charAt(0).toUpperCase() + resource.difficulty.slice(1)}
+        </span>
+      )}
+
+      {/* Delivery Summary Tag */}
+      {resource.deliverySummary && (
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-emerald-900/40 text-emerald-300 border border-emerald-700">
+          <FiSend size={12} />
+          {resource.deliverySummary.recipientCount || 0} prepared
+        </span>
       )}
     </div>
-    
-    {/* Progress Bar - Optional Enhancement */}
-    {resource.progress !== undefined && (
-      <div className="mt-6 flex items-center gap-4">
-        <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000"
-            style={{ width: `${resource.progress}%` }}
-          />
-        </div>
-        <span className="text-xs font-bold text-slate-600">{resource.progress}% Complete</span>
+
+    {/* Quick Stats */}
+    <div className="flex flex-wrap items-center gap-4 mt-6 text-xs text-slate-400">
+      <div className="flex items-center gap-1.5">
+        <FiClock size={14} />
+        Updated {new Date(resource.updatedAt || Date.now()).toLocaleDateString()}
       </div>
-    )}
+      <div className="flex items-center gap-1.5">
+        <FiEye size={14} />
+        {resource.views || 0} views
+      </div>
+    </div>
   </div>
-  
-  {/* Bottom Accent Border */}
-  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
 </div>
 
         {/* Content Body */}
@@ -559,7 +520,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
               {/* Description Section */}
               <section className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                  <div className="w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
                     <IoDocumentTextOutline />
                   </div>
                   <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Overview</h3>
@@ -582,8 +543,8 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {resource.files.map((file, idx) => (
-                      <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 group">
-                        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 hover:border-teal-500/30 hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-300 group">
+                        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 group-hover:bg-teal-600 group-hover:text-white transition-colors">
                           {getFileIcon(file.extension)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -610,7 +571,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center">
-                        <FiUserCheck className="text-blue-400" />
+                        <FiUserCheck className="text-teal-400" />
                       </div>
                       <div>
                         <p className="text-[10px] font-bold text-white/40 uppercase">Instructor</p>
@@ -640,10 +601,10 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
                   </div>
                 </div>
 
-                <div className="p-6 bg-blue-50 rounded-[32px] border border-blue-100">
-                   <p className="text-[10px] font-black text-blue-600 uppercase mb-2">Security</p>
-                   <p className="text-xs font-bold text-blue-900/70 leading-relaxed">
-                     This resource is restricted to <span className="text-blue-600 underline font-black">{resource.accessLevel}</span> roles only.
+                <div className="p-6 bg-teal-50 rounded-[32px] border border-teal-100">
+                   <p className="text-[10px] font-black text-teal-600 uppercase mb-2">Security</p>
+                   <p className="text-xs font-bold text-teal-900/70 leading-relaxed">
+                     This resource is restricted to <span className="text-teal-600 underline font-black">{resource.accessLevel}</span> roles only.
                    </p>
                 </div>
               </div>
@@ -662,7 +623,7 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
           </button>
           <button 
             onClick={() => onEdit(resource)}
-            className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-blue-600 text-white px-10 py-4 rounded-2xl font-black transition-all duration-300 shadow-lg shadow-slate-200"
+            className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-teal-600 text-white px-10 py-4 rounded-2xl font-black transition-all duration-300 shadow-lg shadow-slate-200"
           >
             <FiEdit size={18} /> Edit Resource
           </button>
@@ -683,7 +644,11 @@ function ModernResourceModal({ onClose, onSave, resource, loading }) {
     category: resource?.category || 'General',
     accessLevel: resource?.accessLevel || 'student',
     uploadedBy: resource?.uploadedBy || 'Admin',
-    isActive: resource?.isActive ?? true
+    isActive: resource?.isActive ?? true,
+    targetGrades: resource?.targetCriteria?.grades || [],
+    targetClasses: resource?.targetCriteria?.classes || (resource?.className ? [resource.className] : []),
+    targetCategories: resource?.targetCriteria?.categories || [],
+    deliveryCategoryInput: ''
   });
 
   // File states
@@ -746,38 +711,17 @@ useEffect(() => {
   const isSubmitDisabled = 
     loading || 
     !formData.title.trim() || 
-    !formData.subject || 
     !formData.className || 
-    !formData.teacher ||
     (files.length === 0 && existingFiles.length === 0 && !resource) ||
     totalSizeMB > 4.5 ||
     fileSizeError;
 
   // Class options
   const classOptions = [
-    'Form 1',
-    'Form 2', 
-    'Form 3',
-    'Form 4',
-    'Form 5',
-    'Form 6'
+    ...DELIVERY_LEVEL_OPTIONS
   ];
 
-  // Subject options
-  const subjectOptions = [
-    'Mathematics',
-    'Science',
-    'English',
-    'History',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Computer Science',
-    'Art',
-    'Music',
-    'Physical Education',
-    'Geography'
-  ];
+  // Subject intentionally removed to simplify the create/edit form
 
   // Category options
   const categoryOptions = [
@@ -910,9 +854,9 @@ useEffect(() => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate required fields
-    if (!formData.title.trim() || !formData.subject || !formData.className || !formData.teacher) {
-      alert('Please fill in all required fields');
+    // Validate required fields: keep minimal set (title and class)
+    if (!formData.title.trim() || !formData.className) {
+      alert('Please fill in all required fields (title and class)');
       return;
     }
     
@@ -942,20 +886,34 @@ useEffect(() => {
       return;
     }
 
+    const deliveryTargetGrades = formData.targetGrades.length > 0 ? formData.targetGrades : [];
+    const deliveryTargetCategories = formData.targetCategories.length > 0 ? formData.targetCategories : [];
+    const deliveryTargetClasses = formData.targetClasses.length > 0
+      ? formData.targetClasses
+      : (deliveryTargetGrades.length > 0 || deliveryTargetCategories.length > 0 ? [] : [formData.className].filter(Boolean));
+
     // Create FormData for submission
     const formDataToSend = new FormData();
     
     // Add form data
     Object.keys(formData).forEach(key => {
+      if (['targetGrades', 'targetClasses', 'targetCategories', 'deliveryCategoryInput'].includes(key)) {
+        return;
+      }
       if (key === 'isActive') {
         formDataToSend.append(key, formData[key] ? 'true' : 'false');
       } else {
         formDataToSend.append(key, formData[key]);
       }
     });
+    deliveryTargetGrades.forEach(level => formDataToSend.append('targetGrades', level));
+    deliveryTargetClasses.forEach(className => formDataToSend.append('targetClasses', className));
+    deliveryTargetCategories.forEach(category => formDataToSend.append('targetCategories', category));
+    formDataToSend.append('senderReference', SCHOOL_COMMUNICATION_NUMBER);
 
-    // Add action type
-    formDataToSend.append('action', 'update');
+    if (resource) {
+      formDataToSend.append('action', 'update');
+    }
 
     // Handle files for CREATE vs UPDATE
     if (resource) {
@@ -990,6 +948,18 @@ useEffect(() => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const toggleTargetValue = (field, value) => {
+    setFormData(prev => {
+      const selected = prev[field] || [];
+      return {
+        ...prev,
+        [field]: selected.includes(value)
+          ? selected.filter(item => item !== value)
+          : [...selected, value]
+      };
+    });
+  };
+
   const formatFileSize = (bytes) => {
     if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -1012,7 +982,7 @@ useEffect(() => {
         background: 'linear-gradient(135deg, #f8fafc 0%, #faf5ff 100%)'
       }}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 p-6 text-white">
+        <div className="bg-gradient-to-r from-teal-600 via-green-600 to-emerald-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-white bg-opacity-20 rounded-2xl">
@@ -1062,45 +1032,58 @@ useEffect(() => {
                 required
                 value={formData.title}
                 onChange={(e) => handleChange('title', e.target.value)}
-                className="w-full px-4 font-bold py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                className="w-full px-4 font-bold py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50"
                 placeholder="Enter resource title"
               />
             </div>
 
-            {/* Subject and Class in Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-base font-bold text-gray-800 mb-3">
-                  Subject *
-                </label>
-                <select
-                  required
-                  value={formData.subject}
-                  onChange={(e) => handleChange('subject', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50"
-                >
-                  <option value="">Select Subject</option>
-                  {subjectOptions.map(subject => (
-                    <option key={subject} value={subject}>{subject}</option>
-                  ))}
-                </select>
+            {/* Class selection (simplified) */}
+            <div>
+              <label className="block text-base font-bold text-gray-800 mb-3">Class *</label>
+              <select
+                required
+                value={formData.className}
+                onChange={(e) => handleChange('className', e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-gray-50"
+              >
+                <option value="">Select Class</option>
+                {classOptions.map(className => (
+                  <option key={className} value={className}>{className}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Subject selection with search */}
+            <div>
+              <label className="block text-base font-bold text-gray-800 mb-3">Subject</label>
+              <SearchableSubjectDropdown
+                value={formData.subject}
+                onChange={(value) => handleChange('subject', value)}
+                options={ALL_SUBJECTS}
+                placeholder="Select or search subject..."
+                className="w-full"
+              />
+            </div>
+
+            <div className="rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#0f5b4c,#d4b15f)] text-white">
+                  <FiSend className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-slate-500">Delivery Desk</p>
+                  <h3 className="mt-1 text-lg font-black text-slate-950">Email Delivery</h3>
+                  <p className="mt-1 text-sm text-slate-600">Select recipient grades and optional categories. Contacts previewed on save.</p>
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-xs font-black text-teal-800">
+                  <FiMessageCircle />
+                  Preview on save
+                </div>
               </div>
 
-              <div>
-                <label className="block text-base font-bold text-gray-800 mb-3">
-                  Class *
-                </label>
-                <select
-                  required
-                  value={formData.className}
-                  onChange={(e) => handleChange('className', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-gray-50"
-                >
-                  <option value="">Select Class</option>
-                  {classOptions.map(className => (
-                    <option key={className} value={className}>{className}</option>
-                  ))}
-                </select>
+              <div className="mt-4">
+                <p className="mb-2 text-sm font-bold text-slate-700">Delivery</p>
+                <p className="text-sm text-slate-600">Resource notices will be sent to parent email addresses for the selected class.</p>
               </div>
             </div>
 
@@ -1128,72 +1111,9 @@ useEffect(() => {
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
                 rows="4"
-                className="w-full px-4 py-3 font-bold border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                className="w-full px-4 py-3 font-bold border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50"
                 placeholder="Describe the resource..."
               />
-            </div>
-
-            {/* Category and Access Level in Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-base font-bold text-gray-800 mb-3">
-                  Category
-                </label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => handleChange('category', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
-                >
-                  {categoryOptions.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-base font-bold text-gray-800 mb-3">
-                  Access Level
-                </label>
-                <select
-                  value={formData.accessLevel}
-                  onChange={(e) => handleChange('accessLevel', e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-gray-50"
-                >
-                  <option value="student">Student</option>
-                  <option value="teacher">Teacher</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Uploaded By and Active Status in Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-base font-bold text-gray-800 mb-3">
-                  Uploaded By
-                </label>
-                <input
-                  type="text"
-                  value={formData.uploadedBy}
-                  onChange={(e) => handleChange('uploadedBy', e.target.value)}
-                  className="w-full px-4 py-3 font-bold border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-gray-50"
-                  placeholder="Enter uploader name"
-                />
-              </div>
-
-              {/* Active Status */}
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={formData.isActive}
-                  onChange={(e) => handleChange('isActive', e.target.checked)}
-                  className="w-5 h-5 text-green-600 rounded focus:ring-green-500 cursor-pointer"
-                />
-                <label htmlFor="isActive" className="text-base font-bold text-gray-800 cursor-pointer">
-                  Active (Visible to users)
-                </label>
-              </div>
             </div>
 
             {/* File Upload Section */}
@@ -1201,7 +1121,7 @@ useEffect(() => {
               <section className="bg-white rounded-[32px] p-2 sm:p-4">
                 <div className="flex items-center justify-between gap-3 mb-6 px-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
+                    <div className="w-1.5 h-6 bg-teal-600 rounded-full" />
                     <label className="text-xl font-black text-slate-800 tracking-tight">
                       Upload Resources *
                     </label>
@@ -1283,16 +1203,16 @@ useEffect(() => {
                       className={`cursor-pointer w-full py-10 border-2 border-dashed rounded-[24px] flex flex-col items-center justify-center text-center px-6 transition-all ${
                         totalSizeMB > 4.5
                           ? 'border-red-300 bg-red-50/30 opacity-60'
-                          : 'border-slate-200 bg-slate-50/50 hover:bg-blue-50/30 hover:border-blue-400'
+                          : 'border-slate-200 bg-slate-50/50 hover:bg-teal-50/30 hover:border-teal-400'
                       }`}
                     >
-                      <div className={`p-4 rounded-2xl mb-4 transition-transform ${
+                      <div className={`p-4 rounded-2xl mb-4 ${
                         totalSizeMB > 4.5 
                           ? 'bg-red-100' 
-                          : 'bg-white shadow-sm group-hover:scale-100'
+                          : 'bg-white shadow-sm'
                       }`}>
                         <FiUpload className={`text-3xl ${
-                          totalSizeMB > 4.5 ? 'text-red-600' : 'text-blue-600'
+                          totalSizeMB > 4.5 ? 'text-red-600' : 'text-teal-600'
                         }`} />
                       </div>
                       <p className={`text-lg font-bold mb-1 ${
@@ -1351,10 +1271,10 @@ useEffect(() => {
                           const fileSizeMB = fileObj.size ? (fileObj.size / (1024 * 1024)).toFixed(1) : 0;
                           
                           return (
-                            <div key={`new-${index}`} className={`group flex items-center justify-between p-4 rounded-2xl border transition-all ${
+                            <div key={`new-${index}`} className={`group flex items-center justify-between p-4 rounded-2xl border ${
                               totalSizeMB > 4.5
                                 ? 'bg-red-50/50 border-red-200'
-                                : 'bg-white border-slate-100 hover:border-blue-200 hover:shadow-sm'
+                                : 'bg-white border-slate-100 hover:border-teal-200 hover:shadow-sm'
                             }`}>
                               <div className="flex items-center gap-4 min-w-0">
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
@@ -1400,7 +1320,7 @@ useEffect(() => {
                             <div key={`exist-${index}`} className={`group flex items-center justify-between p-4 rounded-2xl border transition-all ${
                               totalSizeMB > 4.5
                                 ? 'bg-red-50/30 border-red-200'
-                                : 'bg-blue-50/30 border-blue-100 hover:shadow-sm'
+                                : 'bg-teal-50/30 border-teal-100 hover:shadow-sm'
                             }`}>
                               <div className="flex items-center gap-4 min-w-0">
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
@@ -1408,7 +1328,7 @@ useEffect(() => {
                                     ? 'bg-red-600 text-white'
                                     : parseFloat(fileSizeMB) > 1
                                     ? 'bg-amber-600 text-white'
-                                    : 'bg-blue-600 text-white'
+                                    : 'bg-teal-600 text-white'
                                 }`}>
                                   <FiFileText className="text-lg" />
                                 </div>
@@ -1418,7 +1338,7 @@ useEffect(() => {
                                   </p>
                                   <div className="flex items-center gap-2 mt-1">
                                     <span className={`text-[11px] font-bold uppercase tracking-wider ${
-                                      totalSizeMB > 4.5 ? 'text-red-600' : 'text-blue-600'
+                                      totalSizeMB > 4.5 ? 'text-red-600' : 'text-teal-600'
                                     }`}>
                                       Stored in Cloud • {fileSizeMB}MB
                                     </span>
@@ -1456,7 +1376,7 @@ useEffect(() => {
               <button 
                 type="submit"
                 disabled={isSubmitDisabled}
-                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-md  hover:from-blue-700 hover:to-cyan-700 transition-all"
+                className="px-6 py-3 text-white rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-gradient-to-r from-teal-600 to-green-600 text-md  hover:from-teal-700 hover:to-green-700 transition-all"
               >
                 {loading ? (
                   <>
@@ -1504,6 +1424,8 @@ export default function ResourcesManager() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [stats, setStats] = useState(null);
+  const deliveryCancelRef = useRef(false);
+  const deliveryAbortRef = useRef(null);
 
   // NEW: Bulk delete states
   const [selectedResources, setSelectedResources] = useState(new Set());
@@ -1516,7 +1438,21 @@ export default function ResourcesManager() {
     open: false,
     type: 'success',
     title: '',
-    message: ''
+    message: '',
+    actionLabel: '',
+    onAction: null
+  });
+
+  // Delivery progress state
+  const [deliveryProgress, setDeliveryProgress] = useState({
+    isOpen: false,
+    totalRecipients: 0,
+    sentCount: 0,
+    failedCount: 0,
+    currentRecipient: '',
+    isComplete: false,
+    failedRecipients: [],
+    isLoading: false,
   });
 
   // Status options
@@ -1529,9 +1465,9 @@ export default function ResourcesManager() {
   // Type options
   const typeOptions = [
     { value: 'all', label: 'All Types', color: 'gray', icon: <FiFolder /> },
-    { value: 'document', label: 'Document', color: 'blue', icon: <FiFileText /> },
+    { value: 'document', label: 'Document', color: 'teal', icon: <FiFileText /> },
     { value: 'pdf', label: 'PDF', color: 'red', icon: <FiFileText /> },
-    { value: 'video', label: 'Video', color: 'purple', icon: <FiVideo /> },
+    { value: 'video', label: 'Video', color: 'green', icon: <FiVideo /> },
     { value: 'presentation', label: 'Presentation', color: 'orange', icon: <FiBarChart /> },
     { value: 'spreadsheet', label: 'Spreadsheet', color: 'green', icon: <FiGrid /> },
     { value: 'image', label: 'Image', color: 'pink', icon: <FiImage /> },
@@ -1542,28 +1478,12 @@ export default function ResourcesManager() {
   // Priority options
   const accessOptions = [
     { value: 'all', label: 'All Access', color: 'gray' },
-    { value: 'student', label: 'Student', color: 'blue' },
+    { value: 'student', label: 'Student', color: 'teal' },
     { value: 'teacher', label: 'Teacher', color: 'green' },
-    { value: 'admin', label: 'Admin', color: 'purple' }
+    { value: 'admin', label: 'Admin', color: 'green' }
   ];
 
   // Subject options
-  const subjectOptions = [
-    'All Subjects',
-    'Mathematics',
-    'Science',
-    'English',
-    'History',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Computer Science',
-    'Art',
-    'Music',
-    'Physical Education',
-    'Geography'
-  ];
-
   // Category options
   const categoryOptions = [
     'All Categories',
@@ -1582,21 +1502,18 @@ export default function ResourcesManager() {
   // Class options
   const classOptions = [
     'All Classes',
-    'Form 1',
-    'Form 2', 
-    'Form 3',
-    'Form 4',
-    'Form 5',
-    'Form 6'
+    ...DELIVERY_LEVEL_OPTIONS
   ];
 
   // Notification handler
-  const showNotification = (type, title, message) => {
+  const showNotification = (type, title, message, action = {}) => {
     setNotification({
       open: true,
       type,
       title,
-      message
+      message,
+      actionLabel: action.label || '',
+      onAction: action.onClick || null
     });
   };
 
@@ -1618,6 +1535,10 @@ export default function ResourcesManager() {
       uploadedBy: apiResource.uploadedBy || 'System',
       downloads: apiResource.downloads || 0,
       isActive: apiResource.isActive ?? true,
+      targetCriteria: apiResource.targetCriteria || null,
+      deliverySummary: apiResource.deliverySummary || null,
+      deliveryStatus: apiResource.deliveryStatus || 'prepared',
+      senderReference: apiResource.senderReference || SCHOOL_COMMUNICATION_NUMBER,
       createdAt: apiResource.createdAt || new Date().toISOString(),
       updatedAt: apiResource.updatedAt || new Date().toISOString(),
       
@@ -1656,6 +1577,170 @@ export default function ResourcesManager() {
   };
 };
 
+const fetchResourceDeliveryRecipients = async (resourceId) => {
+  const response = await fetch(`/api/resources/delivery?resourceId=${resourceId}`);
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || 'Could not load resource delivery recipients');
+  }
+
+  return result.data || [];
+};
+
+const sendResourceDeliveryBatch = async (resourceId, recipients, headers) => {
+  deliveryCancelRef.current = false;
+  deliveryAbortRef.current = null;
+
+  const deliverableRecipients = recipients
+    .map((recipient) => ({
+      ...recipient,
+      id: recipient.id || recipient.recipientId
+    }))
+    .filter((recipient) => recipient.id);
+
+  const totalRecipients = deliverableRecipients.length;
+  const failedRecipients = [];
+  let sentCount = 0;
+  let failedCount = 0;
+
+  setDeliveryProgress({
+    isOpen: true,
+    totalRecipients,
+    sentCount: 0,
+    failedCount: 0,
+    currentRecipient: totalRecipients ? 'Preparing email delivery...' : 'No recipients found',
+    isComplete: totalRecipients === 0,
+    failedRecipients: [],
+    isLoading: totalRecipients > 0,
+    itemId: resourceId,
+  });
+
+  if (totalRecipients === 0) {
+    return { successCount: 0, failureCount: 0, totalRecipients: 0, failedRecipients: [] };
+  }
+
+  for (let index = 0; index < deliverableRecipients.length; index += 1) {
+    if (deliveryCancelRef.current) break;
+
+    const recipient = deliverableRecipients[index];
+    const recipientLabel = recipient.studentName || recipient.email || recipient.admissionNumber || `Recipient ${index + 1}`;
+
+    setDeliveryProgress(prev => ({
+      ...prev,
+      currentRecipient: `${index + 1} of ${totalRecipients}: ${recipientLabel}`,
+      isLoading: true,
+      isComplete: false,
+    }));
+
+    try {
+      const controller = new AbortController();
+      deliveryAbortRef.current = controller;
+      const timeoutId = setTimeout(() => controller.abort(), 90000);
+      let deliveryResponse;
+
+      try {
+        deliveryResponse = await fetch('/api/resources/delivery', {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resourceId, recipientIds: [recipient.id] }),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+        deliveryAbortRef.current = null;
+      }
+
+      const deliveryResult = await deliveryResponse.json().catch(() => ({}));
+      const resultItem = deliveryResult.data?.results?.[0];
+      const delivered = deliveryResponse.ok && deliveryResult.success && (deliveryResult.data?.successCount > 0 || resultItem?.success);
+
+      if (delivered) {
+        sentCount += 1;
+      } else {
+        failedCount += 1;
+        failedRecipients.push({
+          ...recipient,
+          recipientId: recipient.id,
+          email: resultItem?.email || recipient.email,
+          error: resultItem?.error || deliveryResult.error || 'Email could not be delivered',
+        });
+      }
+    } catch (error) {
+      if (deliveryCancelRef.current) {
+        setDeliveryProgress(prev => ({
+          ...prev,
+          isLoading: false,
+          isComplete: true,
+          currentRecipient: 'Delivery cancelled by user.',
+        }));
+        break;
+      }
+
+      failedCount += 1;
+      failedRecipients.push({
+        ...recipient,
+        recipientId: recipient.id,
+        error: error.name === 'AbortError'
+          ? 'Delivery timed out. Check the connection and retry this recipient.'
+          : error.message || 'Network error while sending email',
+      });
+    }
+
+    setDeliveryProgress(prev => ({
+      ...prev,
+      sentCount,
+      failedCount,
+      failedRecipients: [...failedRecipients],
+      isLoading: index < deliverableRecipients.length - 1,
+      isComplete: index === deliverableRecipients.length - 1,
+      currentRecipient: index === deliverableRecipients.length - 1 ? '' : prev.currentRecipient,
+      itemId: resourceId,
+    }));
+  }
+
+  return { successCount: sentCount, failureCount: failedCount, totalRecipients, failedRecipients };
+};
+
+const cancelResourceDelivery = () => {
+  deliveryCancelRef.current = true;
+  deliveryAbortRef.current?.abort();
+  setDeliveryProgress(prev => ({
+    ...prev,
+    isLoading: false,
+    isComplete: true,
+    currentRecipient: 'Delivery cancelled by user.',
+  }));
+  showNotification('warning', 'Delivery Cancelled', 'Email delivery was stopped. Already processed recipients are unchanged.');
+};
+
+const retryFailedResourceDelivery = async (resourceId, failedRecipients) => {
+  if (!resourceId || failedRecipients.length === 0) return;
+
+  try {
+    const headers = getAuthHeaders();
+    const result = await sendResourceDeliveryBatch(resourceId, failedRecipients, headers);
+
+    if (result.failureCount === 0) {
+      showNotification('success', 'Delivery Complete', `Retried and delivered ${result.successCount} resource email(s).`);
+    } else {
+      showNotification(
+        'warning',
+        'Retry Incomplete',
+        `${result.successCount} delivered, ${result.failureCount} still failed.`,
+        { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, result.failedRecipients) }
+      );
+    }
+  } catch (error) {
+    showNotification(
+      'error',
+      'Retry Failed',
+      error.message || 'Could not retry failed resource emails.',
+      { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, failedRecipients) }
+    );
+  }
+};
+
   // NEW: Bulk delete function
   const handleBulkDelete = () => {
     if (selectedResources.size === 0) {
@@ -1669,7 +1754,7 @@ export default function ResourcesManager() {
   // Fetch resources
   const fetchResources = async (isRefresh = false) => {
     setSelectedType('all');
-    setSelectedSubject('All Subjects');
+    setSelectedSubject('all');
     setSelectedCategory('All Categories');
     setSelectedClass('All Classes');
     setSelectedAccessLevel('all');
@@ -1743,6 +1828,9 @@ export default function ResourcesManager() {
       adminAccess: resourcesList.filter(r => r.accessLevel === 'admin').length,
       
       // Class stats
+      grade10: resourcesList.filter(r => r.className === 'Grade 10').length,
+      grade11: resourcesList.filter(r => r.className === 'Grade 11').length,
+      grade12: resourcesList.filter(r => r.className === 'Grade 12').length,
       form1: resourcesList.filter(r => r.className === 'Form 1').length,
       form2: resourcesList.filter(r => r.className === 'Form 2').length,
       form3: resourcesList.filter(r => r.className === 'Form 3').length,
@@ -1777,7 +1865,7 @@ export default function ResourcesManager() {
     }
 
     // Subject filter
-    if (selectedSubject !== 'All Subjects') {
+    if (selectedSubject !== 'all') {
       filtered = filtered.filter(resource => resource.subject === selectedSubject);
     }
 
@@ -1816,6 +1904,24 @@ export default function ResourcesManager() {
   const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const hasActiveFilters = selectedType !== 'all' ||
+    selectedSubject !== 'all' ||
+    selectedCategory !== 'All Categories' ||
+    selectedClass !== 'All Classes' ||
+    selectedAccessLevel !== 'all' ||
+    selectedStatus !== 'all' ||
+    Boolean(searchTerm);
+
+  const clearResourceFilters = () => {
+    setSelectedType('all');
+    setSelectedSubject('all');
+    setSelectedCategory('All Categories');
+    setSelectedClass('All Classes');
+    setSelectedAccessLevel('all');
+    setSelectedStatus('all');
+    setSearchTerm('');
+  };
 
   // View resource
   const handleView = (resource) => {
@@ -1992,14 +2098,48 @@ const handleSubmit = async (formData, id) => {
     const result = await response.json();
 
     if (result.success) {
+      let deliveryResult = null;
+      let deliveryInterrupted = false;
+      const savedResourceId = result.resource?.id;
+      if (savedResourceId) {
+        try {
+          const recipients = await fetchResourceDeliveryRecipients(savedResourceId);
+          deliveryResult = await sendResourceDeliveryBatch(savedResourceId, recipients, headers);
+
+          if (deliveryResult.failureCount > 0) {
+            showNotification(
+              deliveryResult.successCount > 0 ? 'warning' : 'error',
+              deliveryResult.successCount > 0 ? 'Partial Delivery' : 'Delivery Failed',
+              `${deliveryResult.successCount} resource email(s) delivered, ${deliveryResult.failureCount} failed.`,
+              { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(savedResourceId, deliveryResult.failedRecipients) }
+            );
+          }
+        } catch (deliveryError) {
+          console.error('Resource email delivery failed:', deliveryError);
+          deliveryInterrupted = true;
+          showNotification(
+            'error',
+            'Delivery Interrupted',
+            deliveryError.message || 'Network or timeout error while sending resource emails.',
+            { label: 'Retry', onClick: async () => {
+              const recipients = await fetchResourceDeliveryRecipients(savedResourceId);
+              await sendResourceDeliveryBatch(savedResourceId, recipients, headers);
+            }}
+          );
+        }
+      }
+
       // Refresh the list
       await fetchResources();
       setShowModal(false);
-      showNotification(
-        'success',
-        id ? 'Updated' : 'Created',
-        `Resource ${id ? 'updated' : 'created'} successfully!`
-      );
+      const recipientCount = result.resource?.deliverySummary?.recipientCount;
+      if (!deliveryInterrupted && (!deliveryResult || deliveryResult.failureCount === 0)) {
+        showNotification(
+          'success',
+          id ? 'Updated' : 'Created',
+          `Resource ${id ? 'updated' : 'created'} successfully!${deliveryResult ? ` ${deliveryResult.successCount} email(s) delivered.` : Number.isFinite(recipientCount) ? ` ${recipientCount} email recipient(s) prepared.` : ''}`
+        );
+      }
     } else {
       throw new Error(result.error);
     }
@@ -2056,7 +2196,7 @@ const handleSubmit = async (formData, id) => {
                 onClick={() => paginate(page)}
                 className={`px-3 py-2 rounded-xl font-bold ${
                   currentPage === page
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white shadow-lg'
                     : 'text-gray-700'
                 }`}
               >
@@ -2080,7 +2220,7 @@ const handleSubmit = async (formData, id) => {
   // Loading state
   if (loading && resources.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-teal-50 to-green-50">
         <div className="text-center">
           <Spinner size={48} />
           <p className="text-gray-700 text-lg mt-4 font-medium">
@@ -2095,7 +2235,7 @@ const handleSubmit = async (formData, id) => {
   }
 
   return (
-    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50">
+    <div className="space-y-6 p-4 min-h-screen bg-gradient-to-br from-gray-50 via-teal-50 to-green-50">
       {/* Custom Notification */}
       <Notification
         open={notification.open}
@@ -2103,6 +2243,8 @@ const handleSubmit = async (formData, id) => {
         type={notification.type}
         title={notification.title}
         message={notification.message}
+        actionLabel={notification.actionLabel}
+        onAction={notification.onAction}
       />
 
       {/* Delete Confirmation Modal */}
@@ -2121,21 +2263,21 @@ const handleSubmit = async (formData, id) => {
 {/* Modern Responsive Header with Bronze Gradient */}
 {/* Modern Responsive Header – Resources Theme */}
 <div className="relative mb-6 sm:mb-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem]
-                bg-gradient-to-br from-indigo-700 via-purple-700 to-violet-700
+                bg-gradient-to-br from-indigo-700 via-green-700 to-violet-700
                 p-4 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl">
 
-  {/* Abstract Gradient Orbs - Purple/Indigo Theme */}
+  {/* Abstract Gradient Orbs - green/Indigo Theme */}
   <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] 
-                  bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-violet-500/30 
+                  bg-gradient-to-br from-indigo-500/30 via-green-500/20 to-violet-500/30 
                   rounded-full blur-[100px] pointer-events-none animate-pulse" />
   
   <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] 
-                  bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-violet-500/20 
+                  bg-gradient-to-tr from-green-500/20 via-indigo-500/10 to-violet-500/20 
                   rounded-full blur-[80px] pointer-events-none" />
   
   {/* Central Floating Orb */}
   <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] 
-                  bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
+                  bg-gradient-to-r from-indigo-500/20 to-green-500/20 
                   rounded-full blur-[70px] pointer-events-none animate-pulse" />
   
   {/* Subtle Grid Pattern */}
@@ -2150,220 +2292,74 @@ const handleSubmit = async (formData, id) => {
                   bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full 
                   group-hover:translate-x-full" 
        style={{ transform: 'skewX(-20deg)' }} />
-
-  <div className="relative z-10">
-    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 sm:gap-6">
-
-      {/* Left Content */}
-      <div className="flex-1 min-w-0">
-        
-        {/* Premium Institution Badge */}
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-indigo-400 via-purple-400 to-violet-400 
-                          rounded-full shadow-[0_0_15px_rgba(129,140,248,0.5)]" />
-          <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-200">
-              Katwanyaa Senior School
-            </h2>
-            <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
-              Digital Resource Hub
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-
-          {/* Icon with Multi-layer Glow */}
-          <div className="relative shrink-0 self-start">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-500
-                            rounded-xl sm:rounded-2xl blur-md sm:blur-lg opacity-70" />
-            <div className="relative p-3 sm:p-4 bg-gradient-to-br from-indigo-600 to-purple-600
-                            rounded-xl sm:rounded-2xl shadow-2xl transform group-hover:scale-105 
-                            group-hover:rotate-3 transition-all duration-500">
-              <FiFolder className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-          </div>
-
-          {/* Text */}
-          <div className="flex-1 min-w-0">
-
-            {/* Security Badge */}
-            <div className="hidden xs:inline-flex items-center gap-1.5 px-2.5 py-1 
-                            bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
-                            backdrop-blur-sm rounded-full mb-2 sm:mb-3 max-w-max 
-                            border border-white/10">
-              <FiShield className="w-2.5 h-2.5 text-indigo-300" />
-              <span className="text-[9px] font-bold text-indigo-300 uppercase tracking-wider">
-                Secure Portal
-              </span>
-            </div>
-
-            {/* Title */}
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl
-                           font-black text-white tracking-tight leading-tight">
-              Resources <span className="block sm:inline">& </span>
-              <span className="text-transparent bg-clip-text
-                               bg-gradient-to-r from-indigo-200 to-purple-200">
-                Manager
-              </span>
-            </h1>
-
-            {/* Description */}
-            <p className="mt-2 sm:mt-3 text-sm xs:text-base sm:text-lg
-                          text-indigo-100/90 font-medium
-                          max-w-2xl leading-relaxed
-                          line-clamp-2 sm:line-clamp-none">
-              Centralized hub for uploading, organizing, and securely managing learning resources and documents.
-            </p>
-
-            {/* Quick Stats Pills */}
-            <div className="flex flex-wrap items-center gap-2 mt-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                  Service: Active
-                </span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <FiFolder className="w-3 h-3 text-indigo-400" />
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                  {stats?.total || 0} Resources
-                </span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <FiFileText className="w-3 h-3 text-amber-400" />
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                  {stats?.totalFiles || 0} Files
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+{/* ── Clean Responsive Resources Header ── */}
+<div className="relative z-10 rounded-2xl bg-[#071527] p-4 sm:p-6 shadow-sm">
+  <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+    
+    {/* Left Content */}
+    <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
+      {/* Icon */}
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10">
+        <FiFolder className="h-6 w-6 text-white" />
       </div>
 
-      {/* Right Content */}
-      <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between
-                      lg:flex-col lg:items-end gap-3 sm:gap-4">
+      {/* Text */}
+      <div className="min-w-0 flex-1">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-200/80">
+         Katwanyaa senior school
+        </p>
 
-        {/* Actions */}
-        <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 w-full xs:w-auto">
-          
-          {/* Refresh Button - Glass Effect */}
-          <button
-            onClick={() => fetchResources(true)}
-            disabled={refreshing}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
-                       px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-white/10 backdrop-blur-sm border border-white/20
-                       rounded-xl sm:rounded-2xl text-white font-semibold
-                       hover:bg-white/15 active:scale-95 transition-all
-                       disabled:opacity-60 w-full xs:w-auto min-w-[120px]"
-          >
-            {/* Button Shine Effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full 
-                            transition-transform duration-1000 
-                            bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            
-            {refreshing ? (
-              <>
-                <CircularProgress size={16} color="inherit" />
-                <span className="text-xs sm:text-sm">Refreshing...</span>
-              </>
-            ) : (
-              <>
-                <FiRotateCw className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" />
-                <span className="text-xs sm:text-sm">Refresh</span>
-              </>
-            )}
-            
-            {/* Live Badge */}
-            <span className="hidden sm:inline-block ml-1 px-1.5 py-0.5 
-                             rounded-md bg-white/10 text-[9px] font-black 
-                             text-white/60 border border-white/10">
-              LIVE
-            </span>
-          </button>
+        <h1 className="text-2xl font-black leading-tight text-white sm:text-3xl md:text-4xl">
+          Resources Manager
+        </h1>
 
-          {/* Upload Button - Gradient Primary */}
-          <button
-            onClick={handleCreate}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
-                       px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500
-                       hover:from-indigo-600 hover:via-purple-600 hover:to-violet-600
-                       text-white rounded-xl sm:rounded-2xl font-semibold
-                       active:scale-95 transition-all
-                       shadow-[0_8px_20px_rgba(139,92,246,0.3)] 
-                       hover:shadow-[0_12px_30px_rgba(139,92,246,0.4)]
-                       w-full xs:w-auto"
-          >
-            {/* Button Shine Effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full 
-                            transition-transform duration-1000 
-                            bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            
-            <FiPlus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-300" />
-            <span className="text-xs sm:text-sm whitespace-nowrap">Upload Resource</span>
-            
-            {/* Pulse Indicator */}
-            <span className="relative flex h-2 w-2 ml-1">
-              <span className="animate-ping absolute inline-flex h-full w-full 
-                               rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-            </span>
-          </button>
-        </div>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-blue-100/75 sm:text-base">
+          Upload, organize, and manage school learning resources and documents in one place.
+        </p>
 
-        {/* Today's Stats - Desktop */}
-        <div className="hidden lg:flex flex-col items-end">
-          <span className="text-[9px] font-bold text-indigo-300/70 uppercase tracking-widest">
-            Total Files
-          </span>
-          <span className="text-2xl font-black text-white">
-            {stats?.totalFiles || 0}
-          </span>
+        {/* Simple Stats */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          <div className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/85">
+            {stats?.total || 0} Resources
+          </div>
+
+          <div className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/85">
+            {stats?.totalFiles || 0} Files
+          </div>
         </div>
       </div>
     </div>
-    
-    {/* Enhanced Status Bar */}
-    <div className="mt-6 pt-4 border-t border-white/10 
-                    flex flex-wrap items-center gap-4 sm:gap-6 
-                    text-[10px] font-bold uppercase tracking-wider">
-      
-      {/* Service Status */}
-      <div className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-white/40">Status:</span>
-        <span className="text-emerald-400">Operational</span>
-      </div>
-      
-      {/* Security Badge */}
-      <div className="flex items-center gap-2">
-        <FiShield className="w-3 h-3 text-indigo-400" />
-        <span className="text-white/40">Security:</span>
-        <span className="text-indigo-400">Encrypted</span>
-      </div>
-      
-      {/* Total Resources */}
-      <div className="flex items-center gap-2">
-        <FiFolder className="w-3 h-3 text-purple-400" />
-        <span className="text-white/40">Resources:</span>
-        <span className="text-purple-400 font-black">{stats?.total || 0}</span>
-      </div>
-      
-      {/* Last Updated */}
-      <div className="flex items-center gap-2 ml-auto">
-        <FiClock className="w-3 h-3 text-white/30" />
-        <span className="text-white/40">
-          Updated: {new Date().toLocaleTimeString()}
-        </span>
-      </div>
+
+    {/* Right Actions */}
+    <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto lg:justify-end">
+      <button
+        onClick={() => fetchResources(true)}
+        disabled={refreshing}
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+      >
+        {refreshing ? (
+          <>
+            <CircularProgress size={16} color="inherit" />
+            <span>Refreshing...</span>
+          </>
+        ) : (
+          <>
+            <FiRotateCw className="h-4 w-4" />
+            <span>Refresh</span>
+          </>
+        )}
+      </button>
+
+      <button
+        onClick={handleCreate}
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-95 sm:w-auto"
+      >
+        <FiPlus className="h-4 w-4" />
+        <span>Upload Resource</span>
+      </button>
     </div>
   </div>
+</div>
 </div>
 
 
@@ -2378,7 +2374,7 @@ const handleSubmit = async (formData, id) => {
                 <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Total</p>
                 <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.total}</p>
               </div>
-              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 rounded-2xl">
+              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-teal-50 to-teal-100 text-teal-600 rounded-2xl">
                 <FiFolder className="text-lg sm:text-xl" />
               </div>
             </div>
@@ -2391,31 +2387,44 @@ const handleSubmit = async (formData, id) => {
                 <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Total Files</p>
                 <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.totalFiles}</p>
               </div>
-              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 rounded-2xl">
+              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-green-50 to-green-100 text-green-600 rounded-2xl">
                 <FiFileText className="text-lg sm:text-xl" />
               </div>
             </div>
           </div>
 
-          {/* Form 1 Card */}
+          {/* Grade 10 Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-5 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 transform-gpu">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Form 1</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.form1 || 0}</p>
+                <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Grade 10</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.grade10 || 0}</p>
               </div>
-              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 rounded-2xl">
+              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-teal-50 to-teal-100 text-teal-600 rounded-2xl">
                 <FiUsers className="text-lg sm:text-xl" />
               </div>
             </div>
           </div>
 
-          {/* Form 2 Card */}
+          {/* Grade 11 Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-5 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 transform-gpu">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Form 2</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.form2 || 0}</p>
+                <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Grade 11</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.grade11 || 0}</p>
+              </div>
+              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-green-50 to-green-100 text-green-600 rounded-2xl">
+                <FiUsers className="text-lg sm:text-xl" />
+              </div>
+            </div>
+          </div>
+
+          {/* Grade 12 Card */}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-5 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 transform-gpu">
+            <div className="flex items-center justify-between">
+              <div className="min-w-0">
+                <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Grade 12</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.grade12 || 0}</p>
               </div>
               <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-green-50 to-green-100 text-green-600 rounded-2xl">
                 <FiUsers className="text-lg sm:text-xl" />
@@ -2430,7 +2439,7 @@ const handleSubmit = async (formData, id) => {
                 <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Form 3</p>
                 <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.form3 || 0}</p>
               </div>
-              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 rounded-2xl">
+              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-green-50 to-green-100 text-green-600 rounded-2xl">
                 <FiUsers className="text-lg sm:text-xl" />
               </div>
             </div>
@@ -2443,7 +2452,7 @@ const handleSubmit = async (formData, id) => {
                 <p className="text-xs sm:text-md  font-semibold text-gray-600 mb-1 truncate">Form 4</p>
                 <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stats.form4 || 0}</p>
               </div>
-              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-cyan-50 to-cyan-100 text-cyan-600 rounded-2xl">
+              <div className="flex-shrink-0 ml-3 p-2.5 sm:p-3 bg-gradient-to-br from-green-50 to-green-100 text-green-600 rounded-2xl">
                 <FiUsers className="text-lg sm:text-xl" />
               </div>
             </div>
@@ -2499,6 +2508,23 @@ const handleSubmit = async (formData, id) => {
 
       {/* Filters Section */}
       <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-lg border border-gray-200">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">
+              <FiFilter className="text-teal-600" />
+              Filters
+            </p>
+            <h2 className="mt-1 text-lg font-black text-slate-950">Refine resource records</h2>
+          </div>
+          <button
+            onClick={clearResourceFilters}
+            disabled={!hasActiveFilters}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black text-slate-700 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <FiFilter />
+            Clear All Filters
+          </button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
           <div className="lg:col-span-2 relative">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -2507,14 +2533,14 @@ const handleSubmit = async (formData, id) => {
               placeholder="Search resources by title, description, or subject..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10    font-bold pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-md  bg-gray-50"
+              className="w-full pl-10    font-bold pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-md  bg-gray-50"
             />
           </div>
 
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 cursor-pointer text-md "
+            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50 cursor-pointer text-md "
           >
             <option value="all">All Types</option>
             {typeOptions.filter(opt => opt.value !== 'all').map(option => (
@@ -2524,17 +2550,13 @@ const handleSubmit = async (formData, id) => {
             ))}
           </select>
 
-          <select
+          <SearchableSubjectDropdown
             value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50 cursor-pointer text-md "
-          >
-            {subjectOptions.map(subject => (
-              <option key={subject} value={subject}>
-                {subject}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => setSelectedSubject(value)}
+            options={ALL_SUBJECTS}
+            placeholder="Search subjects..."
+            className="w-full"
+          />
 
           <select
             value={selectedCategory}
@@ -2551,7 +2573,7 @@ const handleSubmit = async (formData, id) => {
           <select
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-gray-50 cursor-pointer text-md "
+            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-gray-50 cursor-pointer text-md "
           >
             {classOptions.map(className => (
               <option key={className} value={className}>
@@ -2587,43 +2609,15 @@ const handleSubmit = async (formData, id) => {
               </option>
             ))}
           </select>
-
-          {/* Clear Filters Button */}
-      {/* Clear Filters Button - FIXED */}
-{(selectedType !== 'all' || selectedSubject !== 'All Subjects' || 
-  selectedCategory !== 'All Categories' || selectedClass !== 'All Classes' || 
-  selectedAccessLevel !== 'all' || selectedStatus !== 'all' || searchTerm) && (
-  <button
-    onClick={() => {
-      // Reset ALL filter states
-      setSelectedType('all');
-      setSelectedSubject('All Subjects');
-      etSelectedCategory('All Categories');
-      setSelectedClass('All Classes');
-      setSelectedAccessLevel('all');
-      setSelectedStatus('all');
-      setSearchTerm('');
-      
-      // Also reset pagination to first page
-      setCurrentPage(1);
-      
-      // Optional: Show notification that filters were cleared
-      showNotification('info', 'Filters Cleared', 'All filters have been reset successfully');
-    }}
-    className="px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold text-md hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:border-red-300 hover:text-red-600"
-  >
-  Clear Filters
-  </button>
-)}
         </div>
       </div>
 
 
       {filteredResources.length > 0 ? (
         <>
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/5 border border-slate-200/50 overflow-hidden relative">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-teal-500/5 border border-slate-200/50 overflow-hidden relative">
             {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent pointer-events-none"></div>
             
             {/* Enhanced Table Header */}
             <div className="border-b border-slate-200/50">
@@ -2644,13 +2638,13 @@ const handleSubmit = async (formData, id) => {
                           setSelectedResources(newSelection);
                         }
                       }}
-                      className="w-5 h-5 rounded-xl border-2 border-slate-300 bg-white checked:bg-gradient-to-r checked:from-blue-500 checked:to-purple-600 checked:border-0 focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all duration-200"
+                      className="w-5 h-5 rounded-xl border-2 border-slate-300 bg-white checked:bg-gradient-to-r checked:from-teal-500 checked:to-green-600 checked:border-0 focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all duration-200"
                     />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-900">
                       Digital Resources
-                      <span className="ml-2 px-2.5 py-0.5 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 text-xs font-semibold rounded-full">
+                      <span className="ml-2 px-2.5 py-0.5 bg-gradient-to-r from-teal-100 to-green-100 text-teal-700 text-xs font-semibold rounded-full">
                         {filteredResources.length} items
                       </span>
                     </h3>
@@ -2673,7 +2667,7 @@ const handleSubmit = async (formData, id) => {
                     </th>
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800  uppercase tracking-[0.2em] min-w-[300px]">
                       <div className="flex items-center gap-2">
-                        <HiOutlineSparkles className="w-4 h-4 text-blue-500" />
+                        <HiOutlineSparkles className="w-4 h-4 text-teal-500" />
                         Resource
                       </div>
                     </th>
@@ -2691,7 +2685,7 @@ const handleSubmit = async (formData, id) => {
                     </th>
                     <th className="py-5 px-8 text-left text-xs font-bold text-slate-800  uppercase tracking-[0.2em]">
                       <div className="flex items-center gap-2">
-                        <FiUserCheck className="w-4 h-4 text-purple-500" />
+                        <FiUserCheck className="w-4 h-4 text-green-500" />
                         Teacher
                       </div>
                     </th>
@@ -2707,8 +2701,8 @@ const handleSubmit = async (formData, id) => {
                   {currentItems.map((resource) => (
                     <tr 
                       key={resource.id} 
-                      className={`group hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-purple-50/20 transition-all duration-300  ${
-                        selectedResources.has(resource.id) ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/30' : ''
+                      className={`group hover:bg-gradient-to-r hover:from-teal-50/30 hover:to-green-50/20 transition-all duration-300  ${
+                        selectedResources.has(resource.id) ? 'bg-gradient-to-r from-teal-50/50 to-green-50/30' : ''
                       }`}
                     >
                       {/* Checkbox Column */}
@@ -2718,7 +2712,7 @@ const handleSubmit = async (formData, id) => {
     type="checkbox"
     checked={selectedResources.has(resource.id)}
     onChange={(e) => handleResourceSelect(resource.id, e.target.checked)}
-    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer transition-colors"
+    className="w-5 h-5 rounded border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer transition-colors"
   />
 </div>
                       </td>
@@ -2731,9 +2725,9 @@ const handleSubmit = async (formData, id) => {
                             resource.type?.toLowerCase() === 'pdf' 
                               ? 'bg-gradient-to-br from-red-50 to-pink-50 border border-red-100 shadow-sm shadow-red-500/10' 
                               : resource.type?.toLowerCase() === 'video' 
-                              ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 shadow-sm shadow-blue-500/10'
+                              ? 'bg-gradient-to-br from-teal-50 to-green-50 border border-teal-100 shadow-sm shadow-teal-500/10'
                               : resource.type?.toLowerCase() === 'image' 
-                              ? 'bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 shadow-sm shadow-purple-500/10'
+                              ? 'bg-gradient-to-br from-green-50 to-violet-50 border border-green-100 shadow-sm shadow-green-500/10'
                               : resource.type?.toLowerCase() === 'document' 
                               ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm shadow-emerald-500/10'
                               : 'bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-100 shadow-sm shadow-slate-500/10'
@@ -2741,9 +2735,9 @@ const handleSubmit = async (formData, id) => {
                             {resource.type?.toLowerCase() === 'pdf' ? (
                               <HiOutlineDocumentText className="text-xl text-red-600" />
                             ) : resource.type?.toLowerCase() === 'video' ? (
-                              <FiVideo className="text-xl text-blue-600" />
+                              <FiVideo className="text-xl text-teal-600" />
                             ) : resource.type?.toLowerCase() === 'image' ? (
-                              <HiOutlinePhotograph className="text-xl text-purple-600" />
+                              <HiOutlinePhotograph className="text-xl text-green-600" />
                             ) : resource.type?.toLowerCase() === 'presentation' ? (
                               <HiOutlinePresentationChartBar className="text-xl text-amber-600" />
                             ) : (
@@ -2757,7 +2751,7 @@ const handleSubmit = async (formData, id) => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2 mb-2">
-                              <h4 className="font-bold text-slate-900 text-md  leading-tight group-hover:text-blue-600 transition-colors">
+                              <h4 className="font-bold text-slate-900 text-md  leading-tight group-hover:text-teal-600 transition-colors">
                                 {resource.title || 'Untitled Resource'}
                               </h4>
               
@@ -2779,7 +2773,7 @@ const handleSubmit = async (formData, id) => {
                       <td className="py-5 px-8">
                         <div className="space-y-3">
                           <div className="inline-flex flex-col gap-1.5">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 text-xs font-bold rounded-xl border border-blue-100">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-green-50 text-teal-700 text-xs font-bold rounded-xl border border-teal-100">
                               <FiUsers className="w-3 h-3" />
                               {resource.className || 'All Classes'}
                             </span>
@@ -2802,8 +2796,8 @@ const handleSubmit = async (formData, id) => {
                             <div className="flex items-center gap-2">
                               <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${
                                 resource.type?.toLowerCase() === 'pdf' ? 'bg-gradient-to-r from-red-500 to-pink-500' :
-                                resource.type?.toLowerCase() === 'video' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
-                                resource.type?.toLowerCase() === 'image' ? 'bg-gradient-to-r from-purple-500 to-violet-500' :
+                                resource.type?.toLowerCase() === 'video' ? 'bg-gradient-to-r from-teal-500 to-green-500' :
+                                resource.type?.toLowerCase() === 'image' ? 'bg-gradient-to-r from-green-500 to-violet-500' :
                                 resource.type?.toLowerCase() === 'document' ? 'bg-gradient-to-r from-emerald-500 to-teal-500' :
                                 'bg-gradient-to-r from-slate-500 to-gray-500'
                               }`} />
@@ -2813,11 +2807,11 @@ const handleSubmit = async (formData, id) => {
                             </div>
                             <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${
                               resource.accessLevel === 'student' 
-                                ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 border-blue-100' 
+                                ? 'bg-gradient-to-r from-teal-50 to-green-50 text-teal-700 border-teal-100' 
                                 : resource.accessLevel === 'teacher' 
                                 ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 border-emerald-100'
                                 : resource.accessLevel === 'admin' 
-                                ? 'bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border-purple-100'
+                                ? 'bg-gradient-to-r from-green-50 to-violet-50 text-green-700 border-green-100'
                                 : 'bg-gradient-to-r from-slate-50 to-gray-50 text-slate-700 border-slate-100'
                             }`}>
                               {resource.accessLevel === 'admin' ? <FiLock className="w-3 h-3" /> : <FiUnlock className="w-3 h-3" />}
@@ -2831,13 +2825,13 @@ const handleSubmit = async (formData, id) => {
                       <td className="py-5 px-8">
                         <div className="flex items-center gap-3 group/author">
                           <div className="relative">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-md  shadow-md shadow-blue-500/25">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-green-600 flex items-center justify-center text-white font-bold text-md  shadow-md shadow-teal-500/25">
                               {resource.teacher?.split(' ').map(n => n[0]).join('') || 'A'}
                             </div>
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/0 to-purple-600/0 group-hover/author:from-blue-500/20 group-hover/author:to-purple-600/20 transition-all duration-300"></div>
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-teal-500/0 to-green-600/0 group-hover/author:from-teal-500/20 group-hover/author:to-green-600/20 transition-all duration-300"></div>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-md  font-bold text-slate-900 group-hover/author:text-blue-600 transition-colors">
+                            <span className="text-md  font-bold text-slate-900 group-hover/author:text-teal-600 transition-colors">
                               {resource.teacher || 'System Admin'}
                             </span>
                             <span className="text-xs text-slate-800  font-medium">
@@ -2869,7 +2863,7 @@ const handleSubmit = async (formData, id) => {
   <div className="flex items-center justify-end gap-4">
     <button
       onClick={() => handleView(resource)}
-      className="flex items-center gap-1.5 text-blue-600 font-bold text-sm cursor-pointer"
+      className="flex items-center gap-1.5 text-teal-600 font-bold text-sm cursor-pointer"
     >
       <FiEye className="w-4 h-4" />
       <span>View</span>
@@ -2901,9 +2895,9 @@ const handleSubmit = async (formData, id) => {
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="p-2.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-teal-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
                   >
-                    <FiChevronLeft className="w-5 h-5 text-slate-800  group-hover:text-blue-600" />
+                    <FiChevronLeft className="w-5 h-5 text-slate-800  group-hover:text-teal-600" />
                   </button>
                   
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -2917,7 +2911,7 @@ const handleSubmit = async (formData, id) => {
                           onClick={() => paginate(page)}
                           className={`px-4 py-2 rounded-xl font-medium text-md  transition-all duration-200 ${
                             currentPage === page 
-                              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25' 
+                              ? 'bg-gradient-to-r from-teal-600 to-green-600 text-white shadow-lg shadow-teal-500/25' 
                               : 'text-slate-700 hover:bg-slate-100'
                           }`}
                         >
@@ -2929,9 +2923,9 @@ const handleSubmit = async (formData, id) => {
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="p-2.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-teal-300 hover:bg-white hover:shadow-md disabled:opacity-30 transition-all duration-200 group"
                   >
-                    <FiChevronRight className="w-5 h-5 text-slate-800  group-hover:text-blue-600" />
+                    <FiChevronRight className="w-5 h-5 text-slate-800  group-hover:text-teal-600" />
                   </button>
                 </div>
               </div>
@@ -2940,25 +2934,25 @@ const handleSubmit = async (formData, id) => {
         </>
       ) : (
         /* Modern Empty State */
-        <div className="relative bg-gradient-to-br from-white/90 to-blue-50/50 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-500/5 border border-blue-100/50 text-center py-16 px-8 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-white/90 to-teal-50/50 backdrop-blur-xl rounded-3xl shadow-2xl shadow-teal-500/5 border border-teal-100/50 text-center py-16 px-8 overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-400 to-green-400"></div>
           </div>
           
           <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/10">
-              <FiFolder className="text-4xl text-gradient-to-r from-blue-500 to-purple-500" />
+            <div className="w-24 h-24 bg-gradient-to-r from-teal-100 to-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-teal-500/10">
+              <FiFolder className="text-4xl text-gradient-to-r from-teal-500 to-green-500" />
             </div>
             
             <h3 className="text-2xl font-bold text-slate-900 mb-3">
-              {searchTerm || selectedType !== 'all' || selectedSubject !== 'All Subjects' 
+              {searchTerm || selectedType !== 'all' || selectedSubject !== 'all' 
                 ? 'No resources match your search' 
                 : 'Your resource library is empty'}
             </h3>
             
             <p className="text-slate-600 text-base mb-8 max-w-md mx-auto">
-              {searchTerm || selectedType !== 'all' || selectedSubject !== 'All Subjects' 
+              {searchTerm || selectedType !== 'all' || selectedSubject !== 'all' 
                 ? 'Try adjusting your filters or search keywords to find what you need.' 
                 : 'Start building your digital classroom by uploading your first resource.'}
             </p>
@@ -2966,22 +2960,12 @@ const handleSubmit = async (formData, id) => {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button 
                 onClick={handleCreate} 
-                className="group relative bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
+                className="group relative bg-gradient-to-r from-teal-600 to-green-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-teal-500/25 hover:shadow-2xl hover:shadow-teal-500/30 flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5"
               >
                 <FiUpload className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Upload Resource
               </button>
               
-              <button 
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedType('all');
-                  setSelectedSubject('All Subjects');
-                }}
-                className="px-6 py-3.5 rounded-2xl font-semibold border-2 border-slate-200 text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-white transition-all duration-300"
-              >
-                Clear Filters
-              </button>
             </div>
           </div>
         </div>
@@ -3006,6 +2990,25 @@ const handleSubmit = async (formData, id) => {
           onEdit={handleEdit}
         />
       )}
+
+      {/* Delivery Progress Indicator */}
+      <DeliveryProgressIndicator
+        isOpen={deliveryProgress.isOpen}
+        totalRecipients={deliveryProgress.totalRecipients}
+        sentCount={deliveryProgress.sentCount}
+        failedCount={deliveryProgress.failedCount}
+        currentRecipient={deliveryProgress.currentRecipient}
+        isComplete={deliveryProgress.isComplete}
+        failedRecipients={deliveryProgress.failedRecipients}
+        isLoading={deliveryProgress.isLoading}
+        onCancel={cancelResourceDelivery}
+        onClose={() => setDeliveryProgress(prev => ({ ...prev, isOpen: false }))}
+        onRetry={async () => {
+          if (deliveryProgress.itemId && deliveryProgress.failedRecipients.length > 0) {
+            await retryFailedResourceDelivery(deliveryProgress.itemId, deliveryProgress.failedRecipients);
+          }
+        }}
+      />
     </div>
   );
 }
