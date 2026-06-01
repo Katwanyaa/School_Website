@@ -64,27 +64,27 @@ function ModernLoadingSpinner({ message = "Loading fee data...", size = "medium"
   const { outer, inner } = sizes[size]
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-50 via-blue-50/30 to-emerald-50/20 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-50 flex items-center justify-center z-50 backdrop-blur-sm">
       <div className="text-center">
         <div className="relative inline-block">
           <div className="relative">
             <CircularProgress 
               size={outer} 
               thickness={5}
-              className="text-indigo-600"
+              className="text-slate-700"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full" style={{ width: inner, height: inner }}></div>
+              <div className="bg-gradient-to-r from-slate-600 to-slate-800 rounded-full" style={{ width: inner, height: inner }}></div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30" />
+          <div className="absolute -inset-6 bg-gradient-to-r from-slate-300 to-slate-400 rounded-full blur-xl opacity-20" />
         </div>
         
         <div className="mt-8 space-y-3">
           <span className="block text-lg font-semibold text-gray-800">{message}</span>
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+              <div key={i} className="w-2 h-2 bg-slate-700 rounded-full"></div>
             ))}
           </div>
         </div>
@@ -219,7 +219,7 @@ function ModernFileUpload({ onFileSelect, file, onRemove, dragActive, onDrag, sh
     <div
       className={`border-3 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer ${
         dragActive 
-          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 ring-4 ring-blue-100' 
+          ? 'border-slate-500 bg-gradient-to-br from-slate-100 to-slate-200 ring-4 ring-slate-200' 
           : 'border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100'
       }`}
       onDragEnter={onDrag}
@@ -233,7 +233,7 @@ function ModernFileUpload({ onFileSelect, file, onRemove, dragActive, onDrag, sh
       }}
       onClick={() => fileInputRef.current?.click()}
     >
-      <FiUpload className={`mx-auto text-3xl mb-4 ${dragActive ? 'text-blue-600' : 'text-gray-400'}`} />
+      <FiUpload className={`mx-auto text-3xl mb-4 ${dragActive ? 'text-slate-700' : 'text-gray-400'}`} />
       <p className="text-gray-800 mb-2 font-bold text-lg">
         {dragActive ? '📁 Drop file here!' : file ? 'Click to replace file' : 'Drag & drop or click to upload'}
       </p>
@@ -289,12 +289,12 @@ function ModernFeeDetailModal({ fee, student, onClose, onEdit, onDelete, showNot
           <div className="bg-slate-900 px-6 py-4 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-white/10">
+                <div className="p-2 rounded-lg bg-white/5">
                   <IoCash className="text-lg" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold">School Fee Details</h2>
-                  <p className="text-xs text-slate-300">
+                  <p className="text-xs text-slate-400">
                     Balance & payment overview
                   </p>
                 </div>
@@ -308,7 +308,7 @@ function ModernFeeDetailModal({ fee, student, onClose, onEdit, onDelete, showNot
           <div className="max-h-[calc(95vh-64px)] overflow-y-auto p-6 space-y-6">
             {/* Student Summary */}
             <div className="flex items-center gap-4 bg-white rounded-xl p-4 border shadow-sm">
-              <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+              <div className="w-12 h-12 rounded-lg bg-slate-700 flex items-center justify-center text-white">
                 <FiDollarSign />
               </div>
               <div className="flex-1">
@@ -336,14 +336,14 @@ function ModernFeeDetailModal({ fee, student, onClose, onEdit, onDelete, showNot
                 <h4 className="text-sm font-semibold text-gray-800">
                   Payment Progress
                 </h4>
-                <span className="text-sm font-semibold text-blue-600">
+                <span className="text-sm font-semibold text-slate-700">
                   {calculateProgress().toFixed(1)}%
                 </span>
               </div>
 
-              <div className="h-2 bg-slate-200 rounded-full overflow-hidden mb-4">
+              <div className="h-2 bg-slate-300 rounded-full overflow-hidden mb-4">
                 <div
-                  className="h-full bg-blue-600 rounded-full transition-all"
+                  className="h-full bg-slate-700 rounded-full transition-all"
                   style={{ width: `${calculateProgress()}%` }}
                 />
               </div>
@@ -425,7 +425,7 @@ function ModernFeeDetailModal({ fee, student, onClose, onEdit, onDelete, showNot
             <div className="flex gap-3 pt-4 border-t">
               <button
                 onClick={onEdit}
-                className="flex-1 py-3 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
+                className="flex-1 py-3 rounded-xl bg-slate-700 text-white text-sm font-medium hover:bg-slate-800 transition"
               >
                 Edit Fee
               </button>
@@ -509,7 +509,7 @@ function ModernFeeEditModal({ fee, student, onClose, onSave, loading }) {
         bgcolor: 'background.paper', borderRadius: 3, boxShadow: 24, overflow: 'hidden',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 p-6 text-white">
+        <div className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-white bg-opacity-20 rounded-2xl">
@@ -649,7 +649,7 @@ function ModernFeeEditModal({ fee, student, onClose, onSave, loading }) {
                     required
                     value={formData.term}
                     onChange={(e) => setFormData({...formData, term: e.target.value})}
-                    className="w-full px-5 py-3.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-base"
+                    className="w-full px-5 py-3.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600 bg-white text-base"
                   >
                     <option value="">Select Term</option>
                     <option value="Term 1">Term 1</option>
@@ -667,7 +667,7 @@ function ModernFeeEditModal({ fee, student, onClose, onSave, loading }) {
                     value={formData.academicYear}
                     onChange={(e) => setFormData({...formData, academicYear: e.target.value})}
                     placeholder="e.g., 2024/2025"
-                    className="w-full px-5 py-3.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-base"
+                    className="w-full px-5 py-3.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600 bg-white text-base"
                   />
                 </div>
                 <div>
@@ -695,7 +695,7 @@ function ModernFeeEditModal({ fee, student, onClose, onSave, loading }) {
                 ].map(status => (
                   <label key={status.value} className={`flex items-center gap-3 p-4 rounded-xl border-3 cursor-pointer ${
                     formData.paymentStatus === status.value 
-                      ? `border-blue-600 bg-gradient-to-r ${status.color} text-white shadow-lg` 
+                      ? `border-slate-600 bg-gradient-to-r ${status.color} text-white shadow-lg` 
                       : 'border-gray-300'
                   }`}>
                     <input
@@ -703,7 +703,7 @@ function ModernFeeEditModal({ fee, student, onClose, onSave, loading }) {
                       value={status.value}
                       checked={formData.paymentStatus === status.value}
                       onChange={(e) => setFormData({...formData, paymentStatus: e.target.value})}
-                      className="text-blue-600 focus:ring-blue-500"
+                      className="text-slate-700 focus:ring-slate-600"
                     />
                     <div className="flex-1">
                       <div className="font-bold text-base">{status.label}</div>
@@ -730,7 +730,7 @@ function ModernFeeEditModal({ fee, student, onClose, onSave, loading }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-2xl font-bold text-base shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                className="flex-1 px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-2xl font-bold text-base shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
                 {loading ? (
                   <>
@@ -925,7 +925,7 @@ function ModernFeeChart({
         {/* Header: Reduced text and spacing */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className={`shrink-0 w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-md`}>
+            <div className={`shrink-0 w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center shadow-md`}>
               <span className="text-white text-lg">📊</span>
             </div>
             <div>

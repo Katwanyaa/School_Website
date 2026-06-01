@@ -419,7 +419,7 @@ function ModernLoadingSpinner({ message = 'Loading...', size = 'medium' }) {
   const { outer, inner } = sizes[size] || sizes.medium;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-50 via-blue-50/30 to-emerald-50/20 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-50 flex items-center justify-center z-50">
       <div className="text-center">
         <div className="relative inline-block">
           {/* Main spinner */}
@@ -427,16 +427,16 @@ function ModernLoadingSpinner({ message = 'Loading...', size = 'medium' }) {
             <CircularProgress 
               size={outer} 
               thickness={5}
-              className="text-indigo-600"
+              className="text-slate-700"
             />
             {/* Pulsing inner circle */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full animate-ping opacity-25"
+              <div className="bg-gradient-to-r from-slate-600 to-slate-800 rounded-full animate-ping opacity-25"
                    style={{ width: inner, height: inner }}></div>
             </div>
           </div>
           {/* Outer glow effect */}
-          <div className="absolute -inset-6 bg-gradient-to-r from-indigo-100 to-violet-100 rounded-full blur-xl opacity-30 animate-pulse"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-slate-300 to-slate-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
         </div>
         
         {/* Text content */}
@@ -448,7 +448,7 @@ function ModernLoadingSpinner({ message = 'Loading...', size = 'medium' }) {
           {/* Bouncing dots */}
           <div className="flex justify-center space-x-1.5">
             {[0, 1, 2].map(i => (
-              <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" 
+              <div key={i} className="w-2 h-2 bg-slate-700 rounded-full animate-bounce" 
                    style={{ animationDelay: `${i * 0.15}s` }}></div>
             ))}
           </div>
@@ -1723,8 +1723,8 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
         <div className="group relative bg-[#0F172A] rounded-xl md:rounded-[2rem] p-5 md:p-8 text-white overflow-hidden shadow-2xl border border-white/5 transition-all duration-500 ">
           
           {/* Abstract Mesh Gradient Background */}
-          <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-blue-600/25 rounded-full blur-[100px] pointer-events-none  transition-transform duration-700" />
-          <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-purple-600/15 rounded-full blur-[80px] pointer-events-none  transition-transform duration-700" />
+          <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-slate-700/15 rounded-full blur-[100px] pointer-events-none  transition-transform duration-700" />
+          <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-slate-600/10 rounded-full blur-[80px] pointer-events-none  transition-transform duration-700" />
           
           <div className="relative z-10">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-6">
@@ -1757,7 +1757,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
               <button
                 onClick={refreshDashboard}
                 disabled={refreshing}
-                className="flex items-center justify-center gap-2.5 bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-[12px] tracking-wide transition-all hover:bg-white/20 active:scale-95 disabled:opacity-50 w-full sm:w-fit"
+                className="flex items-center justify-center gap-2.5 bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-[12px] tracking-wide transition-all hover:bg-white/15 active:scale-95 disabled:opacity-50 w-full sm:w-fit"
               >
                 <FiRefreshCw className={`text-base transition-transform ${refreshing ? 'animate-spin' : ''}`} />
                 <span>{refreshing ? 'UPDATING...' : 'REFRESH DATA'}</span>
@@ -1777,7 +1777,7 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <button
                 onClick={() => setShowQuickTour(true)}
-                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg sm:rounded-xl font-bold text-[12px] uppercase tracking-wider shadow-lg transition-all active:scale-95 w-full sm:w-auto"
+                className="flex items-center justify-center gap-2 bg-slate-600 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg sm:rounded-xl font-bold text-[12px] uppercase tracking-wider shadow-lg transition-all active:scale-95 w-full sm:w-auto"
               >
                 <FiPlay className="text-xs" />
                 Video Tour

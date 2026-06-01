@@ -92,7 +92,7 @@ import DeliveryProgressIndicator from '../DeliveryProgressIndicator';
 // Rest of your component logic goes here...
 
 const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
-const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12'];
+const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
 
 const safeText = (value) => {
   if (typeof value === 'string') return value;
