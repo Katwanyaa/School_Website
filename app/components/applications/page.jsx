@@ -1402,241 +1402,41 @@ const EmptyState = () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-emerald-50/20 p-4 md:p-6">
       <Toaster position="top-right" richColors />
 
-{/* Modern Applications Dashboard Header - Enhanced with Premium Design */}
-<div className="relative mb-6 sm:mb-8 overflow-hidden
-                rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem]
-                bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-700
-                p-4 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl">
-
-  {/* Abstract Gradient Orbs - Purple/Blue Theme */}
-  <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] 
-                  bg-gradient-to-br from-purple-500/30 via-indigo-500/20 to-blue-500/30 
-                  rounded-full blur-[100px] pointer-events-none animate-pulse" />
-  
-  <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] 
-                  bg-gradient-to-tr from-blue-500/20 via-indigo-500/10 to-purple-500/20 
-                  rounded-full blur-[80px] pointer-events-none" />
-  
-  {/* Central Floating Orb */}
-  <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] 
-                  bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
-                  rounded-full blur-[70px] pointer-events-none animate-pulse" />
-  
-  {/* Subtle Grid Pattern */}
-  <div className="absolute inset-0 opacity-[0.02]" 
-       style={{ 
-         backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-         backgroundSize: '40px 40px'
-       }} />
-  
-  {/* Shine Effect Overlay */}
-  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 
-                  bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full 
-                  group-hover:translate-x-full" 
-       style={{ transform: 'skewX(-20deg)' }} />
-
-  <div className="relative z-10">
-    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 sm:gap-6">
-
-      {/* Left Content */}
-      <div className="flex-1 min-w-0">
-        
-        {/* Premium Institution Badge */}
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-7 w-1 bg-gradient-to-b from-purple-400 via-indigo-400 to-blue-400 
-                          rounded-full shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
-          <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-200">
-              Katwanyaa Senior School            </h2>
-            <p className="text-[9px] italic font-medium text-white/40 tracking-widest uppercase">
-              Student Support Services
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-
-          {/* Icon with Multi-layer Glow */}
-          <div className="relative shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500
-                            rounded-xl sm:rounded-2xl blur-md sm:blur-lg opacity-70" />
-            <div className="relative p-3 sm:p-4 bg-gradient-to-br from-blue-600 to-purple-600
-                            rounded-xl sm:rounded-2xl shadow-2xl transform group-hover:scale-105 
-                            group-hover:rotate-3 transition-all duration-500">
-              <GraduationCap className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+      {/* Applications Header - matched to Student Upload */}
+      <div className="relative mb-6 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-slate-950 via-indigo-950 to-blue-950 p-6 text-white shadow-2xl shadow-slate-900/20 sm:mb-8 sm:p-8">
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="rounded-2xl border border-white/10 bg-white/10 p-2">
+              <GraduationCap className="h-6 w-6 text-yellow-300" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300">Katwanyaa Senior School</p>
+              <h1 className="mt-1 text-3xl font-bold">Admissions Dashboard</h1>
+              <p className="mt-2 max-w-2xl text-base leading-7 text-slate-200">
+                Manage and review student applications efficiently with real-time updates.
+              </p>
             </div>
           </div>
 
-          {/* Text */}
-          <div className="flex-1 min-w-0">
-
-            {/* Security Badge */}
-            <div className="hidden xs:inline-flex items-center gap-1.5 px-2.5 py-1 
-                            bg-gradient-to-r from-indigo-500/20 to-purple-500/20 
-                            backdrop-blur-sm rounded-full mb-2 sm:mb-3 max-w-max 
-                            border border-white/10">
-              <ShieldCheck className="w-2.5 h-2.5 text-indigo-300" />
-              <span className="text-[9px] font-bold text-indigo-300 uppercase tracking-wider">
-                Secure Portal
-              </span>
-            </div>
-
-            {/* Title */}
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl
-                           font-black text-white tracking-tight leading-tight">
-              Admissions
-              <span className="block sm:inline"> </span>
-              <span className="text-transparent bg-clip-text
-                               bg-gradient-to-r from-cyan-200 to-purple-200">
-                Dashboard
-              </span>
-            </h1>
-
-            {/* Description */}
-            <p className="mt-2 sm:mt-3 text-sm xs:text-base sm:text-lg
-                          text-indigo-100/90 font-medium
-                          max-w-2xl leading-relaxed">
-              Manage and review student applications efficiently with real-time updates.
-            </p>
-
-            {/* Quick Stats Pills */}
-            <div className="flex flex-wrap items-center gap-2 mt-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                  Service: Active
-                </span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 
-                              bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <Users className="w-3 h-3 text-indigo-400" />
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                  {stats.total || 0} Applications
-                </span>
-              </div>
-            </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={fetchApplications}
+              disabled={refreshing || loadingStates?.fetching}
+              className="flex items-center justify-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white/85 transition hover:bg-white/10 hover:text-white disabled:opacity-60"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+            <button
+              onClick={exportApplications}
+              className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 shadow-lg transition hover:shadow-xl"
+            >
+              <Download className="h-4 w-4" />
+              Export Data
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Right Content */}
-      <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between
-                      lg:flex-col lg:items-end gap-3 sm:gap-4">
-
-        {/* Actions */}
-        <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 w-full xs:w-auto">
-          
-          {/* Refresh Button - Glass Effect */}
-          <button
-            onClick={fetchApplications}
-            disabled={refreshing || loadingStates?.fetching}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
-                       px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-white/10 backdrop-blur-sm border border-white/20
-                       rounded-xl sm:rounded-2xl text-white font-semibold
-                       hover:bg-white/15 active:scale-95 transition-all
-                       disabled:opacity-60 w-full xs:w-auto min-w-[120px]"
-          >
-            {/* Button Shine Effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full 
-                            transition-transform duration-1000 
-                            bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : 'group-hover/btn:rotate-180 transition-transform duration-500'}`} />
-            <span className="text-xs sm:text-sm">
-              {refreshing ? 'Refreshing…' : 'Refresh'}
-            </span>
-            
-            {/* Live Badge */}
-            <span className="hidden sm:inline-block ml-1 px-1.5 py-0.5 
-                             rounded-md bg-white/10 text-[9px] font-black 
-                             text-white/60 border border-white/10">
-              LIVE
-            </span>
-          </button>
-
-          {/* Export Button - Gradient Primary */}
-          <button
-            onClick={exportApplications}
-            className="group/btn relative overflow-hidden flex items-center justify-center gap-2.5
-                       px-4 sm:px-5 py-2.5 sm:py-3
-                       bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
-                       hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600
-                       text-white rounded-xl sm:rounded-2xl font-semibold
-                       active:scale-95 transition-all
-                       shadow-[0_8px_20px_rgba(99,102,241,0.3)] 
-                       hover:shadow-[0_12px_30px_rgba(99,102,241,0.4)]
-                       w-full xs:w-auto"
-          >
-            {/* Button Shine Effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full 
-                            transition-transform duration-1000 
-                            bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            
-            <Download className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" />
-            <span className="text-xs sm:text-sm whitespace-nowrap">Export Data</span>
-            
-            {/* Pulse Indicator */}
-            <span className="relative flex h-2 w-2 ml-1">
-              <span className="animate-ping absolute inline-flex h-full w-full 
-                               rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-            </span>
-          </button>
-        </div>
-
-        {/* Today's Stats - Desktop */}
-        <div className="hidden lg:flex flex-col items-end">
-          <span className="text-[9px] font-bold text-indigo-300/70 uppercase tracking-widest">
-            Active Today
-          </span>
-          <span className="text-2xl font-black text-white">
-            {filteredApplications.filter(app => {
-              const today = new Date().toDateString();
-              return new Date(app.createdAt).toDateString() === today;
-            }).length}
-          </span>
-        </div>
-      </div>
-    </div>
-    
-    {/* Enhanced Status Bar */}
-    <div className="mt-6 pt-4 border-t border-white/10 
-                    flex flex-wrap items-center gap-4 sm:gap-6 
-                    text-[10px] font-bold uppercase tracking-wider">
-      
-      {/* Service Status */}
-      <div className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-white/40">Status:</span>
-        <span className="text-emerald-400">Operational</span>
-      </div>
-      
-      {/* Security Badge */}
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="w-3 h-3 text-indigo-400" />
-        <span className="text-white/40">Security:</span>
-        <span className="text-indigo-400">Encrypted</span>
-      </div>
-      
-      {/* Total Applications */}
-      <div className="flex items-center gap-2">
-        <FileText className="w-3 h-3 text-purple-400" />
-        <span className="text-white/40">Total:</span>
-        <span className="text-purple-400 font-black">{stats.total || 0} Apps</span>
-      </div>
-      
-      {/* Last Updated */}
-      <div className="flex items-center gap-2 ml-auto">
-        <Clock className="w-3 h-3 text-white/30" />
-        <span className="text-white/40">
-          Updated: {new Date().toLocaleTimeString()}
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <div className="mb-8 space-y-6">

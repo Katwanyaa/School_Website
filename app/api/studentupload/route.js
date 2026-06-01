@@ -1724,9 +1724,19 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    const rawData = fileExtension === 'csv'
-      ? await parseCSV(file)
-      : await parseExcel(file);
+    let rawData;
+    try {
+      rawData = fileExtension === 'csv'
+        ? await parseCSV(file)
+        : await parseExcel(file);
+    } catch (parseError) {
+      return NextResponse.json({
+        success: false,
+        error: parseError.message || 'Could not read the uploaded spreadsheet.',
+        authenticated: true,
+        suggestion: `Use only these student spreadsheet columns: ${REQUIRED_STUDENT_FIELD_LABELS}.`
+      }, { status: 422 });
+    }
 
     const prepared = prepareUploadRows(rawData, { uploadType, selectedForms, targetForm });
 

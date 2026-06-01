@@ -2271,74 +2271,42 @@ const handleSubmit = async (formData, id) => {
       />
 
 
-{/* Modern Clean Resources Header */}
-<div className="w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[#0b1329] md:p-6">
-  <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-    
-    {/* Left Content */}
-    <div className="flex min-w-0 flex-1 items-start gap-4">
-      {/* Icon */}
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-        <FiFolder className="h-6 w-6" />
-      </div>
+      {/* Resources Header - matched to Student Upload */}
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-slate-950 via-indigo-950 to-blue-950 p-6 text-white shadow-2xl shadow-slate-900/20 sm:p-8">
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="rounded-2xl border border-white/10 bg-white/10 p-2">
+              <FiFolder className="text-2xl text-yellow-300" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300">Katwanyaa Senior School</p>
+              <h1 className="mt-1 text-3xl font-bold">Resources Manager</h1>
+              <p className="mt-2 max-w-2xl text-base leading-7 text-slate-200">
+                Upload, organize, and manage school learning resources and documents in one place.
+              </p>
+            </div>
+          </div>
 
-      {/* Text */}
-      <div className="min-w-0 flex-1">
-        <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-          Katwanyaa Senior School
-        </p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={() => fetchResources(true)}
+              disabled={refreshing}
+              className="flex items-center justify-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white/85 transition hover:bg-white/10 hover:text-white disabled:opacity-60"
+            >
+              {refreshing ? <CircularProgress size={16} color="inherit" /> : <FiRotateCw />}
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
 
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-          Resources Manager
-        </h1>
-
-        <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-          Upload, organize, and manage school learning resources and documents in one place.
-        </p>
-
-        {/* Minimal Tags */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span className="inline-flex items-center rounded-md bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10 dark:bg-slate-400/10 dark:text-slate-400 dark:ring-slate-400/20">
-            {stats?.total || 0} Resources
-          </span>
-          <span className="inline-flex items-center rounded-md bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10 dark:bg-slate-400/10 dark:text-slate-400 dark:ring-slate-400/20">
-            {stats?.totalFiles || 0} Files
-          </span>
+            <button
+              onClick={handleCreate}
+              className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 shadow-lg transition hover:shadow-xl"
+            >
+              <FiPlus />
+              Upload Resource
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-
-    {/* Right Actions */}
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center lg:w-auto">
-      <button
-        onClick={() => fetchResources(true)}
-        disabled={refreshing}
-        className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
-      >
-        {refreshing ? (
-          <>
-            <CircularProgress size={16} color="inherit" />
-            <span>Refreshing...</span>
-          </>
-        ) : (
-          <>
-            <FiRotateCw className="h-4 w-4" />
-            <span>Refresh</span>
-          </>
-        )}
-      </button>
-
-      <button
-        onClick={handleCreate}
-        className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
-      >
-        <FiPlus className="h-4 w-4" />
-        <span>Upload Resource</span>
-      </button>
-    </div>
-
-  </div>
-</div>
 
 
       {/* Stats Overview */}

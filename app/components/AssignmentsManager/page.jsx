@@ -2383,168 +2383,46 @@ export default function AssignmentsManager() {
         loading={deleting || bulkDeleting}
       />
 
-      {/* Modern Assignments Header - Aligned with Applications and Email */}
-      <div className="group relative mb-6 overflow-hidden rounded-[1.5rem] bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-700 p-4 text-white shadow-xl sm:mb-8 sm:rounded-[2rem] sm:p-6 sm:shadow-2xl md:rounded-[2.5rem] md:p-8">
-        <div className="absolute top-[-25%] right-[-10%] h-[250px] w-[250px] rounded-full bg-gradient-to-br from-purple-500/30 via-indigo-500/20 to-blue-500/30 blur-[100px] pointer-events-none transition-transform duration-700 group-hover:scale-110 md:h-[420px] md:w-[420px]" />
-        <div className="absolute bottom-[-25%] left-[-10%] h-[200px] w-[200px] rounded-full bg-gradient-to-tr from-blue-500/20 via-indigo-500/10 to-purple-500/20 blur-[80px] pointer-events-none transition-transform duration-700 group-hover:scale-110 md:h-[340px] md:w-[340px]" />
-        <div className="absolute top-[30%] right-[20%] h-[180px] w-[180px] rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 blur-[70px] pointer-events-none animate-pulse" />
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }}
-        />
-        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition-all duration-1000 group-hover:translate-x-full group-hover:opacity-100" style={{ transform: 'skewX(-20deg)' }} />
-
-        <div className="relative z-10">
-          <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="min-w-0 flex-1">
-              <div className="mb-4 flex items-center gap-2.5">
-                <div className="h-7 w-1 rounded-full bg-gradient-to-b from-purple-400 via-indigo-400 to-blue-400 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
-                <div>
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-200">
-                    Katwanyaa Senior School
-                  </h2>
-                  <p className="text-[9px] italic font-medium uppercase tracking-widest text-white/40">
-                    Academic Learning Services
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-400 to-blue-500 opacity-70 blur-md sm:rounded-2xl sm:blur-lg" />
-                  <div className="relative rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 p-3 shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 sm:rounded-2xl sm:p-4">
-                    <FiClipboard className="h-5 w-5 text-white sm:h-6 sm:w-6" />
-                  </div>
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <div className="mb-2 inline-flex max-w-max items-center gap-1.5 rounded-full border border-white/10 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 px-2.5 py-1 backdrop-blur-sm sm:mb-3">
-                    <FiShield className="h-2.5 w-2.5 text-indigo-300" />
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-300">
-                      Unified Assignment Portal
-                    </span>
-                  </div>
-
-                  <h1 className="text-2xl font-black leading-tight tracking-tight text-white xs:text-3xl sm:text-4xl md:text-5xl">
-                    Assignments
-                    <span className="block sm:inline"> </span>
-                    <span className="bg-gradient-to-r from-cyan-200 to-purple-200 bg-clip-text text-transparent">
-                      Manager
-                    </span>
-                  </h1>
-
-                  <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-indigo-100/90 xs:text-base sm:mt-3 sm:text-lg">
-                    Create, organize, and manage student assignments across classes and subjects.
-                  </p>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-sm">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">
-                        Service: Active
-                      </span>
-                    </div>
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-sm">
-                      <FiFileText className="h-3 w-3 text-indigo-400" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">
-                        {stats?.total || 0} Assignments
-                      </span>
-                    </div>
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-sm">
-                      <FiCalendar className="h-3 w-3 text-cyan-300" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">
-                        {stats?.thisWeek || 0} Due This Week
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      {/* Assignments Header - matched to Student Upload */}
+      <div className="relative mb-6 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-slate-950 via-indigo-950 to-blue-950 p-6 text-white shadow-2xl shadow-slate-900/20 sm:mb-8 sm:p-8">
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="rounded-2xl border border-white/10 bg-white/10 p-2">
+              <FiClipboard className="text-2xl text-yellow-300" />
             </div>
-
-            <div className="flex flex-col gap-3 sm:gap-4 xs:flex-row xs:items-center xs:justify-between lg:flex-col lg:items-end">
-              <div className="flex w-full flex-col gap-2 sm:gap-3 xs:w-auto xs:flex-row">
-                <button
-                  onClick={() => fetchAssignments(true)}
-                  disabled={refreshing}
-                  className="group/btn relative flex w-full min-w-[120px] items-center justify-center gap-2.5 overflow-hidden rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/15 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:rounded-2xl sm:px-5 sm:py-3 sm:text-sm xs:w-auto"
-                >
-                  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover/btn:translate-x-full" />
-                  {refreshing ? (
-                    <>
-                      <CircularProgress size={16} color="inherit" />
-                      <span>Refreshing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FiRotateCw className="h-4 w-4 transition-transform duration-500 group-hover/btn:rotate-180" />
-                      <span>Refresh</span>
-                    </>
-                  )}
-                  <span className="ml-1 hidden rounded-md border border-white/10 bg-white/10 px-1.5 py-0.5 text-[9px] font-black text-white/60 sm:inline-block">
-                    LIVE
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => document.getElementById('assignment-filters')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  className="group/btn relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/15 active:scale-95 sm:rounded-2xl sm:px-5 sm:py-3 sm:text-sm xs:w-auto"
-                >
-                  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover/btn:translate-x-full" />
-                  <FiFilter className="h-4 w-4" />
-                  <span>Filters</span>
-                </button>
-
-                <button
-                  onClick={handleCreate}
-                  className="group/btn relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-4 py-2.5 text-xs font-semibold text-white shadow-[0_8px_20px_rgba(99,102,241,0.3)] transition-all hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 hover:shadow-[0_12px_30px_rgba(99,102,241,0.4)] active:scale-95 sm:rounded-2xl sm:px-5 sm:py-3 sm:text-sm xs:w-auto"
-                >
-                  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover/btn:translate-x-full" />
-                  <FiPlus className="h-4 w-4 transition-transform duration-300 group-hover/btn:rotate-90" />
-                  <span className="whitespace-nowrap">Create Assignment</span>
-                  <span className="relative ml-1 flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-white opacity-75 animate-ping" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                  </span>
-                </button>
-              </div>
-
-              <div className="hidden flex-col items-end lg:flex">
-                <span className="text-[9px] font-bold uppercase tracking-widest text-indigo-300/70">
-                  Overdue
-                </span>
-                <span className="text-2xl font-black text-white">
-                  {stats?.overdue || 0}
-                </span>
-              </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300">Katwanyaa Senior School</p>
+              <h1 className="mt-1 text-3xl font-bold">Assignments Manager</h1>
+              <p className="mt-2 max-w-2xl text-base leading-7 text-slate-200">
+                Create, organize, and manage student assignments across classes and subjects.
+              </p>
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-white/10 pt-4 text-[10px] font-bold uppercase tracking-wider sm:gap-6">
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-white/40">Status:</span>
-              <span className="text-emerald-400">Operational</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FiShield className="h-3 w-3 text-indigo-400" />
-              <span className="text-white/40">Classes:</span>
-              <span className="text-indigo-400">Grade 10-12, Form 3-4</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FiFileText className="h-3 w-3 text-purple-400" />
-              <span className="text-white/40">Total:</span>
-              <span className="font-black text-purple-400">{stats?.total || 0} Tasks</span>
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <FiClock className="h-3 w-3 text-white/30" />
-              <span className="text-white/40">
-                Updated: {new Date().toLocaleTimeString()}
-              </span>
-            </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => document.getElementById('assignment-filters')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              className="flex items-center justify-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white/85 transition hover:bg-white/10 hover:text-white"
+            >
+              <FiFilter />
+              Filters
+            </button>
+            <button
+              onClick={() => fetchAssignments(true)}
+              disabled={refreshing}
+              className="flex items-center justify-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white/85 transition hover:bg-white/10 hover:text-white disabled:opacity-60"
+            >
+              {refreshing ? <CircularProgress size={16} color="inherit" /> : <FiRotateCw />}
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+            <button
+              onClick={handleCreate}
+              className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 shadow-lg transition hover:shadow-xl"
+            >
+              <FiPlus />
+              Create Assignment
+            </button>
           </div>
         </div>
       </div>

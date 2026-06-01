@@ -112,6 +112,22 @@ const GRADE_CHART_COLORS = {
 };
 const STUDENT_TEMPLATE_HEADERS = ['Admission Number', 'Full Name', 'Grade/Class', 'Stream', 'Parent Email'];
 
+const formatUploadError = (data, fallback = 'Upload failed') => {
+  if (!data || typeof data !== 'object') return fallback;
+
+  const parts = [
+    data.error,
+    data.message,
+    Array.isArray(data.errors) && data.errors.length > 0
+      ? data.errors.slice(0, 3).join(' | ')
+      : '',
+    data.errorCount ? `${data.errorCount} row issue${data.errorCount === 1 ? '' : 's'} found.` : '',
+    data.suggestion
+  ].filter(Boolean);
+
+  return parts.length > 0 ? parts.join(' ') : fallback;
+};
+
 const getGradeStatsTotal = (stats = {}) => GRADE_LEVELS.reduce(
   (sum, grade) => sum + (stats[GRADE_STAT_KEYS[grade]] || 0),
   0
@@ -2299,9 +2315,13 @@ const checkDuplicates = async () => {
       throw new Error('Authentication failed. Please login again.');
     }
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(formatUploadError(data, 'Failed to validate file'));
+    }
     
-    if (data.success) {
+    if (data?.success) {
       if (data.duplicates && data.duplicates.length > 0) {
         setDuplicates(data.duplicates);
         setShowValidationModal(true);
@@ -2310,7 +2330,7 @@ const checkDuplicates = async () => {
         proceedWithUpload('skip');
       }
     } else {
-      sooner.error(data.error || 'Failed to check for duplicates');
+      sooner.error(formatUploadError(data, 'Failed to check for duplicates'));
     }
   } catch (error) {
     console.error('Validation error:', error);
@@ -2318,7 +2338,7 @@ const checkDuplicates = async () => {
     if (error.message.includes('Authentication') || error.message.includes('login')) {
       sooner.error('Authentication failed. Please login again to continue.');
     } else {
-      sooner.error('Failed to validate file');
+      sooner.error(error.message || 'Failed to validate file');
     }
   } finally {
     setValidationLoading(false);
@@ -2365,15 +2385,15 @@ const proceedWithUpload = async (duplicateAction = 'skip') => {
       throw new Error('Authentication failed. Please login again.');
     }
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
     
     if (!response.ok) {
-      throw new Error(data.message || 'Upload failed');
+      throw new Error(formatUploadError(data, 'Upload failed'));
     }
     
     setResult(data);
     
-    if (data.success) {
+    if (data?.success) {
       let successMessage = '';
       if (uploadStrategy.uploadType === 'new') {
         successMessage = `✅ New upload successful! ${data.processingStats?.validRows || 0} students processed.`;
@@ -2399,7 +2419,7 @@ const proceedWithUpload = async (duplicateAction = 'skip') => {
         fileInputRef.current.value = '';
       }
     } else {
-      sooner.error(data.message || 'Upload failed');
+      sooner.error(formatUploadError(data, 'Upload failed'));
     }
   } catch (error) {
     console.error('Upload error:', error);
