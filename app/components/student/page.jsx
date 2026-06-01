@@ -140,19 +140,19 @@ const getStudentName = (student) => (
 // Helper function for form colors
 function getFormColor(form) {
   switch (form) {
-    case 'Grade 10': return 'from-blue-500 to-blue-700';
-    case 'Grade 11': return 'from-emerald-500 to-emerald-700';
-    case 'Grade 12': return 'from-purple-500 to-purple-700';
-    case 'Form 3': return 'from-amber-500 to-orange-600';
-    case 'Form 4': return 'from-rose-500 to-red-700';
-    default: return 'from-gray-400 to-gray-600';
+    case 'Grade 10': return 'from-slate-600 to-slate-800';
+    case 'Grade 11': return 'from-emerald-600 to-emerald-800';
+    case 'Grade 12': return 'from-slate-600 to-slate-800';
+    case 'Form 3': return 'from-amber-600 to-orange-700';
+    case 'Form 4': return 'from-rose-600 to-red-800';
+    default: return 'from-gray-500 to-gray-700';
   }
 }
 
 // Helper function for form badge colors (NEW - ADD THIS)
 function getFormBadgeColor(form) {
   switch (form) {
-    case 'Grade 10': return 'bg-gradient-to-r from-blue-500 to-blue-700 text-white';
+    case 'Grade 10': return 'bg-gradient-to-r from-slate-600 to-slate-800 text-white';
     case 'Grade 11': return 'bg-gradient-to-r from-emerald-500 to-emerald-700 text-white';
     case 'Grade 12': return 'bg-gradient-to-r from-purple-500 to-purple-700 text-white';
     case 'Form 3': return 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
@@ -164,7 +164,7 @@ function getFormBadgeColor(form) {
 // Helper function for form text colors (NEW - ADD THIS)
 function getFormTextColor(form) {
   switch (form) {
-    case 'Grade 10': return 'text-blue-700';
+    case 'Grade 10': return 'text-slate-700';
     case 'Grade 11': return 'text-emerald-700';
     case 'Grade 12': return 'text-purple-700';
     case 'Form 3': return 'text-amber-700';
@@ -219,7 +219,7 @@ const Spinner = ({
       <div className="flex min-h-[280px] w-full items-center justify-center rounded-[2rem] border border-slate-200 bg-white/80 p-8 shadow-xl shadow-blue-100/40 backdrop-blur">
         <div className="text-center">
           <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-purple-500/20 blur-xl" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-slate-600/15 via-emerald-600/15 to-slate-600/15 blur-xl" />
             <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-blue-100 bg-white shadow-lg">
               <CircularProgress size={36} color={color} variant={variant} value={variant === "determinate" ? value : undefined} thickness={4.5} />
             </div>
@@ -230,7 +230,7 @@ const Spinner = ({
             {[0, 1, 2].map((dot) => (
               <span
                 key={dot}
-                className="h-2 w-2 animate-bounce rounded-full bg-blue-500"
+                className="h-2 w-2 animate-bounce rounded-full bg-slate-700"
                 style={{ animationDelay: `${dot * 0.12}s` }}
               />
             ))}
@@ -427,7 +427,7 @@ function ModernFileUpload({ onFileSelect, file, onRemove, dragActive, onDrag }) 
     <div
       className={`border-3 border-dashed rounded-2xl p-10 text-center transition-all duration-300 cursor-pointer ${
         dragActive 
-          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 ring-4 ring-blue-100' 
+          ? 'border-slate-500 bg-gradient-to-br from-slate-100 to-slate-200 ring-4 ring-slate-200' 
           : 'border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100'
       }`}
       onDragEnter={handleDragEvent}
@@ -445,7 +445,7 @@ function ModernFileUpload({ onFileSelect, file, onRemove, dragActive, onDrag }) 
       onClick={() => fileInputRef.current?.click()}
     >
       <FiUpload className={`mx-auto text-3xl mb-4 ${
-        dragActive ? 'text-blue-600' : 'text-gray-400'
+        dragActive ? 'text-slate-700' : 'text-gray-400'
       }`} />
       <p className="text-gray-800 mb-2 font-bold text-lg">
         {dragActive ? '📁 Drop file here!' : file ? 'Click to replace file' : 'Drag & drop or click to upload'}
@@ -505,7 +505,7 @@ function StudentDetailModal({ student, onClose, onEdit, onDelete }) {
           }}
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+          <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-6 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/20 rounded-xl">
@@ -531,7 +531,7 @@ function StudentDetailModal({ student, onClose, onEdit, onDelete }) {
           <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
             {/* Profile Section */}
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center">
                 <FiUser className="text-white text-3xl" />
                 </div>
                 <div>
@@ -562,7 +562,7 @@ function StudentDetailModal({ student, onClose, onEdit, onDelete }) {
               {/* Academic Info */}
               <div className="bg-gray-50 p-6 rounded-2xl">
                 <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <FiBook className="text-blue-600" />
+                  <FiBook className="text-slate-300" />
                   Academic Information
                 </h4>
                 <div className="space-y-3">
@@ -584,7 +584,7 @@ function StudentDetailModal({ student, onClose, onEdit, onDelete }) {
               {/* Contact Info */}
               <div className="bg-gray-50 p-6 rounded-2xl">
                 <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <FiMail className="text-blue-600" />
+                  <FiMail className="text-slate-300" />
                   Contact Information
                 </h4>
                 <div className="grid grid-cols-1 gap-6">
@@ -647,7 +647,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
         }}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+        <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-xl">
@@ -683,7 +683,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
                     required
                     value={formData.fullName}
                     onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600"
                   />
                 </div>
                 <div>
@@ -695,7 +695,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
                     required
                     value={formData.admissionNumber}
                     onChange={(e) => setFormData({...formData, admissionNumber: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600"
                   />
                 </div>
               </div>
@@ -713,7 +713,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
                     required
                     value={formData.form}
                     onChange={(e) => setFormData({...formData, form: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600"
                   >
                     {GRADE_LEVELS.map((grade) => (
                       <option key={grade} value={grade}>{grade}</option>
@@ -727,7 +727,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
                   <select
                     value={formData.stream}
                     onChange={(e) => setFormData({...formData, stream: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600"
                   >
                     <option value="">Select Stream</option>
                     <option value="A">A</option>
@@ -748,7 +748,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
                     required
                     value={formData.status}
                     onChange={(e) => setFormData({...formData, status: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600"
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
@@ -772,7 +772,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
                     required
                     value={formData.parentEmail}
                     onChange={(e) => setFormData({...formData, parentEmail: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600"
                   />
                 </div>
               </div>
@@ -790,7 +790,7 @@ function StudentEditModal({ student, onClose, onSave, loading }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-lg transition-all"
+                className="flex-1 py-3 bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-lg transition-all"
               >
                 {loading ? (
                   <>
@@ -1021,7 +1021,7 @@ function StudentsChart({
       <div className="relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 flex items-center justify-center shadow-2xl ring-4 ring-blue-100">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-slate-700 via-slate-600 to-slate-500 flex items-center justify-center shadow-2xl ring-4 ring-slate-200">
               {type === 'pie' && <FiPieChart className="text-white text-xl" />}
               {type === 'bar' && <FiBarChart2 className="text-white text-xl" />}
               {type === 'radial' && <FiTrendingUp className="text-white text-xl" />}
@@ -1051,7 +1051,7 @@ function StudentsChart({
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl">
-                <div className="text-2xl font-bold text-blue-700">
+                <div className="text-2xl font-bold text-slate-700">
                   {data.reduce((sum, d) => sum + d.value, 0).toLocaleString()}
                 </div>
                 <div className="text-sm font-semibold text-blue-900">Total Students</div>
@@ -1120,7 +1120,7 @@ function StatisticsSummaryCard({ stats, demographics, onRefresh }) {
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-gradient-to-r from-blue-100 to-blue-200 rounded-2xl">
-            <FiBarChart2 className="text-blue-700 text-2xl" />
+            <FiBarChart2 className="text-slate-700 text-2xl" />
           </div>
           <div>
             <h3 className="text-2xl font-bold text-gray-900">Statistics Overview</h3>
@@ -1131,7 +1131,7 @@ function StatisticsSummaryCard({ stats, demographics, onRefresh }) {
         </div>
         <button
           onClick={onRefresh}
-          className="px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold flex items-center gap-3 text-sm hover:shadow-xl transition-all duration-300"
+          className="px-5 py-3 bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-xl font-bold flex items-center gap-3 text-sm hover:shadow-xl transition-all duration-300"
         >
           <FiRefreshCw className="text-sm" />
           Refresh Stats
@@ -1142,13 +1142,13 @@ function StatisticsSummaryCard({ stats, demographics, onRefresh }) {
       <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-blue-700 font-bold text-sm mb-2">TOTAL STUDENTS</p>
+            <p className="text-slate-700 font-bold text-sm mb-2">TOTAL STUDENTS</p>
             <h4 className="text-4xl font-bold text-gray-900">
               {totalStudents.toLocaleString()}
             </h4>
           </div>
           <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-lg">
-            <FiUsers className="text-blue-600 text-3xl" />
+            <FiUsers className="text-slate-600 text-3xl" />
           </div>
         </div>
       </div>
@@ -1259,13 +1259,13 @@ function EnhancedFilterPanel({
     <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-xl mb-6 overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-          <FiFilter className="text-blue-600" />
+          <FiFilter className="text-slate-700" />
           Advanced Filters
         </h3>
         <div className="flex items-center gap-3">
           <button
             onClick={onToggleAdvanced}
-            className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 transition-colors"
+            className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-slate-700 transition-colors"
           >
             {showAdvanced ? 'Hide Advanced' : 'Show Advanced'}
           </button>
@@ -1290,7 +1290,7 @@ function EnhancedFilterPanel({
               value={localFilters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
               placeholder="Name, admission, email..."
-              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base"
+              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-all duration-300 text-base"
             />
           </div>
         </div>
@@ -1302,7 +1302,7 @@ function EnhancedFilterPanel({
           <select
             value={localFilters.form}
             onChange={(e) => handleFilterChange('form', e.target.value)}
-            className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base"
+            className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-all duration-300 text-base"
           >
             <option value="">All Grades</option>
             {GRADE_LEVELS.map(form => (
@@ -1318,7 +1318,7 @@ function EnhancedFilterPanel({
           <select
             value={localFilters.stream}
             onChange={(e) => handleFilterChange('stream', e.target.value)}
-            className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base"
+            className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-all duration-300 text-base"
           >
             <option value="">All Streams</option>
             {['A', 'B', 'C', 'D', 'E', 'East', 'West', 'North', 'South', 'Science', 'Arts', 'Commercial'].map(stream => (
@@ -1334,7 +1334,7 @@ function EnhancedFilterPanel({
           <select
             value={localFilters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
-            className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base"
+            className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-all duration-300 text-base"
           >
             <option value="">All Status</option>
             {['active', 'inactive', 'graduated', 'transferred'].map(status => (
@@ -1353,7 +1353,7 @@ function EnhancedFilterPanel({
             <select
               value={localFilters.sortBy}
               onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-              className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base"
+              className="w-full px-4 py-3.5 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-all duration-300 text-base"
             >
               <option value="createdAt">Date Created</option>
               <option value="admissionNumber">Admission Number</option>
@@ -1427,7 +1427,7 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
         }}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4 sm:p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-2 bg-white/20 rounded-xl">
@@ -1466,7 +1466,7 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
                 >
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className={`p-1.5 sm:p-2 rounded-lg ${uploadType === 'new' ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                      <FiPlus className={`text-sm sm:text-lg ${uploadType === 'new' ? 'text-blue-600' : 'text-gray-500'}`} />
+                      <FiPlus className={`text-sm sm:text-lg ${uploadType === 'new' ? 'text-slate-700' : 'text-gray-500'}`} />
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 text-sm sm:text-base">New Upload</h4>
@@ -1491,7 +1491,7 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
                 >
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className={`p-1.5 sm:p-2 rounded-lg ${uploadType === 'update' ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                      <FiDatabase className={`text-sm sm:text-lg ${uploadType === 'update' ? 'text-blue-600' : 'text-gray-500'}`} />
+                      <FiDatabase className={`text-sm sm:text-lg ${uploadType === 'update' ? 'text-slate-700' : 'text-gray-500'}`} />
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 text-sm sm:text-base">Update Upload</h4>
@@ -1521,8 +1521,8 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
                       onClick={() => handleFormToggle(form)}
                       className={`p-2 sm:p-3 border-2 rounded-lg cursor-pointer transition-all duration-300 ${
                         selectedForms.includes(form)
-                          ? `border-blue-500 bg-gradient-to-r ${getFormColor(form)} text-white shadow-lg`
-                          : 'border-gray-300 hover:border-blue-300'
+                          ? `border-slate-500 bg-gradient-to-r ${getFormColor(form)} text-white shadow-lg`
+                          : 'border-gray-300 hover:border-slate-400'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -1556,8 +1556,8 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
                       onClick={() => setTargetForm(form)}
                       className={`p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
                         targetForm === form
-                          ? `border-blue-500 bg-gradient-to-r ${getFormColor(form)} text-white shadow-lg`
-                          : 'border-gray-300 hover:border-blue-300'
+                          ? `border-slate-500 bg-gradient-to-r ${getFormColor(form)} text-white shadow-lg`
+                          : 'border-gray-300 hover:border-slate-400'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -1580,10 +1580,10 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
                 {targetForm && (
                   <div className="mt-3 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-start gap-2">
-                      <FiInfo className="text-blue-600 mt-0.5 text-sm sm:text-base" />
+                      <FiInfo className="text-slate-700 mt-0.5 text-sm sm:text-base" />
                       <div>
                         <p className="text-xs sm:text-sm text-blue-800 font-bold">Update Strategy:</p>
-                        <ul className="text-xs text-blue-700 mt-1 space-y-0.5 sm:space-y-1">
+                        <ul className="text-xs text-slate-700 mt-1 space-y-0.5 sm:space-y-1">
                           <li>• Matches students by admission number</li>
                           <li>• Updates existing records</li>
                           <li>• Creates new students if not exists</li>
@@ -1611,7 +1611,7 @@ function UploadStrategyModal({ open, onClose, onConfirm, loading }) {
             <button
               onClick={handleConfirm}
               disabled={loading || (uploadType === 'new' && selectedForms.length === 0) || (uploadType === 'update' && !targetForm)}
-              className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-lg transition-all text-sm sm:text-base"
+              className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-lg transition-all text-sm sm:text-base"
             >
               {loading ? (
                 <>
@@ -1760,13 +1760,13 @@ function DuplicateValidationModal({ open, onClose, duplicates, onProceed, loadin
                     onClick={() => setAction('skip')}
                     className={`p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
                       action === 'skip'
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-300 hover:border-blue-300'
+                        ? 'border-slate-500 bg-slate-100'
+                        : 'border-gray-300 hover:border-slate-400'
                     }`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3">
-                      <div className={`p-1.5 sm:p-2 rounded-lg ${action === 'skip' ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                        <FiCheckCircle className={`text-sm sm:text-base ${action === 'skip' ? 'text-blue-600' : 'text-gray-500'}`} />
+                      <div className={`p-1.5 sm:p-2 rounded-lg ${action === 'skip' ? 'bg-slate-200' : 'bg-gray-100'}`}>
+                        <FiCheckCircle className={`text-sm sm:text-base ${action === 'skip' ? 'text-slate-700' : 'text-gray-500'}`} />
                       </div>
                       <div>
                         <h4 className="font-bold text-gray-900 text-sm sm:text-base">Skip Duplicates</h4>
@@ -1781,13 +1781,13 @@ function DuplicateValidationModal({ open, onClose, duplicates, onProceed, loadin
                     onClick={() => setAction('replace')}
                     className={`p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
                       action === 'replace'
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-300 hover:border-blue-300'
+                        ? 'border-slate-500 bg-slate-100'
+                        : 'border-gray-300 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className={`p-1.5 sm:p-2 rounded-lg ${action === 'replace' ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                        <FiDatabase className={`text-sm sm:text-base ${action === 'replace' ? 'text-blue-600' : 'text-gray-500'}`} />
+                        <FiDatabase className={`text-sm sm:text-base ${action === 'replace' ? 'text-slate-700' : 'text-gray-500'}`} />
                       </div>
                       <div>
                         <h4 className="font-bold text-gray-900 text-sm sm:text-base">Replace Existing</h4>
@@ -1854,7 +1854,7 @@ function DuplicateValidationModal({ open, onClose, duplicates, onProceed, loadin
             <button
               onClick={() => onProceed(action)}
               disabled={loading}
-              className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:shadow-lg transition-all disabled:opacity-50 text-sm sm:text-base"
+              className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:shadow-lg transition-all disabled:opacity-50 text-sm sm:text-base"
             >
               {loading ? (
                 <>
@@ -2648,8 +2648,8 @@ const downloadExcelTemplate = () => {
   const getFormBgColor = (form) => {
   const themes = {
     'Grade 10': 'bg-gradient-to-b from-emerald-500 to-green-500',
-    'Grade 11': 'bg-gradient-to-b from-blue-500 to-indigo-500',
-    'Grade 12': 'bg-gradient-to-b from-indigo-500 to-purple-500',
+    'Grade 11': 'bg-gradient-to-b from-slate-600 to-slate-700',
+    'Grade 12': 'bg-gradient-to-b from-slate-600 to-slate-700',
     'Form 3': 'bg-gradient-to-b from-amber-500 to-orange-500',
     'Form 4': 'bg-gradient-to-b from-rose-500 to-red-600',
   };
@@ -3100,7 +3100,7 @@ const downloadExcelTemplate = () => {
                       onChange={(e) => handleFilterChange('search', e.target.value)}
                       onKeyDown={handleSearch}
                       placeholder="Search students by name, admission number, or parent email"
-                      className="w-full pl-14 pr-4 py-4 bg-white border-2 border-gray-400 rounded-2xl focus:ring-4 focus:ring-blue-500 focus:border-blue-600 transition-all duration-300 text-base"
+                      className="w-full pl-14 pr-4 py-4 bg-white border-2 border-gray-400 rounded-2xl focus:ring-4 focus:ring-slate-600 focus:border-slate-700 transition-all duration-300 text-base"
                     />
                   </div>
                 </div>
