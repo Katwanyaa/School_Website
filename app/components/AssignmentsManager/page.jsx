@@ -1834,11 +1834,19 @@ export default function AssignmentsManager() {
       if (result.failureCount === 0) {
         showNotification('success', 'Delivery Complete', `Retried and delivered ${result.successCount} assignment email(s).`);
       } else {
+        const gmailLimitExceeded = result.failedRecipients?.some((recipient) =>
+          isGmailDailyLimitResult(recipient, recipient.error)
+        );
+
         showNotification(
-          'warning',
-          'Retry Incomplete',
-          `${result.successCount} delivered, ${result.failureCount} still failed.`,
-          { label: 'Retry Failed', onClick: () => retryFailedAssignmentDelivery(assignmentId, result.failedRecipients) }
+          gmailLimitExceeded ? 'error' : 'warning',
+          gmailLimitExceeded ? 'Sending Limit Exceeded' : 'Retry Incomplete',
+          gmailLimitExceeded
+            ? GMAIL_DAILY_LIMIT_MESSAGE
+            : `${result.successCount} delivered, ${result.failureCount} still failed.`,
+          gmailLimitExceeded
+            ? undefined
+            : { label: 'Retry Failed', onClick: () => retryFailedAssignmentDelivery(assignmentId, result.failedRecipients) }
         );
       }
     } catch (error) {
@@ -2269,11 +2277,19 @@ export default function AssignmentsManager() {
             deliveryResult = await sendAssignmentDeliveryBatch(savedAssignmentId, recipients, headers);
 
             if (deliveryResult.failureCount > 0) {
+              const gmailLimitExceeded = deliveryResult.failedRecipients?.some((recipient) =>
+                isGmailDailyLimitResult(recipient, recipient.error)
+              );
+
               showNotification(
-                deliveryResult.successCount > 0 ? 'warning' : 'error',
-                deliveryResult.successCount > 0 ? 'Partial Delivery' : 'Delivery Failed',
-                `${deliveryResult.successCount} assignment email(s) delivered, ${deliveryResult.failureCount} failed.`,
-                { label: 'Retry Failed', onClick: () => retryFailedAssignmentDelivery(savedAssignmentId, deliveryResult.failedRecipients) }
+                gmailLimitExceeded ? 'error' : deliveryResult.successCount > 0 ? 'warning' : 'error',
+                gmailLimitExceeded ? 'Sending Limit Exceeded' : deliveryResult.successCount > 0 ? 'Partial Delivery' : 'Delivery Failed',
+                gmailLimitExceeded
+                  ? GMAIL_DAILY_LIMIT_MESSAGE
+                  : `${deliveryResult.successCount} assignment email(s) delivered, ${deliveryResult.failureCount} failed.`,
+                gmailLimitExceeded
+                  ? undefined
+                  : { label: 'Retry Failed', onClick: () => retryFailedAssignmentDelivery(savedAssignmentId, deliveryResult.failedRecipients) }
               );
             }
           } catch (deliveryError) {
