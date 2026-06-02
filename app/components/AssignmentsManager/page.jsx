@@ -88,6 +88,17 @@ import { Modal, Box, CircularProgress } from '@mui/material';
 const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
 const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
 
+const formatDisplayText = (value, fallback = '') => {
+  if (value === null || value === undefined || value === '') return fallback;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (value instanceof Error) return value.message || fallback;
+  if (typeof value === 'object') {
+    return value.message || value.error || value.detail || value.code || fallback || JSON.stringify(value);
+  }
+  return String(value);
+};
+
 const safeText = (value) => {
   if (typeof value === 'string') return value;
   if (typeof value === 'number') return String(value);
@@ -350,6 +361,9 @@ function Notification({
   };
 
   const styles = getTypeStyles();
+  const displayTitle = formatDisplayText(title);
+  const displayMessage = formatDisplayText(message);
+  const displayActionLabel = formatDisplayText(actionLabel);
 
   if (!open) return null;
 
@@ -362,16 +376,16 @@ function Notification({
               {getIcon()}
             </div>
             <div className="flex-1">
-              <h4 className={`font-bold ${styles.title} mb-1`}>{title}</h4>
-              <p className="text-gray-700 text-sm">{message}</p>
-              {actionLabel && onAction && (
+              <h4 className={`font-bold ${styles.title} mb-1`}>{displayTitle}</h4>
+              <p className="text-gray-700 text-sm">{displayMessage}</p>
+              {displayActionLabel && onAction && (
                 <button
                   type="button"
                   onClick={onAction}
                   className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-bold text-slate-800 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50"
                 >
                   <FiRotateCw size={14} />
-                  {actionLabel}
+                  {displayActionLabel}
                 </button>
               )}
             </div>
@@ -1530,9 +1544,9 @@ export default function AssignmentsManager() {
     setNotification({
       open: true,
       type,
-      title,
-      message,
-      actionLabel: action.label || '',
+      title: formatDisplayText(title),
+      message: formatDisplayText(message),
+      actionLabel: formatDisplayText(action.label),
       onAction: action.onClick || null
     });
   };

@@ -3,6 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { FiCheck, FiX, FiAlertCircle, FiRotateCw, FiLoader } from 'react-icons/fi';
 
+const formatDisplayText = (value, fallback = '') => {
+  if (value === null || value === undefined || value === '') return fallback;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (value instanceof Error) return value.message || fallback;
+  if (typeof value === 'object') {
+    return value.message || value.error || value.detail || value.code || fallback || JSON.stringify(value);
+  }
+  return String(value);
+};
+
 /**
  * DeliveryProgressIndicator
  * Shows progress of resource/assignment delivery with status, percentage, and retry options
@@ -106,7 +117,7 @@ export const DeliveryProgressIndicator = ({
           {/* Current Recipient */}
           {!isComplete && currentRecipient && (
             <div className="text-center text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
-              Currently sending to: <strong>{currentRecipient}</strong>
+              Currently sending to: <strong>{formatDisplayText(currentRecipient)}</strong>
             </div>
           )}
 
@@ -202,7 +213,7 @@ export const DeliveryProgressIndicator = ({
                         </div>
                       )}
                       <div className="text-gray-600 text-xs mt-1">
-                        {recipient.error || 'Unknown error'}
+                        {formatDisplayText(recipient.error, 'Unknown error')}
                       </div>
                     </div>
                   ))}
