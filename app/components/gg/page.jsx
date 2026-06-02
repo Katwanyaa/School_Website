@@ -720,10 +720,11 @@ const ShareModal = ({ isOpen, onClose, gallery }) => {
 };
 
 // Modern Gallery Detail Modal with WORKING Download
-const ModernGalleryDetailModal = ({ gallery, onClose, onDownload, onShare }) => {
+const ModernGalleryDetailModal = ({ gallery, onClose, onShare }) => {
   const [activeTab, setActiveTab] = useState('preview');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingIndex, setDownloadingIndex] = useState(null);
 
   if (!gallery) return null;
 
@@ -764,95 +765,74 @@ const ModernGalleryDetailModal = ({ gallery, onClose, onDownload, onShare }) => 
     return `${schoolName} - ${title} - ${category} - ${year} - Image ${index + 1}`;
   };
 
-  // WORKING DOWNLOAD FUNCTION
-  const downloadAllFiles = async () => {
-    if (!gallery || !gallery.files || gallery.files.length === 0) {
-      toast.error('No files available to download');
+  const getDownloadFileName = (fileUrl, index) => {
+    try {
+      const pathname = new URL(fileUrl, window.location.origin).pathname;
+      const rawName = pathname.split('/').pop();
+      return decodeURIComponent(rawName || `gallery_file_${index + 1}`);
+    } catch {
+      return fileUrl?.split('/').pop() || `gallery_file_${index + 1}`;
+    }
+  };
+
+  const triggerBrowserDownload = (fileUrl, fileName) => {
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileName;
+    link.rel = 'noopener noreferrer';
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadFile = async (fileUrl, index) => {
+    if (!fileUrl) {
+      toast.error('No file selected to download');
       return;
     }
 
     setDownloading(true);
-    const toastId = toast.loading(`Starting download of ${gallery.files.length} files...`);
-    
+    setDownloadingIndex(index);
+    const fileName = getDownloadFileName(fileUrl, index);
+    const toastId = toast.loading(`Downloading ${fileName}...`);
+
     try {
-      const files = gallery.files;
-      let downloadedCount = 0;
-      
-      for (let i = 0; i < files.length; i++) {
-        const fileUrl = files[i];
-        const fileName = fileUrl.split('/').pop() || `file_${i + 1}`;
-        
-        try {
-          toast.loading(`Downloading ${i + 1}/${files.length}: ${fileName}`, { id: toastId });
-          
-          const link = document.createElement('a');
-          link.href = fileUrl;
-          link.download = fileName;
-          link.style.display = 'none';
-          
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          downloadedCount++;
-          
-          if (i < files.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-          
-        } catch (error) {
-          console.error(`Failed to download ${fileName}:`, error);
-        }
+      try {
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error(`Download request failed with ${response.status}`);
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        triggerBrowserDownload(objectUrl, fileName);
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      } catch (fetchError) {
+        console.warn('Blob download failed, falling back to direct link:', fetchError);
+        triggerBrowserDownload(fileUrl, fileName);
       }
-      
+
       toast.dismiss(toastId);
-      toast.success(`Successfully downloaded ${downloadedCount}/${files.length} files!`, {
-        duration: 5000
-      });
-      
-      if (downloadedCount < files.length) {
-        toast.info(`${files.length - downloadedCount} files may need to be downloaded manually`, {
-          duration: 7000
-        });
-      }
-      
+      toast.success(`Downloaded: ${fileName}`);
     } catch (error) {
-      console.error('Error in download process:', error);
+      console.error('Error downloading file:', error);
       toast.dismiss(toastId);
-      toast.error('Download failed. Please try downloading files individually.');
+      toast.error('Failed to download file. Please try again.');
     } finally {
       setDownloading(false);
+      setDownloadingIndex(null);
     }
   };
 
   // Download selected file
   const downloadSelectedFile = async () => {
-    if (!gallery.files || !gallery.files[selectedIndex]) {
+    const selectedFile = gallery.files?.[selectedIndex];
+    if (!selectedFile) {
       toast.error('No file selected to download');
       return;
     }
-    
-    const fileUrl = gallery.files[selectedIndex];
-    const fileName = fileUrl.split('/').pop() || `gallery_file_${selectedIndex + 1}`;
-    
-    try {
-      const toastId = toast.loading(`Downloading ${fileName}...`);
-      
-      const link = document.createElement('a');
-      link.href = fileUrl;
-      link.download = fileName;
-      link.style.display = 'none';
-      
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      toast.dismiss(toastId);
-      toast.success(`Downloaded: ${fileName}`);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-      toast.error('Failed to download file. Please try again.');
-    }
+
+    await downloadFile(selectedFile, selectedIndex);
   };
 
   return (
@@ -1045,24 +1025,11 @@ const ModernGalleryDetailModal = ({ gallery, onClose, onDownload, onShare }) => 
                           View
                         </button>
                         <button
-                          onClick={async () => {
-                            const fileName = file.split('/').pop() || `file_${index + 1}`;
-                            try {
-                              const link = document.createElement('a');
-                              link.href = file;
-                              link.download = fileName;
-                              link.style.display = 'none';
-                              document.body.appendChild(link);
-                              link.click();
-                              document.body.removeChild(link);
-                              toast.success(`Downloaded: ${fileName}`);
-                            } catch (error) {
-                              toast.error('Failed to download file');
-                            }
-                          }}
-                          className="px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg"
+                          onClick={() => downloadFile(file, index)}
+                          disabled={downloading}
+                          className="px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Download
+                          {downloadingIndex === index ? 'Downloading...' : 'Download'}
                         </button>
                       </div>
                     </div>
@@ -1117,9 +1084,9 @@ const ModernGalleryDetailModal = ({ gallery, onClose, onDownload, onShare }) => 
         <div className="shrink-0 p-3 sm:p-4 md:p-6 bg-slate-50/80 backdrop-blur-md border-t border-slate-100">
           <div className="max-w-2xl mx-auto flex flex-row gap-2 sm:gap-3 px-1">
             
-            {/* Download All Button */}
+            {/* Download Selected Button */}
             <button
-              onClick={downloadAllFiles}
+              onClick={downloadSelectedFile}
               disabled={!gallery.files || gallery.files.length === 0 || downloading}
               className={`
                 flex-1 min-w-0
@@ -1137,7 +1104,7 @@ const ModernGalleryDetailModal = ({ gallery, onClose, onDownload, onShare }) => 
               `}
             >
               <FiDownload className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 shrink-0" />
-              <span className="truncate">{downloading ? 'Downloading...' : 'Download All'}</span>
+              <span className="truncate">{downloading ? 'Downloading...' : 'Download Selected'}</span>
             </button>
 
             {/* Share Button */}
@@ -1339,10 +1306,6 @@ export default function ModernGallery() {
   };
 
   const handleViewGallery = (gallery) => {
-    setSelectedGallery(gallery);
-  };
-
-  const handleDownload = (gallery) => {
     setSelectedGallery(gallery);
   };
 
@@ -1859,7 +1822,6 @@ export default function ModernGallery() {
           <ModernGalleryDetailModal
             gallery={selectedGallery}
             onClose={() => setSelectedGallery(null)}
-            onDownload={handleDownload}
             onShare={handleShare}
           />
         )}
