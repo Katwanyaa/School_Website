@@ -70,6 +70,12 @@ const socialLinks = [
 // === Academics mega dropdown (mirrors the “Academics” group from Matungulu, adapted for Katwanyaa) ===
 const academicLinks = [
   {
+    name: 'Staff Directory',
+    href: '/pages/staff',
+    icon: FiUsers,
+    description: 'Meet our dedicated team',
+  },
+  {
     name: 'Departments',
     href: '/pages/Departments',
     icon: FiLayers,
@@ -140,12 +146,6 @@ const schoolHubLinks = [
     href: '/pages/careers',
     icon: FiBriefcase,
     description: 'Join the Katwanyaa family',
-  },
-  {
-    name: 'Staff Directory',
-    href: '/pages/staff',
-    icon: FiUsers,
-    description: 'Meet our dedicated team',
   },
 ];
 
