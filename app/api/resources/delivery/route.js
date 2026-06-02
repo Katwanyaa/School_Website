@@ -73,6 +73,11 @@ const getStudentName = (recipient) =>
 const getRecipientEmail = (recipient) =>
   normalizeEmailAddress(recipient.student?.parentEmail || recipient.student?.email);
 
+const isGmailDailyLimitResult = (result = {}) =>
+  result.code === 'GMAIL_DAILY_LIMIT_EXCEEDED' ||
+  result.retryAfterHours === 24 ||
+  /gmail sending limit exceeded|daily user sending limit exceeded/i.test(String(result.error || ''));
+
 const buildResourceEmail = (resource, studentName) => {
   const deliveryAction = resource.targetCriteria?.deliveryAction === 'updated' ? 'updated' : 'new';
   const subjectPrefix = deliveryAction === 'updated' ? 'Updated learning resource' : 'New learning resource';
@@ -329,11 +334,12 @@ export async function POST(req) {
         failureCount++;
         
         // Check if this is a rate limit error
-        const isRateLimit = sendResult.error?.includes('454') || 
+        const isRateLimit = sendResult.error?.includes('454') ||
                            sendResult.error?.includes('Too many login attempts') ||
-                           sendResult.responseCode === 454;
+                           sendResult.responseCode === 454 ||
+                           isGmailDailyLimitResult(sendResult);
         
-        if (isRateLimit) {
+        if (isRateLimit && !isGmailDailyLimitResult(sendResult)) {
           rateLimitEncountered = true;
           // Exponential backoff: start with 5 seconds, then increase
           rateLimitWaitTime = Math.min(
@@ -341,6 +347,8 @@ export async function POST(req) {
             120000 // Max 2 minutes
           );
           console.warn(`Rate limit detected after ${successCount + failureCount} emails. Waiting ${rateLimitWaitTime}ms`);
+        } else if (isGmailDailyLimitResult(sendResult)) {
+          console.warn('Gmail daily sending limit exceeded. Further retries should wait 24 hours.');
         }
         
         await prisma.resourceDeliveryRecipient.update({

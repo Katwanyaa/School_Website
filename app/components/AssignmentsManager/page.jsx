@@ -87,6 +87,7 @@ import { Modal, Box, CircularProgress } from '@mui/material';
 
 const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
 const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
+const GMAIL_DAILY_LIMIT_MESSAGE = 'Gmail sending limit exceeded. Please try again in 24 hours.';
 
 const formatDisplayText = (value, fallback = '') => {
   if (value === null || value === undefined || value === '') return fallback;
@@ -98,6 +99,12 @@ const formatDisplayText = (value, fallback = '') => {
   }
   return String(value);
 };
+
+const isGmailDailyLimitResult = (result, message = '') => (
+  result?.code === 'GMAIL_DAILY_LIMIT_EXCEEDED' ||
+  result?.retryAfterHours === 24 ||
+  /gmail sending limit exceeded|daily user sending limit exceeded/i.test(formatDisplayText(message || result?.error))
+);
 
 const safeText = (value) => {
   if (typeof value === 'string') return value;
@@ -1743,13 +1750,31 @@ export default function AssignmentsManager() {
         if (delivered) {
           sentCount += 1;
         } else {
+          const errorMessage = formatDisplayText(
+            resultItem?.error || deliveryResult.error,
+            'Email could not be delivered'
+          );
+          const gmailLimitExceeded = isGmailDailyLimitResult(resultItem || deliveryResult, errorMessage);
           failedCount += 1;
           failedRecipients.push({
             ...recipient,
             recipientId: recipient.id,
             email: resultItem?.email || recipient.email,
-            error: resultItem?.error || deliveryResult.error || 'Email could not be delivered',
+            error: gmailLimitExceeded ? GMAIL_DAILY_LIMIT_MESSAGE : errorMessage,
           });
+
+          if (gmailLimitExceeded) {
+            setDeliveryProgress(prev => ({
+              ...prev,
+              sentCount,
+              failedCount,
+              failedRecipients: [...failedRecipients],
+              isLoading: false,
+              isComplete: true,
+              currentRecipient: GMAIL_DAILY_LIMIT_MESSAGE,
+            }));
+            break;
+          }
         }
       } catch (error) {
         if (deliveryCancelRef.current) {

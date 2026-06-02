@@ -14,6 +14,20 @@ const transporter = nodemailer.createTransport({
   rateLimit: 5,
 });
 
+const GMAIL_DAILY_LIMIT_MESSAGE = 'Gmail sending limit exceeded. Please try again in 24 hours.';
+
+const isGmailDailySendingLimitError = (error) => {
+  const errorText = [
+    error?.message,
+    error?.response,
+    error?.command,
+    error?.code,
+  ].filter(Boolean).join(' ');
+
+  return error?.responseCode === 550 &&
+    /daily user sending limit exceeded|550-5\.4\.5|550 5\.4\.5/i.test(errorText);
+};
+
 /**
  * Normalize and validate email addresses
  * @param {string} email - Email address to normalize
@@ -93,7 +107,10 @@ export const sendDeliveryEmail = async (options) => {
     let errorMessage = error.message;
 
     // Gmail specific error codes
-    if (error.code === 'ECONNREFUSED') {
+    if (isGmailDailySendingLimitError(error)) {
+      responseCode = 550;
+      errorMessage = GMAIL_DAILY_LIMIT_MESSAGE;
+    } else if (error.code === 'ECONNREFUSED') {
       responseCode = 503;
       errorMessage = 'Email service unavailable. Connection refused.';
     } else if (error.message?.includes('454') || error.message?.includes('Too many login attempts')) {
@@ -113,7 +130,8 @@ export const sendDeliveryEmail = async (options) => {
       success: false,
       error: errorMessage,
       responseCode: responseCode,
-      code: error.code,
+      code: isGmailDailySendingLimitError(error) ? 'GMAIL_DAILY_LIMIT_EXCEEDED' : error.code,
+      retryAfterHours: isGmailDailySendingLimitError(error) ? 24 : undefined,
       timestamp: new Date().toISOString(),
     };
   }
@@ -135,6 +153,7 @@ export const verifyEmailTransporter = async () => {
 };
 
 export default {
+  GMAIL_DAILY_LIMIT_MESSAGE,
   normalizeEmailAddress,
   sendDeliveryEmail,
   verifyEmailTransporter,
