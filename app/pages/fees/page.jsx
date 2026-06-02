@@ -753,30 +753,84 @@ const router = useRouter();
               </div>
             )}
 
-            {/* Quick Info Card */}
+            {/* Payment Information Card */}
             <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 p-4 sm:p-5 md:p-6">
-              <h3 className="font-bold text-slate-900 mb-3 text-sm sm:text-base md:text-lg">Payment Info</h3>
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <IoCardOutline className="text-blue-600 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
-                  <div className="min-w-0">
-                    <p className="text-[8px] sm:text-xs font-bold text-slate-400">Bank Transfer</p>
-                    <p className="text-[10px] sm:text-xs md:text-sm font-bold text-slate-900 truncate">Account: 1234567890</p>
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg">Payment Information</h3>
+                  <p className="mt-1 text-[10px] sm:text-xs text-slate-500 font-semibold">
+                    Official channels for Katwanyaa Secondary School fees.
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[9px] sm:text-[10px] font-black uppercase tracking-wider">
+                  Branch: Tala
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <IoCardOutline className="text-blue-700 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
+                    <p className="text-xs sm:text-sm font-black text-blue-950">Direct Bank Payments</p>
+                  </div>
+                  <div className="grid gap-2">
+                    {[
+                      { bank: 'Equity Bank', account: '0900263541203' },
+                      { bank: 'Kenya Commercial Bank (KCB)', account: '1107286352' }
+                    ].map((option) => (
+                      <div key={option.account} className="rounded-lg bg-white/80 p-3 border border-blue-100">
+                        <p className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-400">{option.bank}</p>
+                        <p className="mt-1 text-xs sm:text-sm font-bold text-slate-900">Account Name: KATWANYAA SECONDARY SCHOOL</p>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900">Account Number: {option.account}</p>
+                        <p className="text-[10px] sm:text-xs font-semibold text-slate-600">Branch: TALA</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <IoCashOutline className="text-emerald-600 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
-                  <div className="min-w-0">
-                    <p className="text-[8px] sm:text-xs font-bold text-slate-400">MPesa Paybill</p>
-                    <p className="text-[10px] sm:text-xs md:text-sm font-bold text-slate-900 truncate">Business No: 522522</p>
+
+                <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <IoCashOutline className="text-emerald-700 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
+                    <p className="text-xs sm:text-sm font-black text-emerald-950">M-PESA Pay Bill</p>
+                  </div>
+                  <div className="rounded-lg bg-white/80 p-3 border border-emerald-100 space-y-2">
+                    <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Business Number</p>
+                        <p className="font-black text-slate-900">522123</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">School Code</p>
+                        <p className="font-black text-slate-900">34997K</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-slate-900 p-3 text-white">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">Account format</p>
+                      <p className="mt-1 font-mono text-xs sm:text-sm break-all">34997K[SingleName][AdmissionNo]</p>
+                      <p className="mt-2 text-[10px] sm:text-xs text-slate-300">Example: 34997KMUTUA2</p>
+                    </div>
+                    <ol className="list-decimal pl-4 text-[10px] sm:text-xs text-slate-700 font-semibold space-y-1">
+                      <li>Go to the M-PESA menu and select Pay Bill.</li>
+                      <li>Enter Business Number 522123.</li>
+                      <li>Enter the account as school code, one student name, then admission number.</li>
+                      <li>Enter amount, then your M-PESA PIN.</li>
+                    </ol>
+                    <div className="rounded-lg bg-amber-50 border border-amber-200 p-2 text-[10px] sm:text-xs text-amber-900 font-bold">
+                      Use one student name only. Do not include class name in the account field.
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <IoReceiptOutline className="text-purple-600 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
-                  <div className="min-w-0">
-                    <p className="text-[8px] sm:text-xs font-bold text-slate-400">Account Name</p>
-                    <p className="text-[10px] sm:text-xs md:text-sm font-bold text-slate-900 truncate">Katwanyaa Senior School</p>
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <IoReceiptOutline className="text-slate-700 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
+                    <p className="text-xs sm:text-sm font-black text-slate-950">Other Accepted Methods</p>
                   </div>
+                  <ul className="space-y-1 text-[10px] sm:text-xs text-slate-700 font-semibold">
+                    <li>Crossed banker&apos;s cheque payable to KATWANYAA SECONDARY SCHOOL.</li>
+                    <li>Postal money order payable to KATWANYAA SECONDARY SCHOOL.</li>
+                    <li>Fees must be paid through the official channels listed here.</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -802,7 +856,7 @@ const router = useRouter();
                 Contact our finance office for payment plans and financial aid information.
               </p>
             </div>
-            <button onclick={() => (router.push("/pages/contact"))} className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-slate-900 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm hover:bg-slate-100 transition-all active:scale-95 flex-shrink-0">
+            <button onClick={() => router.push("/pages/contact")} className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-slate-900 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm hover:bg-slate-100 transition-all active:scale-95 flex-shrink-0">
               Contact
             </button>
           </div>
