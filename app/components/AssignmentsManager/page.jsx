@@ -88,6 +88,7 @@ import { Modal, Box, CircularProgress } from '@mui/material';
 const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
 const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
 const GMAIL_DAILY_LIMIT_MESSAGE = 'Gmail sending limit exceeded. Please try again in 24 hours.';
+const GMAIL_LIMIT_PENDING_MESSAGE = 'Not sent because Gmail sending limit was reached. It will be retried first after 24 hours.';
 
 const formatDisplayText = (value, fallback = '') => {
   if (value === null || value === undefined || value === '') return fallback;
@@ -105,6 +106,49 @@ const isGmailDailyLimitResult = (result, message = '') => (
   result?.retryAfterHours === 24 ||
   /gmail sending limit exceeded|daily user sending limit exceeded/i.test(formatDisplayText(message || result?.error))
 );
+
+const getDeliveryStatusPriority = (status) => {
+  switch (String(status || '').toLowerCase()) {
+    case 'failed':
+      return 0;
+    case 'prepared':
+    case 'pending':
+    case 'sending':
+      return 1;
+    default:
+      return 2;
+  }
+};
+
+const isSentDeliveryRecipient = (recipient) =>
+  String(recipient?.status || '').toLowerCase() === 'sent';
+
+const sortDeliveryRecipientsForRetry = (a, b) =>
+  getDeliveryStatusPriority(a.status) - getDeliveryStatusPriority(b.status) ||
+  (a._deliveryOrder || 0) - (b._deliveryOrder || 0);
+
+const buildGmailLimitRetryRecipients = (recipients, currentIndex, currentRecipient) => {
+  const retryRecipients = [];
+  const seenRecipientIds = new Set();
+  const addRecipient = (recipient, error) => {
+    const recipientId = recipient?.id || recipient?.recipientId;
+    if (!recipientId || seenRecipientIds.has(recipientId) || isSentDeliveryRecipient(recipient)) return;
+    seenRecipientIds.add(recipientId);
+    retryRecipients.push({
+      ...recipient,
+      id: recipientId,
+      recipientId,
+      error,
+    });
+  };
+
+  addRecipient(currentRecipient, GMAIL_DAILY_LIMIT_MESSAGE);
+  recipients.slice(currentIndex + 1).forEach((recipient) => {
+    addRecipient(recipient, GMAIL_LIMIT_PENDING_MESSAGE);
+  });
+
+  return retryRecipients;
+};
 
 const safeText = (value) => {
   if (typeof value === 'string') return value;
@@ -1685,11 +1729,13 @@ export default function AssignmentsManager() {
     deliveryAbortRef.current = null;
 
     const deliverableRecipients = recipients
-      .map((recipient) => ({
+      .map((recipient, originalIndex) => ({
         ...recipient,
-        id: recipient.id || recipient.recipientId
+        id: recipient.id || recipient.recipientId,
+        _deliveryOrder: originalIndex,
       }))
-      .filter((recipient) => recipient.id);
+      .filter((recipient) => recipient.id && !isSentDeliveryRecipient(recipient))
+      .sort(sortDeliveryRecipientsForRetry);
 
     const totalRecipients = deliverableRecipients.length;
     const failedRecipients = [];
@@ -1755,15 +1801,17 @@ export default function AssignmentsManager() {
             'Email could not be delivered'
           );
           const gmailLimitExceeded = isGmailDailyLimitResult(resultItem || deliveryResult, errorMessage);
-          failedCount += 1;
-          failedRecipients.push({
+          const failedRecipient = {
             ...recipient,
             recipientId: recipient.id,
             email: resultItem?.email || recipient.email,
             error: gmailLimitExceeded ? GMAIL_DAILY_LIMIT_MESSAGE : errorMessage,
-          });
+          };
 
           if (gmailLimitExceeded) {
+            const retryRecipients = buildGmailLimitRetryRecipients(deliverableRecipients, index, failedRecipient);
+            failedCount += retryRecipients.length;
+            failedRecipients.push(...retryRecipients);
             setDeliveryProgress(prev => ({
               ...prev,
               sentCount,
@@ -1775,6 +1823,9 @@ export default function AssignmentsManager() {
             }));
             break;
           }
+
+          failedCount += 1;
+          failedRecipients.push(failedRecipient);
         }
       } catch (error) {
         if (deliveryCancelRef.current) {

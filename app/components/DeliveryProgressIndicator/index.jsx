@@ -62,6 +62,11 @@ export const DeliveryProgressIndicator = ({
     : processedCount;
   const percentage = totalRecipients > 0 ? Math.round((processedCount / totalRecipients) * 100) : 0;
   const hasFailures = failedCount > 0;
+  const hasGmailLimitPending = failedRecipients.some((recipient) =>
+    /gmail sending limit exceeded|gmail sending limit was reached|daily user sending limit exceeded/i.test(
+      formatDisplayText(recipient?.error)
+    )
+  );
 
   const handleRetry = async () => {
     setRetrying(true);
@@ -84,6 +89,7 @@ export const DeliveryProgressIndicator = ({
     if (!isComplete) return `Sending to ${activeRecipientNumber} of ${totalRecipients} recipients...`;
     if (!hasRecipients) return 'No parent email recipients were found for this selection.';
     if (failedCount === 0) return '✓ Successfully delivered to all recipients!';
+    if (hasGmailLimitPending) return `Delivered to ${sentCount} recipient(s). ${failedCount} pending after Gmail sending limit.`;
     if (sentCount === 0) return '✗ Failed to deliver to any recipients';
     return `✓ Delivered to ${sentCount} recipient(s), ${failedCount} failed`;
   };
@@ -152,11 +158,11 @@ export const DeliveryProgressIndicator = ({
             </div>
 
             {/* Failed */}
-            <div className={`${hasFailures ? 'bg-red-50' : 'bg-gray-50'} rounded-lg p-3 text-center`}>
-              <div className={`text-2xl font-bold ${hasFailures ? 'text-red-600' : 'text-gray-600'}`}>
+            <div className={`${hasFailures ? (hasGmailLimitPending ? 'bg-orange-50' : 'bg-red-50') : 'bg-gray-50'} rounded-lg p-3 text-center`}>
+              <div className={`text-2xl font-bold ${hasFailures ? (hasGmailLimitPending ? 'text-orange-600' : 'text-red-600') : 'text-gray-600'}`}>
                 {failedCount}
               </div>
-              <div className="text-xs text-gray-600">Failed</div>
+              <div className="text-xs text-gray-600">{hasGmailLimitPending ? 'Pending' : 'Failed'}</div>
             </div>
           </div>
 
@@ -180,16 +186,16 @@ export const DeliveryProgressIndicator = ({
 
           {/* Failed Recipients List (if complete and has failures) */}
           {isComplete && hasFailures && (
-            <div className="bg-red-50 border border-red-200 rounded-lg overflow-hidden">
+            <div className={`${hasGmailLimitPending ? 'bg-orange-50 border-orange-200' : 'bg-red-50 border-red-200'} border rounded-lg overflow-hidden`}>
               <button
                 type="button"
                 onClick={() => setExpandFailures(!expandFailures)}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-red-100 transition-colors"
+                className={`w-full px-4 py-3 flex items-center justify-between ${hasGmailLimitPending ? 'hover:bg-orange-100' : 'hover:bg-red-100'} transition-colors`}
               >
                 <div className="flex items-center gap-2">
-                  <FiAlertCircle className="text-red-600" />
-                  <span className="font-medium text-red-700">
-                    {failedRecipients.length} Failed Recipient(s)
+                  <FiAlertCircle className={hasGmailLimitPending ? 'text-orange-600' : 'text-red-600'} />
+                  <span className={`font-medium ${hasGmailLimitPending ? 'text-orange-700' : 'text-red-700'}`}>
+                    {failedRecipients.length} {hasGmailLimitPending ? 'Pending Recipient(s)' : 'Failed Recipient(s)'}
                   </span>
                 </div>
                 <span className={`transform transition-transform ${expandFailures ? 'rotate-180' : ''}`}>
@@ -198,11 +204,11 @@ export const DeliveryProgressIndicator = ({
               </button>
 
               {expandFailures && (
-                <div className="max-h-40 overflow-y-auto border-t border-red-200">
+                <div className={`max-h-40 overflow-y-auto border-t ${hasGmailLimitPending ? 'border-orange-200' : 'border-red-200'}`}>
                   {failedRecipients.map((recipient, index) => (
                     <div
                       key={index}
-                      className="px-4 py-2 border-b border-red-100 last:border-b-0 text-xs bg-white hover:bg-red-50"
+                      className={`px-4 py-2 border-b ${hasGmailLimitPending ? 'border-orange-100 hover:bg-orange-50' : 'border-red-100 hover:bg-red-50'} last:border-b-0 text-xs bg-white`}
                     >
                       <div className="font-medium text-gray-800">
                         {recipient.studentName || recipient.email}
@@ -246,7 +252,7 @@ export const DeliveryProgressIndicator = ({
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
             >
               <FiRotateCw size={16} />
-              Retry Failed
+              {hasGmailLimitPending ? 'Send Pending First' : 'Retry Failed'}
             </button>
           )}
 
