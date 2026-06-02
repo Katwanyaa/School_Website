@@ -79,11 +79,16 @@ const buildAssignmentEmail = (assignment, studentName) => {
     : 'Check the student portal';
   const teacherName = assignment.teacher || 'The subject teacher';
   const classStream = assignment.className || 'Check the student portal';
-  const subject = `New assignment: ${assignment.title}`;
+  const deliveryAction = assignment.targetCriteria?.deliveryAction === 'updated' ? 'updated' : 'new';
+  const subjectPrefix = deliveryAction === 'updated' ? 'Updated assignment' : 'New assignment';
+  const introText = deliveryAction === 'updated'
+    ? `An assignment has been updated for ${studentName}.`
+    : `A new assignment has been shared for ${studentName}.`;
+  const subject = `${subjectPrefix}: ${assignment.title}`;
   const text = [
     'Dear Parent/Guardian,',
     '',
-    `A new assignment has been shared for ${studentName}.`,
+    introText,
     `Title: ${assignment.title}`,
     `Subject: ${assignment.subject}`,
     `Teacher: ${teacherName}`,
@@ -98,7 +103,7 @@ const buildAssignmentEmail = (assignment, studentName) => {
   const html = `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#0f172a">
       <p>Dear Parent/Guardian,</p>
-      <p>A new assignment has been shared for <strong>${studentName}</strong>.</p>
+      <p>${introText.replace(studentName, `<strong>${studentName}</strong>`)}</p>
       <ul>
         <li><strong>Title:</strong> ${assignment.title}</li>
         <li><strong>Subject:</strong> ${assignment.subject}</li>

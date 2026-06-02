@@ -74,11 +74,16 @@ const getRecipientEmail = (recipient) =>
   normalizeEmailAddress(recipient.student?.parentEmail || recipient.student?.email);
 
 const buildResourceEmail = (resource, studentName) => {
-  const subject = `New learning resource: ${resource.title}`;
+  const deliveryAction = resource.targetCriteria?.deliveryAction === 'updated' ? 'updated' : 'new';
+  const subjectPrefix = deliveryAction === 'updated' ? 'Updated learning resource' : 'New learning resource';
+  const introText = deliveryAction === 'updated'
+    ? `A learning resource has been updated for ${studentName}.`
+    : `A new learning resource has been shared for ${studentName}.`;
+  const subject = `${subjectPrefix}: ${resource.title}`;
   const text = [
     'Dear Parent/Guardian,',
     '',
-    `A new learning resource has been shared for ${studentName}.`,
+    introText,
     `Title: ${resource.title}`,
     `Subject: ${resource.subject}`,
     '',
@@ -90,7 +95,7 @@ const buildResourceEmail = (resource, studentName) => {
   const html = `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#0f172a">
       <p>Dear Parent/Guardian,</p>
-      <p>A new learning resource has been shared for <strong>${studentName}</strong>.</p>
+      <p>${introText.replace(studentName, `<strong>${studentName}</strong>`)}</p>
       <ul>
         <li><strong>Title:</strong> ${resource.title}</li>
         <li><strong>Subject:</strong> ${resource.subject}</li>

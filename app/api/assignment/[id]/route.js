@@ -545,7 +545,7 @@ export async function PUT(request, { params }) {
     const teacherRemarks = formData.get("teacherRemarks")?.toString().trim() || existingAssignment.teacherRemarks;
     const learningObjectives = formData.get("learningObjectives")?.toString();
     const dateAssigned = formData.get("dateAssigned")?.toString() || existingAssignment.dateAssigned;
-    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className);
+    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className, 'general', 'updated');
     
     console.log('📝 Fields extracted:', { title, subject, className, teacher, dueDate });
 

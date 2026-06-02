@@ -8,7 +8,7 @@ export const SCHOOL_COMMUNICATION_NUMBER = '+254720123456';
  * Build delivery criteria from form data
  * Determines which recipients should receive the assignment/resource
  */
-export const buildDeliveryCriteriaFromFormData = (formData, className, category = 'general') => {
+export const buildDeliveryCriteriaFromFormData = (formData, className, category = 'general', deliveryAction = 'new') => {
   const deliveryType = formData.get('deliveryType') || 'class'; // 'class', 'specific', 'all'
   const specificRecipients = formData.get('specificRecipients') || ''; // comma-separated emails
   const notifyParents = formData.get('notifyParents') === 'true' || formData.get('notifyParents') === true;
@@ -21,6 +21,7 @@ export const buildDeliveryCriteriaFromFormData = (formData, className, category 
     category: category,
     notifyParents: notifyParents,
     notifyTeachers: notifyTeachers,
+    deliveryAction,
     createdAt: new Date().toISOString(),
   };
 

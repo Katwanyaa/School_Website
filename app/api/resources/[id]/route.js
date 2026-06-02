@@ -484,7 +484,12 @@ async function handleFormUpdate(request, id, existingResource) {
     if (accessLevel !== null && accessLevel !== undefined) updateData.accessLevel = accessLevel;
     if (uploadedBy !== null && uploadedBy !== undefined) updateData.uploadedBy = uploadedBy;
     if (isActive !== null && isActive !== undefined) updateData.isActive = isActive === "true";
-    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className || existingResource.className, category || existingResource.category);
+    const deliveryCriteria = buildDeliveryCriteriaFromFormData(
+      formData,
+      className || existingResource.className,
+      category || existingResource.category,
+      'updated'
+    );
     updateData.targetCriteria = deliveryCriteria;
     updateData.senderReference = deliveryCriteria.senderReference;
     updateData.deliveryStatus = 'preparing';

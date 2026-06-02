@@ -412,7 +412,7 @@ export async function POST(request) {
     const category = formData.get("category")?.trim() || "general";
     const accessLevel = formData.get("accessLevel")?.trim() || "student";
     const uploadedBy = formData.get("uploadedBy")?.trim() || auth.user.name;
-    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className, category);
+    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className, category, 'new');
 
     // Validate required fields
     if (!title || !subject || !teacher || !className) {

@@ -511,7 +511,7 @@ export async function POST(request) {
     const additionalWork = formData.get("additionalWork")?.toString().trim() || "";
     const teacherRemarks = formData.get("teacherRemarks")?.toString().trim() || "";
     const learningObjectives = formData.get("learningObjectives")?.toString();
-    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className);
+    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className, 'general', 'new');
 
     // Calculate dueDate: use provided date or default to 7 days from today
     const dateAssignedDate = new Date();
