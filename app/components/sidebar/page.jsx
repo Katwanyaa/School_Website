@@ -108,7 +108,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, sidebarOpen, set
 
         // Check if user has valid role - same as dashboard
         const userRole = user.role;
-        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'administrator', 'TEACHER', 'PRINCIPAL'];
+        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'administrator', 'TEACHER', 'PRINCIPAL', 'STAFF'];
         
         if (!userRole || !validRoles.includes(userRole.toUpperCase())) {
           console.log('❌ Sidebar: User does not have valid role:', userRole);
@@ -254,7 +254,7 @@ const handleLogout = () => {
       badge: 'emerald',
     },
     {
-      id: 'feebalances',
+      id: 'fees',
       label: 'Fee Balances',
       icon: FiDollarSign,
       badge: 'yellow'
