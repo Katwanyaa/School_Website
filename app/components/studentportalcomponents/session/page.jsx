@@ -730,7 +730,7 @@ function EmergencyModal({ student, onClose, onSubmit }) {
                 <div>
                   <p className="text-xs  text-gray-700">
                     <span className="font-bold">Important:</span> For immediate life-threatening emergencies, 
-                    please call Our Ofiice Direct 0789384922 or your local emergency number first. This form is for urgent school-related 
+                    please call the school office on 0710 894 145 or your local emergency number first. This form is for urgent school-related 
                     matters that require immediate administrative attention.
                   </p>
                 </div>
@@ -1947,15 +1947,15 @@ const fetchAllData = useCallback(async () => {
                 <h4 className="font-bold mb-2 md:mb-3 flex items-center gap-1 md:gap-2 text-sm md:text-base">
                   <FiBell className="text-sm md:text-base" /> Contact
                 </h4>
-                <p className="text-gray-300 text-xs md:text-sm">guidance@school.edu</p>
-                <p className="text-gray-300 text-xs md:text-sm">(123) 456-7890</p>
+                <p className="text-gray-300 text-xs md:text-sm">katzict@gmail.com</p>
+                <p className="text-gray-300 text-xs md:text-sm">0710 894 145</p>
               </div>
               <div className="bg-white/10 p-3 md:p-5 rounded-lg md:rounded-xl backdrop-blur-sm">
                 <h4 className="font-bold mb-2 md:mb-3 flex items-center gap-1 md:gap-2 text-sm md:text-base">
                   <FiAlertCircle className="text-sm md:text-base" /> Emergency
                 </h4>
                 <p className="text-gray-300 text-xs md:text-sm">24/7 Student Support</p>
-                <p className="text-gray-300 text-xs md:text-sm">(123) 456-7891</p>
+                <p className="text-gray-300 text-xs md:text-sm">0710 894 145</p>
               </div>
             </div>
           </div>

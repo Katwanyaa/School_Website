@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Box, CircularProgress } from '@mui/material';
 
 // Consolidated Feather Icons (Fi) - All Duplicates Removed
@@ -31,7 +31,6 @@ import {
   FiPaperclip,
   FiFileText,
   FiDownload,
-  FiSend,
   FiTarget,
   FiBarChart,
   FiPercent,
@@ -40,7 +39,6 @@ import {
   FiBookOpen,
   FiArchive,
   FiTag,
-  FiMail,
   FiUserCheck,
   FiFilter,
   FiHardDrive,
@@ -62,7 +60,6 @@ import {
   FiCopy,
   FiShare2,
   FiHeart,
-  FiMessageCircle
 } from 'react-icons/fi';
 
 // Consolidated Heroicons (Hi)
@@ -88,14 +85,10 @@ import {
 // Import subject list and components
 import { ALL_SUBJECTS } from '../../constants/subjects';
 import SearchableSubjectDropdown from '../SearchableSubjectDropdown';
-import DeliveryProgressIndicator from '../DeliveryProgressIndicator';
 
 // Rest of your component logic goes here...
 
-const SCHOOL_COMMUNICATION_NUMBER = '0793472960';
 const DELIVERY_LEVEL_OPTIONS = ['Grade 10', 'Grade 11', 'Grade 12', 'Form 3', 'Form 4'];
-const GMAIL_DAILY_LIMIT_MESSAGE = 'Gmail sending limit exceeded. Please try again in 24 hours.';
-const GMAIL_LIMIT_PENDING_MESSAGE = 'Not sent because Gmail sending limit was reached. It will be retried first after 24 hours.';
 
 const safeText = (value) => {
   if (typeof value === 'string') return value;
@@ -116,55 +109,6 @@ const formatDisplayText = (value, fallback = '') => {
     return value.message || value.error || value.detail || value.code || fallback || JSON.stringify(value);
   }
   return String(value);
-};
-
-const isGmailDailyLimitResult = (result, message = '') => (
-  result?.code === 'GMAIL_DAILY_LIMIT_EXCEEDED' ||
-  result?.retryAfterHours === 24 ||
-  /gmail sending limit exceeded|daily user sending limit exceeded/i.test(formatDisplayText(message || result?.error))
-);
-
-const getDeliveryStatusPriority = (status) => {
-  switch (String(status || '').toLowerCase()) {
-    case 'failed':
-      return 0;
-    case 'prepared':
-    case 'pending':
-    case 'sending':
-      return 1;
-    default:
-      return 2;
-  }
-};
-
-const isSentDeliveryRecipient = (recipient) =>
-  String(recipient?.status || '').toLowerCase() === 'sent';
-
-const sortDeliveryRecipientsForRetry = (a, b) =>
-  getDeliveryStatusPriority(a.status) - getDeliveryStatusPriority(b.status) ||
-  (a._deliveryOrder || 0) - (b._deliveryOrder || 0);
-
-const buildGmailLimitRetryRecipients = (recipients, currentIndex, currentRecipient) => {
-  const retryRecipients = [];
-  const seenRecipientIds = new Set();
-  const addRecipient = (recipient, error) => {
-    const recipientId = recipient?.id || recipient?.recipientId;
-    if (!recipientId || seenRecipientIds.has(recipientId) || isSentDeliveryRecipient(recipient)) return;
-    seenRecipientIds.add(recipientId);
-    retryRecipients.push({
-      ...recipient,
-      id: recipientId,
-      recipientId,
-      error,
-    });
-  };
-
-  addRecipient(currentRecipient, GMAIL_DAILY_LIMIT_MESSAGE);
-  recipients.slice(currentIndex + 1).forEach((recipient) => {
-    addRecipient(recipient, GMAIL_LIMIT_PENDING_MESSAGE);
-  });
-
-  return retryRecipients;
 };
 
 // Modern Loading Spinner Component
@@ -563,13 +507,6 @@ function ModernResourceDetailModal({ resource, onClose, onEdit }) {
         </span>
       )}
 
-      {/* Delivery Summary Tag */}
-      {resource.deliverySummary && (
-        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-emerald-900/40 text-emerald-300 border border-emerald-700">
-          <FiSend size={12} />
-          {resource.deliverySummary.recipientCount || 0} prepared
-        </span>
-      )}
     </div>
 
     {/* Quick Stats */}
@@ -721,10 +658,6 @@ function ModernResourceModal({ onClose, onSave, resource, loading }) {
     accessLevel: resource?.accessLevel || 'student',
     uploadedBy: resource?.uploadedBy || 'Admin',
     isActive: resource?.isActive ?? true,
-    targetGrades: resource?.targetCriteria?.grades || [],
-    targetClasses: resource?.targetCriteria?.classes || (resource?.className ? [resource.className] : []),
-    targetCategories: resource?.targetCriteria?.categories || [],
-    deliveryCategoryInput: ''
   });
 
   // File states
@@ -962,30 +895,17 @@ useEffect(() => {
       return;
     }
 
-    const deliveryTargetGrades = formData.targetGrades.length > 0 ? formData.targetGrades : [];
-    const deliveryTargetCategories = formData.targetCategories.length > 0 ? formData.targetCategories : [];
-    const deliveryTargetClasses = formData.targetClasses.length > 0
-      ? formData.targetClasses
-      : (deliveryTargetGrades.length > 0 || deliveryTargetCategories.length > 0 ? [] : [formData.className].filter(Boolean));
-
     // Create FormData for submission
     const formDataToSend = new FormData();
     
     // Add form data
     Object.keys(formData).forEach(key => {
-      if (['targetGrades', 'targetClasses', 'targetCategories', 'deliveryCategoryInput'].includes(key)) {
-        return;
-      }
       if (key === 'isActive') {
         formDataToSend.append(key, formData[key] ? 'true' : 'false');
       } else {
         formDataToSend.append(key, formData[key]);
       }
     });
-    deliveryTargetGrades.forEach(level => formDataToSend.append('targetGrades', level));
-    deliveryTargetClasses.forEach(className => formDataToSend.append('targetClasses', className));
-    deliveryTargetCategories.forEach(category => formDataToSend.append('targetCategories', category));
-    formDataToSend.append('senderReference', SCHOOL_COMMUNICATION_NUMBER);
 
     if (resource) {
       formDataToSend.append('action', 'update');
@@ -1022,18 +942,6 @@ useEffect(() => {
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const toggleTargetValue = (field, value) => {
-    setFormData(prev => {
-      const selected = prev[field] || [];
-      return {
-        ...prev,
-        [field]: selected.includes(value)
-          ? selected.filter(item => item !== value)
-          : [...selected, value]
-      };
-    });
   };
 
   const formatFileSize = (bytes) => {
@@ -1139,28 +1047,6 @@ useEffect(() => {
                 placeholder="Select or search subject..."
                 className="w-full"
               />
-            </div>
-
-            <div className="rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#0f5b4c,#d4b15f)] text-white">
-                  <FiSend className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-slate-500">Delivery Desk</p>
-                  <h3 className="mt-1 text-lg font-black text-slate-950">Email Delivery</h3>
-                  <p className="mt-1 text-sm text-slate-600">Select recipient grades and optional categories. Contacts previewed on save.</p>
-                </div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-xs font-black text-teal-800">
-                  <FiMessageCircle />
-                  Preview on save
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <p className="mb-2 text-sm font-bold text-slate-700">Delivery</p>
-                <p className="text-sm text-slate-600">Resource notices will be sent to parent email addresses for the selected class.</p>
-              </div>
             </div>
 
             {/* Teacher - Full Width */}
@@ -1500,8 +1386,6 @@ export default function ResourcesManager() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [stats, setStats] = useState(null);
-  const deliveryCancelRef = useRef(false);
-  const deliveryAbortRef = useRef(null);
 
   // NEW: Bulk delete states
   const [selectedResources, setSelectedResources] = useState(new Set());
@@ -1517,18 +1401,6 @@ export default function ResourcesManager() {
     message: '',
     actionLabel: '',
     onAction: null
-  });
-
-  // Delivery progress state
-  const [deliveryProgress, setDeliveryProgress] = useState({
-    isOpen: false,
-    totalRecipients: 0,
-    sentCount: 0,
-    failedCount: 0,
-    currentRecipient: '',
-    isComplete: false,
-    failedRecipients: [],
-    isLoading: false,
   });
 
   // Status options
@@ -1611,10 +1483,6 @@ export default function ResourcesManager() {
       uploadedBy: apiResource.uploadedBy || 'System',
       downloads: apiResource.downloads || 0,
       isActive: apiResource.isActive ?? true,
-      targetCriteria: apiResource.targetCriteria || null,
-      deliverySummary: apiResource.deliverySummary || null,
-      deliveryStatus: apiResource.deliveryStatus || 'prepared',
-      senderReference: apiResource.senderReference || SCHOOL_COMMUNICATION_NUMBER,
       createdAt: apiResource.createdAt || new Date().toISOString(),
       updatedAt: apiResource.updatedAt || new Date().toISOString(),
       
@@ -1651,203 +1519,6 @@ export default function ResourcesManager() {
       'x-admin-token': adminToken,
       'x-device-token': deviceToken
     };
-  };
-
-  const fetchResourceDeliveryRecipients = async (resourceId) => {
-    const response = await fetch(`/api/resources/delivery?resourceId=${resourceId}`);
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Could not load resource delivery recipients');
-    }
-
-    return result.data || [];
-  };
-
-  const sendResourceDeliveryBatch = async (resourceId, recipients, headers) => {
-    deliveryCancelRef.current = false;
-    deliveryAbortRef.current = null;
-
-    const deliverableRecipients = recipients
-      .map((recipient, originalIndex) => ({
-        ...recipient,
-        id: recipient.id || recipient.recipientId,
-        _deliveryOrder: originalIndex,
-      }))
-      .filter((recipient) => recipient.id && !isSentDeliveryRecipient(recipient))
-      .sort(sortDeliveryRecipientsForRetry);
-
-    const totalRecipients = deliverableRecipients.length;
-    const failedRecipients = [];
-    let sentCount = 0;
-    let failedCount = 0;
-
-    setDeliveryProgress({
-      isOpen: true,
-      totalRecipients,
-      sentCount: 0,
-      failedCount: 0,
-      currentRecipient: totalRecipients ? 'Preparing email delivery...' : 'No recipients found',
-      isComplete: totalRecipients === 0,
-      failedRecipients: [],
-      isLoading: totalRecipients > 0,
-      itemId: resourceId,
-    });
-
-    if (totalRecipients === 0) {
-      return { successCount: 0, failureCount: 0, totalRecipients: 0, failedRecipients: [] };
-    }
-
-    for (let index = 0; index < deliverableRecipients.length; index += 1) {
-      if (deliveryCancelRef.current) break;
-
-      const recipient = deliverableRecipients[index];
-      const recipientLabel = recipient.studentName || recipient.email || recipient.admissionNumber || `Recipient ${index + 1}`;
-
-      setDeliveryProgress(prev => ({
-        ...prev,
-        currentRecipient: `${index + 1} of ${totalRecipients}: ${recipientLabel}`,
-        isLoading: true,
-        isComplete: false,
-      }));
-
-      try {
-        const controller = new AbortController();
-        deliveryAbortRef.current = controller;
-        const timeoutId = setTimeout(() => controller.abort(), 90000);
-        let deliveryResponse;
-
-        try {
-          deliveryResponse = await fetch('/api/resources/delivery', {
-            method: 'POST',
-            headers: { ...headers, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ resourceId, recipientIds: [recipient.id] }),
-            signal: controller.signal,
-          });
-        } finally {
-          clearTimeout(timeoutId);
-          deliveryAbortRef.current = null;
-        }
-
-        const deliveryResult = await deliveryResponse.json().catch(() => ({}));
-        const resultItem = deliveryResult.data?.results?.[0];
-        const delivered = deliveryResponse.ok && deliveryResult.success && (deliveryResult.data?.successCount > 0 || resultItem?.success);
-
-        if (delivered) {
-          sentCount += 1;
-        } else {
-          const errorMessage = formatDisplayText(
-            resultItem?.error || deliveryResult.error,
-            'Email could not be delivered'
-          );
-          const gmailLimitExceeded = isGmailDailyLimitResult(resultItem || deliveryResult, errorMessage);
-          const failedRecipient = {
-            ...recipient,
-            recipientId: recipient.id,
-            email: resultItem?.email || recipient.email,
-            error: gmailLimitExceeded ? GMAIL_DAILY_LIMIT_MESSAGE : errorMessage,
-          };
-
-          if (gmailLimitExceeded) {
-            const retryRecipients = buildGmailLimitRetryRecipients(deliverableRecipients, index, failedRecipient);
-            failedCount += retryRecipients.length;
-            failedRecipients.push(...retryRecipients);
-            setDeliveryProgress(prev => ({
-              ...prev,
-              sentCount,
-              failedCount,
-              failedRecipients: [...failedRecipients],
-              isLoading: false,
-              isComplete: true,
-              currentRecipient: GMAIL_DAILY_LIMIT_MESSAGE,
-            }));
-            break;
-          }
-
-          failedCount += 1;
-          failedRecipients.push(failedRecipient);
-        }
-      } catch (error) {
-        if (deliveryCancelRef.current) {
-          setDeliveryProgress(prev => ({
-            ...prev,
-            isLoading: false,
-            isComplete: true,
-            currentRecipient: 'Delivery cancelled by user.',
-          }));
-          break;
-        }
-
-        failedCount += 1;
-        failedRecipients.push({
-          ...recipient,
-          recipientId: recipient.id,
-          error: error.name === 'AbortError'
-            ? 'Delivery timed out. Check the connection and retry this recipient.'
-            : error.message || 'Network error while sending email',
-        });
-      }
-
-      setDeliveryProgress(prev => ({
-        ...prev,
-        sentCount,
-        failedCount,
-        failedRecipients: [...failedRecipients],
-        isLoading: index < deliverableRecipients.length - 1,
-        isComplete: index === deliverableRecipients.length - 1,
-        currentRecipient: index === deliverableRecipients.length - 1 ? '' : prev.currentRecipient,
-        itemId: resourceId,
-      }));
-    }
-
-    return { successCount: sentCount, failureCount: failedCount, totalRecipients, failedRecipients };
-  };
-
-  const cancelResourceDelivery = () => {
-    deliveryCancelRef.current = true;
-    deliveryAbortRef.current?.abort();
-    setDeliveryProgress(prev => ({
-      ...prev,
-      isLoading: false,
-      isComplete: true,
-      currentRecipient: 'Delivery cancelled by user.',
-    }));
-    showNotification('warning', 'Delivery Cancelled', 'Email delivery was stopped. Already processed recipients are unchanged.');
-  };
-
-  const retryFailedResourceDelivery = async (resourceId, failedRecipients) => {
-    if (!resourceId || failedRecipients.length === 0) return;
-
-    try {
-      const headers = getAuthHeaders();
-      const result = await sendResourceDeliveryBatch(resourceId, failedRecipients, headers);
-
-      if (result.failureCount === 0) {
-        showNotification('success', 'Delivery Complete', `Retried and delivered ${result.successCount} resource email(s).`);
-      } else {
-        const gmailLimitExceeded = result.failedRecipients?.some((recipient) =>
-          isGmailDailyLimitResult(recipient, recipient.error)
-        );
-
-        showNotification(
-          gmailLimitExceeded ? 'error' : 'warning',
-          gmailLimitExceeded ? 'Sending Limit Exceeded' : 'Retry Incomplete',
-          gmailLimitExceeded
-            ? GMAIL_DAILY_LIMIT_MESSAGE
-            : `${result.successCount} delivered, ${result.failureCount} still failed.`,
-          gmailLimitExceeded
-            ? undefined
-            : { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, result.failedRecipients) }
-        );
-      }
-    } catch (error) {
-      showNotification(
-        'error',
-        'Retry Failed',
-        error.message || 'Could not retry failed resource emails.',
-        { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(resourceId, failedRecipients) }
-      );
-    }
   };
 
   // NEW: Bulk delete function
@@ -2208,56 +1879,14 @@ const handleSubmit = async (formData, id) => {
     const result = await response.json();
 
     if (result.success) {
-      let deliveryResult = null;
-      let deliveryInterrupted = false;
-      const savedResourceId = result.resource?.id;
-      if (savedResourceId) {
-        try {
-          const recipients = await fetchResourceDeliveryRecipients(savedResourceId);
-          deliveryResult = await sendResourceDeliveryBatch(savedResourceId, recipients, headers);
-
-          if (deliveryResult.failureCount > 0) {
-            const gmailLimitExceeded = deliveryResult.failedRecipients?.some((recipient) =>
-              isGmailDailyLimitResult(recipient, recipient.error)
-            );
-
-            showNotification(
-              gmailLimitExceeded ? 'error' : deliveryResult.successCount > 0 ? 'warning' : 'error',
-              gmailLimitExceeded ? 'Sending Limit Exceeded' : deliveryResult.successCount > 0 ? 'Partial Delivery' : 'Delivery Failed',
-              gmailLimitExceeded
-                ? GMAIL_DAILY_LIMIT_MESSAGE
-                : `${deliveryResult.successCount} resource email(s) delivered, ${deliveryResult.failureCount} failed.`,
-              gmailLimitExceeded
-                ? undefined
-                : { label: 'Retry Failed', onClick: () => retryFailedResourceDelivery(savedResourceId, deliveryResult.failedRecipients) }
-            );
-          }
-        } catch (deliveryError) {
-          console.error('Resource email delivery failed:', deliveryError);
-          deliveryInterrupted = true;
-          showNotification(
-            'error',
-            'Delivery Interrupted',
-            deliveryError.message || 'Network or timeout error while sending resource emails.',
-            { label: 'Retry', onClick: async () => {
-              const recipients = await fetchResourceDeliveryRecipients(savedResourceId);
-              await sendResourceDeliveryBatch(savedResourceId, recipients, headers);
-            }}
-          );
-        }
-      }
-
       // Refresh the list
       await fetchResources();
       setShowModal(false);
-      const recipientCount = result.resource?.deliverySummary?.recipientCount;
-      if (!deliveryInterrupted && (!deliveryResult || deliveryResult.failureCount === 0)) {
-        showNotification(
-          'success',
-          id ? 'Updated' : 'Created',
-          `Resource ${id ? 'updated' : 'created'} successfully!${deliveryResult ? ` ${deliveryResult.successCount} email(s) delivered.` : Number.isFinite(recipientCount) ? ` ${recipientCount} email recipient(s) prepared.` : ''}`
-        );
-      }
+      showNotification(
+        'success',
+        id ? 'Updated' : 'Created',
+        `Resource ${id ? 'updated' : 'created'} successfully!`
+      );
     } else {
       throw new Error(result.error);
     }
@@ -3015,24 +2644,6 @@ const handleSubmit = async (formData, id) => {
         />
       )}
 
-      {/* Delivery Progress Indicator */}
-      <DeliveryProgressIndicator
-        isOpen={deliveryProgress.isOpen}
-        totalRecipients={deliveryProgress.totalRecipients}
-        sentCount={deliveryProgress.sentCount}
-        failedCount={deliveryProgress.failedCount}
-        currentRecipient={deliveryProgress.currentRecipient}
-        isComplete={deliveryProgress.isComplete}
-        failedRecipients={deliveryProgress.failedRecipients}
-        isLoading={deliveryProgress.isLoading}
-        onCancel={cancelResourceDelivery}
-        onClose={() => setDeliveryProgress(prev => ({ ...prev, isOpen: false }))}
-        onRetry={async () => {
-          if (deliveryProgress.itemId && deliveryProgress.failedRecipients.length > 0) {
-            await retryFailedResourceDelivery(deliveryProgress.itemId, deliveryProgress.failedRecipients);
-          }
-        }}
-      />
     </div>
   );
 }

@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../libs/prisma";
 import cloudinary from "../../../libs/cloudinary";
-import {
-  buildDeliveryCriteriaFromFormData,
-  prepareAssignmentDelivery,
-  SCHOOL_COMMUNICATION_NUMBER
-} from "../../../libs/delivery";
 
 const decodeJwtPayload = (token) => {
   const payload = token.split('.')[1];
@@ -431,11 +426,7 @@ const cleanAssignmentResponse = (assignment) => {
   return {
     ...assignment,
     assignmentFileAttachments,
-    attachmentAttachments,
-    senderReference: assignment.senderReference || SCHOOL_COMMUNICATION_NUMBER,
-    deliveryStatus: assignment.deliveryStatus || assignment.deliverySummary?.status || 'prepared',
-    deliverySummary: assignment.deliverySummary || null,
-    targetCriteria: assignment.targetCriteria || null
+    attachmentAttachments
   };
 };
 
@@ -511,7 +502,6 @@ export async function POST(request) {
     const additionalWork = formData.get("additionalWork")?.toString().trim() || "";
     const teacherRemarks = formData.get("teacherRemarks")?.toString().trim() || "";
     const learningObjectives = formData.get("learningObjectives")?.toString();
-    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className, 'general', 'new');
 
     // Calculate dueDate: use provided date or default to 7 days from today
     const dateAssignedDate = new Date();
@@ -589,24 +579,12 @@ export async function POST(request) {
         assignmentFiles,
         attachments,
         learningObjectives: learningObjectivesArray,
-        targetCriteria: deliveryCriteria,
-        senderReference: deliveryCriteria.senderReference,
-        deliveryStatus: 'preparing',
         createdAt: new Date(),
         updatedAt: new Date()
       },
     });
 
-    const deliverySummary = await prepareAssignmentDelivery(prisma, createdAssignment.id, deliveryCriteria);
-    const assignment = await prisma.assignment.update({
-      where: { id: createdAssignment.id },
-      data: {
-        deliverySummary,
-        deliveryStatus: deliverySummary.status,
-        updatedAt: new Date()
-      }
-    });
-
+    const assignment = createdAssignment;
     console.log(`✅ Assignment created with ID: ${assignment.id}`);
 
     return NextResponse.json(

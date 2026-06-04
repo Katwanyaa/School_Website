@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { 
   CreditCard, 
   Calendar, 
@@ -26,53 +26,52 @@ const FeesView = ({ student, token }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchFees = async () => {
-      if (!student?.admissionNumber) {
-        setError('No admission number found');
-        setLoading(false);
-        return;
-      }
-      
-      if (!token) {
-        setError('Authentication required');
-        setLoading(false);
-        return;
-      }
-      
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(`/api/feebalances/${student.admissionNumber}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Cache-Control': 'no-cache'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          setFeeData(data.data);
-        } else {
-          throw new Error(data.message || 'No fee data found');
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        setError(err.message);
-        // Don't show toast - just show the "no records" state
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchFees = useCallback(async () => {
+    if (!student?.admissionNumber) {
+      setError('No admission number found');
+      setLoading(false);
+      return;
+    }
     
-    fetchFees();
+    if (!token) {
+      setError('Authentication required');
+      setLoading(false);
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/feebalances/${student.admissionNumber}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        setFeeData(data.data);
+      } else {
+        throw new Error(data.message || 'No fee data found');
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [student?.admissionNumber, token]);
+
+  useEffect(() => {
+    fetchFees();
+  }, [fetchFees]);
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -267,7 +266,8 @@ if (loading) {
                       </div>
                       <div className="text-left">
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Support Contact</p>
-                        <p className="text-sm font-semibold text-slate-900">+254 700 123 456</p>
+                        <p className="text-sm font-semibold text-slate-900">0710 894 145</p>
+                        <p className="text-xs font-semibold text-slate-500">katzict@gmail.com</p>
                       </div>
                     </div>
                   </div>
@@ -276,15 +276,16 @@ if (loading) {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
-                    onClick={() => window.location.reload()}
+                    onClick={fetchFees}
+                    disabled={loading}
                     className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
                   >
-                    <RefreshCw className="w-4 h-4" />
-                    Refresh Page
+                    <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                    {loading ? 'Refreshing...' : 'Refresh Fees'}
                   </button>
                   
                   <button
-                    onClick={() => window.location.href = 'tel:+254700123456'}
+                    onClick={() => window.location.href = 'tel:0710894145'}
                     className="px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
                   >
                     <Phone className="w-4 h-4" />
@@ -537,11 +538,17 @@ if (loading) {
               }
             </p>
             <button
-              onClick={() => window.location.href = 'tel:+254700123456'}
+              onClick={() => window.location.href = 'tel:0710894145'}
               className="mt-4 text-xs font-bold text-indigo-600 hover:underline"
             >
-              Contact Support
+              Contact Support: 0710 894 145
             </button>
+            <a
+              href="mailto:katzict@gmail.com"
+              className="mt-2 text-xs font-bold text-indigo-600 hover:underline"
+            >
+              katzict@gmail.com
+            </a>
           </div>
         </div>
       </div>

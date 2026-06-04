@@ -6,12 +6,12 @@ import {
   FiMic, FiCalendar, FiUser, FiClock, FiCheckCircle, FiArrowRight, FiX, FiBook, FiFile,
   FiRefreshCw, FiExternalLink, FiPaperclip, FiSettings, FiChevronDown, FiChevronUp,
   FiCheck, FiStar, FiBarChart2, FiTrendingUp, FiTrendingDown, FiInfo, FiPrinter,
-  FiShare2, FiBell, FiBookOpen, FiTag, FiSchool, FiBookmark, FiHeart, FiMessageSquare
+  FiShare2, FiBell, FiBookOpen, FiTag, FiSchool, FiHeart, FiMessageSquare
 } from 'react-icons/fi';
 
 import {
   IoDocumentsOutline, IoFolderOpen, IoStatsChart, IoAnalytics, IoSparkles,
-  IoClose, IoFilter, IoSchool, IoDocumentAttach, IoStar, IoTime, IoCheckmarkCircle,
+  IoClose, IoFilter, IoSchool, IoDocumentAttach, IoTime, IoCheckmarkCircle,
   IoWarning, IoInformation, IoArrowDown, IoArrowUp, IoCloudDownload, IoEye,
   IoCalendar, IoPerson, IoDocument, IoImages, IoVideocam, IoMusicalNotes,
   IoColorPalette, IoGameController, IoCode, IoBuild, IoCalculator
@@ -335,7 +335,7 @@ function FilePreviewCard({ file, onDownload, onPreview, index }) {
   );
 }
 
-function AssignmentResourceCard({ item, type, onView, onDownload, onBookmark, isBookmarked = false }) {
+function AssignmentResourceCard({ item, type, onView, onDownload }) {
   const isResource = type === 'resource';
   
   // DYNAMIC DATA EXTRACTION BASED ON TYPE
@@ -388,16 +388,6 @@ function AssignmentResourceCard({ item, type, onView, onDownload, onBookmark, is
           </div>
           
           <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              onClick={() => onBookmark?.(item)}
-              className={`p-1.5 sm:p-2 rounded-md sm:rounded-lg ${
-                isBookmarked 
-                  ? 'text-yellow-300 bg-white/20' 
-                  : 'text-white/70 bg-white/10'
-              }`}
-            >
-              <FiBookmark className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
-            </button>
             <div className="text-xs font-bold bg-white/20 px-1.5 py-0.5 sm:px-2 sm:yp-1 rounded-full">
               {totalFiles} {totalFiles === 1 ? 'file' : 'files'}
             </div>
@@ -442,12 +432,6 @@ function AssignmentResourceCard({ item, type, onView, onDownload, onBookmark, is
               Description
             </div>
             <p className="text-gray-700 text-xs sm:text-sm line-clamp-2">{item.description}</p>
-          </div>
-        )}
-        
-        {!isResource && item.status && (
-          <div className="mb-3 sm:mb-4">
-            <StatusBadge status={item.status} size="sm" />
           </div>
         )}
         
@@ -745,6 +729,12 @@ function DetailModal({ item, type, onClose, onDownload }) {
 
 export default function ModernResourcesAssignmentsView({
   student,
+  assignments: assignmentsProp = [],
+  resources: resourcesProp = [],
+  assignmentsLoading: assignmentsLoadingProp = false,
+  resourcesLoading: resourcesLoadingProp = false,
+  onRefresh,
+  isRefreshing = false,
   onDownload,
   onViewDetails
 }) {
@@ -757,19 +747,15 @@ export default function ModernResourcesAssignmentsView({
   const [selectedResourceType, setSelectedResourceType] = useState('all');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [bookmarkedItems, setBookmarkedItems] = useState(new Set());
-  const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
-  
   const [assignments, setAssignments] = useState([]);
   const [resources, setResources] = useState([]);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [resourcesLoading, setResourcesLoading] = useState(false);
   const [stats, setStats] = useState({
     totalAssignments: 0,
-    pendingAssignments: 0,
     totalResources: 0,
-    completedAssignments: 0,
-    averageCompletion: 0
+    assignmentFiles: 0,
+    resourceFiles: 0
   });
 
   // Function to check if an item matches student's class
@@ -871,30 +857,72 @@ export default function ModernResourcesAssignmentsView({
   }, [student, matchesStudentClass]);
 
   useEffect(() => {
+    let filteredAssignments = Array.isArray(assignmentsProp) ? assignmentsProp : [];
+
+    if (student && student.form) {
+      filteredAssignments = filteredAssignments.filter(assignment =>
+        matchesStudentClass(assignment.className)
+      );
+    }
+
+    setAssignments(filteredAssignments.map((assignment) => ({
+      ...assignment,
+      assignmentFileAttachments: (assignment.assignmentFiles || []).map((url) => {
+        const fileInfo = extractFileInfoFromUrl(url);
+        return { ...fileInfo, url };
+      }),
+      attachmentAttachments: (assignment.attachments || []).map((url) => {
+        const fileInfo = extractFileInfoFromUrl(url);
+        return { ...fileInfo, url };
+      })
+    })));
+  }, [assignmentsProp, student, matchesStudentClass]);
+
+  useEffect(() => {
+    let filteredResources = Array.isArray(resourcesProp) ? resourcesProp : [];
+
+    if (student && student.form) {
+      filteredResources = filteredResources.filter(resource =>
+        matchesStudentClass(resource.className)
+      );
+    }
+
+    setResources(filteredResources.map((resource) => ({
+      ...resource,
+      files: (resource.files || []).map(file => ({
+        ...file,
+        url: file.url,
+        name: file.name || 'Untitled',
+        extension: file.extension || (file.name ? file.name.split('.').pop()?.toLowerCase() : ''),
+        fileType: file.fileType || resource.type || 'document'
+      }))
+    })));
+  }, [resourcesProp, student, matchesStudentClass]);
+
+  useEffect(() => {
+    if (onRefresh || assignmentsProp.length > 0 || resourcesProp.length > 0) return;
     fetchAssignments();
     fetchResources();
-  }, [fetchAssignments, fetchResources]);
+  }, [fetchAssignments, fetchResources, onRefresh, assignmentsProp.length, resourcesProp.length]);
 
   // Calculate statistics
   useEffect(() => {
     const totalAssignments = assignments.length;
-    const pendingAssignments = assignments.filter(a => 
-      ['assigned', 'pending', 'in-progress'].includes(a.status)
-    ).length;
     const totalResources = resources.length;
-    const completedAssignments = assignments.filter(a => 
-      ['completed', 'reviewed'].includes(a.status)
-    ).length;
-    const averageCompletion = totalAssignments > 0 
-      ? Math.round((completedAssignments / totalAssignments) * 100) 
-      : 0;
+    const assignmentFiles = assignments.reduce(
+      (total, item) => total + (item.assignmentFileAttachments?.length || 0) + (item.attachmentAttachments?.length || 0),
+      0
+    );
+    const resourceFiles = resources.reduce(
+      (total, item) => total + (item.files?.length || 0),
+      0
+    );
 
     setStats({
       totalAssignments,
-      pendingAssignments,
       totalResources,
-      completedAssignments,
-      averageCompletion
+      assignmentFiles,
+      resourceFiles
     });
   }, [assignments, resources]);
 
@@ -943,9 +971,7 @@ export default function ModernResourcesAssignmentsView({
         assignment.subject?.toLowerCase().includes(searchLower) ||
         assignment.teacher?.toLowerCase().includes(searchLower);
       
-      const matchesBookmark = !showBookmarkedOnly || bookmarkedItems.has(assignment.id);
-      
-      return matchesClass && matchesSubject && matchesStatus && matchesSearch && matchesBookmark;
+      return matchesClass && matchesSubject && matchesStatus && matchesSearch;
     });
 
     // Sort by due date, then priority
@@ -955,7 +981,7 @@ export default function ModernResourcesAssignmentsView({
       }
       return 0;
     });
-  }, [assignments, selectedClass, selectedSubject, selectedStatus, searchTerm, bookmarkedItems, showBookmarkedOnly]);
+  }, [assignments, selectedClass, selectedSubject, selectedStatus, searchTerm]);
 
   // Filter resources
   const filteredResources = useMemo(() => {
@@ -970,9 +996,7 @@ export default function ModernResourcesAssignmentsView({
         resource.description?.toLowerCase().includes(searchLower) ||
         resource.subject?.toLowerCase().includes(searchLower);
       
-      const matchesBookmark = !showBookmarkedOnly || bookmarkedItems.has(resource.id);
-      
-      return matchesType && matchesClass && matchesSubject && matchesSearch && matchesBookmark;
+      return matchesType && matchesClass && matchesSubject && matchesSearch;
     });
 
     // Sort by creation date (newest first)
@@ -982,18 +1006,7 @@ export default function ModernResourcesAssignmentsView({
       }
       return 0;
     });
-  }, [resources, selectedResourceType, selectedClass, selectedSubject, searchTerm, bookmarkedItems, showBookmarkedOnly]);
-
-  // Bookmark functions
-  const toggleBookmark = useCallback((item) => {
-    const newBookmarks = new Set(bookmarkedItems);
-    if (newBookmarks.has(item.id)) {
-      newBookmarks.delete(item.id);
-    } else {
-      newBookmarks.add(item.id);
-    }
-    setBookmarkedItems(newBookmarks);
-  }, [bookmarkedItems]);
+  }, [resources, selectedResourceType, selectedClass, selectedSubject, searchTerm]);
 
   // Download functions
   const handleDownload = useCallback((item) => {
@@ -1055,10 +1068,9 @@ export default function ModernResourcesAssignmentsView({
     setSelectedStatus('all');
     setSelectedResourceType('all');
     setSearchTerm('');
-    setShowBookmarkedOnly(false);
   }, []);
 
-  const isLoading = assignmentsLoading || resourcesLoading;
+  const isLoading = assignmentsLoading || resourcesLoading || assignmentsLoadingProp || resourcesLoadingProp || isRefreshing;
 
   if (isLoading && assignments.length === 0 && resources.length === 0) {
     return <LoadingSpinner />;
@@ -1100,10 +1112,20 @@ export default function ModernResourcesAssignmentsView({
 
             <div className="flex gap-2 sm:gap-3">
               <button
-                onClick={activeTab === 'assignments' ? fetchAssignments : fetchResources}
-                className="px-4 py-2 sm:px-5 sm:py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2"
+                onClick={async () => {
+                  if (onRefresh) {
+                    await onRefresh();
+                  } else if (activeTab === 'assignments') {
+                    await fetchAssignments();
+                  } else {
+                    await fetchResources();
+                  }
+                }}
+                disabled={isRefreshing || assignmentsLoadingProp || resourcesLoadingProp}
+                className="px-4 py-2 sm:px-5 sm:py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                <span>Refresh</span>
+                <FiRefreshCw className={isRefreshing ? 'animate-spin' : ''} />
+                <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
               </button>
             </div>
           </div>
@@ -1116,37 +1138,36 @@ export default function ModernResourcesAssignmentsView({
           title="Total Assignments"
           value={stats.totalAssignments}
           icon={IoDocument}
-          color="from-purple-500 to-purple-600"
-          trend={5}
-          description={`${stats.pendingAssignments} pending`}
+          color="from-blue-500 to-indigo-600"
+          trend={0}
+          description="From teachers"
         />
         
         <StatsCard
           title="Learning Resources"
           value={stats.totalResources}
           icon={IoDocumentsOutline}
-          color="from-blue-500 to-blue-600"
-          trend={12}
-          description="Available files"
+          color="from-emerald-500 to-teal-600"
+          trend={0}
+          description="Learning materials"
         />
         
         <StatsCard
-          title="Completion Rate"
-          value={stats.averageCompletion}
-          icon={IoCheckmarkCircle}
-          color="from-emerald-500 to-emerald-600"
-          trend={stats.averageCompletion > 75 ? 8 : -3}
-          unit="%"
-          description="Completed"
+          title="Assignment Files"
+          value={stats.assignmentFiles}
+          icon={IoDocumentAttach}
+          color="from-amber-500 to-orange-600"
+          trend={0}
+          description="Attached files"
         />
         
         <StatsCard
-          title="Bookmarked Items"
-          value={bookmarkedItems.size}
-          icon={IoStar}
-          color="from-amber-500 to-amber-600"
-          trend={bookmarkedItems.size > 0 ? 15 : 0}
-          description="Saved items"
+          title="Resource Files"
+          value={stats.resourceFiles}
+          icon={IoFolderOpen}
+          color="from-slate-600 to-blue-700"
+          trend={0}
+          description="Downloadable files"
         />
       </div>
 
@@ -1215,18 +1236,6 @@ export default function ModernResourcesAssignmentsView({
 
             {/* View & Filter Controls */}
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Bookmark Toggle */}
-              <button
-                onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
-                className={`p-2.5 sm:p-3 rounded-2xl border ${
-                  showBookmarkedOnly
-                    ? 'bg-gradient-to-r from-amber-50 to-amber-100/50 border-amber-200 text-amber-600 shadow-lg shadow-amber-500/10'
-                    : 'bg-white border-gray-200 text-gray-600'
-                }`}
-              >
-                <IoStar className="text-lg sm:text-xl" />
-              </button>
-
               {/* View Toggle */}
               <div className="flex bg-gradient-to-r from-gray-50 to-gray-50/50 rounded-2xl p-1 border border-gray-200">
                 <button
@@ -1360,7 +1369,7 @@ export default function ModernResourcesAssignmentsView({
                     <div className="flex items-end">
                       {(selectedClass !== 'all' || selectedSubject !== 'all' || 
                         selectedStatus !== 'all' || selectedResourceType !== 'all' || 
-                        searchTerm || showBookmarkedOnly) && (
+                        searchTerm) && (
                         <button
                           onClick={clearFilters}
                           className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2"
@@ -1375,7 +1384,7 @@ export default function ModernResourcesAssignmentsView({
                   {/* Active Filters */}
                   {(selectedClass !== 'all' || selectedSubject !== 'all' || 
                     selectedStatus !== 'all' || selectedResourceType !== 'all' ||
-                    showBookmarkedOnly) && (
+                    searchTerm) && (
                     <div className="flex flex-wrap gap-2">
                       <span className="text-sm text-gray-500">Active filters:</span>
                       {selectedClass !== 'all' && (
@@ -1414,15 +1423,6 @@ export default function ModernResourcesAssignmentsView({
                           </button>
                         </span>
                       )}
-                      {showBookmarkedOnly && (
-                        <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-amber-50 text-amber-700 rounded-full text-xs sm:text-sm font-bold border border-amber-100">
-                          <IoStar className="text-xs sm:text-sm" />
-                          Bookmarked Only
-                          <button onClick={() => setShowBookmarkedOnly(false)} className="ml-1 text-amber-500">
-                            <IoClose className="text-xs sm:text-sm" />
-                          </button>
-                        </span>
-                      )}
                     </div>
                   )}
                 </div>
@@ -1443,7 +1443,6 @@ export default function ModernResourcesAssignmentsView({
             <p className="text-sm sm:text-base text-gray-600">
               Showing {filteredCount} of {totalItems} items
               {searchTerm && ` • Search: "${searchTerm}"`}
-              {showBookmarkedOnly && ` • Bookmarked only`}
               {student && (
                 <span className="text-blue-600 font-bold">
                   • Filtered for {student.form} {student.stream}
@@ -1474,14 +1473,14 @@ export default function ModernResourcesAssignmentsView({
             </h3>
             <p className="text-gray-600 max-w-md mx-auto mb-4 sm:mb-6 text-sm sm:text-base">
               {searchTerm || selectedClass !== 'all' || selectedSubject !== 'all' || 
-               selectedStatus !== 'all' || selectedResourceType !== 'all' || showBookmarkedOnly
+               selectedStatus !== 'all' || selectedResourceType !== 'all'
                 ? 'Try adjusting your filters or search terms'
                 : student 
                 ? `No ${activeTab === 'assignments' ? 'assignments' : 'resources'} available for ${student.form} ${student.stream}`
                 : `No ${activeTab === 'assignments' ? 'assignments' : 'resources'} available yet`}
             </p>
             {(searchTerm || selectedClass !== 'all' || selectedSubject !== 'all' || 
-              selectedStatus !== 'all' || selectedResourceType !== 'all' || showBookmarkedOnly) && (
+              selectedStatus !== 'all' || selectedResourceType !== 'all') && (
               <button
                 onClick={clearFilters}
                 className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-bold shadow-lg"
@@ -1509,8 +1508,6 @@ export default function ModernResourcesAssignmentsView({
                   type={activeTab}
                   onView={() => setSelectedItem(item)}
                   onDownload={() => handleDownload(item)}
-                  onBookmark={() => toggleBookmark(item)}
-                  isBookmarked={bookmarkedItems.has(item.id)}
                 />
               </motion.div>
             ))}
@@ -1589,16 +1586,6 @@ export default function ModernResourcesAssignmentsView({
                   {/* Actions */}
                   <div className="flex items-center gap-2 sm:gap-3">
                     <button
-                      onClick={() => toggleBookmark(item)}
-                      className={`p-2 rounded-xl ${
-                        bookmarkedItems.has(item.id)
-                          ? 'text-yellow-500 bg-yellow-50'
-                          : 'text-gray-400 bg-gray-50'
-                      }`}
-                    >
-                      <IoStar className="text-lg sm:text-xl" />
-                    </button>
-                    <button
                       onClick={() => setSelectedItem(item)}
                       className="px-3 sm:px-4 py-2 bg-gray-900 text-white rounded-xl font-bold flex items-center gap-2"
                     >
@@ -1635,7 +1622,7 @@ export default function ModernResourcesAssignmentsView({
       {/* Footer */}
       <div className="mt-6 text-center text-gray-500 text-xs sm:text-sm">
         <p>
-          {totalItems} total items • {bookmarkedItems.size} bookmarked • 
+          {totalItems} total items • 
           Last updated {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
         <p className="mt-1 sm:mt-2 text-xs">

@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../libs/prisma";
 import cloudinary from "../../../../libs/cloudinary";
-import {
-  buildDeliveryCriteriaFromFormData,
-  prepareAssignmentDelivery,
-  SCHOOL_COMMUNICATION_NUMBER
-} from "../../../../libs/delivery";
 
 const decodeJwtPayload = (token) => {
   const payload = token.split('.')[1];
@@ -448,11 +443,7 @@ const cleanAssignmentResponse = (assignment) => {
   return {
     ...assignment,
     assignmentFileAttachments,
-    attachmentAttachments,
-    senderReference: assignment.senderReference || SCHOOL_COMMUNICATION_NUMBER,
-    deliveryStatus: assignment.deliveryStatus || assignment.deliverySummary?.status || 'prepared',
-    deliverySummary: assignment.deliverySummary || null,
-    targetCriteria: assignment.targetCriteria || null
+    attachmentAttachments
   };
 };
 
@@ -545,7 +536,6 @@ export async function PUT(request, { params }) {
     const teacherRemarks = formData.get("teacherRemarks")?.toString().trim() || existingAssignment.teacherRemarks;
     const learningObjectives = formData.get("learningObjectives")?.toString();
     const dateAssigned = formData.get("dateAssigned")?.toString() || existingAssignment.dateAssigned;
-    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className, 'general', 'updated');
     
     console.log('📝 Fields extracted:', { title, subject, className, teacher, dueDate });
 
@@ -684,22 +674,11 @@ export async function PUT(request, { params }) {
         assignmentFiles: updatedAssignmentFiles,
         attachments: updatedAttachments,
         learningObjectives: learningObjectivesArray,
-        targetCriteria: deliveryCriteria,
-        senderReference: deliveryCriteria.senderReference,
-        deliveryStatus: 'preparing',
         updatedAt: new Date()
       },
     });
 
-    const deliverySummary = await prepareAssignmentDelivery(prisma, savedAssignment.id, deliveryCriteria);
-    const updatedAssignment = await prisma.assignment.update({
-      where: { id: savedAssignment.id },
-      data: {
-        deliverySummary,
-        deliveryStatus: deliverySummary.status,
-        updatedAt: new Date()
-      }
-    });
+    const updatedAssignment = savedAssignment;
 
     console.log('✅ Update successful:', updatedAssignment.id);
     

@@ -131,6 +131,7 @@ function ModernStudentHeader({
   searchTerm, 
   setSearchTerm, 
   onRefresh,
+  isRefreshing = false,
   onMenuToggle,
   isMenuOpen,
   currentView 
@@ -256,6 +257,16 @@ function ModernStudentHeader({
                 <p className="text-xs text-gray-500 hidden sm:block">Student Portal</p>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="hidden lg:flex items-center justify-center gap-2 rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-black text-blue-700 shadow-sm transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <FiRefreshCw className={isRefreshing ? 'animate-spin' : ''} />
+              {isRefreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
           </div>
         </div>
       </header>
@@ -537,6 +548,7 @@ const router = useRouter();
   const [resourcesLoading, setResourcesLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
   const [feeLoading, setFeeLoading] = useState(false);
+  const [refreshingData, setRefreshingData] = useState(false);
 
   // Error States
   const [assignmentsError, setAssignmentsError] = useState(null);
@@ -786,7 +798,7 @@ const router = useRouter();
         
         if (data.requiresContact) {
           toast.error('Student record not found', {
-            description: 'Please contact your class teacher or school administrator'
+            description: 'Please contact katzict@gmail.com or 0710 894 145'
           });
         } else {
           toast.error(data.error || 'Login failed');
@@ -886,14 +898,25 @@ const router = useRouter();
   };
 
   // Handle refresh
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     if (!token) {
       setShowLoginModal(true);
       return;
     }
-    
-    fetchAllData();
-    toast.success('🔄 Refreshing data...');
+
+    if (refreshingData) return;
+
+    setRefreshingData(true);
+    const toastId = toast.loading('Refreshing latest data...');
+    try {
+      await fetchAllData();
+      toast.success('Data refreshed successfully', { id: toastId });
+    } catch (error) {
+      console.error('Refresh failed:', error);
+      toast.error('Refresh failed. Please try again.', { id: toastId });
+    } finally {
+      setRefreshingData(false);
+    }
   };
 
   const handleLoginModalClose = () => {
@@ -1295,6 +1318,7 @@ if (!student || !token) {
             currentView={currentView}
             setCurrentView={handleViewChange}
             onRefresh={handleRefresh}
+            isRefreshing={refreshingData}
             onMenuClose={closeMenuOnMobile}
           />
         </div>
@@ -1307,6 +1331,7 @@ if (!student || !token) {
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             onRefresh={handleRefresh}
+            isRefreshing={refreshingData}
             onMenuToggle={toggleMenu}
             isMenuOpen={isMenuOpen}
             currentView={currentView}
@@ -1341,6 +1366,8 @@ if (!student || !token) {
                 resources={resources}
                 assignmentsLoading={assignmentsLoading}
                 resourcesLoading={resourcesLoading}
+                onRefresh={handleRefresh}
+                isRefreshing={refreshingData}
                 onDownload={handleDownload}
                 onViewDetails={handleViewDetails}
               />

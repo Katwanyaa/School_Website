@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../libs/prisma";
 import cloudinary from "../../../libs/cloudinary";
-import {
-  buildDeliveryCriteriaFromFormData,
-  prepareResourceDelivery,
-  SCHOOL_COMMUNICATION_NUMBER
-} from "../../../libs/delivery";
 
 const decodeJwtPayload = (token) => {
   const payload = token.split('.')[1];
@@ -351,10 +346,6 @@ const cleanResourceResponse = (resource) => {
     uploadedBy: resource.uploadedBy,
     downloads: resource.downloads,
     isActive: resource.isActive,
-    senderReference: resource.senderReference || SCHOOL_COMMUNICATION_NUMBER,
-    deliveryStatus: resource.deliveryStatus || resource.deliverySummary?.status || 'prepared',
-    deliverySummary: resource.deliverySummary || null,
-    targetCriteria: resource.targetCriteria || null,
     createdAt: resource.createdAt,
     updatedAt: resource.updatedAt
   };
@@ -412,7 +403,6 @@ export async function POST(request) {
     const category = formData.get("category")?.trim() || "general";
     const accessLevel = formData.get("accessLevel")?.trim() || "student";
     const uploadedBy = formData.get("uploadedBy")?.trim() || auth.user.name;
-    const deliveryCriteria = buildDeliveryCriteriaFromFormData(formData, className, category, 'new');
 
     // Validate required fields
     if (!title || !subject || !teacher || !className) {
@@ -477,23 +467,11 @@ export async function POST(request) {
         accessLevel,
         uploadedBy,
         downloads: 0,
-        isActive: true,
-        targetCriteria: deliveryCriteria,
-        senderReference: deliveryCriteria.senderReference,
-        deliveryStatus: 'preparing'
+        isActive: true
       },
     });
 
-    const deliverySummary = await prepareResourceDelivery(prisma, createdResource.id, deliveryCriteria);
-    const resource = await prisma.resource.update({
-      where: { id: createdResource.id },
-      data: {
-        deliverySummary,
-        deliveryStatus: deliverySummary.status,
-        updatedAt: new Date()
-      }
-    });
-
+    const resource = createdResource;
     console.log(`✅ Resource created with ID: ${resource.id}`);
 
     return NextResponse.json(

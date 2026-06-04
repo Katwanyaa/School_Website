@@ -203,17 +203,17 @@ export default function StudentLoginModal({
 
   return (
     <div
-      className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[9999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="student-login-title"
     >
-      <main className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
-        <header className="relative bg-slate-950 px-5 sm:px-7 py-5 text-white flex-shrink-0">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-emerald-400 to-amber-400" />
+      <main className="bg-slate-950 rounded-3xl shadow-2xl shadow-blue-950/40 w-full max-w-4xl border border-blue-900/50 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+        <header className="relative bg-blue-950 px-5 sm:px-7 py-5 text-white flex-shrink-0">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-400" />
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl p-1 shadow-xl overflow-hidden">
+              <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl p-1 shadow-xl shadow-blue-950/40 overflow-hidden">
                 <Image
                   src="/katz.jpeg"
                   alt="Katwanyaa Senior School Logo"
@@ -226,7 +226,7 @@ export default function StudentLoginModal({
                 <h1 id="student-login-title" className="text-lg sm:text-xl font-black tracking-tight">
                   Katwanyaa Student Portal
                 </h1>
-                <p className="text-slate-300 text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em]">
+                <p className="text-blue-100 text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em]">
                   Secure student access
                 </p>
               </div>
@@ -243,12 +243,12 @@ export default function StudentLoginModal({
         </header>
 
         <article className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] min-h-0 overflow-y-auto">
-          <aside className="bg-slate-50 border-r border-slate-200 p-5 sm:p-7">
-            <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
-              <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center mb-4">
+          <aside className="bg-slate-900 border-r border-blue-900/50 p-5 sm:p-7">
+            <div className="rounded-2xl bg-blue-950/50 border border-blue-800/50 p-5 shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4">
                 <FiShield className="text-xl" />
               </div>
-              <h2 className="text-lg font-black text-slate-950">How access works</h2>
+              <h2 className="text-lg font-black text-white">How access works</h2>
               <div className="mt-4 space-y-4">
                 {[
                   ['First time', 'Verify your admission number and registered name.'],
@@ -256,41 +256,41 @@ export default function StudentLoginModal({
                   ['Password help', 'Forgot and change requests are recorded for secure school follow-up.']
                 ].map(([title, text]) => (
                   <div key={title} className="flex gap-3">
-                    <div className="mt-0.5 w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <div className="mt-0.5 w-7 h-7 rounded-xl bg-blue-500/15 text-blue-200 flex items-center justify-center shrink-0">
                       <FiCheckCircle className="text-sm" />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-slate-900">{title}</p>
-                      <p className="text-xs text-slate-600 leading-relaxed">{text}</p>
+                      <p className="text-sm font-black text-white">{title}</p>
+                      <p className="text-xs text-blue-100/75 leading-relaxed">{text}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-              <div className="flex items-center gap-2 text-blue-900 font-black text-sm">
+            <div className="mt-4 rounded-2xl border border-blue-800/50 bg-slate-950/70 p-4">
+              <div className="flex items-center gap-2 text-blue-100 font-black text-sm">
                 <FiClock />
                 Session duration
               </div>
-              <p className="text-xs text-blue-800 mt-1">For safety, student sessions expire after 2 hours.</p>
+              <p className="text-xs text-blue-200/75 mt-1">For safety, student sessions expire after 2 hours.</p>
             </div>
           </aside>
 
-          <section className="p-5 sm:p-7">
+          <section className="bg-slate-950 p-5 sm:p-7">
             {!passwordSetupToken && (
-              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1 mb-5">
+              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-900 p-1 mb-5 border border-blue-900/40">
                 <button
                   type="button"
                   onClick={() => switchMode('password')}
-                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'password' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-600 hover:text-slate-950'}`}
+                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'password' ? 'bg-blue-600 text-white shadow-sm shadow-blue-950/40' : 'text-blue-100/70 hover:text-white'}`}
                 >
                   Password Login
                 </button>
                 <button
                   type="button"
                   onClick={() => switchMode('firstAccess')}
-                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'firstAccess' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-600 hover:text-slate-950'}`}
+                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'firstAccess' ? 'bg-blue-600 text-white shadow-sm shadow-blue-950/40' : 'text-blue-100/70 hover:text-white'}`}
                 >
                   First-Time Access
                 </button>
@@ -306,9 +306,12 @@ export default function StudentLoginModal({
                   <p className="text-sm font-black text-red-900">{requiresContact ? 'Record needs attention' : 'Access issue'}</p>
                   <p className="text-sm text-red-700 mt-1">{localError}</p>
                   {requiresContact && (
-                    <p className="text-xs text-red-700 mt-2 flex items-center gap-1">
-                      <FiHelpCircle /> Contact your class teacher or the school office.
-                    </p>
+                    <div className="mt-2 space-y-1 text-xs text-red-700">
+                      <p className="flex items-center gap-1">
+                        <FiHelpCircle /> Contact your class teacher or the school office.
+                      </p>
+                      <p className="font-bold">katzict@gmail.com • 0710 894 145</p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -329,8 +332,8 @@ export default function StudentLoginModal({
             {mode === 'setup' && passwordSetupToken ? (
               <form onSubmit={handleSetupPassword} className="space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">Create Your Password</h2>
-                  <p className="text-sm text-slate-600 mt-1">
+                  <h2 className="text-xl font-black text-white">Create Your Password</h2>
+                  <p className="text-sm text-blue-100/75 mt-1">
                     Verified for {passwordSetupStudent?.fullName || 'student'} ({passwordSetupStudent?.admissionNumber}).
                   </p>
                 </div>
@@ -360,7 +363,7 @@ export default function StudentLoginModal({
                       <div key={index} className={`h-1.5 rounded-full ${index < strength ? 'bg-emerald-500' : 'bg-slate-200'}`} />
                     ))}
                   </div>
-                  <p className="text-xs text-slate-500">Use 8+ characters with uppercase, lowercase, a number, and a symbol.</p>
+                  <p className="text-xs text-blue-100/65">Use 8+ characters with uppercase, lowercase, a number, and a symbol.</p>
                 </div>
 
                 <InputField
@@ -387,8 +390,8 @@ export default function StudentLoginModal({
             ) : mode === 'firstAccess' ? (
               <form onSubmit={handleFirstAccess} className="space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">Verify Student Record</h2>
-                  <p className="text-sm text-slate-600 mt-1">Use your uploaded student record details for first-time access.</p>
+                  <h2 className="text-xl font-black text-white">Verify Student Record</h2>
+                  <p className="text-sm text-blue-100/75 mt-1">Use your uploaded student record details for first-time access.</p>
                 </div>
 
                 <InputField
@@ -417,10 +420,10 @@ export default function StudentLoginModal({
             ) : mode === 'forgotPassword' || mode === 'changePassword' ? (
               <form onSubmit={handlePasswordResetRequest} className="space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">
+                  <h2 className="text-xl font-black text-white">
                     {mode === 'changePassword' ? 'Request Password Change' : 'Forgot Password'}
                   </h2>
-                  <p className="text-sm text-slate-600 mt-1">
+                  <p className="text-sm text-blue-100/75 mt-1">
                     {mode === 'changePassword'
                       ? 'Confirm your current password so the school office can help safely.'
                       : 'Send a secure password help request to the school office.'}
@@ -478,7 +481,7 @@ export default function StudentLoginModal({
                 <button
                   type="button"
                   onClick={() => switchMode('password')}
-                  className="w-full text-sm font-bold text-slate-700 hover:text-slate-950"
+                  className="w-full text-sm font-bold text-blue-200 hover:text-white"
                 >
                   Back to password login.
                 </button>
@@ -486,8 +489,8 @@ export default function StudentLoginModal({
             ) : (
               <form onSubmit={handlePasswordLogin} className="space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">Sign In Securely</h2>
-                  <p className="text-sm text-slate-600 mt-1">Use your admission number and your portal password.</p>
+                  <h2 className="text-xl font-black text-white">Sign In Securely</h2>
+                  <p className="text-sm text-blue-100/75 mt-1">Use your admission number and your portal password.</p>
                 </div>
 
                 <InputField
@@ -525,21 +528,21 @@ export default function StudentLoginModal({
                   <button
                     type="button"
                     onClick={() => switchMode('firstAccess')}
-                    className="w-full text-sm font-bold text-slate-700 hover:text-slate-950"
+                    className="w-full text-sm font-bold text-blue-200 hover:text-white"
                   >
                     First time here? Verify your record and create a password.
                   </button>
                   <button
                     type="button"
                     onClick={() => switchMode('forgotPassword')}
-                    className="w-full text-sm font-bold text-blue-700 hover:text-blue-900"
+                    className="w-full text-sm font-bold text-blue-300 hover:text-white"
                   >
                     Forgot password? Send reset request.
                   </button>
                   <button
                     type="button"
                     onClick={() => switchMode('changePassword')}
-                    className="w-full text-sm font-bold text-emerald-700 hover:text-emerald-900"
+                    className="w-full text-sm font-bold text-sky-300 hover:text-white"
                   >
                     Change password? Verify current password first.
                   </button>
@@ -547,15 +550,15 @@ export default function StudentLoginModal({
               </form>
             )}
 
-            <div className="mt-6 pt-5 border-t border-slate-200 grid grid-cols-3 gap-3">
+            <div className="mt-6 pt-5 border-t border-blue-900/50 grid grid-cols-3 gap-3">
               {[
                 [FiBook, 'Resources'],
                 [FiShield, 'Secure'],
                 [FiAward, 'Results']
               ].map(([Icon, label]) => (
-                <div key={label} className="text-center rounded-2xl bg-slate-50 p-3">
-                  <Icon className="text-slate-800 mx-auto mb-1" />
-                  <p className="text-[10px] font-black text-slate-700">{label}</p>
+                <div key={label} className="text-center rounded-2xl bg-slate-900 border border-blue-900/40 p-3">
+                  <Icon className="text-blue-200 mx-auto mb-1" />
+                  <p className="text-[10px] font-black text-blue-100">{label}</p>
                 </div>
               ))}
             </div>
@@ -580,8 +583,8 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-2">
-        <Icon className="text-slate-600" />
+      <label className="text-xs font-black text-blue-100 uppercase tracking-wider flex items-center gap-2 mb-2">
+        <Icon className="text-blue-300" />
         {label}
       </label>
       <div className="relative">
@@ -592,7 +595,7 @@ function InputField({
           placeholder={placeholder}
           disabled={disabled}
           autoComplete={autoComplete}
-          className={`w-full rounded-2xl border-2 bg-white px-4 py-3.5 text-slate-900 placeholder-slate-400 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500 ${rightAction ? 'pr-12' : ''} ${error ? 'border-red-400' : 'border-slate-200 hover:border-slate-300'}`}
+          className={`w-full rounded-2xl border-2 bg-slate-900 px-4 py-3.5 text-white placeholder-blue-100/40 transition-all focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-slate-900/60 disabled:text-blue-100/50 ${rightAction ? 'pr-12' : ''} ${error ? 'border-red-400' : 'border-blue-900/60 hover:border-blue-700'}`}
         />
         {rightAction && (
           <div className="absolute inset-y-0 right-2 flex items-center">
@@ -601,7 +604,7 @@ function InputField({
         )}
       </div>
       {error && (
-        <p className="mt-1.5 text-xs font-bold text-red-600 flex items-center gap-1">
+        <p className="mt-1.5 text-xs font-bold text-red-300 flex items-center gap-1">
           <FiAlertCircle />
           {error}
         </p>
@@ -617,7 +620,7 @@ function PasswordVisibilityButton({ visible, onClick, label }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-200"
+      className="flex h-9 w-9 items-center justify-center rounded-xl text-blue-200 transition hover:bg-blue-900/60 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
       aria-label={`${visible ? 'Hide' : 'Show'} ${label}`}
     >
       <Icon className="h-5 w-5" aria-hidden="true" />
@@ -630,7 +633,7 @@ function SubmitButton({ loading, label, loadingLabel, icon: Icon }) {
     <button
       type="submit"
       disabled={loading}
-      className="w-full py-3.5 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-black flex items-center justify-center gap-2 disabled:opacity-70 transition-all shadow-lg shadow-slate-900/20"
+      className="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black flex items-center justify-center gap-2 disabled:opacity-70 transition-all shadow-lg shadow-blue-950/30"
     >
       {loading ? (
         <>
