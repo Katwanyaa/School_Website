@@ -770,6 +770,7 @@ const [growthMetrics, setGrowthMetrics] = useState({
       };
 
       const authHeaders = getAuthHeaders();
+      console.log('🔐 Dashboard auth headers:', Object.keys(authHeaders));
 
       // Fetch data from all endpoints
       const [
@@ -808,58 +809,59 @@ const [growthMetrics, setGrowthMetrics] = useState({
         fetch('/api/staff/departments?grouped=1', { headers: authHeaders })
       ]);
 
-      // Process responses
-      const studentsData = studentsRes.status === 'fulfilled'
-        ? await studentsRes.value.json()
-        : { success: false, data: { students: [] } };
+      // Helper to safely parse responses with logging
+      const parseResponse = async (response, name, fallback) => {
+        if (response.status !== 'fulfilled') {
+          console.warn(`⚠️ ${name} fetch failed:`, response.reason);
+          return fallback;
+        }
+        if (!response.value.ok) {
+          console.warn(`⚠️ ${name} returned status ${response.value.status}`);
+          return fallback;
+        }
+        try {
+          const data = await response.value.json();
+          console.log(`✅ ${name}:`, data);
+          return data;
+        } catch (error) {
+          console.error(`❌ ${name} parse error:`, error);
+          return fallback;
+        }
+      };
 
-      const staff = staffRes.status === 'fulfilled' ? await staffRes.value.json() : { staff: [] };
-      const subscribers = subscribersRes.status === 'fulfilled' ? await subscribersRes.value.json() : { subscribers: [] };
-      const assignments = assignmentsRes.status === 'fulfilled' ? await assignmentsRes.value.json() : { assignments: [] };
-      const careersData = careersRes.status === 'fulfilled' ? await careersRes.value.json() : { jobs: [] };
-      const gallery = galleryRes.status === 'fulfilled' ? await galleryRes.value.json() : { galleries: [] };
-      const guidance = guidanceRes.status === 'fulfilled' ? await guidanceRes.value.json() : { events: [] };
-// Process news - FIXED VERSION
+      // Process all responses with logging
+      const studentsData = await parseResponse(studentsRes, 'Students', { success: false, data: { students: [] } });
+      const staff = await parseResponse(staffRes, 'Staff', { staff: [] });
+      const subscribers = await parseResponse(subscribersRes, 'Subscribers', { subscribers: [] });
+      const assignments = await parseResponse(assignmentsRes, 'Assignments', { assignments: [] });
+      const careersData = await parseResponse(careersRes, 'Careers', { jobs: [] });
+      const gallery = await parseResponse(galleryRes, 'Gallery', { galleries: [] });
+      const guidance = await parseResponse(guidanceRes, 'Guidance', { events: [] });
 // Process news - FIXED VERSION
 let newsArticles = [];
-if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
-  try {
-    const newsData = await newsRes.value.json();
-    console.log('News API response:', newsData);
+let newsData = await parseResponse(newsRes, 'News', {});
 
-    // Handle different response structures
-    if (newsData.success && newsData.data && Array.isArray(newsData.data)) {
-      // Case: { success: true, data: [...] }
-      newsArticles = newsData.data;
-    } else if (newsData.data && Array.isArray(newsData.data)) {
-      // Case: { data: [...] }
-      newsArticles = newsData.data;
-    } else if (newsData.news && Array.isArray(newsData.news)) {
-      // Case: { news: [...] }
-      newsArticles = newsData.news;
-    } else if (Array.isArray(newsData)) {
-      // Case: [...] (direct array)
-      newsArticles = newsData;
-    }
-
-    console.log(`✅ Found ${newsArticles.length} news articles`);
-  } catch (error) {
-    console.error('❌ Error parsing news data:', error);
-    newsArticles = [];
+if (newsData && Object.keys(newsData).length > 0) {
+  // Handle different response structures
+  if (newsData.success && newsData.data && Array.isArray(newsData.data)) {
+    newsArticles = newsData.data;
+  } else if (newsData.data && Array.isArray(newsData.data)) {
+    newsArticles = newsData.data;
+  } else if (newsData.news && Array.isArray(newsData.news)) {
+    newsArticles = newsData.news;
+  } else if (Array.isArray(newsData)) {
+    newsArticles = newsData;
   }
-} else {
-  console.warn('⚠️ News fetch failed or returned non-OK status');
-  newsArticles = [];
+  console.log(`📰 News articles count: ${newsArticles.length}`);
 }
 
+const schoolInfo = await parseResponse(schoolInfoRes, 'School Info', { school: {} });
+const admins = await parseResponse(adminsRes, 'Admins', { users: [] });
+const resources = await parseResponse(resourcesRes, 'Resources', { resources: [] });
+const emailCampaignsData = await parseResponse(emailCampaignsRes, 'Email Campaigns', { campaigns: [] });
 
-     const schoolInfo = schoolInfoRes.status === 'fulfilled' ? await schoolInfoRes.value.json() : { school: {} };
-      const admins = adminsRes.status === 'fulfilled' ? await adminsRes.value.json() : { users: [] };
-      const resources = resourcesRes.status === 'fulfilled' ? await resourcesRes.value.json() : { resources: [] };
-      const emailCampaignsData = emailCampaignsRes.status === 'fulfilled' ? await emailCampaignsRes.value.json() : { campaigns: [] };
-
-      // Process SMS campaigns
-      const smsData = smsRes.status === 'fulfilled' ? await smsRes.value.json() : { campaigns: [] };
+// Process SMS campaigns
+const smsData = await parseResponse(smsRes, 'SMS', { campaigns: [] });
       let computedSmsStats = {
         total: 0,
         draft: 0,
@@ -882,6 +884,7 @@ if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
           successRate
         };
         setSmsStats(computedSmsStats);
+        console.log('📱 SMS Stats:', computedSmsStats);
 
         // Get recent campaigns for display
         const recent = campaigns
@@ -894,9 +897,7 @@ if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
         setRecentSmsCampaigns(recent);
       }
 
-      const achievementsData = achievementsRes.status === 'fulfilled'
-        ? await achievementsRes.value.json()
-        : { success: false, allAchievements: [] };
+      const achievementsData = await parseResponse(achievementsRes, 'Achievements', { success: false, allAchievements: [] });
       const allAchievements = Array.isArray(achievementsData.allAchievements)
         ? achievementsData.allAchievements
         : Object.values(achievementsData.achievements || {}).flat().filter(Boolean);
@@ -918,22 +919,21 @@ if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
           .map(([year, value]) => ({ year: String(year), value }))
           .sort((a, b) => Number(a.year) - Number(b.year))
       };
+      console.log('🏆 Achievements:', achievementSummaryData);
       setAchievementSummary(achievementSummaryData);
 
-      const schoolStatsData = schoolStatsRes.status === 'fulfilled'
-        ? await schoolStatsRes.value.json()
-        : { success: false, stats: null };
+      const schoolStatsData = await parseResponse(schoolStatsRes, 'School Stats', { success: false, stats: null });
       const currentSchoolStats = schoolStatsData.success ? schoolStatsData.stats : null;
+      console.log('🏫 School Stats:', currentSchoolStats);
       setSchoolStats(currentSchoolStats);
 
-      const departmentsData = departmentsRes.status === 'fulfilled'
-        ? await departmentsRes.value.json()
-        : { success: false, departments: [] };
+      const departmentsData = await parseResponse(departmentsRes, 'Departments', { success: false, departments: [] });
       const departmentsByCategory = departmentsData.departmentsByCategory || {};
       const departmentList = Array.isArray(departmentsData.departments)
         ? departmentsData.departments
         : Object.values(departmentsByCategory).flat().filter(Boolean);
       const totalDepartments = departmentList.filter(dept => dept?.isActive !== false).length;
+      console.log('🏢 Departments:', totalDepartments);
 
       // Store school video for quick tour
       if (schoolInfo.school?.videoTour) {
@@ -1070,13 +1070,25 @@ if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
 
       setStats(updatedStats);
 
+      // Log all dashboard stats for debugging
+      console.log('📊 ===== DASHBOARD STATS SUMMARY =====');
+      console.log(`👥 Students: ${exactStudentTotal} (${activeStudents} active, ${inactiveStudents} inactive)`);
+      console.log(`👨‍💼 Staff: ${staff.staff?.length || 0}`);
+      console.log(`📧 Subscribers: ${subscribers.subscribers?.length || 0}`);
+      console.log(`📝 Assignments: ${totalAssignments} (${activeAssignments} active, ${completedAssignments} completed)`);
+      console.log(`🎓 Guidance Sessions: ${guidanceSessionsCount}`);
+      console.log(`📰 News Articles: ${newsArticles.length}`);
+      console.log(`🏫 School: Form 1-4, Departments: ${totalDepartments}`);
+      console.log(`🎯 Achievements: ${achievementSummaryData.total} (${achievementSummaryData.featured} featured)`);
+      console.log(`🏢 Careers: ${totalCareers}`);
+      console.log(`📸 Gallery Items: ${gallery.galleries?.length || 0}`);
+      console.log('=====================================');
 
-
-// Calculate guidance growth with safe defaults
-const guidanceEvents = guidance.events || guidance.sessions || [];
-const currentMonthGuidance = countRecordsByMonth(guidanceEvents, 0);
-const previousMonthGuidance = countRecordsByMonth(guidanceEvents, 1);
-const guidanceGrowth = calculateMonthOverMonthGrowth(currentMonthGuidance, previousMonthGuidance);
+      // Calculate growth metrics with safe defaults
+      const guidanceEvents = guidance.events || guidance.sessions || [];
+      const currentMonthGuidance = countRecordsByMonth(guidanceEvents, 0);
+      const previousMonthGuidance = countRecordsByMonth(guidanceEvents, 1);
+      const guidanceGrowth = calculateMonthOverMonthGrowth(currentMonthGuidance, previousMonthGuidance);
 
 // Calculate news growth with safe defaults
 const newsItems = newsArticles || [];
