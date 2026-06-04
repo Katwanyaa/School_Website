@@ -203,30 +203,31 @@ export default function StudentLoginModal({
 
   return (
     <div
-      className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[9999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="student-login-title"
     >
-      <main className="bg-slate-950 rounded-3xl shadow-2xl shadow-blue-950/40 w-full max-w-4xl border border-blue-900/50 overflow-hidden my-auto max-h-[92vh] flex flex-col">
-        <header className="relative bg-blue-950 px-5 sm:px-7 py-5 text-white flex-shrink-0">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-400" />
+      <div className="bg-white rounded-3xl shadow-xl w-full max-w-5xl overflow-hidden my-auto max-h-[95vh] flex flex-col">
+        {/* Header */}
+        <header className="relative bg-gradient-to-r from-blue-600 to-indigo-700 px-4 sm:px-6 md:px-8 py-4 md:py-5 text-white flex-shrink-0">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400" />
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl p-1 shadow-xl shadow-blue-950/40 overflow-hidden">
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white rounded-xl sm:rounded-2xl p-1 shadow-md overflow-hidden flex-shrink-0">
                 <Image
                   src="/katz.jpeg"
                   alt="Katwanyaa Senior School Logo"
                   width={56}
                   height={56}
-                  className="object-contain"
+                  className="object-contain w-full h-full"
                 />
               </div>
               <div>
-                <h1 id="student-login-title" className="text-lg sm:text-xl font-black tracking-tight">
+                <h1 id="student-login-title" className="text-base sm:text-lg md:text-xl font-bold tracking-tight">
                   Katwanyaa Student Portal
                 </h1>
-                <p className="text-blue-100 text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em]">
+                <p className="text-blue-100 text-[10px] sm:text-xs font-medium tracking-wide">
                   Secure student access
                 </p>
               </div>
@@ -234,7 +235,7 @@ export default function StudentLoginModal({
 
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+              className="p-2 hover:bg-white/10 rounded-xl transition-colors flex-shrink-0"
               aria-label="Close login modal"
             >
               <FiX className="text-xl" aria-hidden="true" />
@@ -242,73 +243,86 @@ export default function StudentLoginModal({
           </div>
         </header>
 
-        <article className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] min-h-0 overflow-y-auto">
-          <aside className="bg-slate-900 border-r border-blue-900/50 p-5 sm:p-7">
-            <div className="rounded-2xl bg-blue-950/50 border border-blue-800/50 p-5 shadow-sm">
-              <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4">
-                <FiShield className="text-xl" />
+        {/* Content Grid - Mobile Responsive */}
+        <div className="flex flex-col md:grid md:grid-cols-[0.9fr_1.1fr] min-h-0 overflow-y-auto">
+          {/* Left Sidebar - Info */}
+          <aside className="bg-blue-50 border-b md:border-b-0 md:border-r border-blue-100 p-4 sm:p-5 md:p-6">
+            <div className="rounded-xl bg-white border border-blue-100 p-4 sm:p-5 shadow-sm">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-3 sm:mb-4">
+                <FiShield className="text-lg sm:text-xl" />
               </div>
-              <h2 className="text-lg font-black text-white">How access works</h2>
-              <div className="mt-4 space-y-4">
+              <h2 className="text-base sm:text-lg font-bold text-gray-800">How access works</h2>
+              <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
                 {[
                   ['First time', 'Verify your admission number and registered name.'],
                   ['Create password', 'Set a strong password that stays saved after record refreshes.'],
                   ['Password help', 'Forgot and change requests are recorded for secure school follow-up.']
                 ].map(([title, text]) => (
                   <div key={title} className="flex gap-3">
-                    <div className="mt-0.5 w-7 h-7 rounded-xl bg-blue-500/15 text-blue-200 flex items-center justify-center shrink-0">
-                      <FiCheckCircle className="text-sm" />
+                    <div className="mt-0.5 w-6 h-6 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                      <FiCheckCircle className="text-xs sm:text-sm" />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-white">{title}</p>
-                      <p className="text-xs text-blue-100/75 leading-relaxed">{text}</p>
+                      <p className="text-xs sm:text-sm font-bold text-gray-800">{title}</p>
+                      <p className="text-xs text-gray-500 leading-relaxed">{text}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-blue-800/50 bg-slate-950/70 p-4">
-              <div className="flex items-center gap-2 text-blue-100 font-black text-sm">
-                <FiClock />
+            <div className="mt-3 sm:mt-4 rounded-xl border border-blue-100 bg-white p-3 sm:p-4">
+              <div className="flex items-center gap-2 text-gray-700 font-bold text-xs sm:text-sm">
+                <FiClock className="text-blue-600" />
                 Session duration
               </div>
-              <p className="text-xs text-blue-200/75 mt-1">For safety, student sessions expire after 2 hours.</p>
+              <p className="text-xs text-gray-500 mt-1">For safety, student sessions expire after 2 hours.</p>
             </div>
           </aside>
 
-          <section className="bg-slate-950 p-5 sm:p-7">
+          {/* Right Side - Forms */}
+          <section className="bg-white p-4 sm:p-5 md:p-6 overflow-y-auto">
+            {/* Mode Tabs */}
             {!passwordSetupToken && (
-              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-900 p-1 mb-5 border border-blue-900/40">
+              <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 mb-4 sm:mb-5">
                 <button
                   type="button"
                   onClick={() => switchMode('password')}
-                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'password' ? 'bg-blue-600 text-white shadow-sm shadow-blue-950/40' : 'text-blue-100/70 hover:text-white'}`}
+                  className={`py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                    mode === 'password' 
+                      ? 'bg-blue-600 text-white shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
                 >
                   Password Login
                 </button>
                 <button
                   type="button"
                   onClick={() => switchMode('firstAccess')}
-                  className={`py-3 rounded-xl text-sm font-black transition-all ${mode === 'firstAccess' ? 'bg-blue-600 text-white shadow-sm shadow-blue-950/40' : 'text-blue-100/70 hover:text-white'}`}
+                  className={`py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                    mode === 'firstAccess' 
+                      ? 'bg-blue-600 text-white shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
                 >
                   First-Time Access
                 </button>
               </div>
             )}
 
+            {/* Error Message */}
             {localError && (
-              <div className="mb-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
-                <div className="p-2 bg-red-100 rounded-xl text-red-700">
-                  <FiAlertCircle />
+              <div className="mb-4 sm:mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3 sm:p-4">
+                <div className="p-1.5 sm:p-2 bg-red-100 rounded-lg text-red-700">
+                  <FiAlertCircle className="text-sm sm:text-base" />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-red-900">{requiresContact ? 'Record needs attention' : 'Access issue'}</p>
-                  <p className="text-sm text-red-700 mt-1">{localError}</p>
+                  <p className="text-sm font-bold text-red-900">{requiresContact ? 'Record needs attention' : 'Access issue'}</p>
+                  <p className="text-xs sm:text-sm text-red-700 mt-1">{localError}</p>
                   {requiresContact && (
                     <div className="mt-2 space-y-1 text-xs text-red-700">
                       <p className="flex items-center gap-1">
-                        <FiHelpCircle /> Contact your class teacher or the school office.
+                        <FiHelpCircle className="text-xs" /> Contact your class teacher or the school office.
                       </p>
                       <p className="font-bold">katzict@gmail.com • 0710 894 145</p>
                     </div>
@@ -317,23 +331,25 @@ export default function StudentLoginModal({
               </div>
             )}
 
+            {/* Success Message */}
             {localSuccess && (
-              <div className="mb-5 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-                <div className="p-2 bg-emerald-100 rounded-xl text-emerald-700">
-                  <FiCheckCircle />
+              <div className="mb-4 sm:mb-5 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-3 sm:p-4">
+                <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg text-green-700">
+                  <FiCheckCircle className="text-sm sm:text-base" />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-emerald-900">Request sent</p>
-                  <p className="text-sm text-emerald-700 mt-1">{localSuccess}</p>
+                  <p className="text-sm font-bold text-green-900">Request sent</p>
+                  <p className="text-xs sm:text-sm text-green-700 mt-1">{localSuccess}</p>
                 </div>
               </div>
             )}
 
+            {/* Setup Password Form */}
             {mode === 'setup' && passwordSetupToken ? (
-              <form onSubmit={handleSetupPassword} className="space-y-5" autoComplete="off">
+              <form onSubmit={handleSetupPassword} className="space-y-4 sm:space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-white">Create Your Password</h2>
-                  <p className="text-sm text-blue-100/75 mt-1">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">Create Your Password</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
                     Verified for {passwordSetupStudent?.fullName || 'student'} ({passwordSetupStudent?.admissionNumber}).
                   </p>
                 </div>
@@ -360,10 +376,10 @@ export default function StudentLoginModal({
                 <div>
                   <div className="grid grid-cols-5 gap-2 mb-2">
                     {[0, 1, 2, 3, 4].map(index => (
-                      <div key={index} className={`h-1.5 rounded-full ${index < strength ? 'bg-emerald-500' : 'bg-slate-200'}`} />
+                      <div key={index} className={`h-1.5 rounded-full ${index < strength ? 'bg-green-500' : 'bg-gray-200'}`} />
                     ))}
                   </div>
-                  <p className="text-xs text-blue-100/65">Use 8+ characters with uppercase, lowercase, a number, and a symbol.</p>
+                  <p className="text-xs text-gray-500">Use 8+ characters with uppercase, lowercase, a number, and a symbol.</p>
                 </div>
 
                 <InputField
@@ -388,10 +404,10 @@ export default function StudentLoginModal({
                 <SubmitButton loading={isLoading} label="Create Password" loadingLabel="Creating..." icon={FiShield} />
               </form>
             ) : mode === 'firstAccess' ? (
-              <form onSubmit={handleFirstAccess} className="space-y-5" autoComplete="off">
+              <form onSubmit={handleFirstAccess} className="space-y-4 sm:space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-white">Verify Student Record</h2>
-                  <p className="text-sm text-blue-100/75 mt-1">Use your uploaded student record details for first-time access.</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">Verify Student Record</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">Use your uploaded student record details for first-time access.</p>
                 </div>
 
                 <InputField
@@ -418,12 +434,12 @@ export default function StudentLoginModal({
                 <SubmitButton loading={isLoading} label="Verify and Continue" loadingLabel="Verifying..." icon={FiCheckCircle} />
               </form>
             ) : mode === 'forgotPassword' || mode === 'changePassword' ? (
-              <form onSubmit={handlePasswordResetRequest} className="space-y-5" autoComplete="off">
+              <form onSubmit={handlePasswordResetRequest} className="space-y-4 sm:space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-white">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">
                     {mode === 'changePassword' ? 'Request Password Change' : 'Forgot Password'}
                   </h2>
-                  <p className="text-sm text-blue-100/75 mt-1">
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
                     {mode === 'changePassword'
                       ? 'Confirm your current password so the school office can help safely.'
                       : 'Send a secure password help request to the school office.'}
@@ -481,16 +497,16 @@ export default function StudentLoginModal({
                 <button
                   type="button"
                   onClick={() => switchMode('password')}
-                  className="w-full text-sm font-bold text-blue-200 hover:text-white"
+                  className="w-full text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700"
                 >
                   Back to password login.
                 </button>
               </form>
             ) : (
-              <form onSubmit={handlePasswordLogin} className="space-y-5" autoComplete="off">
+              <form onSubmit={handlePasswordLogin} className="space-y-4 sm:space-y-5" autoComplete="off">
                 <div>
-                  <h2 className="text-xl font-black text-white">Sign In Securely</h2>
-                  <p className="text-sm text-blue-100/75 mt-1">Use your admission number and your portal password.</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">Sign In Securely</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">Use your admission number and your portal password.</p>
                 </div>
 
                 <InputField
@@ -524,25 +540,25 @@ export default function StudentLoginModal({
 
                 <SubmitButton loading={isLoading} label="Login to Portal" loadingLabel="Signing in..." icon={FiLogIn} />
 
-                <div className="grid gap-2 text-center">
+                <div className="flex flex-col gap-2 text-center">
                   <button
                     type="button"
                     onClick={() => switchMode('firstAccess')}
-                    className="w-full text-sm font-bold text-blue-200 hover:text-white"
+                    className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700"
                   >
                     First time here? Verify your record and create a password.
                   </button>
                   <button
                     type="button"
                     onClick={() => switchMode('forgotPassword')}
-                    className="w-full text-sm font-bold text-blue-300 hover:text-white"
+                    className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700"
                   >
                     Forgot password? Send reset request.
                   </button>
                   <button
                     type="button"
                     onClick={() => switchMode('changePassword')}
-                    className="w-full text-sm font-bold text-sky-300 hover:text-white"
+                    className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700"
                   >
                     Change password? Verify current password first.
                   </button>
@@ -550,25 +566,27 @@ export default function StudentLoginModal({
               </form>
             )}
 
-            <div className="mt-6 pt-5 border-t border-blue-900/50 grid grid-cols-3 gap-3">
+            {/* Footer Features */}
+            <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-gray-100 grid grid-cols-3 gap-2 sm:gap-3">
               {[
                 [FiBook, 'Resources'],
                 [FiShield, 'Secure'],
                 [FiAward, 'Results']
               ].map(([Icon, label]) => (
-                <div key={label} className="text-center rounded-2xl bg-slate-900 border border-blue-900/40 p-3">
-                  <Icon className="text-blue-200 mx-auto mb-1" />
-                  <p className="text-[10px] font-black text-blue-100">{label}</p>
+                <div key={label} className="text-center rounded-xl bg-gray-50 border border-gray-100 p-2 sm:p-3">
+                  <Icon className="text-blue-600 mx-auto mb-1 text-sm sm:text-base" />
+                  <p className="text-[10px] sm:text-xs font-semibold text-gray-600">{label}</p>
                 </div>
               ))}
             </div>
           </section>
-        </article>
-      </main>
+        </div>
+      </div>
     </div>
   );
 }
 
+// Input Field Component - Light Theme & Mobile Optimized
 function InputField({
   label,
   icon: Icon,
@@ -583,8 +601,8 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="text-xs font-black text-blue-100 uppercase tracking-wider flex items-center gap-2 mb-2">
-        <Icon className="text-blue-300" />
+      <label className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-1.5 sm:mb-2">
+        <Icon className="text-blue-500 text-xs sm:text-sm" />
         {label}
       </label>
       <div className="relative">
@@ -595,17 +613,19 @@ function InputField({
           placeholder={placeholder}
           disabled={disabled}
           autoComplete={autoComplete}
-          className={`w-full rounded-2xl border-2 bg-slate-900 px-4 py-3.5 text-white placeholder-blue-100/40 transition-all focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-slate-900/60 disabled:text-blue-100/50 ${rightAction ? 'pr-12' : ''} ${error ? 'border-red-400' : 'border-blue-900/60 hover:border-blue-700'}`}
+          className={`w-full rounded-xl border bg-white px-3 sm:px-4 py-2.5 sm:py-3 text-gray-800 placeholder-gray-400 transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-200 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${
+            rightAction ? 'pr-10 sm:pr-12' : ''
+          } ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 hover:border-gray-300'}`}
         />
         {rightAction && (
-          <div className="absolute inset-y-0 right-2 flex items-center">
+          <div className="absolute inset-y-0 right-1 sm:right-2 flex items-center">
             {rightAction}
           </div>
         )}
       </div>
       {error && (
-        <p className="mt-1.5 text-xs font-bold text-red-300 flex items-center gap-1">
-          <FiAlertCircle />
+        <p className="mt-1 text-xs font-medium text-red-600 flex items-center gap-1">
+          <FiAlertCircle className="text-xs" />
           {error}
         </p>
       )}
@@ -613,6 +633,7 @@ function InputField({
   );
 }
 
+// Password Visibility Button - Light Theme
 function PasswordVisibilityButton({ visible, onClick, label }) {
   const Icon = visible ? FiEyeOff : FiEye;
 
@@ -620,30 +641,31 @@ function PasswordVisibilityButton({ visible, onClick, label }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-9 w-9 items-center justify-center rounded-xl text-blue-200 transition hover:bg-blue-900/60 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
       aria-label={`${visible ? 'Hide' : 'Show'} ${label}`}
     >
-      <Icon className="h-5 w-5" aria-hidden="true" />
+      <Icon className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
     </button>
   );
 }
 
+// Submit Button - Light Theme & Mobile Optimized
 function SubmitButton({ loading, label, loadingLabel, icon: Icon }) {
   return (
     <button
       type="submit"
       disabled={loading}
-      className="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black flex items-center justify-center gap-2 disabled:opacity-70 transition-all shadow-lg shadow-blue-950/30"
+      className="w-full py-2.5 sm:py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-2 disabled:opacity-70 transition-all shadow-sm"
     >
       {loading ? (
         <>
-          <CircularProgress size={18} thickness={4} sx={{ color: 'white' }} />
-          {loadingLabel}
+          <CircularProgress size={16} sm={{ size: 18 }} thickness={4} sx={{ color: 'white' }} />
+          <span className="text-xs sm:text-sm">{loadingLabel}</span>
         </>
       ) : (
         <>
-          <Icon />
-          {label}
+          <Icon className="text-sm sm:text-base" />
+          <span className="text-xs sm:text-sm">{label}</span>
         </>
       )}
     </button>
