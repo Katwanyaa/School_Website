@@ -210,7 +210,7 @@ export default function StudentLoginModal({
     >
       <div className="bg-white rounded-3xl shadow-xl w-full max-w-5xl overflow-hidden my-auto max-h-[95vh] flex flex-col">
         {/* Header */}
-        <header className="relative bg-gradient-to-r from-blue-600 to-indigo-700 px-4 sm:px-6 md:px-8 py-4 md:py-5 text-white flex-shrink-0">
+        <header className="relative bg-gradient-to-r from-blue-800 to-indigo-900 px-4 sm:px-6 md:px-8 py-4 md:py-5 text-white flex-shrink-0">
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400" />
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -655,7 +655,7 @@ function SubmitButton({ loading, label, loadingLabel, icon: Icon }) {
     <button
       type="submit"
       disabled={loading}
-      className="w-full py-2.5 sm:py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-2 disabled:opacity-70 transition-all shadow-sm"
+      className="w-full py-2.5 sm:py-3 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-bold flex items-center justify-center gap-2 disabled:opacity-70 transition-all shadow-sm"
     >
       {loading ? (
         <>
