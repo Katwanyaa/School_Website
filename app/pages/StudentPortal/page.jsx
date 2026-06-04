@@ -290,7 +290,7 @@ function ModernHomeView({ student, feeBalance, feeLoading, token }) {
       label: 'Stream', 
       value: student?.stream || 'N/A', 
       icon: <FaBook className="text-base sm:text-lg md:text-xl" />, 
-      gradient: 'from-purple-500 to-pink-600',
+      gradient: 'from-blue-950 to-blue-800',
       bgGradient: 'from-purple-50 to-pink-100'
     },
     { 
@@ -315,7 +315,7 @@ function ModernHomeView({ student, feeBalance, feeLoading, token }) {
       title: 'Learning Hub',
       description: 'Access all your academic learning tools in one place, including assignments, revision materials, notes, and other essential learning resources provided by your teachers to support your daily studies and exam preparation.',
       icon: <FiBookOpen className="text-lg sm:text-xl md:text-2xl" />,
-      gradient: 'from-blue-500 to-indigo-600',
+      gradient: 'from-blue-950 to-blue-800',
       bgGradient: 'from-blue-50 to-indigo-100',
       actions: ['View Assignments', 'Browse Learning Resources']
     },
@@ -343,7 +343,7 @@ function ModernHomeView({ student, feeBalance, feeLoading, token }) {
     <div className="space-y-4 sm:space-y-6 md:space-y-8 mobile-scroll-hide">
       {/* Welcome Section */}
       <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-90"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-slate-900 opacity-90"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black opacity-20"></div>
         <div className="relative p-4 sm:p-6 md:p-8 text-white">
           {/* Header */}

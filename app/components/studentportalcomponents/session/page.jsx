@@ -227,8 +227,8 @@ function ModernDetailModal({ session, onClose, onContact }) {
   const getCategoryStyle = (category) => {
     const styles = {
       academic: { gradient: 'from-blue-500 to-cyan-500', icon: FiCalendar },
-      emotional: { gradient: 'from-purple-500 to-pink-500', icon: FiMessageSquare },
-      devotion: { gradient: 'from-indigo-500 to-purple-500', icon: FiStar },
+      emotional: { gradient: 'from-blue-950 to-blue-800', icon: FiMessageSquare },
+      devotion: { gradient: 'from-blue-950 to-blue-800', icon: FiStar },
       worship: { gradient: 'from-amber-500 to-orange-500', icon: FiStar },
       support: { gradient: 'from-emerald-500 to-green-500', icon: FiPhoneCall },
       drugs: { gradient: 'from-red-500 to-rose-500', icon: FiAlertTriangle }
@@ -869,7 +869,7 @@ function ModernGuidanceHeader({
   const getTabColor = (tab) => {
     switch(tab) {
       case 'events': return 'bg-gradient-to-r from-blue-500 to-blue-600';
-      case 'guidance': return 'bg-gradient-to-r from-purple-500 to-purple-600';
+      case 'guidance': return 'bg-gradient-to-r from-blue-950 to-blue-800';
       case 'news': return 'bg-gradient-to-r from-amber-500 to-amber-600';
       default: return 'bg-gradient-to-r from-blue-500 to-blue-600';
     }
@@ -906,7 +906,7 @@ function ModernGuidanceHeader({
 
               {/* Desktop Logo/Title */}
               <div className="hidden lg:flex items-center gap-3">
-                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
+                <div className="p-3 bg-gradient-to-r from-blue-950 to-blue-800 rounded-xl">
                   <FaCalendarCheck className="text-white text-xl" />
                 </div>
                 <div>
@@ -1048,9 +1048,9 @@ function StatisticsCards({ events, guidance, news, activeTab }) {
         ];
       case 'guidance':
         return [
-          { label: 'Total Sessions', value: stats.guidance.total, color: 'from-purple-500 to-purple-600', icon: <FiMessageSquare /> },
+          { label: 'Total Sessions', value: stats.guidance.total, color: 'from-blue-950 to-blue-800', icon: <FiMessageSquare /> },
           { label: 'High Priority', value: stats.guidance.highPriority, color: 'from-red-500 to-red-600', icon: <FiAlertCircle /> },
-          { label: 'With Images', value: stats.guidance.withImages, color: 'from-indigo-500 to-indigo-600', icon: <FiFileText /> }
+          { label: 'With Images', value: stats.guidance.withImages, color: 'from-blue-950 to-blue-800', icon: <FiFileText /> }
         ];
       case 'news':
         return [
@@ -1804,7 +1804,7 @@ const fetchAllData = useCallback(async () => {
       <main className="container mx-auto px-3 sm:px-4 py-4 md:py-6 max-w-7xl">
         {/* Welcome Banner */}
         <div className="mb-6 md:mb-8">
-          <div className="relative overflow-hidden rounded-xl md:rounded-2xl shadow-lg md:shadow-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 mobile-scroll-hide">
+          <div className="relative overflow-hidden rounded-xl md:rounded-2xl shadow-lg md:shadow-2xl bg-gradient-to-r from-blue-950 via-blue-900 to-slate-900 mobile-scroll-hide">
             <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/30"></div>
             <div className="relative p-4 md:p-6 lg:p-8 text-white">
               <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">

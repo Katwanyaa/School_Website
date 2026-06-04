@@ -111,7 +111,7 @@ const downloadMultipleFiles = async (files) => {
   }
 
   const loadingAlert = document.createElement('div');
-  loadingAlert.className = 'fixed top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-xl shadow-2xl z-[10000] backdrop-blur-sm border border-white/20';
+  loadingAlert.className = 'fixed top-4 right-4 bg-gradient-to-r from-blue-950 to-blue-800 text-white px-4 py-3 rounded-xl shadow-2xl z-[10000] backdrop-blur-sm border border-white/20';
   loadingAlert.innerHTML = `
     <div class="flex items-center gap-3">
       <div class="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
@@ -186,7 +186,7 @@ function LoadingSpinner() {
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full w-12 h-12 flex items-center justify-center">
+              <div className="bg-gradient-to-r from-blue-950 to-blue-800 rounded-full w-12 h-12 flex items-center justify-center">
                 <IoDocumentsOutline className="text-white text-xl" />
               </div>
             </div>
@@ -215,7 +215,7 @@ function LoadingSpinner() {
             initial={{ width: 0 }}
             animate={{ width: '100%' }}
             transition={{ delay: 0.6, duration: 1.5 }}
-            className="h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+            className="h-1 bg-gradient-to-r from-blue-950 to-blue-800 rounded-full"
           ></motion.div>
         </div>
       </div>
@@ -350,10 +350,10 @@ function AssignmentResourceCard({ item, type, onView, onDownload }) {
       {/* Card Header */}
       <div className={`p-4 sm:p-5 bg-gradient-to-r ${
         isResource 
-          ? 'from-blue-500 to-indigo-600' 
+          ? 'from-blue-950 to-blue-800' 
           : isOverdue
           ? 'from-rose-500 to-pink-600'
-          : 'from-purple-500 to-violet-600'
+          : 'from-blue-950 to-blue-800'
       } text-white`}>
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -470,10 +470,10 @@ function DetailModal({ item, type, onClose, onDownload }) {
         {/* Modal Header */}
         <div className={`p-4 sm:p-6 md:p-8 text-white ${
           isResource 
-            ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800' 
+            ? 'bg-gradient-to-r from-blue-950 via-blue-900 to-slate-900' 
             : isOverdue
             ? 'bg-gradient-to-r from-rose-600 via-rose-700 to-pink-800'
-            : 'bg-gradient-to-r from-purple-600 via-purple-700 to-violet-800'
+            : 'bg-gradient-to-r from-blue-950 via-blue-900 to-slate-900'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -598,10 +598,10 @@ function DetailModal({ item, type, onClose, onDownload }) {
           {/* Files Section */}
           <div className="space-y-3 sm:space-y-4 md:space-y-6">
             {isResource && item.files && item.files.length > 0 && (
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-purple-200">
+              <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-blue-200">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 md:mb-6 gap-2 sm:gap-0">
                   <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
-                    <IoCloudDownload className="text-purple-600 w-4 h-4 sm:w-5 sm:h-5" />
+                    <IoCloudDownload className="text-blue-900 w-4 h-4 sm:w-5 sm:h-5" />
                     <span>Resource Files ({item.files.length})</span>
                   </h3>
                   <button
@@ -611,7 +611,7 @@ function DetailModal({ item, type, onClose, onDownload }) {
                       fileType: file.fileType,
                       extension: file.extension
                     })))}
-                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg sm:rounded-xl font-bold shadow-md flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-blue-950 to-blue-800 text-white rounded-lg sm:rounded-xl font-bold shadow-md flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
                   >
                     <IoCloudDownload className="w-3 h-3 sm:w-4 sm:h-4" />
                     Download All
@@ -1086,7 +1086,7 @@ export default function ModernResourcesAssignmentsView({
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-900 rounded-3xl p-4 sm:p-6 md:p-8 text-white overflow-hidden mb-4 sm:mb-6 md:mb-8"
+        className="relative bg-gradient-to-r from-blue-950 via-slate-900 to-blue-900 rounded-3xl p-4 sm:p-6 md:p-8 text-white overflow-hidden mb-4 sm:mb-6 md:mb-8"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/20 rounded-full -ml-24 -mb-24 blur-3xl"></div>
@@ -1138,7 +1138,7 @@ export default function ModernResourcesAssignmentsView({
           title="Total Assignments"
           value={stats.totalAssignments}
           icon={IoDocument}
-          color="from-blue-500 to-indigo-600"
+          color="from-blue-950 to-blue-800"
           trend={0}
           description="From teachers"
         />
@@ -1181,7 +1181,7 @@ export default function ModernResourcesAssignmentsView({
               onClick={() => setActiveTab('assignments')}
               className={`flex-1 py-3 sm:py-4 px-2 rounded-xl flex items-center justify-center gap-2 sm:gap-3 ${
                 activeTab === 'assignments'
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/20 text-white'
+                  ? 'bg-gradient-to-r from-blue-950 to-blue-800 shadow-lg shadow-blue-950/20 text-white'
                   : 'text-gray-600'
               }`}
             >
@@ -1197,7 +1197,7 @@ export default function ModernResourcesAssignmentsView({
               onClick={() => setActiveTab('resources')}
               className={`flex-1 py-3 sm:py-4 px-2 rounded-xl flex items-center justify-center gap-2 sm:gap-3 ${
                 activeTab === 'resources'
-                  ? 'bg-gradient-to-r from-purple-500 to-violet-600 shadow-lg shadow-purple-500/20 text-white'
+                  ? 'bg-gradient-to-r from-blue-950 to-blue-800 shadow-lg shadow-blue-950/20 text-white'
                   : 'text-gray-600'
               }`}
             >
@@ -1528,7 +1528,7 @@ export default function ModernResourcesAssignmentsView({
                   <div className="flex items-center gap-3 sm:gap-4">
                     <div className={`p-2 sm:p-3 rounded-2xl ${
                       activeTab === 'assignments' 
-                        ? 'bg-gradient-to-r from-purple-100 to-purple-200' 
+                        ? 'bg-gradient-to-r from-blue-100 to-slate-200' 
                         : 'bg-gradient-to-r from-blue-100 to-blue-200'
                     }`}>
                       {activeTab === 'assignments' ? (
