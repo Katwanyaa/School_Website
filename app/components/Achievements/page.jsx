@@ -106,8 +106,8 @@ function TagInput({ label, tags, onTagsChange, placeholder = "Type and press Ent
   );
 }
 
-// ==================== IMAGE UPLOAD COMPONENT (FIXED) ====================
-function ImageUpload({ images, onImagesChange, onRemoveExisting, maxImages = 5 }) {
+// ==================== IMAGE UPLOAD COMPONENT ====================
+function ImageUpload({ images, onImagesChange, maxImages = 5, onImageRemoved }) {
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -143,18 +143,15 @@ function ImageUpload({ images, onImagesChange, onRemoveExisting, maxImages = 5 }
   };
 
   const handleRemoveImage = (index) => {
-    const removed = images[index];
     const newImages = [...images];
-    if (newImages[index].preview && !newImages[index].url) {
+    if (newImages[index].url) {
+      onImageRemoved?.(newImages[index].url);
+    }
+    if (newImages[index].preview) {
       URL.revokeObjectURL(newImages[index].preview);
     }
     newImages.splice(index, 1);
     onImagesChange(newImages);
-
-    // Notify parent if this was an existing image (has an id)
-    if (removed?.id && onRemoveExisting) {
-      onRemoveExisting(removed.id);
-    }
   };
 
   const handleCaptionChange = (index, caption) => {
@@ -230,7 +227,7 @@ function ImageUpload({ images, onImagesChange, onRemoveExisting, maxImages = 5 }
   );
 }
 
-// ==================== ACHIEVEMENT MODAL (FIXED) ====================
+// ==================== ACHIEVEMENT MODAL ====================
 function AchievementModal({ onClose, onSave, achievement, loading }) {
   const isEditMode = !!achievement;
   const [formData, setFormData] = useState({
@@ -249,7 +246,6 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
   const [images, setImages] = useState(() => {
     if (achievement?.images) {
       return achievement.images.map(img => ({
-        id: img.id, // keep id for deletion tracking
         ...img,
         preview: img.url
       }));
@@ -266,15 +262,11 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleRemoveExistingImage = (imageId) => {
-    setImagesToDelete(prev => [...prev, imageId]);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.title || !formData.category || !formData.year) {
-      toast.error('Please fill in all required fields');
+      toast.error('Please fill in all requiteal fields');
       return;
     }
     
@@ -285,7 +277,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
       const deviceToken = localStorage.getItem('device_token');
       
       if (!adminToken || !deviceToken) {
-        throw new Error('Authentication required. Please login again.');
+        throw new Error('Authentication requiteal. Please login again.');
       }
       
       const formDataObj = new FormData();
@@ -305,16 +297,32 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
       formDataObj.append('displayOrder', formData.displayOrder);
       formDataObj.append('achievedDate', formData.achievedDate);
       
+      const retainedImages = images
+        .filter(img => !img.file && (img.url || img.preview))
+        .map(({ url, public_id, caption, bytes, format }) => ({
+          url: url || '',
+          public_id: public_id || '',
+          caption: caption || '',
+          ...(bytes ? { bytes } : {}),
+          ...(format ? { format } : {})
+        }))
+        .filter(img => img.url);
+
+      const newImageCaptions = [];
+      
       // Add new images
       images.forEach(img => {
         if (img.file) {
           formDataObj.append('images', img.file);
+          newImageCaptions.push(img.caption || '');
         }
       });
+      formDataObj.append('imageCaptions', JSON.stringify(newImageCaptions));
       
       // Handle existing images
       if (isEditMode) {
         formDataObj.append('keepExistingImages', 'true');
+        formDataObj.append('existingImages', JSON.stringify(retainedImages));
         if (imagesToDelete.length > 0) {
           formDataObj.append('imagesToDelete', JSON.stringify(imagesToDelete));
         }
@@ -335,7 +343,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
       
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error('Session expired. Please login again.');
+          throw new Error('Session expiteal. Please login again.');
         }
         throw new Error(data.error || 'Failed to save achievement');
       }
@@ -385,7 +393,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
                   onChange={(e) => handleChange('title', e.target.value)}
                   placeholder="e.g., National Science Fair Winner"
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  required
+                  requiteal
                 />
               </div>
               
@@ -397,7 +405,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
                   value={formData.category}
                   onChange={(e) => handleChange('category', e.target.value)}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  required
+                  requiteal
                 >
                   {categories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -416,7 +424,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
                   min="2000"
                   max={new Date().getFullYear() + 1}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  required
+                  requiteal
                 />
               </div>
               
@@ -465,7 +473,7 @@ function AchievementModal({ onClose, onSave, achievement, loading }) {
                 <ImageUpload
                   images={images}
                   onImagesChange={setImages}
-                  onRemoveExisting={handleRemoveExistingImage}
+                  onImageRemoved={(url) => setImagesToDelete(prev => [...prev, url])}
                   maxImages={5}
                 />
               </div>
@@ -566,7 +574,7 @@ function SchoolStatsModal({ onClose, onSave, stats, loading }) {
       const deviceToken = localStorage.getItem('device_token');
       
       if (!adminToken || !deviceToken) {
-        throw new Error('Authentication required. Please login again.');
+        throw new Error('Authentication requiteal. Please login again.');
       }
       
       const method = isEditMode ? 'PUT' : 'POST';
@@ -592,7 +600,7 @@ function SchoolStatsModal({ onClose, onSave, stats, loading }) {
       
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error('Session expired. Please login again.');
+          throw new Error('Session expiteal. Please login again.');
         }
         throw new Error(data.error || 'Failed to save school stats');
       }
@@ -915,6 +923,7 @@ export default function AchievementsPage() {
     try {
       setLoading(true);
       
+      // Load achievements
       const achievementsRes = await fetch('/api/achievements');
       const achievementsData = await achievementsRes.json();
       
@@ -922,6 +931,7 @@ export default function AchievementsPage() {
         setAchievements(achievementsData.achievements);
       }
       
+      // Load school stats
       const statsRes = await fetch('/api/school-stats');
       const statsData = await statsRes.json();
       
@@ -963,7 +973,7 @@ export default function AchievementsPage() {
       const deviceToken = localStorage.getItem('device_token');
       
       if (!adminToken || !deviceToken) {
-        throw new Error('Authentication required. Please login again.');
+        throw new Error('Authentication requiteal. Please login again.');
       }
       
       const response = await fetch(`/api/achievements?id=${deleteId}`, {
@@ -1007,10 +1017,12 @@ export default function AchievementsPage() {
       
       {/* Header */}
       <div className="group relative mb-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-teal-800 via-emerald-800 to-green-800 p-6 md:p-8 shadow-xl sm:shadow-2xl">
+        {/* Abstract Gradient Orbs */}
         <div className="absolute top-[-25%] right-[-10%] w-[250px] h-[250px] md:w-[420px] md:h-[420px] bg-gradient-to-br from-emerald-500/30 via-teal-500/20 to-green-500/30 rounded-full blur-[100px] pointer-events-none animate-pulse" />
         <div className="absolute bottom-[-25%] left-[-10%] w-[200px] h-[200px] md:w-[340px] md:h-[340px] bg-gradient-to-tr from-teal-500/20 via-emerald-500/10 to-green-500/20 rounded-full blur-[80px] pointer-events-none" />
         <div className="absolute top-[30%] right-[20%] w-[180px] h-[180px] bg-gradient-to-r from-teal-500/20 to-emerald-500/20 rounded-full blur-[70px] pointer-events-none animate-pulse" />
 
+        {/* Subtle Grid Pattern */}
         <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
@@ -1019,6 +1031,7 @@ export default function AchievementsPage() {
           }}
         />
 
+        {/* Shine Effect Overlay */}
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full pointer-events-none"
           style={{ transform: 'skewX(-20deg)' }}
@@ -1031,6 +1044,7 @@ export default function AchievementsPage() {
             </div>
             <p className="text-emerald-100/90">Celebrating our school's excellence and success stories</p>
             
+            {/* School Slogan */}
             {schoolStats?.slogan && (
               <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 inline-block">
                 <FaQuoteRight className="text-emerald-200 mb-2" />
@@ -1072,92 +1086,104 @@ export default function AchievementsPage() {
             </button>
           </div>
         </div>
+        
+
       </div>
       
-      {/* --- MODERN PERFORMANCE METRICS BENTO --- */}
-      {schoolStats && (schoolStats.meanScore || schoolStats.lastYearMean || schoolStats.targetMean) && (
-        <section className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-50 mb-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-emerald-600">
-                <FaChartLine className="text-xl" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em]">Academic Analytics</span>
-              </div>
-              <h2 className="text-3xl font-serif font-bold text-black">
-                Performance <span className="italic text-slate-400">Tracking</span>
-              </h2>
-            </div>
-            
-            <div className="px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reporting Cycle</p>
-              <p className="text-xs font-bold text-slate-700">Annual Academic Audit 2026</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            {schoolStats.lastYearMean && (
-              <div className="md:col-span-3 p-6 bg-slate-50 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
-                <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Prev. Cycle</p>
-                <div>
-                  <p className="text-4xl font-serif font-bold text-slate-800 italic">{schoolStats.lastYearMean}</p>
-                  <p className="text-[10px] font-bold text-slate-900 mt-1 uppercase">Last Year's Mean Score</p>
-                </div>
-              </div>
-            )}
-
-            {schoolStats.meanScore && (
-              <div className="md:col-span-5 p-8 bg-slate-900 rounded-[2.5rem] text-white relative overflow-hidden shadow-2xl shadow-slate-900/20">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] -z-0" />
-                <div className="relative z-10 flex flex-col h-full justify-between">
-                  <div className="flex justify-between items-start">
-                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Active Performance</p>
-                    {schoolStats.lastYearMean && (
-                      <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black ${
-                        schoolStats.meanScore > schoolStats.lastYearMean ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                      }`}>
-                        {schoolStats.meanScore > schoolStats.lastYearMean ? '↑' : '↓'}
-                        {Math.abs(schoolStats.meanScore - schoolStats.lastYearMean).toFixed(2)}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-8">
-                    <p className="text-6xl font-serif font-bold tracking-tighter italic">
-                      {schoolStats.meanScore}
-                    </p>
-                    <p className="text-xs font-medium text-slate-800 mt-2">Current Institutional Mean</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {schoolStats.targetMean && (
-              <div className="md:col-span-4 p-8 bg-emerald-50 rounded-[2.5rem] border border-emerald-100 flex flex-col justify-between">
-                <div>
-                  <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Growth Target</p>
-                  <p className="text-4xl font-serif font-bold text-emerald-700 mt-2">{schoolStats.targetMean}</p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex justify-between items-end">
-                    <p className="text-[10px] font-black text-emerald-600 uppercase">Achievement</p>
-                    <p className="text-lg font-serif font-bold text-emerald-700">
-                      {((schoolStats.meanScore / schoolStats.targetMean) * 100).toFixed(1)}%
-                    </p>
-                  </div>
-                  <div className="h-3 w-full bg-white rounded-full p-1 overflow-hidden border border-emerald-200">
-                    <div 
-                      className="h-full bg-emerald-500 rounded-full"
-                      style={{ width: `${Math.min((schoolStats.meanScore / schoolStats.targetMean) * 100, 100)}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+{/* --- MODERN PERFORMANCE METRICS BENTO --- */}
+{schoolStats && (schoolStats.meanScore || schoolStats.lastYearMean || schoolStats.targetMean) && (
+  <section className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-50 mb-10">
+    
+    {/* Header with Subtitle */}
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+      <div className="space-y-1">
+        <div className="flex items-center gap-2 text-emerald-600">
+          <FaChartLine className="text-xl" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em]">Academic Analytics</span>
+        </div>
+        <h2 className="text-3xl font-serif font-bold text-black">
+          Performance <span className="italic text-slate-400">Tracking</span>
+        </h2>
+      </div>
       
+      <div className="px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reporting Cycle</p>
+        <p className="text-xs font-bold text-slate-700">Annual Academic Audit 2026</p>
+      </div>
+    </div>
+
+    {/* Bento Grid Layout */}
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      
+      {/* 1. Last Year Mean (Compact) */}
+      {schoolStats.lastYearMean && (
+        <div className="md:col-span-3 p-6 bg-slate-50 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
+          <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Prev. Cycle</p>
+          <div>
+            <p className="text-4xl font-serif font-bold text-slate-800 italic">{schoolStats.lastYearMean}</p>
+            <p className="text-[10px] font-bold text-slate-900 mt-1 uppercase">Last Year's Mean Score</p>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Current Mean (Hero Focus) */}
+      {schoolStats.meanScore && (
+        <div className="md:col-span-5 p-8 bg-slate-900 rounded-[2.5rem] text-white relative overflow-hidden shadow-2xl shadow-slate-900/20">
+          {/* Subtle Glow Background */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] -z-0" />
+          
+          <div className="relative z-10 flex flex-col h-full justify-between">
+            <div className="flex justify-between items-start">
+              <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Active Performance</p>
+              {schoolStats.lastYearMean && (
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black ${
+                  schoolStats.meanScore > schoolStats.lastYearMean ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                }`}>
+                  {schoolStats.meanScore > schoolStats.lastYearMean ? '↑' : '↓'}
+                  {Math.abs(schoolStats.meanScore - schoolStats.lastYearMean).toFixed(2)}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <p className="text-6xl font-serif font-bold tracking-tighter italic">
+                {schoolStats.meanScore}
+              </p>
+              <p className="text-xs font-medium text-slate-800 mt-2">Current Institutional Mean</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Target Mean (Progress View) */}
+      {schoolStats.targetMean && (
+        <div className="md:col-span-4 p-8 bg-emerald-50 rounded-[2.5rem] border border-emerald-100 flex flex-col justify-between">
+          <div>
+            <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Growth Target</p>
+            <p className="text-4xl font-serif font-bold text-emerald-700 mt-2">{schoolStats.targetMean}</p>
+          </div>
+
+          <div className="space-y-3">
+             <div className="flex justify-between items-end">
+                <p className="text-[10px] font-black text-emerald-600 uppercase">Achievement</p>
+                <p className="text-lg font-serif font-bold text-emerald-700">
+                  {((schoolStats.meanScore / schoolStats.targetMean) * 100).toFixed(1)}%
+                </p>
+             </div>
+             {/* Custom Progress Bar */}
+             <div className="h-3 w-full bg-white rounded-full p-1 overflow-hidden border border-emerald-200">
+                <div 
+                  className="h-full bg-emerald-500 rounded-full"
+                  style={{ width: `${Math.min((schoolStats.meanScore / schoolStats.targetMean) * 100, 100)}%` }}
+                />
+             </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  </section>
+)}
       {/* Achievement Records */}
       {totalAchievements > 0 && (
         <section className="space-y-6">

@@ -171,6 +171,23 @@ const parseBoolean = (value) => {
   return value === 'true' || value === true;
 };
 
+const normalizeImages = (value) => {
+  const parsed = typeof value === 'string'
+    ? parseJsonField(value, 'images')
+    : (Array.isArray(value) ? value : []);
+
+  return parsed
+    .filter(image => image && (image.url || image.preview))
+    .map(image => ({
+      url: image.url || image.preview,
+      public_id: image.public_id || '',
+      caption: image.caption || '',
+      ...(image.bytes ? { bytes: image.bytes } : {}),
+      ...(image.format ? { format: image.format } : {})
+    }))
+    .filter(image => image.url);
+};
+
 // ============ CLOUDINARY FUNCTIONS ============
 
 const uploadToCloudinary = async (file, folder, resourceType = 'image') => {
@@ -223,14 +240,14 @@ const deleteFromCloudinary = async (url) => {
   }
 };
 
-const handleImagesUpload = async (imageFiles, existingImages = []) => {
+const handleImagesUpload = async (imageFiles, existingImages = [], captions = []) => {
   const images = [...existingImages];
   
   if (!imageFiles || imageFiles.length === 0) {
     return images;
   }
 
-  for (const file of imageFiles) {
+  for (const [index, file] of imageFiles.entries()) {
     if (file && file.size > 0) {
       if (!file.type.startsWith('image/')) {
         throw new Error('Only image files are allowed');
@@ -244,7 +261,7 @@ const handleImagesUpload = async (imageFiles, existingImages = []) => {
       images.push({
         url: result.url,
         public_id: result.public_id,
-        caption: ''
+        caption: captions[index] || ''
       });
     }
   }
@@ -353,6 +370,7 @@ export async function GET(req) {
       Sports: [],
       Arts: [],
       Leadership: [],
+      Environment: [],
       Other: []
     };
     
@@ -417,10 +435,11 @@ export async function POST(req) {
 
     // Handle images upload
     const imageFiles = formData.getAll("images");
+    const imageCaptions = parseJsonField(formData.get("imageCaptions") || "[]", "imageCaptions");
     let images = [];
     
     try {
-      images = await handleImagesUpload(imageFiles.filter(f => f && f.size > 0), []);
+      images = await handleImagesUpload(imageFiles.filter(f => f && f.size > 0), [], imageCaptions);
     } catch (imageError) {
       return NextResponse.json(
         { 
@@ -526,24 +545,45 @@ export async function PUT(req) {
     const keepExistingImages = formData.get("keepExistingImages") === 'true';
     const imagesToDelete = formData.get("imagesToDelete");
     
-    let images = keepExistingImages ? (existing.images || []) : [];
+    const currentImages = normalizeImages(existing.images);
+    let images = keepExistingImages ? currentImages : [];
+    const submittedExistingImages = formData.get("existingImages");
+    const explicitDeleteUrls = [];
+    
+    if (keepExistingImages && submittedExistingImages !== null) {
+      images = normalizeImages(submittedExistingImages);
+      const retainedUrls = new Set(images.map(img => img.url));
+      currentImages
+        .filter(img => img.url && !retainedUrls.has(img.url))
+        .forEach(img => explicitDeleteUrls.push(img.url));
+    }
     
     // Delete images marked for removal
     if (imagesToDelete) {
       try {
         const deleteUrls = JSON.parse(imagesToDelete);
-        for (const url of deleteUrls) {
-          await deleteFromCloudinary(url);
-        }
-        images = images.filter(img => !deleteUrls.includes(img.url));
+        explicitDeleteUrls.push(...deleteUrls);
       } catch (e) {
         console.warn("Error parsing imagesToDelete:", e);
       }
     }
+
+    if (explicitDeleteUrls.length > 0) {
+      const uniqueDeleteUrls = [...new Set(explicitDeleteUrls)];
+      try {
+        for (const url of uniqueDeleteUrls) {
+          await deleteFromCloudinary(url);
+        }
+      } catch (e) {
+        console.warn("Error deleting achievement images:", e);
+      }
+      images = images.filter(img => !uniqueDeleteUrls.includes(img.url));
+    }
     
     // Upload new images
     try {
-      const newImages = await handleImagesUpload(imageFiles.filter(f => f && f.size > 0), []);
+      const imageCaptions = parseJsonField(formData.get("imageCaptions") || "[]", "imageCaptions");
+      const newImages = await handleImagesUpload(imageFiles.filter(f => f && f.size > 0), [], imageCaptions);
       images = [...images, ...newImages];
     } catch (imageError) {
       return NextResponse.json(
@@ -579,7 +619,7 @@ export async function PUT(req) {
       isActive: formData.get("isActive") !== null ? parseBoolean(formData.get("isActive")) : existing.isActive,
       awardingBody: formData.get("awardingBody") !== null ? formData.get("awardingBody") : existing.awardingBody,
       recipients,
-      achievedDate: formData.get("achievedDate") ? parseDate(formData.get("achievedDate")) : existing.achievedDate,
+      achievedDate: formData.has("achievedDate") ? parseDate(formData.get("achievedDate")) : existing.achievedDate,
       updatedAt: new Date()
     };
 
