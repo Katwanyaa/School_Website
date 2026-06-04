@@ -152,38 +152,38 @@ function ModernStudentHeader({
       A: "bg-gradient-to-r from-red-500 to-pink-600",
       B: "bg-gradient-to-r from-blue-500 to-cyan-600",
       C: "bg-gradient-to-r from-green-500 to-emerald-600",
-      D: "bg-gradient-to-r from-purple-500 to-pink-600",
+      D: "bg-gradient-to-r from-blue-950 to-blue-700",
       E: "bg-gradient-to-r from-emerald-500 to-teal-600",
       F: "bg-gradient-to-r from-pink-500 to-rose-600",
       G: "bg-gradient-to-r from-orange-500 to-amber-600",
-      H: "bg-gradient-to-r from-indigo-500 to-violet-600",
+      H: "bg-gradient-to-r from-blue-900 to-sky-700",
       I: "bg-gradient-to-r from-cyan-500 to-blue-600",
       J: "bg-gradient-to-r from-rose-500 to-red-600",
       K: "bg-gradient-to-r from-amber-500 to-yellow-600",
-      L: "bg-gradient-to-r from-violet-500 to-purple-600",
+      L: "bg-gradient-to-r from-slate-800 to-blue-900",
       M: "bg-gradient-to-r from-lime-500 to-green-600",
       N: "bg-gradient-to-r from-sky-500 to-blue-600",
-      O: "bg-gradient-to-r from-fuchsia-500 to-purple-600",
+      O: "bg-gradient-to-r from-sky-700 to-blue-950",
       P: "bg-gradient-to-r from-teal-500 to-emerald-600",
       Q: "bg-gradient-to-r from-slate-600 to-gray-700",
       R: "bg-gradient-to-r from-red-400 to-pink-500",
       S: "bg-gradient-to-r from-blue-400 to-cyan-500",
       T: "bg-gradient-to-r from-emerald-400 to-green-500",
-      U: "bg-gradient-to-r from-indigo-400 to-purple-500",
-      V: "bg-gradient-to-r from-purple-400 to-pink-500",
+      U: "bg-gradient-to-r from-blue-800 to-slate-700",
+      V: "bg-gradient-to-r from-blue-700 to-sky-600",
       W: "bg-gradient-to-r from-orange-400 to-amber-500",
       X: "bg-gradient-to-r from-gray-500 to-slate-600",
       Y: "bg-gradient-to-r from-yellow-400 to-amber-500",
       Z: "bg-gradient-to-r from-zinc-700 to-gray-900",
     };
-    return gradients[char] || "bg-gradient-to-r from-blue-500 to-purple-600";
+    return gradients[char] || "bg-gradient-to-r from-blue-800 to-slate-800";
   };
 
   const getViewIcon = (view) => {
     switch(view) {
       case 'home': return <FaHome className="text-blue-500" />;
       case 'results': return <FaChartBar className="text-green-500" />;
-      case 'resources': return <FaFolder className="text-purple-500" />;
+      case 'resources': return <FaFolder className="text-blue-900" />;
       case 'guidance': return <FaComments className="text-amber-500" />;
       case 'fees': return <FaDollarSign className="text-amber-500" />; // ADDED
       default: return <FaHome className="text-blue-500" />;
@@ -291,7 +291,7 @@ function ModernHomeView({ student, feeBalance, feeLoading, token }) {
       value: student?.stream || 'N/A', 
       icon: <FaBook className="text-base sm:text-lg md:text-xl" />, 
       gradient: 'from-blue-950 to-blue-800',
-      bgGradient: 'from-purple-50 to-pink-100'
+      bgGradient: 'from-blue-50 to-slate-100'
     },
     { 
       label: 'Admission No', 
@@ -316,7 +316,7 @@ function ModernHomeView({ student, feeBalance, feeLoading, token }) {
       description: 'Access all your academic learning tools in one place, including assignments, revision materials, notes, and other essential learning resources provided by your teachers to support your daily studies and exam preparation.',
       icon: <FiBookOpen className="text-lg sm:text-xl md:text-2xl" />,
       gradient: 'from-blue-950 to-blue-800',
-      bgGradient: 'from-blue-50 to-indigo-100',
+      bgGradient: 'from-blue-50 to-slate-100',
       actions: ['View Assignments', 'Browse Learning Resources']
     },
     {
@@ -977,7 +977,7 @@ if (!student || !token) {
       desc: "View and submit your subject tasks and holiday projects." 
     },
     { 
-      icon: <FaChartBar className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />, 
+      icon: <FaChartBar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-900" />, 
       title: "Academic Results", 
       desc: "Personalized performance tracking vs class & KCSE targets." 
     },
@@ -992,7 +992,7 @@ if (!student || !token) {
       desc: "Academic calendar, sports days, and parent-teacher meets." 
     },
     { 
-      icon: <FaComments className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />, 
+      icon: <FaComments className="w-4 h-4 sm:w-5 sm:h-5 text-blue-900" />, 
       title: "School News", 
       desc: "Latest updates from the administration and student body." 
     }
@@ -1140,7 +1140,7 @@ if (!student || !token) {
                     </p>
                   </div>
                   <div className="p-3 xs:p-4 bg-slate-50/80 rounded-xl xs:rounded-2xl border border-slate-100">
-                    <p className="text-[10px] xs:text-xs font-bold text-purple-600 mb-0.5 xs:mb-1">Fee Management</p>
+                    <p className="text-[10px] xs:text-xs font-bold text-blue-900 mb-0.5 xs:mb-1">Fee Management</p>
                     <p className="text-xs xs:text-sm font-semibold text-slate-800 leading-tight">
                       Check balance and download payment slips.
                     </p>
@@ -1398,7 +1398,7 @@ if (!student || !token) {
                     Student Portal v3.0 • Education is Light
                   </p>
                   <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-pulse"></div>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-blue-950 to-blue-700 rounded-full animate-pulse"></div>
                     <span className="text-xs text-gray-400">Session Active</span>
                   </div>
                 </div>

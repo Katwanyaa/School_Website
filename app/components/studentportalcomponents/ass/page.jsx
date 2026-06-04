@@ -79,8 +79,8 @@ const getFileIcon = (fileType, extension, size = 20) => {
   if (type.includes('pdf')) return <FiFileText className="text-red-500" size={size} />;
   if (type.includes('word') || ['doc', 'docx'].includes(type)) return <IoDocument className="text-blue-500" size={size} />;
   if (type.includes('image') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(type)) return <IoImages className="text-pink-500" size={size} />;
-  if (type.includes('video') || ['mp4', 'mov', 'avi', 'wmv', 'flv', 'webm', 'mkv'].includes(type)) return <IoVideocam className="text-purple-500" size={size} />;
-  if (type.includes('audio') || ['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(type)) return <IoMusicalNotes className="text-indigo-500" size={size} />;
+  if (type.includes('video') || ['mp4', 'mov', 'avi', 'wmv', 'flv', 'webm', 'mkv'].includes(type)) return <IoVideocam className="text-blue-900" size={size} />;
+  if (type.includes('audio') || ['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(type)) return <IoMusicalNotes className="text-blue-900" size={size} />;
   if (type.includes('excel') || ['xls', 'xlsx', 'csv'].includes(type)) return <IoCalculator className="text-emerald-500" size={size} />;
   if (type.includes('powerpoint') || ['ppt', 'pptx'].includes(type)) return <IoColorPalette className="text-orange-500" size={size} />;
   if (type.includes('zip') || type.includes('rar') || type.includes('7z') || type.includes('tar')) return <IoFolderOpen className="text-amber-500" size={size} />;
@@ -191,7 +191,7 @@ function LoadingSpinner() {
               </div>
             </div>
           </div>
-          <div className="absolute -inset-6 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full blur-xl opacity-30"></div>
+          <div className="absolute -inset-6 bg-gradient-to-r from-blue-100 to-slate-100 rounded-full blur-xl opacity-30"></div>
         </div>
         
         <div className="mt-8 space-y-3">
@@ -267,9 +267,9 @@ function StatusBadge({ status, size = "md" }) {
       'completed': { bg: 'from-emerald-500 to-teal-400', text: 'Completed', icon: <IoCheckmarkCircle /> },
       'assigned': { bg: 'from-blue-500 to-cyan-400', text: 'Assigned', icon: <IoTime /> },
       'pending': { bg: 'from-amber-500 to-orange-400', text: 'Pending', icon: <IoTime /> },
-      'reviewed': { bg: 'from-purple-500 to-violet-400', text: 'Reviewed', icon: <IoCheckmarkCircle /> },
+      'reviewed': { bg: 'from-blue-950 to-blue-800', text: 'Reviewed', icon: <IoCheckmarkCircle /> },
       'overdue': { bg: 'from-rose-500 to-pink-400', text: 'Overdue', icon: <IoWarning /> },
-      'submitted': { bg: 'from-indigo-500 to-blue-400', text: 'Submitted', icon: <IoDocument /> }
+      'submitted': { bg: 'from-blue-950 to-blue-800', text: 'Submitted', icon: <IoDocument /> }
     };
     return configs[status?.toLowerCase()] || configs.pending;
   };
@@ -405,7 +405,7 @@ function AssignmentResourceCard({ item, type, onView, onDownload }) {
               {isResource ? 'Teacher' : 'Teacher'}
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 text-gray-900 font-bold">
-              <IoPerson className="text-purple-500 w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <IoPerson className="text-blue-900 w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="truncate text-sm sm:text-base">{item.teacher || 'Not specified'}</span>
             </div>
           </div>
@@ -512,7 +512,7 @@ function DetailModal({ item, type, onClose, onDownload }) {
             <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-bold">
               {item.className || 'All Classes'}
             </span>
-            <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-100 text-indigo-800 rounded-full text-xs sm:text-sm font-bold">
+            <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-100 text-blue-900 rounded-full text-xs sm:text-sm font-bold">
               {item.subject || 'General'}
             </span>
             {isResource && item.category && (
@@ -944,7 +944,7 @@ export default function ModernResourcesAssignmentsView({
       { id: 'assigned', label: 'Assigned', color: 'from-blue-500 to-blue-600' },
       { id: 'pending', label: 'Pending', color: 'from-amber-500 to-amber-600' },
       { id: 'completed', label: 'Completed', color: 'from-emerald-500 to-emerald-600' },
-      { id: 'reviewed', label: 'Reviewed', color: 'from-purple-500 to-purple-600' },
+      { id: 'reviewed', label: 'Reviewed', color: 'from-blue-950 to-blue-800' },
       { id: 'overdue', label: 'Overdue', color: 'from-rose-500 to-rose-600' }
     ];
   }, []);
@@ -1089,7 +1089,7 @@ export default function ModernResourcesAssignmentsView({
         className="relative bg-gradient-to-r from-blue-950 via-slate-900 to-blue-900 rounded-3xl p-4 sm:p-6 md:p-8 text-white overflow-hidden mb-4 sm:mb-6 md:mb-8"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/20 rounded-full -ml-24 -mb-24 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-950/20 rounded-full -ml-24 -mb-24 blur-3xl"></div>
         
         <div className="relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
@@ -1267,7 +1267,7 @@ export default function ModernResourcesAssignmentsView({
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                 className={`p-2.5 sm:p-3 rounded-2xl border ${
                   showAdvancedFilters
-                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50/50 border-blue-200 text-blue-600 shadow-lg shadow-blue-500/10'
+                    ? 'bg-gradient-to-r from-blue-50 to-slate-50 border-blue-200 text-blue-900 shadow-lg shadow-blue-500/10'
                     : 'bg-white border-gray-200 text-gray-600'
                 }`}
               >
@@ -1309,7 +1309,7 @@ export default function ModernResourcesAssignmentsView({
                     {/* Subject Filter */}
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                        <FiBookOpen className="text-indigo-500" />
+                        <FiBookOpen className="text-blue-900" />
                         Subject
                       </label>
                       <select
@@ -1335,7 +1335,7 @@ export default function ModernResourcesAssignmentsView({
                           </>
                         ) : (
                           <>
-                            <FiTag className="text-purple-500" />
+                            <FiTag className="text-blue-900" />
                             Type
                           </>
                         )}
@@ -1397,10 +1397,10 @@ export default function ModernResourcesAssignmentsView({
                         </span>
                       )}
                       {selectedSubject !== 'all' && (
-                        <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-bold border border-indigo-100">
+                        <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-50 text-blue-900 rounded-full text-xs sm:text-sm font-bold border border-blue-100">
                           <FiBookOpen className="text-xs sm:text-sm" />
                           {selectedSubject}
-                          <button onClick={() => setSelectedSubject('all')} className="ml-1 text-indigo-500">
+                          <button onClick={() => setSelectedSubject('all')} className="ml-1 text-blue-700">
                             <IoClose className="text-xs sm:text-sm" />
                           </button>
                         </span>
@@ -1415,10 +1415,10 @@ export default function ModernResourcesAssignmentsView({
                         </span>
                       )}
                       {activeTab === 'resources' && selectedResourceType !== 'all' && (
-                        <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-purple-50 text-purple-700 rounded-full text-xs sm:text-sm font-bold border border-purple-100">
+                        <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-50 text-blue-900 rounded-full text-xs sm:text-sm font-bold border border-blue-100">
                           <FiTag className="text-xs sm:text-sm" />
                           {resourceTypes.find(t => t.id === selectedResourceType)?.label}
-                          <button onClick={() => setSelectedResourceType('all')} className="ml-1 text-purple-500">
+                          <button onClick={() => setSelectedResourceType('all')} className="ml-1 text-blue-700">
                             <IoClose className="text-xs sm:text-sm" />
                           </button>
                         </span>
@@ -1532,7 +1532,7 @@ export default function ModernResourcesAssignmentsView({
                         : 'bg-gradient-to-r from-blue-100 to-blue-200'
                     }`}>
                       {activeTab === 'assignments' ? (
-                        <IoDocument className="text-purple-600 text-lg sm:text-xl" />
+                        <IoDocument className="text-blue-900 text-lg sm:text-xl" />
                       ) : (
                         getFileIcon(item.type, item.files?.[0]?.extension, 20)
                       )}
