@@ -415,9 +415,9 @@ export default function AdminDashboard() {
   );
 
   // Fetch student count
-  const fetchStudentCount = async () => {
+  const fetchStudentCount = async (authHeaders = {}) => {
     try {
-      const response = await fetch('/api/studentupload?action=stats');
+      const response = await fetch('/api/studentupload?action=stats', { headers: authHeaders });
       if (!response.ok) {
         console.error('Failed to fetch student stats');
         return 0;
@@ -435,7 +435,7 @@ export default function AdminDashboard() {
         }
       }
       
-      const allStudentsRes = await fetch('/api/studentupload');
+      const allStudentsRes = await fetch('/api/studentupload', { headers: authHeaders });
       if (allStudentsRes.ok) {
         const allStudentsData = await allStudentsRes.json();
         if (allStudentsData.success) {
@@ -454,7 +454,25 @@ export default function AdminDashboard() {
   // Fetch real counts from all APIs
   const fetchRealCounts = async () => {
     try {
-      const studentCount = await fetchStudentCount();
+      const authHeaders = (() => {
+        if (typeof window === 'undefined') return {};
+
+        const tokenKeys = ['admin_token', 'token', 'auth_token', 'jwt_token', 'access_token'];
+        const deviceKeys = ['device_token', 'deviceToken'];
+
+        const adminToken = tokenKeys
+          .map(key => localStorage.getItem(key))
+          .find(Boolean);
+        const deviceToken = deviceKeys
+          .map(key => localStorage.getItem(key))
+          .find(Boolean);
+
+        return adminToken && deviceToken
+          ? { Authorization: `Bearer ${adminToken}`, 'x-device-token': deviceToken }
+          : {};
+      })();
+
+      const studentCount = await fetchStudentCount(authHeaders);
       const readJson = async (settledResponse, fallback) => {
         if (settledResponse.status !== 'fulfilled' || !settledResponse.value?.ok) {
           return fallback;
@@ -483,19 +501,19 @@ export default function AdminDashboard() {
         schooldocumentsRes,
         achievementsRes
       ] = await Promise.allSettled([
-        fetch('/api/staff'),
-        fetch('/api/subscriber'),
-        fetch('/api/events'),
-        fetch('/api/news'),
-        fetch('/api/assignment'),
-        fetch('/api/gallery'),
-        fetch('/api/guidance'),
-        fetch('/api/applyadmission'),
-        fetch('/api/resources'),
-        fetch('/api/career'),
-        fetch('/api/feebalances'),
-        fetch('/api/schooldocuments'),
-        fetch('/api/achievements')
+        fetch('/api/staff', { headers: authHeaders }),
+        fetch('/api/subscriber', { headers: authHeaders }),
+        fetch('/api/events', { headers: authHeaders }),
+        fetch('/api/news', { headers: authHeaders }),
+        fetch('/api/assignment', { headers: authHeaders }),
+        fetch('/api/gallery', { headers: authHeaders }),
+        fetch('/api/guidance', { headers: authHeaders }),
+        fetch('/api/applyadmission', { headers: authHeaders }),
+        fetch('/api/resources', { headers: authHeaders }),
+        fetch('/api/career', { headers: authHeaders }),
+        fetch('/api/feebalances', { headers: authHeaders }),
+        fetch('/api/schooldocuments', { headers: authHeaders }),
+        fetch('/api/achievements', { headers: authHeaders })
 
       ]);
 

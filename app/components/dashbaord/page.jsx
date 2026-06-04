@@ -185,23 +185,35 @@ const listenForRecentActivity = async () => {
   try {
     console.log('📊 Fetching recent activity data...');
 
-    const [studentsRes, resultsRes, uploadsRes, guidanceRes] = await Promise.allSettled([
-      fetch('/api/studentupload?limit=5&sortBy=updatedAt&sortOrder=desc', {
-        headers: { 'Cache-Control': 'no-cache' }
-      }),
-      fetch('/api/results?limit=5&sortBy=updatedAt&sortOrder=desc', {
-        headers: { 'Cache-Control': 'no-cache' }
-      }),
-      fetch('/api/studentupload?action=uploads&limit=3', {
-        headers: { 'Cache-Control': 'no-cache' }
-      }),
-      fetch('/api/guidance?limit=3&sortBy=createdAt&sortOrder=desc', {
-        headers: { 'Cache-Control': 'no-cache' }
-      })
-    ]);
+    const authHeaders = (() => {
+      if (typeof window === 'undefined') return {};
 
-    const activities = [];
-    const now = new Date();
+      const tokenKeys = ['admin_token', 'token', 'auth_token', 'jwt_token', 'access_token'];
+      const deviceKeys = ['device_token', 'deviceToken'];
+
+      const adminToken = tokenKeys
+        .map(key => localStorage.getItem(key))
+        .find(Boolean);
+      const deviceToken = deviceKeys
+        .map(key => localStorage.getItem(key))
+        .find(Boolean);
+
+      return adminToken && deviceToken
+        ? { Authorization: `Bearer ${adminToken}`, 'x-device-token': deviceToken }
+        : {};
+    })();
+
+    const noCacheHeaders = {
+      'Cache-Control': 'no-cache',
+      ...authHeaders
+    };
+
+    const [studentsRes, resultsRes, uploadsRes, guidanceRes] = await Promise.allSettled([
+      fetch('/api/studentupload?limit=5&sortBy=updatedAt&sortOrder=desc', { headers: noCacheHeaders }),
+      fetch('/api/results?limit=5&sortBy=updatedAt&sortOrder=desc', { headers: noCacheHeaders }),
+      fetch('/api/studentupload?action=uploads&limit=3', { headers: noCacheHeaders }),
+      fetch('/api/guidance?limit=3&sortBy=createdAt&sortOrder=desc', { headers: noCacheHeaders })
+    ]);
 
     // Process recent students
     if (studentsRes.status === 'fulfilled' && studentsRes.value.ok) {
@@ -739,12 +751,25 @@ const [growthMetrics, setGrowthMetrics] = useState({
 
       setUser(authenticatedUser);
 
-      // Prefer authenticated staff fetch (privacy-safe public endpoint returns leadership only)
-      const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
-      const deviceToken = typeof window !== 'undefined' ? localStorage.getItem('device_token') : null;
-      const staffHeaders = adminToken && deviceToken
-        ? { Authorization: `Bearer ${adminToken}`, 'x-device-token': deviceToken }
-        : null;
+          const getAuthHeaders = () => {
+        if (typeof window === 'undefined') return {};
+
+        const tokenKeys = ['admin_token', 'token', 'auth_token', 'jwt_token', 'access_token'];
+        const deviceKeys = ['device_token', 'deviceToken'];
+
+        const adminToken = tokenKeys
+          .map(key => localStorage.getItem(key))
+          .find(Boolean);
+        const deviceToken = deviceKeys
+          .map(key => localStorage.getItem(key))
+          .find(Boolean);
+
+        return adminToken && deviceToken
+          ? { Authorization: `Bearer ${adminToken}`, 'x-device-token': deviceToken }
+          : {};
+      };
+
+      const authHeaders = getAuthHeaders();
 
       // Fetch data from all endpoints
       const [
@@ -765,22 +790,22 @@ const [growthMetrics, setGrowthMetrics] = useState({
         schoolStatsRes,
         departmentsRes
       ] = await Promise.allSettled([
-        fetch('/api/studentupload?status=all&includeStats=true&limit=5000'),
-        fetch('/api/staff', staffHeaders ? { headers: staffHeaders } : {}),
-        fetch('/api/subscriber'),
-        fetch('/api/assignment'),
-        fetch('/api/career'),
-        fetch('/api/gallery'),
-        fetch('/api/guidance'),
-        fetch('/api/news'),
-        fetch('/api/school'),
-        fetch('/api/register'),
-        fetch('/api/resources'),
-        fetch('/api/emails'),
-        fetch('/api/sms'),
-        fetch('/api/achievements'),
-        fetch('/api/school-stats'),
-        fetch('/api/staff/departments?grouped=1')
+        fetch('/api/studentupload?status=all&includeStats=true&limit=5000', { headers: authHeaders }),
+        fetch('/api/staff', { headers: authHeaders }),
+        fetch('/api/subscriber', { headers: authHeaders }),
+        fetch('/api/assignment', { headers: authHeaders }),
+        fetch('/api/career', { headers: authHeaders }),
+        fetch('/api/gallery', { headers: authHeaders }),
+        fetch('/api/guidance', { headers: authHeaders }),
+        fetch('/api/news', { headers: authHeaders }),
+        fetch('/api/school', { headers: authHeaders }),
+        fetch('/api/register', { headers: authHeaders }),
+        fetch('/api/resources', { headers: authHeaders }),
+        fetch('/api/emails', { headers: authHeaders }),
+        fetch('/api/sms', { headers: authHeaders }),
+        fetch('/api/achievements', { headers: authHeaders }),
+        fetch('/api/school-stats', { headers: authHeaders }),
+        fetch('/api/staff/departments?grouped=1', { headers: authHeaders })
       ]);
 
       // Process responses
