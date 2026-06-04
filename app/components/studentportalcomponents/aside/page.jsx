@@ -39,7 +39,7 @@ export default function NavigationSidebar({
             <div className="flex items-center gap-3">
               {/* Logo - Using image like Admin sidebar */}
               <div className="relative">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-900 to-blue-900 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/30">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-950 to-blue-900 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-900/40">
                   <img 
                     src="/katz.jpeg" 
                     alt="School Logo" 
@@ -70,7 +70,7 @@ export default function NavigationSidebar({
         {/* Student Profile */}
         <div className="p-4 sm:p-5 lg:p-6 border-b border-gray-200">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-700 to-blue-900 rounded-full flex items-center justify-center shadow-lg shadow-blue-900/30">
               <span className="text-white font-bold text-lg sm:text-xl">
                 {getInitials(student?.fullName)}
               </span>
@@ -80,7 +80,7 @@ export default function NavigationSidebar({
                 {student?.fullName || 'Student Name'}
               </h3>
               <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
-                <span className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap">
+                <span className="px-2 sm:px-3 py-1 bg-blue-900/10 text-blue-900 text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap border border-blue-200">
                   {student?.form} {student?.stream}
                 </span>
               </div>
@@ -93,27 +93,27 @@ export default function NavigationSidebar({
 
         {/* Navigation */}
         <nav className="flex-1 p-4 sm:p-5 lg:p-6 overflow-y-auto">
-          <div className="space-y-2 sm:space-y-4">
+          <div className="space-y-2 sm:space-y-3">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setCurrentView(item.id)}
                 className={`w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4 rounded-xl transition-all duration-200 ${
                   currentView === item.id 
-                    ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border-l-4 border-blue-600 shadow-lg shadow-blue-500/10 backdrop-blur-sm' 
+                    ? 'bg-gradient-to-r from-blue-100 to-blue-150 text-blue-900 border-l-4 border-blue-800 shadow-lg shadow-blue-900/15 backdrop-blur-sm' 
                     : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <span className={`text-lg sm:text-xl ${
                   currentView === item.id 
-                    ? 'text-blue-600' 
+                    ? 'text-blue-900' 
                     : 'text-gray-500 group-hover:text-gray-700'
                 }`}>
                   {item.icon}
                 </span>
                 <span className={`font-semibold text-left text-sm sm:text-base ${
                   currentView === item.id 
-                    ? 'text-blue-700' 
+                    ? 'text-blue-900' 
                     : 'text-gray-800 group-hover:text-gray-900'
                 }`}>
                   {item.label}
@@ -121,24 +121,27 @@ export default function NavigationSidebar({
               </button>
             ))}
 
+            {/* Divider */}
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-2 sm:my-3"></div>
+
             {/* Zeraki Analytics Link - Added below navigation items */}
             <a
               href="https://analytics.zeraki.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4 rounded-xl transition-all duration-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 group"
+              className="w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4 rounded-xl transition-all duration-200 text-gray-700 hover:bg-blue-50 hover:text-blue-900 group"
             >
               <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
                 <img 
                   src="/zeraki.jpg" 
                   alt="Zeraki Analytics" 
-                  className="w-full h-full object-cover rounded-md border border-gray-300 group-hover:border-blue-400 transition-colors"
+                  className="w-full h-full object-cover rounded-md border border-gray-300 group-hover:border-blue-600 transition-colors"
                 />
               </div>
               <span className="font-semibold text-left text-sm sm:text-base flex-1">
                 Zeraki Analytics
               </span>
-              <FiExternalLink className="text-gray-400 text-sm sm:text-base group-hover:text-blue-600 transition-colors" />
+              <FiExternalLink className="text-gray-400 text-sm sm:text-base group-hover:text-blue-800 transition-colors" />
             </a>
           </div>
         </nav>
@@ -150,9 +153,9 @@ export default function NavigationSidebar({
               onClick={onRefresh}
               disabled={isRefreshing}
               className="group flex-1 flex items-center justify-center gap-1.5 sm:gap-2.5 px-3 sm:px-4 py-2.5 sm:py-3 
-              bg-white border border-blue-100 text-blue-600 rounded-xl sm:rounded-2xl 
-              text-xs sm:text-sm font-bold tracking-tight shadow-[0_4px_12px_rgba(59,130,246,0.08)] 
-              active:bg-blue-50 active:scale-95 transition-all duration-200 min-w-0 disabled:cursor-not-allowed disabled:opacity-70"
+              bg-white border border-blue-700 text-blue-900 rounded-xl sm:rounded-2xl 
+              text-xs sm:text-sm font-bold tracking-tight shadow-[0_4px_12px_rgba(30,58,138,0.1)] 
+              active:bg-blue-100 active:scale-95 transition-all duration-200 min-w-0 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <FiRefreshCw className={`text-sm sm:text-lg ${isRefreshing ? 'animate-spin' : 'group-active:animate-spin'}`} />
               <span className="truncate">{isRefreshing ? 'Refreshing' : 'Refresh'}</span>
@@ -162,7 +165,7 @@ export default function NavigationSidebar({
             <button
               onClick={onLogout}
               className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2.5 px-3 sm:px-4 py-2.5 sm:py-3 
-              bg-rose-50/50 border border-rose-100 text-rose-600 rounded-xl sm:rounded-2xl 
+              bg-rose-50/50 border border-rose-200 text-rose-700 rounded-xl sm:rounded-2xl 
               text-xs sm:text-sm font-bold tracking-tight shadow-[0_4px_12px_rgba(225,29,72,0.08)] 
               active:bg-rose-100 active:scale-95 transition-all duration-200 min-w-0"
             >
