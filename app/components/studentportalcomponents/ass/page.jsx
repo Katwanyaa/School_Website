@@ -110,60 +110,67 @@ const downloadMultipleFiles = async (files) => {
     return;
   }
 
+  // Create loading notification
   const loadingAlert = document.createElement('div');
-  loadingAlert.className = 'fixed top-4 right-4 bg-gradient-to-r from-blue-950 to-blue-800 text-white px-4 py-3 rounded-xl shadow-2xl z-[10000] backdrop-blur-sm border border-white/20';
-  loadingAlert.innerHTML = `
-    <div class="flex items-center gap-3">
-      <div class="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
+  loadingAlert.className = 'fixed bottom-4 left-4 bg-gradient-to-r from-blue-950 to-blue-800 text-white px-3 py-2 sm:px-4 sm:py-3 rounded-lg sm:rounded-xl shadow-2xl z-[10000] backdrop-blur-sm border border-white/20';
+  loadingAlert.style.fontSize = 'clamp(12px, 2vw, 14px)';
+  
+  const spinnerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="display: inline-block; width: 16px; height: 16px; border: 2px solid white; border-right: 2px solid transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
       <div>
-        <p class="font-bold">Preparing Download</p>
-        <p class="text-sm opacity-90">Processing ${files.length} files...</p>
+        <p style="margin: 0; font-weight: bold; font-size: 13px;">Downloading ${files.length} file${files.length > 1 ? 's' : ''}...</p>
       </div>
     </div>
+    <style>
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   `;
+  loadingAlert.innerHTML = spinnerHTML;
   document.body.appendChild(loadingAlert);
 
   try {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      if (file && file.url) {
-        downloadFile(file.url, file.fileName);
-        await new Promise(resolve => setTimeout(resolve, 300));
+      // Handle different file object structures
+      const fileUrl = file?.url || file?.downloadUrl || file?.href;
+      const fileName = file?.fileName || file?.name || file?.originalName || 'download';
+      
+      if (fileUrl) {
+        downloadFile(fileUrl, fileName);
+        await new Promise(resolve => setTimeout(resolve, 200)); // Stagger downloads
       }
     }
 
+    // Success notification
     loadingAlert.innerHTML = `
-      <div class="flex items-center gap-3">
-        <div class="h-6 w-6 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
-          <IoCheckmarkCircle className="text-white" size={16} />
-        </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: linear-gradient(135deg, #4ade80 0%, #10b981 100%); border-radius: 50%; font-weight: bold; color: white; font-size: 12px;">✓</div>
         <div>
-          <p class="font-bold">Download Complete</p>
-          <p class="text-sm opacity-90">${files.length} files downloaded!</p>
+          <p style="margin: 0; font-weight: bold; font-size: 13px;">Downloaded ${files.length} file${files.length > 1 ? 's' : ''}!</p>
         </div>
       </div>
     `;
     
     setTimeout(() => {
       document.body.removeChild(loadingAlert);
-    }, 3000);
+    }, 2500);
 
   } catch (error) {
     console.error('Error downloading files:', error);
     loadingAlert.innerHTML = `
-      <div class="flex items-center gap-3">
-        <div class="h-6 w-6 bg-gradient-to-r from-red-400 to-rose-500 rounded-full flex items-center justify-center">
-          <IoWarning className="text-white" size={16} />
-        </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: linear-gradient(135deg, #f87171 0%, #ef4444 100%); border-radius: 50%; font-weight: bold; color: white; font-size: 12px;">!</div>
         <div>
-          <p class="font-bold">Download Failed</p>
-          <p class="text-sm opacity-90">Please try again</p>
+          <p style="margin: 0; font-weight: bold; font-size: 13px;">Download failed. Try again.</p>
         </div>
       </div>
     `;
     setTimeout(() => {
       document.body.removeChild(loadingAlert);
-    }, 3000);
+    }, 2500);
   }
 };
 
@@ -435,22 +442,23 @@ function AssignmentResourceCard({ item, type, onView, onDownload }) {
           </div>
         )}
         
-        {/* Action Buttons - FLEX LAYOUT ONLY (not stacked on mobile) */}
-        <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-100">
+        {/* Action Buttons - COMPACT & MOBILE RESPONSIVE */}
+        <div className="flex gap-2 pt-3 sm:pt-4 border-t border-gray-100">
           <button
             onClick={() => onView?.(item)}
-            className="flex-1 flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-gray-900 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm"
+            className="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 sm:py-2.5 bg-gray-900 text-white rounded-lg font-bold text-xs sm:text-sm active:scale-95 transition-all"
           >
-            <span>View Details</span>
-            <IoArrowDown className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">View Details</span>
+            <span className="inline sm:hidden">View</span>
+            <IoArrowDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           </button>
           
           <button
             onClick={() => onDownload?.(item)}
-            className="px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg sm:rounded-xl font-bold shadow-md text-xs sm:text-sm"
-            title={`Download ${totalFiles} ${totalFiles === 1 ? 'file' : 'files'}`}
+            className="px-2 sm:px-3 py-2 sm:py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-bold text-xs sm:text-sm shadow-md active:scale-95 transition-all"
+            title={`Download ${totalFiles} file${totalFiles !== 1 ? 's' : ''}`}
           >
-            <IoCloudDownload className="w-4 h-4 sm:w-5 sm:h-5" />
+            <IoCloudDownload className="w-4 h-4 sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
@@ -540,17 +548,7 @@ function DetailModal({ item, type, onClose, onDownload }) {
                     </div>
                   </div>
                 )}
-                {item.priority && (
-                  <div className="text-center p-2 sm:p-3 md:p-4 bg-gray-50 rounded-lg sm:rounded-xl md:rounded-2xl">
-                    <div className="text-xs sm:text-sm text-gray-600 font-bold">Priority</div>
-                    <div className={`text-sm sm:text-base md:text-lg font-bold mt-1 sm:mt-2 ${
-                      item.priority === 'high' ? 'text-rose-600' :
-                      item.priority === 'medium' ? 'text-amber-600' : 'text-emerald-600'
-                    }`}>
-                      {item.priority?.toUpperCase()}
-                    </div>
-                  </div>
-                )}
+
               </>
             )}
             <div className="text-center p-2 sm:p-3 md:p-4 bg-gray-50 rounded-lg sm:rounded-xl md:rounded-2xl">
@@ -559,19 +557,11 @@ function DetailModal({ item, type, onClose, onDownload }) {
                 {item.teacher || 'Not specified'}
               </div>
             </div>
-            <div className="text-center p-2 sm:p-3 md:p-4 bg-gray-50 rounded-lg sm:rounded-xl md:rounded-2xl">
-              <div className="text-xs sm:text-sm text-gray-600 font-bold">Files</div>
-              <div className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mt-1 sm:mt-2">
-                {isResource 
-                  ? (item.files?.length || 0)
-                  : ((item.assignmentFileAttachments?.length || 0) + (item.attachmentAttachments?.length || 0))
-                }
-              </div>
-            </div>
+
           </div>
 
           {/* Description */}
-          {(item.description || (!isResource && item.instructions)) && (
+          {item.description && (
             <div className="space-y-3 sm:space-y-4 md:space-y-6">
               {item.description && (
                 <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-gray-200">
@@ -583,15 +573,7 @@ function DetailModal({ item, type, onClose, onDownload }) {
                 </div>
               )}
               
-              {!isResource && item.instructions && (
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-blue-200">
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4 flex items-center gap-2 sm:gap-3">
-                    <IoDocument className="text-blue-600 w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Instructions</span>
-                  </h3>
-                  <p className="text-gray-700 text-sm sm:text-base whitespace-pre-line">{item.instructions}</p>
-                </div>
-              )}
+
             </div>
           )}
 
@@ -605,16 +587,17 @@ function DetailModal({ item, type, onClose, onDownload }) {
                     <span>Resource Files ({item.files.length})</span>
                   </h3>
                   <button
-                    onClick={() => downloadMultipleFiles(item.files.map(file => ({
+                    onClick={() => downloadMultipleFiles(item.files?.map(file => ({
                       url: file.url,
-                      fileName: file.name,
+                      fileName: file.name || 'file',
                       fileType: file.fileType,
                       extension: file.extension
-                    })))}
-                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-blue-950 to-blue-800 text-white rounded-lg sm:rounded-xl font-bold shadow-md flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+                    })) || [])}
+                    className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-blue-950 to-blue-800 text-white rounded-lg font-bold shadow-md flex items-center gap-1 text-xs sm:text-sm whitespace-nowrap"
                   >
-                    <IoCloudDownload className="w-3 h-3 sm:w-4 sm:h-4" />
-                    Download All
+                    <IoCloudDownload className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span className="hidden sm:inline">Download All</span>
+                    <span className="inline sm:hidden">Download</span>
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
@@ -647,11 +630,17 @@ function DetailModal({ item, type, onClose, onDownload }) {
                         <span>Assignment Files ({item.assignmentFileAttachments?.length || 0})</span>
                       </h3>
                       <button
-                        onClick={() => downloadMultipleFiles(item.assignmentFileAttachments || [])}
-                        className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg sm:rounded-xl font-bold shadow-md flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+                        onClick={() => downloadMultipleFiles(item.assignmentFileAttachments?.map(file => ({
+                          url: file.url,
+                          fileName: file.fileName || file.name || 'file',
+                          fileType: file.fileType,
+                          extension: file.extension
+                        })) || [])}
+                        className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-bold shadow-md flex items-center gap-1 text-xs sm:text-sm whitespace-nowrap"
                       >
-                        <IoCloudDownload className="w-3 h-3 sm:w-4 sm:h-4" />
-                        Download All
+                        <IoCloudDownload className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span className="hidden sm:inline">Download All</span>
+                        <span className="inline sm:hidden">Download</span>
                       </button>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
@@ -676,11 +665,17 @@ function DetailModal({ item, type, onClose, onDownload }) {
                         <span>Additional Attachments ({item.attachmentAttachments?.length || 0})</span>
                       </h3>
                       <button
-                        onClick={() => downloadMultipleFiles(item.attachmentAttachments || [])}
-                        className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg sm:rounded-xl font-bold shadow-md flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+                        onClick={() => downloadMultipleFiles(item.attachmentAttachments?.map(file => ({
+                          url: file.url,
+                          fileName: file.fileName || file.name || 'file',
+                          fileType: file.fileType,
+                          extension: file.extension
+                        })) || [])}
+                        className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg font-bold shadow-md flex items-center gap-1 text-xs sm:text-sm whitespace-nowrap"
                       >
-                        <IoCloudDownload className="w-3 h-3 sm:w-4 sm:h-4" />
-                        Download All
+                        <IoCloudDownload className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span className="hidden sm:inline">Download All</span>
+                        <span className="inline sm:hidden">Download</span>
                       </button>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
@@ -700,23 +695,22 @@ function DetailModal({ item, type, onClose, onDownload }) {
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-row items-center gap-2 sm:gap-3 md:gap-4 pt-3 sm:pt-4 md:pt-6 border-t border-gray-200">
+          {/* Action Buttons - COMPACT & MOBILE RESPONSIVE */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-3 sm:pt-4 border-t border-gray-200">
             <button
               onClick={onClose}
-              className="flex-1 min-w-0 h-11 sm:h-14 bg-gray-100 text-gray-700 rounded-lg sm:rounded-xl md:rounded-2xl font-bold text-[12px] sm:text-base md:text-lg flex items-center justify-center gap-1.5 sm:gap-2 active:scale-95 transition-all"
+              className="flex items-center justify-center gap-1 px-3 py-2 sm:px-4 sm:py-2.5 bg-gray-100 text-gray-700 rounded-lg font-bold text-xs sm:text-sm active:scale-95 transition-all"
             >
-              <IoClose className="shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="truncate">Close</span>
+              <IoClose className="shrink-0 w-4 h-4" />
+              <span>Close</span>
             </button>
             
             <button
               onClick={() => onDownload?.(item)}
-              className="flex-[2] min-w-0 h-11 sm:h-14 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg sm:rounded-xl md:rounded-2xl font-bold text-[12px] sm:text-base md:text-lg shadow-lg flex items-center justify-center gap-1.5 sm:gap-2 active:scale-95 transition-all"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-bold text-xs sm:text-sm shadow-md active:scale-95 transition-all"
             >
-              <IoCloudDownload className="shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="truncate sm:hidden">Download</span>
-              <span className="hidden sm:inline">Download All Files</span>
+              <IoCloudDownload className="shrink-0 w-4 h-4" />
+              <span>Download</span>
             </button>
           </div>
         </div>
