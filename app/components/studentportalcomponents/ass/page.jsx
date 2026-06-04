@@ -1507,96 +1507,117 @@ export default function ModernResourcesAssignmentsView({
             ))}
           </motion.div>
         ) : (
-          /* List View */
-          <div className="space-y-3 sm:space-y-4">
-            {currentItems.map((item, index) => (
-              <motion.div
-                key={item.id || index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-2xl border border-gray-200 shadow p-3 sm:p-4 md:p-6"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                  {/* Icon & Status */}
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <div className={`p-2 sm:p-3 rounded-2xl ${
-                      activeTab === 'assignments' 
-                        ? 'bg-gradient-to-r from-blue-100 to-slate-200' 
-                        : 'bg-gradient-to-r from-blue-100 to-blue-200'
-                    }`}>
-                      {activeTab === 'assignments' ? (
-                        <IoDocument className="text-blue-900 text-lg sm:text-xl" />
-                      ) : (
-                        getFileIcon(item.type, item.files?.[0]?.extension, 20)
-                      )}
-                    </div>
+          /* Table View */
+          <div className="overflow-x-auto rounded-2xl border border-gray-200">
+            <table className="w-full">
+              {/* Table Header */}
+              <thead>
+                <tr className="bg-gradient-to-r from-blue-950 to-blue-900 text-white border-b border-gray-200">
+                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider">Title</th>
+                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider hidden sm:table-cell">Subject</th>
+                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider hidden lg:table-cell">Class</th>
+                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider">
+                    {activeTab === 'assignments' ? 'Due Date' : 'Date Added'}
+                  </th>
+                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm font-bold uppercase tracking-wider">Files</th>
+                  {activeTab === 'assignments' && (
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm font-bold uppercase tracking-wider hidden md:table-cell">Status</th>
+                  )}
+                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-bold uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              {/* Table Body */}
+              <tbody>
+                {currentItems.map((item, index) => (
+                  <motion.tr
+                    key={item.id || index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-slate-50 transition-colors duration-200 ${
+                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
+                    }`}
+                  >
+                    {/* Title */}
+                    <td className="px-4 sm:px-6 py-4 text-sm sm:text-base font-semibold text-gray-900 max-w-xs">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className={`p-2 rounded-lg flex-shrink-0 ${
+                          activeTab === 'assignments' 
+                            ? 'bg-blue-100' 
+                            : 'bg-green-100'
+                        }`}>
+                          {activeTab === 'assignments' ? (
+                            <IoDocument className={`${activeTab === 'assignments' ? 'text-blue-900' : 'text-green-900'}`} />
+                          ) : (
+                            getFileIcon(item.type, item.files?.[0]?.extension, 16)
+                          )}
+                        </div>
+                        <span className="line-clamp-2">{item.title || 'Untitled'}</span>
+                      </div>
+                    </td>
                     
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                          {activeTab === 'assignments' ? 'Assignment' : item.type || 'Resource'}
-                        </span>
-                        {activeTab === 'assignments' && item.status && (
-                          <StatusBadge status={item.status} size="sm" />
-                        )}
-                      </div>
-                      <h3 className="font-bold text-gray-900 text-base sm:text-lg line-clamp-1">{item.title || 'Untitled'}</h3>
-                    </div>
-                  </div>
-
-                  {/* Metadata */}
-                  <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                    <div className="space-y-1">
-                      <div className="text-xs text-gray-500">Subject</div>
-                      <div className="font-bold text-gray-900">{item.subject || 'General'}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-gray-500">Class</div>
-                      <div className="font-bold text-gray-900">{item.className || 'All Classes'}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-gray-500">
-                        {activeTab === 'assignments' ? 'Due Date' : 'Date Added'}
-                      </div>
-                      <div className="font-bold text-gray-900">
+                    {/* Subject */}
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-700 hidden sm:table-cell">
+                      <span className="inline-block px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-semibold">
+                        {item.subject || 'General'}
+                      </span>
+                    </td>
+                    
+                    {/* Class */}
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-700 hidden lg:table-cell">
+                      <span className="text-xs sm:text-sm font-medium">{item.className || 'All'}</span>
+                    </td>
+                    
+                    {/* Date */}
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-700">
+                      <span className="text-xs sm:text-sm">
                         {activeTab === 'assignments' 
-                          ? (item.dueDate ? new Date(item.dueDate).toLocaleDateString() : 'Not specified')
-                          : (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Not specified')
+                          ? (item.dueDate ? new Date(item.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—')
+                          : (item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—')
                         }
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-gray-500">Files</div>
-                      <div className="font-bold text-gray-900">
+                      </span>
+                    </td>
+                    
+                    {/* Files Count */}
+                    <td className="px-4 sm:px-6 py-4 text-center">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-amber-900 text-xs font-bold">
                         {activeTab === 'assignments'
                           ? ((item.assignmentFileAttachments?.length || 0) + (item.attachmentAttachments?.length || 0))
                           : (item.files?.length || 0)
                         }
+                      </span>
+                    </td>
+                    
+                    {/* Status */}
+                    {activeTab === 'assignments' && (
+                      <td className="px-4 sm:px-6 py-4 text-center hidden md:table-cell">
+                        {item.status && <StatusBadge status={item.status} size="sm" />}
+                      </td>
+                    )}
+                    
+                    {/* Actions */}
+                    <td className="px-4 sm:px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2 sm:gap-3">
+                        <button
+                          onClick={() => setSelectedItem(item)}
+                          className="p-2 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                          title="View details"
+                        >
+                          <IoEye className="text-gray-700 text-lg" />
+                        </button>
+                        <button
+                          onClick={() => handleDownload(item)}
+                          className="p-2 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+                          title="Download files"
+                        >
+                          <IoCloudDownload className="text-blue-700 text-lg" />
+                        </button>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <button
-                      onClick={() => setSelectedItem(item)}
-                      className="px-3 sm:px-4 py-2 bg-gray-900 text-white rounded-xl font-bold flex items-center gap-2"
-                    >
-                      <FiEye />
-                      <span className="hidden sm:inline">View</span>
-                    </button>
-                    <button
-                      onClick={() => handleDownload(item)}
-                      className="px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-bold shadow-md flex items-center gap-2"
-                    >
-                      <IoCloudDownload />
-                      <span className="hidden sm:inline">Download</span>
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
