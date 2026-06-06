@@ -406,7 +406,7 @@ We provide a supportive learning environment that promotes intellectual growth, 
 • Closes: ${schoolData.admissionCloseDate ? new Date(schoolData.admissionCloseDate).toLocaleDateString() : 'March'}
 
 **Admission Fee:** ${schoolData.admissionFee ? `KES ${schoolData.admissionFee.toLocaleString()}` : 'Contact for details'}
-**Admission Capacity:** ${schoolData.admissionCapacity || 'Limited slots available'}
+**Admission Vacancies:** ${schoolData.admissionCapacity || 'Limited slots available'}
 
 ${documentData?.admissionFeePdf ? `**Download Admission Fee Structure:** ${documentData.admissionFeePdfName || 'Admission Fees'}` : ''}
 

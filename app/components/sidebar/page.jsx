@@ -11,6 +11,7 @@ import {
   FiMail,
   FiStar,
   FiUser,
+  FiUsers,
   FiShield,
   FiInfo,
   FiMessageCircle,
@@ -234,6 +235,12 @@ const handleLogout = () => {
       label: 'School Hub',
       icon: FiGrid,
       badge: 'emerald'
+    },
+    {
+      id: 'alumni',
+      label: 'Alumni & Governance',
+      icon: FiUsers,
+      badge: 'blue'
     },
     { 
       id: 'assignments', 

@@ -45,6 +45,45 @@
     </image:image>
   </url>
 
+  <!-- Assignments -->
+  <url>
+    <loc>https://katwanyaasenior.school/assignments</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Assignments</image:title>
+      <image:caption>Current school assignments and downloadable academic work</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Learning Resources & Exams -->
+  <url>
+    <loc>https://katwanyaasenior.school/resources-exams</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Learning Resources and Exams</image:title>
+      <image:caption>Learning resources, revision materials, past papers, and exams</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Alumni & Governance -->
+  <url>
+    <loc>https://katwanyaasenior.school/alumni</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://katwanyaasenior.school/katz.jpeg</image:loc>
+      <image:title>Alumni and Governance</image:title>
+      <image:caption>Alumni galleries, BOM, PTA, and principals</image:caption>
+    </image:image>
+  </url>
+
   <!-- Guidance & Counselling -->
   <url>
     <loc>https://katwanyaasenior.school/pages/Guidance-and-Counselling</loc>

@@ -587,6 +587,25 @@ model SchoolDocument {
   @@map("SchoolDocument")
 }
 
+model AlumniGovernanceRecord {
+  id           Int      @id @default(autoincrement())
+  section      String   @db.VarChar(50)
+  name         String   @db.VarChar(255)
+  position     String?  @db.VarChar(255)
+  description  String?  @db.Text
+  image        String?  @db.Text
+  images       Json     @default("[]")
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([section])
+  @@index([isActive])
+  @@index([displayOrder])
+  @@map("alumni_governance_records")
+}
+
 model AdmissionApplication {
   id                 String   @id @default(cuid())
   applicationNumber  String   @unique

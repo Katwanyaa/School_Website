@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   FiAward,
+  FiArchive,
   FiBookOpen,
   FiBriefcase,
   FiCalendar,
@@ -34,6 +35,8 @@ const primaryLinks = [
   { name: 'Home', href: '/', icon: FiHome, exact: true },
   { name: 'About', href: '/pages/AboutUs', icon: FiInfo },
   { name: 'Admissions', href: '/pages/admissions', icon: FiBookOpen },
+  { name: 'Assignments', href: '/assignments', icon: FiFileText },
+  { name: 'Resources & Exams', href: '/resources-exams', icon: FiArchive },
   { name: 'Gallery', href: '/pages/gallery', icon: FiImage },
   { name: 'Events & News', href: '/pages/eventsandnews', icon: FiCalendar },
 ];
@@ -101,10 +104,9 @@ const academicLinks = [
   },
   {
     name: 'Alumni Network',
-    href: 'https://www.facebook.com/groups/414008468611340/',
-    icon: FiExternalLink,
-    description: 'Connect with former students',
-    external: true,
+    href: '/alumni',
+    icon: FiUsers,
+    description: 'Alumni, BOM, PTA & principals',
   },
   {
     name: 'Zeraki Analytics',

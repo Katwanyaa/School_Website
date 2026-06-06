@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../libs/prisma";
 import cloudinary from "../../../libs/cloudinary";
+import { cleanGeneratedFileName } from "../../../libs/displayNames";
 
 const decodeJwtPayload = (token) => {
   const payload = token.split('.')[1];
@@ -331,17 +332,20 @@ const cleanResourceResponse = (resource) => {
     description: resource.description,
     category: resource.category,
     type: resource.type,
-    files: (resource.files || []).map(file => ({
-      url: file.url,
-      name: file.name,
-      size: file.size,
-      extension: file.extension || '.' + file.name.split('.').pop().toLowerCase(),
-      fileType: file.fileType || getFileType(file.name),
-      uploadedAt: file.uploadedAt,
-      formattedSize: formatFileSize(file.size || 0),
-      publicId: file.publicId,
-      format: file.format
-    })),
+    files: (resource.files || []).map(file => {
+      const displayName = cleanGeneratedFileName(file.name || file.url);
+      return {
+        url: file.url,
+        name: displayName,
+        size: file.size,
+        extension: file.extension || (displayName.includes('.') ? '.' + displayName.split('.').pop().toLowerCase() : ''),
+        fileType: file.fileType || getFileType(displayName),
+        uploadedAt: file.uploadedAt,
+        formattedSize: formatFileSize(file.size || 0),
+        publicId: file.publicId,
+        format: file.format
+      };
+    }),
     accessLevel: resource.accessLevel,
     uploadedBy: resource.uploadedBy,
     downloads: resource.downloads,

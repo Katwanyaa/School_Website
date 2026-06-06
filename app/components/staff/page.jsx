@@ -497,7 +497,7 @@ function ModernStaffDetailModal({ staff, onClose, onEdit }) {
               <img
                 src={imageUrl}
                 alt={staff.name}
-                className="relative w-24 h-24 md:w-32 md:h-32 rounded-[1.8rem] object-cover border-2 border-white/10 shadow-2xl"
+                className="relative w-24 h-24 md:w-32 md:h-32 rounded-[1.8rem] object-contain border-2 border-white/10 shadow-2xl"
                 onError={(e) => { e.target.src = '/male.png'; }}
               />
             </div>
@@ -710,7 +710,7 @@ function ModernStaffCard({ staff, onEdit, onDelete, onView, selected, onSelect, 
               src={imageUrl}
               alt={staff.name}
               onClick={() => onView(staff)}
-              className="w-full h-full object-cover rounded-2xl cursor-pointer border border-slate-200"
+              className="w-full h-full object-contain rounded-2xl cursor-pointer border border-slate-200"
               onError={() => setImageError(true)}
             />
           ) : (
@@ -1476,7 +1476,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                     <div className="flex flex-col sm:flex-row items-start gap-4">
                       {imagePreview && (
                         <div className="relative">
-                          <img src={imagePreview} alt="Preview" className="w-24 h-24 rounded-2xl object-cover border-2 border-cyan-300" />
+                          <img src={imagePreview} alt="Preview" className="w-24 h-24 rounded-2xl object-contain border-2 border-cyan-300" />
                           <button
                             type="button"
                             onClick={handleImageRemove}
@@ -1509,7 +1509,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                       <div className="mt-4 flex items-center gap-4">
                         <div className="h-16 w-16 overflow-hidden rounded-2xl bg-slate-100">
                           {imagePreview ? (
-                            <img src={imagePreview} alt="Teacher preview" className="h-full w-full object-cover" />
+                            <img src={imagePreview} alt="Teacher preview" className="h-full w-full object-contain" />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-slate-400">
                               <FaUser />
@@ -1646,7 +1646,7 @@ function ModernStaffModal({ onClose, onSave, staff, loading, existingDeputyCount
                     <div className="flex flex-col sm:flex-row items-start gap-4">
                       {imagePreview && (
                         <div className="relative">
-                          <img src={imagePreview} alt="Preview" className="w-20 h-20 rounded-xl object-cover border-2 border-cyan-300" />
+                          <img src={imagePreview} alt="Preview" className="w-20 h-20 rounded-xl object-contain border-2 border-cyan-300" />
                           <button
                             type="button"
                             onClick={handleImageRemove}
@@ -1911,6 +1911,13 @@ const STAFF_DEPARTMENT_CATEGORIES = [
   { value: 'SUPPORT', label: 'Support / Non-Teaching', icon: FiShield, color: 'from-slate-700 to-slate-900' }
 ];
 
+const CBC_PATHWAY_OPTIONS = [
+  'Arts and Sports Science',
+  'Social Sciences',
+  'STEM',
+  'Technical and Vocational Education and Training',
+];
+
 const getDepartmentAuthHeaders = () => {
   const adminToken = localStorage.getItem('admin_token');
   const deviceToken = localStorage.getItem('device_token');
@@ -1961,7 +1968,6 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
     name: department?.name || '',
     category: department?.category || 'TEACHING',
     headName: department?.headName || '',
-    assistantHeadName: department?.assistantHeadName || '',
     staffCount: department?.staffCount || 0,
     description: department?.description || '',
     displayOrder: department?.displayOrder || 0,
@@ -1969,7 +1975,11 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
     focusAreas: Array.isArray(extra.focusAreas) ? extra.focusAreas.join(', ') : (extra.focusAreas || ''),
     subjects: Array.isArray(extra.subjects) ? extra.subjects.join(', ') : (extra.subjects || ''),
     location: extra.location || '',
-    notes: extra.notes || ''
+    notes: extra.notes || '',
+    cbcPathways: Array.isArray(extra.cbcPathways) ? extra.cbcPathways : [],
+    pathwayAreas: Array.isArray(extra.pathwayAreas) ? extra.pathwayAreas.join(', ') : (extra.pathwayAreas || ''),
+    pathwayCategories: Array.isArray(extra.pathwayCategories) ? extra.pathwayCategories.join(', ') : (extra.pathwayCategories || ''),
+    pathwayHod: extra.pathwayHod || department?.headName || ''
   });
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState(
@@ -2031,6 +2041,15 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
     .map((item) => item.trim())
     .filter(Boolean);
 
+  const togglePathway = (pathway) => {
+    setFormData((previous) => ({
+      ...previous,
+      cbcPathways: previous.cbcPathways.includes(pathway)
+        ? previous.cbcPathways.filter((item) => item !== pathway)
+        : [...previous.cbcPathways, pathway],
+    }));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!hasDepartmentImage) {
@@ -2041,8 +2060,8 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
     const payload = new FormData();
     payload.append('name', formData.name.trim());
     payload.append('category', formData.category);
-    payload.append('headName', formData.headName.trim());
-    payload.append('assistantHeadName', formData.assistantHeadName.trim());
+    payload.append('headName', formData.category === 'CBC' ? formData.pathwayHod.trim() : formData.headName.trim());
+    payload.append('assistantHeadName', '');
     payload.append('staffCount', String(Math.max(0, Number(formData.staffCount) || 0)));
     payload.append('description', formData.description.trim());
     payload.append('displayOrder', String(Number(formData.displayOrder) || 0));
@@ -2051,7 +2070,11 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
       focusAreas: toList(formData.focusAreas),
       subjects: toList(formData.subjects),
       location: formData.location.trim(),
-      notes: formData.notes.trim()
+      notes: formData.notes.trim(),
+      cbcPathways: formData.category === 'CBC' ? formData.cbcPathways : [],
+      pathwayAreas: formData.category === 'CBC' ? toList(formData.pathwayAreas) : [],
+      pathwayCategories: formData.category === 'CBC' ? toList(formData.pathwayCategories) : [],
+      pathwayHod: formData.category === 'CBC' ? formData.pathwayHod.trim() : ''
     }));
 
     if (imageFiles.length > 0) {
@@ -2130,7 +2153,61 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              {formData.category === 'CBC' ? (
+                <div className="rounded-2xl border-2 border-blue-100 bg-blue-50/60 p-4">
+                  <p className="mb-3 text-xs font-black uppercase tracking-widest text-blue-700">
+                    CBC Pathways Configuration
+                  </p>
+                  <div className="grid gap-3">
+                    {CBC_PATHWAY_OPTIONS.map((pathway) => (
+                      <label key={pathway} className="flex items-center gap-3 rounded-xl bg-white p-3 text-sm font-bold text-slate-700">
+                        <input
+                          type="checkbox"
+                          checked={formData.cbcPathways.includes(pathway)}
+                          onChange={() => togglePathway(pathway)}
+                          className="h-5 w-5 rounded border-slate-300 text-blue-600"
+                        />
+                        {pathway}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                        Pathway Areas
+                      </label>
+                      <input
+                        value={formData.pathwayAreas}
+                        onChange={(event) => updateField('pathwayAreas', event.target.value)}
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                        placeholder="Languages, Humanities, Applied sciences"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                        Pathway Categories
+                      </label>
+                      <input
+                        value={formData.pathwayCategories}
+                        onChange={(event) => updateField('pathwayCategories', event.target.value)}
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                        placeholder="Core, Optional, Applied"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+                      Pathway HOD
+                    </label>
+                    <input
+                      value={formData.pathwayHod}
+                      onChange={(event) => updateField('pathwayHod', event.target.value)}
+                      className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
+                      placeholder="HOD responsible for this CBC pathway"
+                    />
+                  </div>
+                </div>
+              ) : (
                 <div>
                   <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
                     HOD Name
@@ -2142,18 +2219,7 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
                     placeholder="Head of Department"
                   />
                 </div>
-                <div>
-                  <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
-                    AHOD Name
-                  </label>
-                  <input
-                    value={formData.assistantHeadName}
-                    onChange={(event) => updateField('assistantHeadName', event.target.value)}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-blue-500"
-                    placeholder="Assistant HOD"
-                  />
-                </div>
-              </div>
+              )}
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
@@ -2201,7 +2267,7 @@ function DepartmentFormModal({ department, onClose, onSave, loading }) {
                     <div className="mb-3 grid grid-cols-2 gap-2">
                       {imagePreviews.map((preview, index) => (
                         <div key={`${preview}-${index}`} className="group relative overflow-hidden rounded-xl">
-                          <img src={preview} alt="Department preview" className="h-28 w-full object-cover" />
+                          <img src={preview} alt="Department preview" className="h-28 w-full bg-slate-100 object-contain" />
                           <button
                             type="button"
                             onClick={() => removeDepartmentPreview(preview, index)}
@@ -2415,8 +2481,11 @@ function StaffDepartmentManager({ showNotification }) {
       department.name,
       department.description,
       department.headName,
-      department.assistantHeadName,
       department.category,
+      ...(parseDepartmentExtra(department.extra).cbcPathways || []),
+      ...(parseDepartmentExtra(department.extra).pathwayAreas || []),
+      ...(parseDepartmentExtra(department.extra).pathwayCategories || []),
+      parseDepartmentExtra(department.extra).pathwayHod,
       ...(department.staff || []).flatMap((teacher) => [
         teacher?.name,
         teacher?.subjectOffered,
@@ -2482,7 +2551,7 @@ function StaffDepartmentManager({ showNotification }) {
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search department, HOD, AHOD or description..."
+            placeholder="Search department, HOD, CBC pathway or description..."
             className="w-full rounded-xl border-2 border-slate-100 bg-slate-50 py-4 pl-12 pr-4 text-sm font-bold outline-none focus:border-blue-500 focus:bg-white"
           />
         </div>
@@ -2508,10 +2577,12 @@ function StaffDepartmentManager({ showNotification }) {
             const categoryInfo = STAFF_DEPARTMENT_CATEGORIES.find((item) => item.value === department.category) || STAFF_DEPARTMENT_CATEGORIES[2];
             const departmentImage = getDepartmentImage(department);
             const teachers = Array.isArray(department.staff) ? department.staff : [];
+            const departmentExtra = parseDepartmentExtra(department.extra);
+            const isCbcDepartment = department.category === 'CBC';
             return (
               <article key={department.id} className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50">
                 {departmentImage ? (
-                  <img src={departmentImage} alt={department.name} className="h-44 w-full object-cover" />
+                  <img src={departmentImage} alt={department.name} className="h-44 w-full bg-slate-100 object-contain" />
                 ) : (
                   <div className="flex h-44 w-full items-center justify-center bg-slate-100 text-center text-xs font-black uppercase tracking-widest text-slate-400">
                     Department image required
@@ -2534,17 +2605,21 @@ function StaffDepartmentManager({ showNotification }) {
                   </p>
                   <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
                     <div className="rounded-xl bg-slate-50 p-3">
-                      <p className="font-black uppercase tracking-widest text-slate-400">HOD</p>
-                      <p className="mt-1 truncate font-bold text-slate-800">{department.headName || 'Not set'}</p>
+                      <p className="font-black uppercase tracking-widest text-slate-400">{isCbcDepartment ? 'Pathway HOD' : 'HOD'}</p>
+                      <p className="mt-1 truncate font-bold text-slate-800">{(isCbcDepartment ? departmentExtra.pathwayHod : department.headName) || 'Not set'}</p>
                     </div>
                     <div className="rounded-xl bg-slate-50 p-3">
                       <p className="font-black uppercase tracking-widest text-slate-400">Staff</p>
                       <p className="mt-1 font-bold text-slate-800">{department.staffCount || 0}</p>
                     </div>
-                    <div className="col-span-2 rounded-xl bg-slate-50 p-3">
-                      <p className="font-black uppercase tracking-widest text-slate-400">AHOD</p>
-                      <p className="mt-1 truncate font-bold text-slate-800">{department.assistantHeadName || 'Not set'}</p>
-                    </div>
+                    {isCbcDepartment && (
+                      <div className="col-span-2 rounded-xl bg-slate-50 p-3">
+                        <p className="font-black uppercase tracking-widest text-slate-400">CBC Pathways</p>
+                        <p className="mt-1 line-clamp-2 font-bold text-slate-800">
+                          {(departmentExtra.cbcPathways || []).join(', ') || 'No pathways selected'}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-3">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -2557,7 +2632,7 @@ function StaffDepartmentManager({ showNotification }) {
                             <img
                               src={teacher.image || (teacher.gender === 'female' ? '/female.png' : '/male.png')}
                               alt={teacher.name}
-                              className="h-8 w-8 rounded-full object-cover object-top"
+                              className="h-8 w-8 rounded-full bg-slate-100 object-contain"
                             />
                             <div className="min-w-0">
                               <p className="truncate text-xs font-black text-slate-800">{teacher.name}</p>

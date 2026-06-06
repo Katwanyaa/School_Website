@@ -57,6 +57,7 @@ import Fees from "../components/fees/page";
 import SchoolDocs from "../components/schooldocuments/page";
 import AchievementsManager from "../components/Achievements/page";
 import SchoolHubManager from "../components/schoolhub/page";
+import AlumniGovernanceManager from "../components/alumni/page";
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -892,6 +893,8 @@ const handleLogout = () => {
         return <SchoolDocs />;
       case 'schoolhub':
         return <SchoolHubManager />;
+      case 'alumni':
+        return <AlumniGovernanceManager />;
       case 'guidance-counseling':
         return <GuidanceCounselingTab />;
       case 'staff':
@@ -959,6 +962,12 @@ const handleLogout = () => {
       label: 'School Hub',
       icon: FiGrid,
       badge: 'emerald'
+    },
+    {
+      id: 'alumni',
+      label: 'Alumni & Governance',
+      icon: FiUsers,
+      badge: 'blue'
     },
     { 
       id: 'staff', 

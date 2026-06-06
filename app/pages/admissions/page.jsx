@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
+import { cleanGeneratedFileName } from '../../libs/displayNames';
 import { 
   FiUser, 
   FiCalendar, 
@@ -1611,7 +1612,7 @@ const AcademicResultsSection = ({ documentData }) => {
               
               <a 
                 href={result.pdf}
-                download={result.pdfName}
+                download={cleanGeneratedFileName(result.pdfName || 'academic-report.pdf')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 w-full py-4 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95"
@@ -1638,7 +1639,7 @@ const AcademicResultsSection = ({ documentData }) => {
                     </div>
                     <div className="min-w-0">
                       <h5 className="font-black text-slate-900 text-[11px] uppercase tracking-wide truncate">
-                        {doc.description || doc.filename}
+                        {doc.description || cleanGeneratedFileName(doc.filename)}
                       </h5>
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">
                         {doc.year} • {doc.term || 'General'}
@@ -1647,7 +1648,7 @@ const AcademicResultsSection = ({ documentData }) => {
                   </div>
                   <a 
                     href={doc.filepath}
-                    download={doc.filename}
+                    download={cleanGeneratedFileName(doc.filename || 'admission-document.pdf')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 bg-slate-900 text-white rounded-xl active:scale-90"
@@ -1704,7 +1705,7 @@ const ModernUniformRequirementsSection = ({
           {admissionFeePdf && (
             <a 
               href={admissionFeePdf}
-              download={admissionFeePdfName}
+              download={cleanGeneratedFileName(admissionFeePdfName || 'admission-document.pdf')}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors"
@@ -2018,7 +2019,7 @@ export default function ComprehensiveAdmissions() {
     { 
       icon: FiTrendingUp, 
       number: schoolData?.admissionCapacity ? schoolData.admissionCapacity.toString() : '300', 
-      label: 'Admission Capacity', 
+      label: 'Admission Vacancies', 
       sublabel: 'Annual Intake',
       color: 'from-blue-500 to-cyan-500'
     },
@@ -2576,7 +2577,7 @@ return (
         {documentData?.curriculumPDF && (
           <a 
             href={documentData.curriculumPDF}
-            download={documentData.curriculumPdfName}
+            download={cleanGeneratedFileName(documentData.curriculumPdfName || 'curriculum.pdf')}
             target="_blank"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-6 py-4 bg-slate-900 text-white rounded-2xl active:scale-95 transition-all shadow-xl"
           >

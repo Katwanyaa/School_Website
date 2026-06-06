@@ -14,6 +14,7 @@ import {
 } from 'react-icons/io5';
 import { CircularProgress } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cleanGeneratedFileName } from '../../../../libs/displayNames';
 
 // ==================== HELPER FUNCTIONS ====================
 
@@ -24,7 +25,7 @@ const extractFileInfoFromUrl = (url) => {
     const pathname = urlObj.pathname;
     const pathParts = pathname.split('/');
     let fileName = pathParts[pathParts.length - 1];
-    fileName = decodeURIComponent(fileName);
+    fileName = cleanGeneratedFileName(decodeURIComponent(fileName));
     const extension = fileName.includes('.') 
       ? fileName.substring(fileName.lastIndexOf('.')).toLowerCase()
       : '';
@@ -192,7 +193,7 @@ function FilePreviewCard({ file, onDownload, onPreview, index }) {
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gray-50 rounded-lg">{getFileIcon(file.fileType, file.extension, 20)}</div>
             <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-gray-900 truncate">{file.fileName}</h4>
+              <h4 className="font-bold text-gray-900 truncate">{cleanGeneratedFileName(file.fileName || file.name || 'file')}</h4>
               <div className="flex items-center gap-2 mt-1"><span className="text-xs text-gray-500">{file.fileType}</span><span className="text-xs text-gray-400">•</span><span className="text-xs text-gray-500">{file.extension}</span></div>
             </div>
           </div>
@@ -369,7 +370,10 @@ export default function ModernResourcesAssignmentsView({
         if (student && student.form) filteredResources = filteredResources.filter(resource => matchesStudentClass(resource.className));
         const processedResources = filteredResources.map((resource) => ({
           ...resource,
-          files: (resource.files || []).map(file => ({ ...file, url: file.url, name: file.name || 'Untitled', extension: file.extension || (file.name ? file.name.split('.').pop()?.toLowerCase() : ''), fileType: file.fileType || resource.type || 'document' }))
+          files: (resource.files || []).map(file => {
+            const name = cleanGeneratedFileName(file.name || file.url || 'Untitled');
+            return { ...file, url: file.url, name, extension: file.extension || (name.includes('.') ? name.split('.').pop()?.toLowerCase() : ''), fileType: file.fileType || resource.type || 'document' };
+          })
         }));
         setResources(processedResources);
       } else setResources([]);
@@ -392,7 +396,10 @@ export default function ModernResourcesAssignmentsView({
     if (student && student.form) filteredResources = filteredResources.filter(resource => matchesStudentClass(resource.className));
     setResources(filteredResources.map((resource) => ({
       ...resource,
-      files: (resource.files || []).map(file => ({ ...file, url: file.url, name: file.name || 'Untitled', extension: file.extension || (file.name ? file.name.split('.').pop()?.toLowerCase() : ''), fileType: file.fileType || resource.type || 'document' }))
+      files: (resource.files || []).map(file => {
+        const name = cleanGeneratedFileName(file.name || file.url || 'Untitled');
+        return { ...file, url: file.url, name, extension: file.extension || (name.includes('.') ? name.split('.').pop()?.toLowerCase() : ''), fileType: file.fileType || resource.type || 'document' };
+      })
     })));
   }, [resourcesProp, student, matchesStudentClass]);
 

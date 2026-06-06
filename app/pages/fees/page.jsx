@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
+import { cleanGeneratedFileName } from '../../libs/displayNames';
 import { 
   FiDownload,
   FiFileText,
@@ -193,7 +194,7 @@ const PDFCard = ({ title, pdfUrl, fileName, fileSize, uploadDate, description, o
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mb-4">
             <span className="flex items-center gap-1">
               <FiFileText className="text-blue-400" size={12} />
-              {fileName || 'Document'}
+              {cleanGeneratedFileName(fileName || 'Document')}
             </span>
             <span className="flex items-center gap-1">
               <FiClock className="text-emerald-400" size={12} />
@@ -416,7 +417,7 @@ const router = useRouter();
     
     const link = document.createElement('a');
     link.href = url;
-    link.download = fileName || 'fee-structure.pdf';
+    link.download = cleanGeneratedFileName(fileName || 'fee-structure.pdf');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -618,7 +619,7 @@ const router = useRouter();
             </div>
             <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 mb-1">New Students</h3>
             <p className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-2 leading-tight">
-              {documentData?.admissionFeePdfName ? documentData.admissionFeePdfName : 'No admission letter uploaded'}
+              {documentData?.admissionFeePdfName ? cleanGeneratedFileName(documentData.admissionFeePdfName) : 'No admission letter uploaded'}
             </p>
             <p className="text-[10px] sm:text-xs md:text-sm text-slate-500">
               {documentData?.admissionFeeDescription || 'Admission letter document details'}

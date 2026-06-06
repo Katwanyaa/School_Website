@@ -100,7 +100,7 @@ const TeacherCard = ({ teacher }) => (
       <img
         src={getTeacherImage(teacher)}
         alt={teacher.name}
-        className="h-full w-full object-cover object-top"
+        className="h-full w-full object-contain"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
       {teacher.subjectOffered && (
@@ -193,6 +193,8 @@ export default function StaffDepartmentDetailPage() {
   const meta = getCategoryMeta(department.category);
   const Icon = meta.icon;
   const teachers = Array.isArray(department.staff) ? department.staff : [];
+  const extra = parseExtra(department.extra);
+  const isCbcDepartment = department.category === "CBC";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 text-slate-900">
@@ -239,8 +241,8 @@ export default function StaffDepartmentDetailPage() {
             {/* Stats grid - responsive: 1 column mobile, 2 on sm, 4 on lg */}
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               <DetailStat icon={FiUsers} label="Teachers/Staff" value={`${department.staffCount || 0} members`} />
-              <DetailStat icon={FiUser} label="Head of Department" value={department.headName} />
-              <DetailStat icon={FiShield} label="AHOD" value={department.assistantHeadName} />
+              <DetailStat icon={FiUser} label={isCbcDepartment ? "Pathway HOD" : "Head of Department"} value={isCbcDepartment ? extra.pathwayHod : department.headName} />
+              <DetailStat icon={FiShield} label={isCbcDepartment ? "CBC Pathways" : "Department Lead"} value={isCbcDepartment ? formatValue(extra.cbcPathways) : department.headName} />
               <DetailStat icon={Icon} label="Category" value={meta.label} />
             </div>
 

@@ -1320,7 +1320,7 @@ const handleFormSubmit = async (e) => {
                     
                     <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 border border-cyan-200">
                       <label className=" text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <FaUsers className="text-cyan-600" /> Admission Capacity
+                        <FaUsers className="text-cyan-600" /> Admission Vacancies
                       </label>
                       <input
                         type="number"

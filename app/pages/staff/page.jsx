@@ -909,13 +909,13 @@ export default function StaffDirectory() {
                       </div>
 
                       <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-                        <div className="relative h-36 w-36 flex-shrink-0 overflow-hidden rounded-3xl ring-4 ring-[#38bdf8]/50 sm:h-44 sm:w-44">
+                        <div className="relative h-48 w-48 flex-shrink-0 overflow-hidden rounded-3xl bg-white/10 ring-4 ring-[#38bdf8]/50 sm:h-64 sm:w-64">
                           <Image
                             src={getImageSrc(principalStaff)}
                             alt={principalStaff.name}
-                            width={176}
-                            height={176}
-                            className="h-full w-full object-cover"
+                            width={256}
+                            height={256}
+                            className="h-full w-full object-contain"
                           />
                         </div>
 
@@ -994,7 +994,7 @@ export default function StaffDirectory() {
                                 alt={staff.name}
                                 width={64}
                                 height={64}
-                                className="h-full w-full object-cover"
+                                className="h-full w-full object-contain"
                               />
                             </div>
 
@@ -1114,7 +1114,7 @@ export default function StaffDirectory() {
                                         key={teacher.id}
                                         src={getTeacherImage(teacher)}
                                         alt={teacher.name}
-                                        className="h-8 w-8 rounded-full border-2 border-white object-cover object-top"
+                                        className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 object-contain"
                                       />
                                     ))}
                                   </div>
