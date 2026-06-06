@@ -35,8 +35,6 @@ const primaryLinks = [
   { name: 'Home', href: '/', icon: FiHome, exact: true },
   { name: 'About', href: '/pages/AboutUs', icon: FiInfo },
   { name: 'Admissions', href: '/pages/admissions', icon: FiBookOpen },
-  { name: 'Assignments', href: '/assignments', icon: FiFileText },
-  { name: 'Resources & Exams', href: '/resources-exams', icon: FiArchive },
   { name: 'Gallery', href: '/pages/gallery', icon: FiImage },
   { name: 'Events & News', href: '/pages/eventsandnews', icon: FiCalendar },
 ];
