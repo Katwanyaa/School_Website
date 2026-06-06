@@ -287,7 +287,6 @@ export default function ModernNavbar() {
         <div className="hidden border-b py-2 border-white/10 bg-gradient-to-r from-blue-950 via-indigo-950 to-purple-950 text-white lg:block">
           <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-6">
             <div className="flex items-center gap-5 text-[13px] font-black uppercase tracking-[0.2em] text-blue-100/80">
-              <span>KATZ </span>
               <span className="h-1 w-1 rounded-full bg-blue-300" />
               <span>GOD FIRST</span>
             </div>
@@ -316,9 +315,6 @@ export default function ModernNavbar() {
 
               <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 border-r border-white/10 pr-3">
-                <span className="hidden text-[10px] font-black uppercase tracking-[0.18em] text-white/45 xl:inline">
-                  Follow uS
-                </span>
                 {socialLinks.map((item) => (
                   <SocialLink key={item.name} item={item} />
                 ))}
