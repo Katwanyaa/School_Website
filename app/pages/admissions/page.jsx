@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
-import { cleanGeneratedFileName } from '../../libs/displayNames';
+import { cleanGeneratedFileName } from '../../../libs/displayNames';
 import { 
   FiUser, 
   FiCalendar, 
