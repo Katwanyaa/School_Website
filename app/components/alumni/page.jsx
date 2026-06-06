@@ -267,41 +267,65 @@ export default function AlumniGovernanceManager() {
       {loading ? (
         <div className="rounded-lg bg-white p-10 text-center text-sm font-bold text-slate-500">Loading records...</div>
       ) : filtered.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((record) => {
-            const label = SECTION_OPTIONS.find((option) => option.value === record.section)?.label || record.section;
-            return (
-              <article key={record.id} className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-                <div className="flex h-56 items-center justify-center bg-slate-100">
-                  {record.image ? (
-                    <img src={record.image} alt={record.name} className="h-full w-full object-contain" />
-                  ) : (
-                    <FiImage className="text-5xl text-slate-300" />
-                  )}
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-blue-700">{label}</span>
-                    <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${record.isActive === false ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}>
-                      {record.isActive === false ? "Inactive" : "Active"}
-                    </span>
-                  </div>
-                  <h2 className="mt-3 text-lg font-black text-slate-950">{record.name}</h2>
-                  <p className="mt-1 text-xs font-bold uppercase tracking-widest text-slate-400">{record.position || "Position not set"}</p>
-                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{record.description || "No description added."}</p>
-                  <p className="mt-3 text-xs font-bold text-slate-500">{Array.isArray(record.images) ? record.images.length : 0} gallery image(s)</p>
-                  <div className="mt-4 flex gap-2">
-                    <button onClick={() => openEdit(record)} className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-xs font-black uppercase tracking-widest text-white">
-                      <FiEdit /> Edit
-                    </button>
-                    <button onClick={() => handleDelete(record)} className="flex h-11 w-11 items-center justify-center rounded-lg bg-red-50 text-red-600">
-                      <FiTrash2 />
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-slate-900 text-white">
+                <tr>
+                  <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Name</th>
+                  <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Section</th>
+                  <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Description</th>
+                  <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Images</th>
+                  <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Status</th>
+                  <th className="px-4 py-4 text-right text-xs font-black uppercase tracking-widest">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.map((record) => {
+                  const label = SECTION_OPTIONS.find((option) => option.value === record.section)?.label || record.section;
+                  const galleryCount = Array.isArray(record.images) ? record.images.length : 0;
+
+                  return (
+                    <tr key={record.id} className="align-top hover:bg-slate-50">
+                      <td className="min-w-[220px] px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100">
+                            {record.image ? (
+                              <img src={record.image} alt={record.name} className="h-full w-full rounded-lg object-cover" />
+                            ) : (
+                              <FiImage className="text-xl text-slate-300" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-950">{record.name}</p>
+                            <p className="mt-1 text-xs font-bold uppercase tracking-widest text-slate-400">{record.position || "Position not set"}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="min-w-[180px] px-4 py-4 text-sm font-bold text-slate-700">{label}</td>
+                      <td className="min-w-[280px] px-4 py-4 text-sm leading-6 text-slate-600">{record.description || "No description added."}</td>
+                      <td className="min-w-[120px] px-4 py-4 text-sm font-bold text-slate-700">{galleryCount} gallery image{galleryCount === 1 ? "" : "s"}</td>
+                      <td className="min-w-[120px] px-4 py-4">
+                        <span className={`inline-flex rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest ${record.isActive === false ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}>
+                          {record.isActive === false ? "Inactive" : "Active"}
+                        </span>
+                      </td>
+                      <td className="min-w-[150px] px-4 py-4">
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => openEdit(record)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-widest text-white">
+                            <FiEdit /> Edit
+                          </button>
+                          <button onClick={() => handleDelete(record)} className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-600">
+                            <FiTrash2 />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
         <div className="rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center">

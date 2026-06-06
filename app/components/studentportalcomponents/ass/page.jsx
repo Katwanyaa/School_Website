@@ -597,33 +597,72 @@ export default function ModernResourcesAssignmentsView({
             {(searchTerm || selectedClass !== 'all' || selectedSubject !== 'all' || selectedStatus !== 'all' || selectedResourceType !== 'all') && <button onClick={clearFilters} className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-bold shadow-lg">Clear All Filters</button>}
           </motion.div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm">
-            <table className="w-full min-w-[640px]">
-              <thead>
-                <tr className="bg-gradient-to-r from-blue-950 to-blue-900 text-white border-b border-gray-200">
-                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider">Title</th>
-                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider hidden sm:table-cell">Subject</th>
-                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider hidden lg:table-cell">Class</th>
-                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold uppercase tracking-wider">{activeTab === 'assignments' ? 'Due Date' : 'Date Added'}</th>
-                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm font-bold uppercase tracking-wider">Files</th>
-                  {activeTab === 'assignments' && <th className="px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm font-bold uppercase tracking-wider hidden md:table-cell">Status</th>}
-                  <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-bold uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentItems.map((item, index) => (
-                  <motion.tr key={item.id || index} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-slate-50 transition-colors duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                    <td className="px-4 sm:px-6 py-4 text-sm sm:text-base font-semibold text-gray-900 max-w-xs"><div className="flex items-center gap-2 sm:gap-3"><div className={`p-2 rounded-lg flex-shrink-0 ${activeTab === 'assignments' ? 'bg-blue-100' : 'bg-green-100'}`}>{activeTab === 'assignments' ? <IoDocument className="text-blue-900" /> : getFileIcon(item.type, item.files?.[0]?.extension, 16)}</div><span className="line-clamp-2">{item.title || 'Untitled'}</span></div></td>
-                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-700 hidden sm:table-cell"><span className="inline-block px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-semibold">{item.subject || 'General'}</span></td>
-                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-700 hidden lg:table-cell"><span className="text-xs sm:text-sm font-medium">{item.className || 'All'}</span></td>
-                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-700"><span className="text-xs sm:text-sm">{activeTab === 'assignments' ? (item.dueDate ? new Date(item.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—') : (item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—')}</span></td>
-                    <td className="px-4 sm:px-6 py-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-amber-900 text-xs font-bold">{activeTab === 'assignments' ? ((item.assignmentFileAttachments?.length || 0) + (item.attachmentAttachments?.length || 0)) : (item.files?.length || 0)}</span></td>
-                    {activeTab === 'assignments' && <td className="px-4 sm:px-6 py-4 text-center hidden md:table-cell">{item.status && <StatusBadge status={item.status} size="sm" />}</td>}
-                    <td className="px-4 sm:px-6 py-4 text-right"><div className="flex items-center justify-end gap-2 sm:gap-3"><button onClick={() => setSelectedItem(item)} className="p-2 hover:bg-gray-200 rounded-lg transition-colors duration-200" title="View details"><IoEye className="text-gray-700 text-lg" /></button><button onClick={() => handleDownload(item)} className="p-2 hover:bg-blue-100 rounded-lg transition-colors duration-200" title="Download files"><IoCloudDownload className="text-blue-700 text-lg" /></button></div></td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-900 text-white">
+                  <tr>
+                    <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Title</th>
+                    <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Description</th>
+                    <th className="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Date Uploaded</th>
+                    <th className="px-4 py-4 text-right text-xs font-black uppercase tracking-widest">Download</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {currentItems.map((item, index) => {
+                    const fileCount = activeTab === 'assignments'
+                      ? ((item.assignmentFileAttachments?.length || 0) + (item.attachmentAttachments?.length || 0))
+                      : (item.files?.length || 0);
+                    const uploadedDate = item.createdAt || item.dateAssigned || item.dueDate;
+
+                    return (
+                      <motion.tr
+                        key={item.id || index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.03 }}
+                        className="align-top hover:bg-slate-50"
+                      >
+                        <td className="min-w-[220px] px-4 py-4">
+                          <p className="font-black text-slate-950">{item.title || 'Untitled'}</p>
+                          <p className="mt-1 text-xs font-bold uppercase tracking-widest text-slate-400">
+                            {[item.subject, item.className, activeTab === 'assignments' ? item.status : item.category].filter(Boolean).join(' / ')}
+                          </p>
+                        </td>
+                        <td className="min-w-[280px] px-4 py-4 text-sm leading-6 text-slate-600">
+                          {item.description || 'No description provided.'}
+                        </td>
+                        <td className="min-w-[150px] px-4 py-4 text-sm font-bold text-slate-700">
+                          {uploadedDate ? new Date(uploadedDate).toLocaleDateString('en-KE', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Not listed'}
+                        </td>
+                        <td className="min-w-[220px] px-4 py-4">
+                          <div className="flex flex-col items-stretch gap-2 sm:items-end">
+                            <button
+                              type="button"
+                              onClick={() => handleDownload(item)}
+                              disabled={fileCount === 0}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+                            >
+                              <IoCloudDownload /> {fileCount > 1 ? 'Download All' : 'Download'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedItem(item)}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-xs font-black uppercase tracking-widest text-slate-700 transition hover:bg-slate-50"
+                            >
+                              <IoEye /> View
+                            </button>
+                            <p className="text-right text-xs font-bold text-slate-400">
+                              {fileCount} file{fileCount === 1 ? '' : 's'}
+                            </p>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

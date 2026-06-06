@@ -41,7 +41,6 @@ import {
   FiTrendingDown as FiTrendingDownSolid,
   FiActivity as FiActivitySolid,
   FiBriefcase,
-  FiSend,
   FiLayers,  // ADD THIS LINE
 } from 'react-icons/fi';
 
@@ -494,12 +493,14 @@ const decodeJWTToken = (token) => {
   }
 };
 
-// ========== SMS OVERVIEW CARD (replaces Student Engagement) ==========
-const SmsOverviewCard = ({ smsStats, recentCampaigns }) => {
-  const total = smsStats?.total || 0;
-  const drafts = smsStats?.draft || 0;
-  const sent = smsStats?.sent || 0;
-  const campaigns = recentCampaigns || [];
+// ========== ALUMNI & GOVERNANCE OVERVIEW CARD ==========
+const AlumniGovernanceOverviewCard = ({ governanceStats, recentRecords }) => {
+  const total = governanceStats?.total || 0;
+  const alumni = governanceStats?.alumni || 0;
+  const governance = governanceStats?.governance || 0;
+  const pta = governanceStats?.pta || 0;
+  const bom = governanceStats?.bom || 0;
+  const records = recentRecords || [];
 
   return (
     <div className="group relative bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)]">
@@ -509,11 +510,11 @@ const SmsOverviewCard = ({ smsStats, recentCampaigns }) => {
 
       <div className="flex items-center justify-between mb-6 relative z-10">
         <div>
-          <h3 className="text-lg font-black text-slate-800 tracking-tight">SMS Campaigns</h3>
-          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Communication Hub</p>
+          <h3 className="text-lg font-black text-slate-800 tracking-tight">Alumni & Governance</h3>
+          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Community Records</p>
         </div>
         <div className="p-3 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 shadow-sm transition-transform group-hover:scale-100">
-          <FiSend className="text-xl" />
+          <FiUsers className="text-xl" />
         </div>
       </div>
 
@@ -523,40 +524,51 @@ const SmsOverviewCard = ({ smsStats, recentCampaigns }) => {
           <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">Total</span>
           <div className="flex items-baseline gap-1 mt-1">
             <span className="text-2xl font-black text-slate-900">{total}</span>
-            <span className="text-xs font-bold text-slate-400">campaigns</span>
+            <span className="text-xs font-bold text-slate-400">records</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-amber-50/80 rounded-xl p-3 border border-amber-100">
-            <span className="text-[10px] font-black text-amber-600 uppercase">Draft</span>
-            <p className="text-xl font-black text-amber-700 mt-1">{drafts}</p>
+          <div className="bg-blue-50/80 rounded-xl p-3 border border-blue-100">
+            <span className="text-[10px] font-black text-blue-600 uppercase">Alumni</span>
+            <p className="text-xl font-black text-blue-700 mt-1">{alumni}</p>
           </div>
           <div className="bg-emerald-50/80 rounded-xl p-3 border border-emerald-100">
-            <span className="text-[10px] font-black text-emerald-600 uppercase">Sent</span>
-            <p className="text-xl font-black text-emerald-700 mt-1">{sent}</p>
+            <span className="text-[10px] font-black text-emerald-600 uppercase">Governance</span>
+            <p className="text-xl font-black text-emerald-700 mt-1">{governance}</p>
           </div>
         </div>
       </div>
 
-      {/* Recent Campaigns */}
+      <div className="grid grid-cols-2 gap-2 mb-5">
+        <div className="rounded-xl border border-amber-100 bg-amber-50/80 p-3">
+          <span className="text-[10px] font-black uppercase text-amber-600">PTA</span>
+          <p className="mt-1 text-xl font-black text-amber-700">{pta}</p>
+        </div>
+        <div className="rounded-xl border border-indigo-100 bg-indigo-50/80 p-3">
+          <span className="text-[10px] font-black uppercase text-indigo-600">BOM</span>
+          <p className="mt-1 text-xl font-black text-indigo-700">{bom}</p>
+        </div>
+      </div>
+
+      {/* Recent Records */}
       <div className="mb-4">
-        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-3">Recent Campaigns</h4>
+        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-3">Recent Records</h4>
         <div className="space-y-3">
-          {campaigns.length > 0 ? (
-            campaigns.slice(0, 3).map((campaign, index) => (
+          {records.length > 0 ? (
+            records.slice(0, 3).map((record, index) => (
               <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded-xl border border-slate-100">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`p-1.5 rounded-lg ${campaign.status === 'sent' ? 'bg-emerald-100' : 'bg-amber-100'}`}>
-                    <FiSend className={`w-3 h-3 ${campaign.status === 'sent' ? 'text-emerald-600' : 'text-amber-600'}`} />
+                  <div className="p-1.5 rounded-lg bg-blue-100">
+                    <FiUsers className="w-3 h-3 text-blue-600" />
                   </div>
-                  <span className="text-xs font-bold text-slate-700 truncate">{campaign.title || 'Untitled'}</span>
+                  <span className="text-xs font-bold text-slate-700 truncate">{record.name || 'Untitled'}</span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400">{campaign.recipientCount || 0} recipients</span>
+                <span className="text-[10px] font-bold text-slate-400">{record.sectionLabel || record.section}</span>
               </div>
             ))
           ) : (
-            <p className="text-xs text-slate-400 text-center py-2">No recent campaigns</p>
+            <p className="text-xs text-slate-400 text-center py-2">No records found</p>
           )}
         </div>
       </div>
@@ -583,15 +595,15 @@ export default function DashboardOverview() {
     featuredAchievements: 0
   });
 
-  // New SMS stats
-  const [smsStats, setSmsStats] = useState({
+  const [governanceStats, setGovernanceStats] = useState({
     total: 0,
-    draft: 0,
-    sent: 0,
-    totalRecipients: 0,
-    successRate: 0
+    alumni: 0,
+    governance: 0,
+    pta: 0,
+    bom: 0,
+    principals: 0
   });
-  const [recentSmsCampaigns, setRecentSmsCampaigns] = useState([]);
+  const [recentGovernanceRecords, setRecentGovernanceRecords] = useState([]);
 
   const [recentActivity, setRecentActivity] = useState([]);
   const [performanceData, setPerformanceData] = useState([]);
@@ -786,7 +798,7 @@ const [growthMetrics, setGrowthMetrics] = useState({
         adminsRes,
         resourcesRes,
         emailCampaignsRes,
-        smsRes,
+        alumniRes,
         achievementsRes,
         schoolStatsRes,
         departmentsRes
@@ -803,7 +815,7 @@ const [growthMetrics, setGrowthMetrics] = useState({
         fetch('/api/register', { headers: authHeaders }),
         fetch('/api/resources', { headers: authHeaders }),
         fetch('/api/emails', { headers: authHeaders }),
-        fetch('/api/sms', { headers: authHeaders }),
+        fetch('/api/alumni?includeInactive=1', { headers: authHeaders }),
         fetch('/api/achievements', { headers: authHeaders }),
         fetch('/api/school-stats', { headers: authHeaders }),
         fetch('/api/staff/departments?grouped=1', { headers: authHeaders })
@@ -860,42 +872,37 @@ const admins = await parseResponse(adminsRes, 'Admins', { users: [] });
 const resources = await parseResponse(resourcesRes, 'Resources', { resources: [] });
 const emailCampaignsData = await parseResponse(emailCampaignsRes, 'Email Campaigns', { campaigns: [] });
 
-// Process SMS campaigns
-const smsData = await parseResponse(smsRes, 'SMS', { campaigns: [] });
-      let computedSmsStats = {
-        total: 0,
-        draft: 0,
-        sent: 0,
-        totalRecipients: 0,
-        successRate: 0
+// Process alumni and governance records
+const alumniData = await parseResponse(alumniRes, 'Alumni & Governance', { records: [] });
+      const sectionLabels = {
+        ALUMNI: 'Alumni',
+        BOM: 'BOM',
+        PTA: 'PTA',
+        PRINCIPAL_CURRENT: 'Current Principal',
+        PRINCIPAL_PREVIOUS: 'Previous Principal'
       };
-      if (smsData.success) {
-        const campaigns = smsData.campaigns || [];
-        const draftCount = campaigns.filter(c => c.status === 'draft').length;
-        const sentCount = campaigns.filter(c => c.status === 'sent').length;
-        const totalRecipients = campaigns.reduce((acc, c) => acc + (c.recipients ? c.recipients.split(',').length : 0), 0);
-        const successRate = sentCount > 0 ? Math.round((sentCount / campaigns.length) * 100) : 0;
-
-        computedSmsStats = {
-          total: campaigns.length,
-          draft: draftCount,
-          sent: sentCount,
-          totalRecipients,
-          successRate
-        };
-        setSmsStats(computedSmsStats);
-        console.log('📱 SMS Stats:', computedSmsStats);
-
-        // Get recent campaigns for display
-        const recent = campaigns
+      const governanceRecords = Array.isArray(alumniData.records) ? alumniData.records : [];
+      const computedGovernanceStats = {
+        total: 0,
+        alumni: 0,
+        governance: 0,
+        pta: 0,
+        bom: 0,
+        principals: 0
+      };
+      computedGovernanceStats.total = governanceRecords.length;
+      computedGovernanceStats.alumni = governanceRecords.filter(record => record.section === 'ALUMNI').length;
+      computedGovernanceStats.pta = governanceRecords.filter(record => record.section === 'PTA').length;
+      computedGovernanceStats.bom = governanceRecords.filter(record => record.section === 'BOM').length;
+      computedGovernanceStats.principals = governanceRecords.filter(record => record.section === 'PRINCIPAL_CURRENT' || record.section === 'PRINCIPAL_PREVIOUS').length;
+      computedGovernanceStats.governance = computedGovernanceStats.pta + computedGovernanceStats.bom + computedGovernanceStats.principals;
+      setGovernanceStats(computedGovernanceStats);
+      setRecentGovernanceRecords(
+        governanceRecords
           .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
           .slice(0, 3)
-          .map(c => ({
-            ...c,
-            recipientCount: c.recipients ? c.recipients.split(',').length : 0
-          }));
-        setRecentSmsCampaigns(recent);
-      }
+          .map(record => ({ ...record, sectionLabel: sectionLabels[record.section] || record.section }))
+      );
 
       const achievementsData = await parseResponse(achievementsRes, 'Achievements', { success: false, allAchievements: [] });
       const allAchievements = Array.isArray(achievementsData.allAchievements)
@@ -1142,11 +1149,11 @@ setGrowthMetrics({
           description: 'Student support engagement'
         },
         {
-          label: 'SMS Campaigns',
-          value: computedSmsStats.total,
+          label: 'Governance Records',
+          value: computedGovernanceStats.governance,
           change: 0,
           color: 'green',
-          description: 'Total SMS campaigns created'
+          description: 'BOM, PTA, and principal records'
         }
       ];
 
@@ -1181,12 +1188,12 @@ setGrowthMetrics({
           calculation: `${achievementSummaryData.featured} featured`
         },
         {
-          label: 'SMS Campaigns',
-          value: `${computedSmsStats.total}`,
+          label: 'Alumni & Governance',
+          value: `${computedGovernanceStats.total}`,
           change: 0,
-          icon: computedSmsStats.total > 0 ? FiTrendingUp : FiTrendingDown,
-          color: computedSmsStats.total > 0 ? 'blue' : 'red',
-          calculation: 'Total campaigns'
+          icon: computedGovernanceStats.total > 0 ? FiTrendingUp : FiTrendingDown,
+          color: computedGovernanceStats.total > 0 ? 'blue' : 'red',
+          calculation: `${computedGovernanceStats.alumni} alumni, ${computedGovernanceStats.governance} governance`
         },
       ];
 
@@ -1995,10 +2002,9 @@ const StatCard = ({ icon: Icon, label, value, change, color, subtitle, trend }) 
           })}
         </div>
 
-        {/* Main Stats Grid - Updated with SMS Overview Card replacing Student Engagement */}
+        {/* Main Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {/* SMS Overview Card (replaces Student Engagement) */}
-          <SmsOverviewCard smsStats={smsStats} recentCampaigns={recentSmsCampaigns} />
+          <AlumniGovernanceOverviewCard governanceStats={governanceStats} recentRecords={recentGovernanceRecords} />
 
           {/* Staff Distribution Card */}
           <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] overflow-hidden">
