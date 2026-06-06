@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { FiArchive, FiBookOpen, FiDownload, FiExternalLink, FiFileText, FiSearch } from "react-icons/fi";
+import { FiArchive, FiBookOpen, FiCheckCircle, FiDownload, FiExternalLink, FiFileText, FiFilter, FiSearch } from "react-icons/fi";
 import { cleanFileRecordName } from "../../libs/displayNames";
 
 const formatDate = (value) => {
@@ -25,15 +25,30 @@ const normalizeFiles = (files = []) => {
     }));
 };
 
-const openDownload = (file) => {
+const triggerBrowserDownload = (url, fileName) => {
   const anchor = document.createElement("a");
-  anchor.href = file.url;
-  anchor.download = file.name || "download";
-  anchor.target = "_blank";
+  anchor.href = url;
+  anchor.download = fileName || "download";
   anchor.rel = "noopener noreferrer";
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
+};
+
+const openDownload = async (file) => {
+  const fileName = file.name || "download";
+
+  try {
+    const response = await fetch(file.url);
+    if (!response.ok) throw new Error("Unable to fetch file");
+
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    triggerBrowserDownload(blobUrl, fileName);
+    window.setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+  } catch {
+    triggerBrowserDownload(file.url, fileName);
+  }
 };
 
 const downloadAll = (files) => {
@@ -51,17 +66,38 @@ export default function AcademicDownloadsPage({
 }) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedClass, setSelectedClass] = useState("all");
+  const [sortOrder, setSortOrder] = useState("newest");
+
+  const pageInstructions = type === "assignments"
+    ? [
+        "Download the assignment files for your class and read every instruction before you begin.",
+        "Plan your time early, complete the work honestly, and submit it according to your teacher's guidance.",
+        "Use the filters to quickly find assignments by subject, class, or upload date.",
+      ]
+    : [
+        "Use these materials for steady revision, exam preparation, and independent study.",
+        "Start with your class resources, then use past papers and revision files to test your understanding.",
+        "Download all related files when a resource has several documents or images.",
+      ];
 
   const categories = useMemo(() => {
-    const values = items.map((item) => item.category || item.subject || item.className).filter(Boolean);
+    const values = items.map((item) => item.category || item.subject).filter(Boolean);
+    return ["all", ...Array.from(new Set(values))];
+  }, [items]);
+
+  const classes = useMemo(() => {
+    const values = items.map((item) => item.className).filter(Boolean);
     return ["all", ...Array.from(new Set(values))];
   }, [items]);
 
   const filteredItems = useMemo(() => {
     const text = query.trim().toLowerCase();
-    return items.filter((item) => {
-      const categoryValue = item.category || item.subject || item.className;
+    return items
+      .filter((item) => {
+      const categoryValue = item.category || item.subject;
       const matchesCategory = selectedCategory === "all" || categoryValue === selectedCategory;
+      const matchesClass = selectedClass === "all" || item.className === selectedClass;
       const haystack = [
         item.title,
         item.description,
@@ -70,9 +106,16 @@ export default function AcademicDownloadsPage({
         item.teacher,
         item.category,
       ].filter(Boolean).join(" ").toLowerCase();
-      return matchesCategory && (!text || haystack.includes(text));
-    });
-  }, [items, query, selectedCategory]);
+      return matchesCategory && matchesClass && (!text || haystack.includes(text));
+    })
+      .sort((a, b) => {
+        const aDate = new Date(a.dateUploaded || 0).getTime();
+        const bDate = new Date(b.dateUploaded || 0).getTime();
+        if (sortOrder === "oldest") return aDate - bDate;
+        if (sortOrder === "title") return (a.title || "").localeCompare(b.title || "");
+        return bDate - aDate;
+      });
+  }, [items, query, selectedCategory, selectedClass, sortOrder]);
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -95,7 +138,31 @@ export default function AcademicDownloadsPage({
             </div>
           </div>
 
-          <div className="mt-8 grid gap-3 lg:grid-cols-[1fr_260px]">
+          <div className="mt-8 grid gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4 lg:grid-cols-[1fr_1fr]">
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <FiCheckCircle className="text-blue-700" />
+                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-700">
+                  Instructions
+                </h2>
+              </div>
+              <div className="space-y-2">
+                {pageInstructions.map((instruction) => (
+                  <p key={instruction} className="text-sm font-semibold leading-6 text-slate-600">
+                    {instruction}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-blue-100 bg-white p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <FiFilter className="text-blue-700" />
+                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-700">
+                  Filter Materials
+                </h2>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
             <div className="relative">
               <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -112,10 +179,35 @@ export default function AcademicDownloadsPage({
             >
               {categories.map((category) => (
                 <option key={category} value={category}>
-                  {category === "all" ? "All Categories" : category}
+                  {category === "all" ? "All Subjects/Categories" : category}
                 </option>
               ))}
             </select>
+                <select
+                  value={selectedClass}
+                  onChange={(event) => setSelectedClass(event.target.value)}
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                >
+                  {classes.map((className) => (
+                    <option key={className} value={className}>
+                      {className === "all" ? "All Classes/Forms" : className}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={sortOrder}
+                  onChange={(event) => setSortOrder(event.target.value)}
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="title">Title A-Z</option>
+                </select>
+              </div>
+              <p className="mt-3 text-xs font-bold text-slate-500">
+                Showing {filteredItems.length} of {items.length} published item{items.length === 1 ? "" : "s"}.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -163,18 +255,16 @@ export default function AcademicDownloadsPage({
                           {files.length > 0 ? (
                             <div className="flex flex-col gap-2">
                               {files.map((file, index) => (
-                                <a
+                                <button
                                   key={`${file.url}-${index}`}
-                                  href={file.url}
-                                  download={file.name}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  type="button"
+                                  onClick={() => openDownload(file)}
                                   className="inline-flex max-w-[280px] items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                                   title={file.name}
                                 >
                                   <span className="truncate">{file.name}</span>
                                   <FiDownload className="shrink-0" size={14} />
-                                </a>
+                                </button>
                               ))}
                             </div>
                           ) : (

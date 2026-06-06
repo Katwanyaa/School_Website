@@ -49,6 +49,11 @@ const utilityLinks = [
   { name: 'Admin Login', href: '/pages/adminLogin', icon: FiLock, secure: true },
 ];
 
+const topAcademicLinks = [
+  { name: 'Assignments', href: '/assignments', icon: FiFileText },
+  { name: 'Resources & Exams', href: '/resources-exams', icon: FiArchive },
+];
+
 const socialLinks = [
   {
     name: 'Facebook',
@@ -287,7 +292,29 @@ export default function ModernNavbar() {
               <span>GOD FIRST</span>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-5">
+              <div className="flex items-center gap-4 border-r border-white/10 pr-4">
+                {topAcademicLinks.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActiveLink(item.href);
+
+                  return (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      onClick={closeAll}
+                      className={`inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.16em] transition ${
+                        active ? 'text-white' : 'text-blue-100/80 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="text-sm" />
+                      <span className="whitespace-nowrap">{item.name}</span>
+                    </a>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 border-r border-white/10 pr-3">
                 <span className="hidden text-[10px] font-black uppercase tracking-[0.18em] text-white/45 xl:inline">
                   Follow uS
@@ -301,6 +328,7 @@ export default function ModernNavbar() {
                 {utilityLinks.map((item) => (
                   <NavLink key={item.name} item={item} compact />
                 ))}
+              </div>
               </div>
             </div>
           </div>
