@@ -77,28 +77,29 @@ const normalizeImages = (record) => {
 
 function RecordCard({ record, section }) {
   const images = normalizeImages(record);
-  const primaryImage = record.image || images[0]?.url;
+  const primaryImage = images[0]?.url;
   const BadgeIcon = section.icon || FiUsers;
+  const photoLabel = `${images.length} ${images.length === 1 ? "photo" : "photos"}`;
 
   return (
-    <article className="grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-lg lg:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.25fr)]">
-      <div className="relative min-h-[260px] bg-slate-100 sm:min-h-[340px] lg:min-h-full">
+    <article className="group grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-xl lg:grid-cols-[minmax(360px,1.08fr)_minmax(0,1.12fr)] xl:grid-cols-[minmax(420px,1.12fr)_minmax(0,1.08fr)]">
+      <div className="relative min-h-[290px] w-full bg-slate-100 sm:min-h-[360px] lg:min-h-full">
         {primaryImage ? (
-          <img src={primaryImage} alt={record.name} className="h-full w-full object-cover" />
+          <img src={primaryImage} alt={record.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-slate-100">
-            <FiUsers className="text-5xl text-slate-300" />
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-blue-50">
+            <BadgeIcon className="text-5xl text-blue-200" />
           </div>
         )}
 
         <div className="absolute left-3 top-3">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-blue-700 shadow-sm">
+          <span className="inline-flex max-w-[calc(100vw-4rem)] items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-blue-700 shadow-sm">
             <BadgeIcon className="text-xs" /> {section.eyebrow}
           </span>
         </div>
 
-        <div className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-white">
-          <FiImage className="text-[11px]" /> {images.length}
+        <div className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
+          <FiImage className="text-[11px]" /> {images.length || 0}
         </div>
 
         {images.length > 1 && (
@@ -117,28 +118,44 @@ function RecordCard({ record, section }) {
         )}
       </div>
 
-      <div className="flex min-h-[300px] flex-col p-5 sm:p-6">
-        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">{section.eyebrow}</p>
-        <h2 className="mt-2 text-2xl font-black leading-tight text-slate-950">{record.name}</h2>
+      <div className="flex min-h-[300px] flex-1 flex-col p-5 sm:p-6 lg:p-7">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">{section.eyebrow}</p>
+            <h2 className="mt-2 text-2xl font-black leading-tight text-slate-950 sm:text-3xl">{record.name}</h2>
+          </div>
+          <span className="inline-flex w-fit shrink-0 items-center gap-1 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-blue-700">
+            <FiImage /> {photoLabel}
+          </span>
+        </div>
+
         {record.position && (
-          <p className="mt-1 text-xs font-black uppercase tracking-widest text-slate-400">{record.position}</p>
+          <p className="mt-3 w-fit rounded-full bg-slate-100 px-3 py-1.5 text-xs font-black uppercase tracking-widest text-slate-500">{record.position}</p>
         )}
+
         {record.description && (
-          <p className="mt-4 text-sm font-medium leading-7 text-slate-600">{record.description}</p>
+          <p className="mt-5 text-sm font-medium leading-7 text-slate-600 sm:text-base">{record.description}</p>
         )}
+
         {images.length > 0 && (
-          <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+          <div className="mt-6 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
             {images.slice(0, 6).map((image, index) => (
-              <div key={`${image.url}-${index}`} className="relative aspect-[4/3] overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+              <div key={`${image.url}-${index}`} className="relative aspect-[4/3] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">
                 <img src={image.url} alt={image.altText || record.name} className="h-full w-full object-cover" />
+                {index === 5 && images.length > 6 && (
+                  <span className="absolute inset-0 flex items-center justify-center bg-slate-950/60 text-xs font-black text-white">
+                    +{images.length - 6}
+                  </span>
+                )}
               </div>
             ))}
           </div>
         )}
-        <div className="mt-auto flex items-center justify-between pt-6">
+
+        <div className="mt-auto flex flex-col gap-3 pt-7 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-xs font-black uppercase tracking-wider text-slate-400">{section.title}</span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">
-            <FiImage /> {images.length} {images.length === 1 ? "photo" : "photos"}
+          <span className="inline-flex w-fit items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-black uppercase tracking-wider text-white">
+            <BadgeIcon /> {section.eyebrow}
           </span>
         </div>
       </div>
@@ -197,7 +214,7 @@ export default async function AlumniPage() {
                   <h2 className="text-2xl font-black text-slate-950">{section.title}</h2>
                 </div>
               </div>
-              <div className="grid gap-5 rounded-2xl bg-slate-100 p-3 sm:p-4">
+              <div className="grid w-full gap-5 rounded-2xl bg-slate-100 p-3 sm:p-4">
                 {sectionRecords.map((record) => (
                   <RecordCard key={record.id} record={record} section={section} />
                 ))}
