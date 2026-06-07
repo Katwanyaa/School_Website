@@ -9,6 +9,7 @@ import {
 
 const SECTIONS = new Set([
   "ALUMNI",
+  "COMMITTEE",
   "BOM",
   "PTA",
   "PRINCIPAL_CURRENT",
@@ -92,6 +93,26 @@ const parseExistingImages = (value) => {
   }
 };
 
+const getImageUrl = (image) => {
+  if (!image) return null;
+  return typeof image === "string" ? image : image.url || null;
+};
+
+const collectRemovedImages = (existing, nextData) => {
+  const nextUrls = new Set([
+    nextData.image,
+    ...(Array.isArray(nextData.images) ? nextData.images.map(getImageUrl) : []),
+  ].filter(Boolean));
+
+  return [
+    existing.image,
+    ...(Array.isArray(existing.images) ? existing.images : []),
+  ].filter((image) => {
+    const url = getImageUrl(image);
+    return url && !nextUrls.has(url);
+  });
+};
+
 const readUpdateForm = async (req, existing) => {
   const formData = await req.formData();
   const section = (formData.get("section") || existing.section).toString().trim();
@@ -154,7 +175,9 @@ export async function PUT(req, { params }) {
     if (!existing) return NextResponse.json({ success: false, error: "Record not found" }, { status: 404 });
 
     const data = await readUpdateForm(req, existing);
+    const removedImages = collectRemovedImages(existing, data);
     const updated = await prisma.alumniGovernanceRecord.update({ where: { id }, data });
+    await deleteSchoolImages(removedImages);
 
     return NextResponse.json({ success: true, record: normalizeRecord(updated) });
   } catch (error) {

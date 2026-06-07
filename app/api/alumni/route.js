@@ -8,6 +8,7 @@ import {
 
 const SECTIONS = new Set([
   "ALUMNI",
+  "COMMITTEE",
   "BOM",
   "PTA",
   "PRINCIPAL_CURRENT",

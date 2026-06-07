@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FiEdit, FiImage, FiPlus, FiRefreshCw, FiSave, FiTrash2, FiUsers, FiX } from "react-icons/fi";
+import { FiCheckCircle, FiEdit, FiImage, FiPlus, FiRefreshCw, FiSave, FiTrash2, FiUploadCloud, FiUsers, FiX } from "react-icons/fi";
 import { toast } from "sonner";
+
+const MAX_ALUMNI_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_BULK_UPLOAD = 20;
 
 const SECTION_OPTIONS = [
   { value: "ALUMNI", label: "Alumni Gallery" },
+  { value: "COMMITTEE", label: "Committee Members" },
   { value: "BOM", label: "Board of Management" },
   { value: "PTA", label: "PTA Members" },
   { value: "PRINCIPAL_CURRENT", label: "Current Principal" },
@@ -35,9 +39,154 @@ const getAuthHeaders = () => {
   };
 };
 
+const formatFileSize = (bytes = 0) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const normalizeImageItem = (image, fallbackAlt = "Alumni image") => {
+  if (!image) return null;
+  if (typeof image === "string") return image.trim() ? { url: image.trim(), altText: fallbackAlt } : null;
+  const url = image.url || image.secure_url || image.preview;
+  if (!url) return null;
+  return {
+    ...image,
+    url,
+    altText: image.altText || image.alt || fallbackAlt,
+  };
+};
+
+const normalizeImageList = (images, fallbackAlt) => {
+  const seen = new Set();
+  return (Array.isArray(images) ? images : [])
+    .map((image) => normalizeImageItem(image, fallbackAlt))
+    .filter((image) => {
+      if (!image?.url || seen.has(image.url)) return false;
+      seen.add(image.url);
+      return true;
+    });
+};
+
+const normalizeSectionKey = (section = "ALUMNI") => {
+  const normalized = section.toString().trim().toUpperCase().replace(/[\s-]+/g, "_");
+  return SECTION_OPTIONS.some((option) => option.value === normalized) ? normalized : "ALUMNI";
+};
+
+function GalleryImagePicker({ files, existingImages, onFilesChange, onExistingImagesChange, disabled }) {
+  const [previews, setPreviews] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const nextPreviews = files.map((file, index) => ({
+      id: `${file.name}-${file.lastModified}-${index}`,
+      name: file.name,
+      size: file.size,
+      url: URL.createObjectURL(file),
+    }));
+    setPreviews(nextPreviews);
+
+    return () => nextPreviews.forEach((preview) => URL.revokeObjectURL(preview.url));
+  }, [files]);
+
+  const addFiles = (fileList) => {
+    const incoming = Array.from(fileList || []);
+    if (!incoming.length) return;
+
+    if (files.length + incoming.length > MAX_BULK_UPLOAD) {
+      setError(`You can upload up to ${MAX_BULK_UPLOAD} gallery images at once.`);
+      return;
+    }
+
+    const valid = [];
+    for (const file of incoming) {
+      if (!file.type?.startsWith("image/")) {
+        setError(`${file.name} is not an image file.`);
+        continue;
+      }
+      if (file.size > MAX_ALUMNI_IMAGE_SIZE) {
+        setError(`${file.name} is ${formatFileSize(file.size)}. Maximum size is 5MB.`);
+        continue;
+      }
+      valid.push(file);
+    }
+
+    if (valid.length) {
+      setError("");
+      onFilesChange([...files, ...valid]);
+    }
+  };
+
+  const removeNewFile = (index) => onFilesChange(files.filter((_, fileIndex) => fileIndex !== index));
+  const removeExistingImage = (url) => onExistingImagesChange(existingImages.filter((image) => image.url !== url));
+
+  return (
+    <div className="space-y-4 sm:col-span-2">
+      <div className="flex flex-col gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-600">
+            <FiImage /> Gallery Images
+          </p>
+          <p className="mt-1 text-xs font-semibold text-slate-500">Bulk upload, review, and remove images before saving.</p>
+        </div>
+        <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 py-3 text-xs font-black uppercase tracking-widest text-white">
+          <FiUploadCloud /> Add Images
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            disabled={disabled}
+            onChange={(event) => {
+              addFiles(event.target.files);
+              event.target.value = "";
+            }}
+            className="hidden"
+          />
+        </label>
+      </div>
+
+      {error && (
+        <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+          <span>{error}</span>
+          <button type="button" onClick={() => setError("")} className="text-red-600">
+            <FiX />
+          </button>
+        </div>
+      )}
+
+      {(existingImages.length > 0 || previews.length > 0) && (
+        <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {existingImages.map((image, index) => (
+            <div key={image.url} className="relative overflow-hidden rounded-lg border border-slate-200 bg-white">
+              <img src={image.url} alt={image.altText || `Saved image ${index + 1}`} className="h-28 w-full object-cover" />
+              <button type="button" onClick={() => removeExistingImage(image.url)} className="absolute right-2 top-2 rounded-full bg-red-600 p-1.5 text-white">
+                <FiX />
+              </button>
+              <p className="flex items-center gap-1 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-emerald-700">
+                <FiCheckCircle /> Saved
+              </p>
+            </div>
+          ))}
+          {previews.map((preview, index) => (
+            <div key={preview.id} className="relative overflow-hidden rounded-lg border border-blue-200 bg-white">
+              <img src={preview.url} alt={preview.name} className="h-28 w-full object-cover" />
+              <button type="button" onClick={() => removeNewFile(index)} className="absolute right-2 top-2 rounded-full bg-red-600 p-1.5 text-white">
+                <FiX />
+              </button>
+              <p className="truncate px-3 py-2 text-[10px] font-black uppercase tracking-widest text-blue-700">
+                New - {formatFileSize(preview.size)}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function RecordModal({ record, onClose, onSaved }) {
   const [form, setForm] = useState(() => record ? {
-    section: record.section,
+    section: normalizeSectionKey(record.section),
     name: record.name || "",
     position: record.position || "",
     description: record.description || "",
@@ -46,18 +195,22 @@ function RecordModal({ record, onClose, onSaved }) {
     image: null,
     images: [],
     existingImage: record.image || "",
-    existingImages: Array.isArray(record.images) ? record.images : [],
+    existingImages: normalizeImageList(record.images, record.name || "Alumni image"),
   } : emptyForm);
   const [saving, setSaving] = useState(false);
+  const [primaryPreview, setPrimaryPreview] = useState("");
 
   const update = (field, value) => setForm((previous) => ({ ...previous, [field]: value }));
 
-  const removeExistingGalleryImage = (url) => {
-    setForm((previous) => ({
-      ...previous,
-      existingImages: previous.existingImages.filter((item) => item.url !== url),
-    }));
-  };
+  useEffect(() => {
+    if (!form.image) {
+      setPrimaryPreview("");
+      return undefined;
+    }
+    const url = URL.createObjectURL(form.image);
+    setPrimaryPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [form.image]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -131,40 +284,27 @@ function RecordModal({ record, onClose, onSaved }) {
           <label className="space-y-2">
             <span className="text-xs font-black uppercase tracking-widest text-slate-500">Primary Image</span>
             <input type="file" accept="image/*" onChange={(event) => update("image", event.target.files?.[0] || null)} className="w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-bold file:text-blue-700" />
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-500">Gallery Images</span>
-            <input type="file" accept="image/*" multiple onChange={(event) => update("images", Array.from(event.target.files || []))} className="w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-bold file:text-blue-700" />
+            {(primaryPreview || form.existingImage) && (
+              <div className="relative mt-3 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                <img src={primaryPreview || form.existingImage} alt="Primary preview" className="h-36 w-full object-cover" />
+                <button type="button" onClick={() => update(primaryPreview ? "image" : "existingImage", primaryPreview ? null : "")} className="absolute right-2 top-2 rounded-full bg-red-600 p-1.5 text-white">
+                  <FiX />
+                </button>
+              </div>
+            )}
           </label>
           <label className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-sm font-bold text-slate-700">
             <input type="checkbox" checked={form.isActive} onChange={(event) => update("isActive", event.target.checked)} className="h-5 w-5" />
             Active
           </label>
+          <GalleryImagePicker
+            files={form.images}
+            existingImages={form.existingImages}
+            disabled={saving}
+            onFilesChange={(files) => update("images", files)}
+            onExistingImagesChange={(images) => update("existingImages", images)}
+          />
         </div>
-
-        {(form.existingImage || form.existingImages.length > 0) && (
-          <div className="border-t border-slate-100 px-5 pb-5">
-            <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-500">Existing Images</p>
-            <div className="grid gap-3 sm:grid-cols-4">
-              {form.existingImage && (
-                <div className="relative rounded-lg border border-slate-200 bg-slate-50 p-2">
-                  <img src={form.existingImage} alt="Primary" className="h-24 w-full object-contain" />
-                  <button type="button" onClick={() => update("existingImage", "")} className="absolute right-2 top-2 rounded-full bg-red-600 p-1 text-white">
-                    <FiX />
-                  </button>
-                </div>
-              )}
-              {form.existingImages.map((image) => (
-                <div key={image.url} className="relative rounded-lg border border-slate-200 bg-slate-50 p-2">
-                  <img src={image.url} alt={image.altText || "Gallery"} className="h-24 w-full object-contain" />
-                  <button type="button" onClick={() => removeExistingGalleryImage(image.url)} className="absolute right-2 top-2 rounded-full bg-red-600 p-1 text-white">
-                    <FiX />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="flex justify-end gap-3 border-t border-slate-200 p-5">
           <button type="button" onClick={onClose} className="rounded-lg bg-slate-100 px-5 py-3 text-sm font-black uppercase tracking-widest text-slate-600">Cancel</button>
@@ -202,7 +342,7 @@ export default function AlumniGovernanceManager() {
     fetchRecords();
   }, []);
 
-  const filtered = useMemo(() => records.filter((record) => section === "all" || record.section === section), [records, section]);
+  const filtered = useMemo(() => records.filter((record) => section === "all" || normalizeSectionKey(record.section) === section), [records, section]);
 
   const handleDelete = async (record) => {
     if (!window.confirm(`Delete "${record.name}"?`)) return;
@@ -233,7 +373,7 @@ export default function AlumniGovernanceManager() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-blue-700">Alumni Management Module</p>
-            <h1 className="mt-2 text-2xl font-black text-slate-950">Alumni, BOM, PTA & Principals</h1>
+            <h1 className="mt-2 text-2xl font-black text-slate-950">Alumni, Committees, BOM, PTA & Principals</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600">Create, edit, update, and delete public alumni galleries and leadership records.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -246,11 +386,11 @@ export default function AlumniGovernanceManager() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-5">
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {SECTION_OPTIONS.map((option) => (
             <div key={option.value} className="rounded-lg bg-slate-50 p-4">
               <FiUsers className="text-blue-700" />
-              <p className="mt-2 text-xl font-black text-slate-950">{records.filter((record) => record.section === option.value).length}</p>
+              <p className="mt-2 text-xl font-black text-slate-950">{records.filter((record) => normalizeSectionKey(record.section) === option.value).length}</p>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{option.label}</p>
             </div>
           ))}
@@ -282,16 +422,19 @@ export default function AlumniGovernanceManager() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filtered.map((record) => {
-                  const label = SECTION_OPTIONS.find((option) => option.value === record.section)?.label || record.section;
-                  const galleryCount = Array.isArray(record.images) ? record.images.length : 0;
+                  const sectionKey = normalizeSectionKey(record.section);
+                  const label = SECTION_OPTIONS.find((option) => option.value === sectionKey)?.label || record.section;
+                  const galleryImages = normalizeImageList(record.images, record.name);
+                  const galleryCount = galleryImages.length;
+                  const thumbnail = record.image || galleryImages[0]?.url;
 
                   return (
                     <tr key={record.id} className="align-top hover:bg-slate-50">
                       <td className="min-w-[220px] px-4 py-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100">
-                            {record.image ? (
-                              <img src={record.image} alt={record.name} className="h-full w-full rounded-lg object-cover" />
+                            {thumbnail ? (
+                              <img src={thumbnail} alt={record.name} className="h-full w-full rounded-lg object-cover" />
                             ) : (
                               <FiImage className="text-xl text-slate-300" />
                             )}
