@@ -27,11 +27,11 @@ const KatwanyaaSeniorSchoolPage = () => {
   const schoolImages = [
     { src: "/bg/14.jpeg", alt: "Katwanyaa Senior School - Main Campus" },
     { src: "/bg/9.jpeg", alt: "Katwanyaa Senior School - Students in Session" },
-    { src: "/hero/st.jpeg", alt: "Katwanyaa Senior School - Classroom Learning" },
-    { src: "/hero/student.jpeg", alt: "Katwanyaa Senior School - Student Life" },
+    { src: "/folder/2.jpeg", alt: "Katwanyaa Senior School - Classroom Learning" },
+    { src: "/folder/4.jpeg", alt: "Katwanyaa Senior School - Student Life" },
     { src: "/hero/env.jpeg", alt: "Katwanyaa Senior School - Environmental Initiatives" },
     { src: "/hero/sports.jpeg", alt: "Katwanyaa Senior School - Sports Activities" },
-    { src: "/hero/katz8.jpeg", alt: "Katwanyaa Senior School - Achievements Celebration" },
+    { src: "/folder/7.jpeg", alt: "Katwanyaa Senior School - Achievements Celebration" },
   ];
 
 const currentYear = new Date().getFullYear();
@@ -70,7 +70,7 @@ const currentYear = new Date().getFullYear();
       color: "from-amber-500 to-orange-500",
       bg: "bg-amber-50",
       border: "border-amber-100",
-      image: "/hero/st.jpeg",
+      image: "/folder/3.jpeg",
       highlights: [
         "Ranked 3rd among public schools in Matungulu Sub-county",
         "Produced an A- candidate",
@@ -110,7 +110,7 @@ const currentYear = new Date().getFullYear();
       color: "from-purple-500 to-pink-500",
       bg: "bg-purple-50",
       border: "border-purple-100",
-      image: "/hero/student.jpeg",
+      image: "/folder/4.jpeg",
       highlights: [
         "KShs 6 million ICT equipment donation",
         "50+ laptops for student use",
@@ -150,7 +150,7 @@ const currentYear = new Date().getFullYear();
       color: "from-teal-500 to-cyan-500",
       bg: "bg-teal-50",
       border: "border-teal-100",
-      image: "/bg/9.jpeg",
+      image: "/folder/5.jpeg",
       highlights: [
         "Named among top improving schools in Matungulu Sub-county",
         "Commendable KCSE results",
@@ -214,7 +214,7 @@ const pathways = [
     icon: FiCpu,
     color: "from-blue-600 to-cyan-500",
     description: "Science, Technology, Engineering & Mathematics",
-    subjects: ["Mathematics", "Integrated Science", "Computer Science", "Pre-Technical", "Health Education"],
+    subjects: ["Mathematics", "Computer Studies", "Biology", "Pysics", "chemistry", "Home science", "Agriculture"],
     careers: [
       // MEDICAL & HEALTHCARE (25+ careers)
       "Medical Doctor (MBChB)",
@@ -359,7 +359,7 @@ const pathways = [
     icon: FiPenTool,
     color: "from-purple-600 to-pink-500",
     description: "Creative Arts, Performing Arts & Athletic Excellence",
-    subjects: ["Visual Arts", "Music", "Physical Education", "Creative Design", "Performing Arts"],
+    subjects: [ "Music", "Physical Education", "Fine Art", "Theatre and Film"],
     careers: [
       // VISUAL ARTS & DESIGN (20+ careers)
       "Graphic Designer",
@@ -493,7 +493,7 @@ const pathways = [
     icon: FiGlobe,
     color: "from-amber-600 to-orange-500",
     description: "Humanities, Languages & Civic Education",
-    subjects: ["Social Studies", "Religious Education", "Business Studies", "Languages", "Life Skills"],
+    subjects: ["History","Literature", "Geography", "CRE"],
     careers: [
       // LAW & LEGAL (15+ careers)
       "Lawyer/Advocate",
@@ -1279,7 +1279,7 @@ const pathways = [
               <p className="text-xs font-semibold text-slate-500">Shared foundation before pathway specialization</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {["Mathematics", "English", "Kiswahili", "Integrated Science", "Social Studies", "Religious Education", "Creative Arts", "Agriculture", "Life Skills", "Physical Education"].map((subject) => (
+              {["Mathematics", "English", "Kiswahili", "Community Service Learning", "ICT", "Physical Education"].map((subject) => (
                 <span key={subject} className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-slate-700">
                   <FiBook className="h-3.5 w-3.5 text-blue-600" />
                   {subject}

@@ -43,7 +43,7 @@ const heroSlides = [
     gradient: "from-green-500 via-emerald-400 to-teal-600",
     description: "Students transition from Junior School to specialize in STEM, Social Sciences, or Arts & Sports. The school supports academic counseling and student development programs.",
     background: "bg-gradient-to-br from-green-900/90 via-emerald-900/80 to-teal-900/70",
-    image: "/hero/st.jpeg",
+    image: "/folder/3.jpeg",
     stats: { 
       stem: "Science/Tech", 
       social: "Humanities", 
@@ -62,7 +62,7 @@ const heroSlides = [
     gradient: "from-blue-500 via-cyan-400 to-purple-600",
     description: "Located in Matungulu Sub-County, Machakos County. As a C3 public senior school, it plays a vital role in the Eastern Region's education sector, serving students from the local community.",
     background: "bg-gradient-to-br from-blue-900/90 via-indigo-900/80 to-purple-900/70",
-    image: "/bg/14.jpeg",
+    image: "/folder/1.jpeg",
     stats: { 
       region: "Eastern", 
       status: "C3 Public", 
