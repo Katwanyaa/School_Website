@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FiCheckCircle, FiEdit, FiImage, FiPlus, FiRefreshCw, FiSave, FiTrash2, FiUploadCloud, FiUsers, FiX } from "react-icons/fi";
+import { FiCheckCircle, FiEdit, FiEye, FiImage, FiPlus, FiRefreshCw, FiSave, FiTrash2, FiUploadCloud, FiUsers, FiX } from "react-icons/fi";
 import { toast } from "sonner";
 
 const MAX_ALUMNI_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -71,6 +71,21 @@ const normalizeImageList = (images, fallbackAlt) => {
 const normalizeSectionKey = (section = "ALUMNI") => {
   const normalized = section.toString().trim().toUpperCase().replace(/[\s-]+/g, "_");
   return SECTION_OPTIONS.some((option) => option.value === normalized) ? normalized : "ALUMNI";
+};
+
+const getRecordImages = (record) => {
+  const images = [];
+  const seen = new Set();
+  const addImage = (image, type) => {
+    const normalized = normalizeImageItem(image, record?.name || "Alumni image");
+    if (!normalized?.url || seen.has(normalized.url)) return;
+    seen.add(normalized.url);
+    images.push({ ...normalized, type });
+  };
+
+  addImage(record?.image, "primary");
+  normalizeImageList(record?.images, record?.name || "Alumni image").forEach((image) => addImage(image, "gallery"));
+  return images;
 };
 
 function GalleryImagePicker({ files, existingImages, onFilesChange, onExistingImagesChange, disabled }) {
@@ -317,10 +332,116 @@ function RecordModal({ record, onClose, onSaved }) {
   );
 }
 
+function ImageManagerModal({ record, onClose, onSaved }) {
+  const [primaryImage, setPrimaryImage] = useState(record.image || "");
+  const [galleryImages, setGalleryImages] = useState(() => normalizeImageList(record.images, record.name || "Alumni image"));
+  const [saving, setSaving] = useState(false);
+  const allImages = getRecordImages({ ...record, image: primaryImage, images: galleryImages });
+
+  const removeImage = (image) => {
+    if (image.type === "primary") {
+      setPrimaryImage("");
+      return;
+    }
+    setGalleryImages((current) => current.filter((item) => item.url !== image.url));
+  };
+
+  const saveChanges = async () => {
+    try {
+      setSaving(true);
+      const payload = new FormData();
+      payload.append("section", normalizeSectionKey(record.section));
+      payload.append("name", record.name || "");
+      payload.append("position", record.position || "");
+      payload.append("description", record.description || "");
+      payload.append("displayOrder", String(Number(record.displayOrder) || 0));
+      payload.append("isActive", record.isActive === false ? "false" : "true");
+      payload.append("existingImage", primaryImage || "");
+      payload.append("existingImages", JSON.stringify(galleryImages || []));
+
+      const response = await fetch(`/api/alumni/${record.id}`, {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: payload,
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || "Failed to update images");
+
+      toast.success("Images updated");
+      onSaved();
+    } catch (error) {
+      toast.error(error.message || "Failed to update images");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[230] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+      <div className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-900 p-5 text-white">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-blue-200">Manage Uploaded Images</p>
+            <h2 className="mt-1 text-2xl font-black">{record.name}</h2>
+          </div>
+          <button type="button" onClick={onClose} className="rounded-lg bg-white/10 p-2 text-white">
+            <FiX />
+          </button>
+        </div>
+
+        <div className="max-h-[calc(92vh-150px)] overflow-y-auto p-5">
+          {allImages.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {allImages.map((image) => (
+                <div key={`${image.type}-${image.url}`} className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+                  <div className="relative">
+                    <img src={image.url} alt={image.altText || record.name} className="h-44 w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(image)}
+                      className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-red-600 px-3 py-1.5 text-xs font-black uppercase tracking-widest text-white shadow-lg"
+                    >
+                      <FiX /> Remove
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between px-3 py-2">
+                    <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-widest ${image.type === "primary" ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700"}`}>
+                      {image.type === "primary" ? "Primary" : "Gallery"}
+                    </span>
+                    <a href={image.url} target="_blank" rel="noreferrer" className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-blue-700">
+                      View
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+              <FiImage className="mx-auto text-5xl text-slate-300" />
+              <h3 className="mt-4 text-lg font-black text-slate-900">No images selected</h3>
+              <p className="mt-2 text-sm font-semibold text-slate-500">Save to remove all uploaded images from this record.</p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-3 border-t border-slate-200 p-5">
+          <button type="button" onClick={onClose} className="rounded-lg bg-slate-100 px-5 py-3 text-sm font-black uppercase tracking-widest text-slate-600">
+            Cancel
+          </button>
+          <button type="button" onClick={saveChanges} disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-5 py-3 text-sm font-black uppercase tracking-widest text-white disabled:opacity-50">
+            <FiSave /> {saving ? "Saving..." : "Save Image Changes"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AlumniGovernanceManager() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingRecord, setEditingRecord] = useState(null);
+  const [managingImagesRecord, setManagingImagesRecord] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [section, setSection] = useState("all");
 
@@ -424,9 +545,9 @@ export default function AlumniGovernanceManager() {
                 {filtered.map((record) => {
                   const sectionKey = normalizeSectionKey(record.section);
                   const label = SECTION_OPTIONS.find((option) => option.value === sectionKey)?.label || record.section;
-                  const galleryImages = normalizeImageList(record.images, record.name);
-                  const galleryCount = galleryImages.length;
-                  const thumbnail = record.image || galleryImages[0]?.url;
+                  const recordImages = getRecordImages(record);
+                  const galleryCount = recordImages.length;
+                  const thumbnail = recordImages[0]?.url;
 
                   return (
                     <tr key={record.id} className="align-top hover:bg-slate-50">
@@ -447,7 +568,23 @@ export default function AlumniGovernanceManager() {
                       </td>
                       <td className="min-w-[180px] px-4 py-4 text-sm font-bold text-slate-700">{label}</td>
                       <td className="min-w-[280px] px-4 py-4 text-sm leading-6 text-slate-600">{record.description || "No description added."}</td>
-                      <td className="min-w-[120px] px-4 py-4 text-sm font-bold text-slate-700">{galleryCount} gallery image{galleryCount === 1 ? "" : "s"}</td>
+                      <td className="min-w-[220px] px-4 py-4">
+                        <div className="space-y-3">
+                          <div className="flex -space-x-2">
+                            {recordImages.slice(0, 4).map((image) => (
+                              <img key={image.url} src={image.url} alt={image.altText || record.name} className="h-10 w-10 rounded-lg border-2 border-white object-cover shadow-sm" />
+                            ))}
+                            {galleryCount === 0 && <span className="text-sm font-bold text-slate-400">No images</span>}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setManagingImagesRecord(record)}
+                            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-black uppercase tracking-widest text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
+                          >
+                            <FiEye /> Manage Images ({galleryCount})
+                          </button>
+                        </div>
+                      </td>
                       <td className="min-w-[120px] px-4 py-4">
                         <span className={`inline-flex rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest ${record.isActive === false ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}>
                           {record.isActive === false ? "Inactive" : "Active"}
@@ -490,6 +627,17 @@ export default function AlumniGovernanceManager() {
           onSaved={() => {
             setShowModal(false);
             setEditingRecord(null);
+            fetchRecords();
+          }}
+        />
+      )}
+
+      {managingImagesRecord && (
+        <ImageManagerModal
+          record={managingImagesRecord}
+          onClose={() => setManagingImagesRecord(null)}
+          onSaved={() => {
+            setManagingImagesRecord(null);
             fetchRecords();
           }}
         />
