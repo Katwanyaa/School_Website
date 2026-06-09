@@ -477,7 +477,9 @@ export default function ModernResourcesAssignmentsView({
 
   const subjects = useMemo(() => {
     const items = activeTab === 'assignments' ? assignments : resources;
-    return ['all', ...new Set(items.map(item => item.subject).filter(Boolean))];
+    return ['all', ...new Set(items
+      .map(item => item.subject)
+      .filter(subject => subject && subject.toLowerCase() !== 'general'))];
   }, [assignments, resources, activeTab]);
 
   const statuses = [
@@ -682,7 +684,16 @@ export default function ModernResourcesAssignmentsView({
                           </p>
                         </td>
                         <td className="min-w-[280px] px-4 py-4 text-sm leading-6 text-slate-600">
-                          {item.description || 'No description provided.'}
+                          <p
+                            className="max-w-[420px] overflow-hidden"
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                            }}
+                          >
+                            {item.description || 'No description provided.'}
+                          </p>
                         </td>
                         <td className="min-w-[150px] px-4 py-4 text-sm font-bold text-slate-700">
                           {uploadedDate ? new Date(uploadedDate).toLocaleDateString('en-KE', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Not listed'}
@@ -702,7 +713,7 @@ export default function ModernResourcesAssignmentsView({
                               onClick={() => setSelectedItem(item)}
                               className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-xs font-black uppercase tracking-widest text-slate-700 transition hover:bg-slate-50"
                             >
-                              <IoEye /> View
+                              <IoEye /> View All
                             </button>
                             <p className="text-right text-xs font-bold text-slate-400">
                               {fileCount} file{fileCount === 1 ? '' : 's'}

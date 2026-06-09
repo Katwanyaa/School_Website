@@ -1503,6 +1503,18 @@ export default function ResourcesManager() {
     ...DELIVERY_LEVEL_OPTIONS
   ];
 
+  const subjectFilterOptions = useMemo(() => {
+    const databaseSubjects = resources
+      .map(resource => safeText(resource.subject).trim())
+      .filter(subject => subject && subject.toLowerCase() !== 'general');
+    const standardSubjects = ALL_SUBJECTS
+      .map(subject => safeText(subject.label || subject.value).trim())
+      .filter(Boolean);
+
+    return Array.from(new Set([...standardSubjects, ...databaseSubjects]))
+      .sort((a, b) => a.localeCompare(b));
+  }, [resources]);
+
   // Notification handler
   const showNotification = (type, title, message, action = {}) => {
     setNotification({
@@ -2287,7 +2299,7 @@ const handleSubmit = async (formData, id) => {
           <SearchableSubjectDropdown
             value={selectedSubject}
             onChange={(value) => setSelectedSubject(value)}
-            options={ALL_SUBJECTS}
+            options={subjectFilterOptions}
             placeholder="Search subjects..."
             className="w-full"
           />

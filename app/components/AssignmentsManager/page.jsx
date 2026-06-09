@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   FiPlus,
   FiSearch,
@@ -1505,6 +1505,18 @@ export default function AssignmentsManager() {
     ...DELIVERY_LEVEL_OPTIONS
   ];
 
+  const subjectFilterOptions = useMemo(() => {
+    const databaseSubjects = assignments
+      .map(assignment => safeText(assignment.subject).trim())
+      .filter(subject => subject && subject.toLowerCase() !== 'general');
+    const standardSubjects = ALL_SUBJECTS
+      .map(subject => safeText(subject.label || subject.value).trim())
+      .filter(Boolean);
+
+    return Array.from(new Set([...standardSubjects, ...databaseSubjects]))
+      .sort((a, b) => a.localeCompare(b));
+  }, [assignments]);
+
   // Notification handler
   const showNotification = (type, title, message, action = {}) => {
     setNotification({
@@ -2378,7 +2390,7 @@ export default function AssignmentsManager() {
           <SearchableSubjectDropdown
             value={selectedSubject}
             onChange={(value) => setSelectedSubject(value)}
-            options={ALL_SUBJECTS}
+            options={subjectFilterOptions}
             placeholder="Search subjects..."
             className="w-full"
           />
