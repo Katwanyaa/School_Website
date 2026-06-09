@@ -256,7 +256,7 @@ const handleLogout = () => {
     },
     { 
       id: 'resources', 
-      label: 'Learning Resources', 
+      label: 'Resources and Exams', 
       icon: FiFolder,
       badge: 'emerald',
     },

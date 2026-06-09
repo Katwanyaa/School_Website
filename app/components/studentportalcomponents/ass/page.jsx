@@ -19,7 +19,7 @@ import { cleanGeneratedFileName } from '../../../../libs/displayNames';
 // ==================== HELPER FUNCTIONS ====================
 
 const extractFileInfoFromUrl = (url) => {
-  if (!url) return null;
+  if (!url || typeof url !== 'string') return null;
   try {
     const urlObj = new URL(url);
     const pathname = urlObj.pathname;
@@ -60,6 +60,68 @@ const extractFileInfoFromUrl = (url) => {
     };
   }
 };
+
+const normalizeExtension = (value = '') => {
+  if (!value) return '';
+  const extension = String(value).toLowerCase();
+  return extension.startsWith('.') ? extension : `.${extension}`;
+};
+
+const normalizeFileRecord = (file, fallbackType = 'document') => {
+  if (!file) return null;
+
+  if (typeof file === 'string') {
+    return extractFileInfoFromUrl(file);
+  }
+
+  const url = file.url || file.downloadUrl || file.href || '';
+  if (!url) return null;
+
+  const name = cleanGeneratedFileName(
+    file.fileName || file.name || file.originalName || url || 'download'
+  );
+  const urlInfo = extractFileInfoFromUrl(url) || {};
+  const extension = normalizeExtension(file.extension || urlInfo.extension || (name.includes('.') ? name.split('.').pop() : ''));
+
+  return {
+    ...file,
+    ...urlInfo,
+    url,
+    name,
+    fileName: name,
+    extension,
+    fileType: file.fileType || file.type || urlInfo.fileType || fallbackType || 'File',
+  };
+};
+
+const normalizeAssignmentRecord = (assignment) => {
+  const assignmentFileAttachments = (
+    assignment.assignmentFileAttachments?.length
+      ? assignment.assignmentFileAttachments
+      : assignment.assignmentFiles || []
+  ).map((file) => normalizeFileRecord(file, 'Assignment File')).filter(Boolean);
+
+  const attachmentAttachments = (
+    assignment.attachmentAttachments?.length
+      ? assignment.attachmentAttachments
+      : assignment.attachments || []
+  ).map((file) => normalizeFileRecord(file, 'Attachment')).filter(Boolean);
+
+  return {
+    ...assignment,
+    assignmentFileAttachments,
+    attachmentAttachments,
+  };
+};
+
+const normalizeResourceRecord = (resource) => ({
+  ...resource,
+  files: (resource.files || [])
+    .map((file) => normalizeFileRecord(file, resource.type || 'document'))
+    .filter(Boolean),
+});
+
+const normalizeClassName = (value = '') => String(value).toLowerCase().replace(/[^a-z0-9]/g, '');
 
 const getFileIcon = (fileType, extension, size = 20) => {
   const type = fileType?.toLowerCase() || extension?.toLowerCase() || '';
@@ -338,7 +400,17 @@ export default function ModernResourcesAssignmentsView({
 
   const matchesStudentClass = useCallback((itemClassName) => {
     if (!student || !student.form) return true;
-    return itemClassName === student.form;
+    const itemClass = normalizeClassName(itemClassName);
+    const studentClasses = [student.form, student.className, student.grade, student.currentClass]
+      .filter(Boolean)
+      .map(normalizeClassName);
+
+    if (!itemClass || ['all', 'allclasses', 'allforms'].includes(itemClass)) return true;
+    return studentClasses.some((studentClass) => (
+      itemClass === studentClass ||
+      itemClass.includes(studentClass) ||
+      studentClass.includes(itemClass)
+    ));
   }, [student]);
 
   const fetchAssignments = useCallback(async () => {
@@ -349,11 +421,7 @@ export default function ModernResourcesAssignmentsView({
       if (data.success) {
         let filteredAssignments = data.assignments || [];
         if (student && student.form) filteredAssignments = filteredAssignments.filter(assignment => matchesStudentClass(assignment.className));
-        const processedAssignments = filteredAssignments.map((assignment) => ({
-          ...assignment,
-          assignmentFileAttachments: (assignment.assignmentFiles || []).map((url) => ({ ...extractFileInfoFromUrl(url), url })),
-          attachmentAttachments: (assignment.attachments || []).map((url) => ({ ...extractFileInfoFromUrl(url), url }))
-        }));
+        const processedAssignments = filteredAssignments.map(normalizeAssignmentRecord);
         setAssignments(processedAssignments);
       } else setAssignments([]);
     } catch (error) { console.error('Error fetching assignments:', error); setAssignments([]); }
@@ -368,13 +436,7 @@ export default function ModernResourcesAssignmentsView({
       if (data.success) {
         let filteredResources = data.resources || [];
         if (student && student.form) filteredResources = filteredResources.filter(resource => matchesStudentClass(resource.className));
-        const processedResources = filteredResources.map((resource) => ({
-          ...resource,
-          files: (resource.files || []).map(file => {
-            const name = cleanGeneratedFileName(file.name || file.url || 'Untitled');
-            return { ...file, url: file.url, name, extension: file.extension || (name.includes('.') ? name.split('.').pop()?.toLowerCase() : ''), fileType: file.fileType || resource.type || 'document' };
-          })
-        }));
+        const processedResources = filteredResources.map(normalizeResourceRecord);
         setResources(processedResources);
       } else setResources([]);
     } catch (error) { console.error('Error fetching resources:', error); setResources([]); }
@@ -384,23 +446,13 @@ export default function ModernResourcesAssignmentsView({
   useEffect(() => {
     let filteredAssignments = Array.isArray(assignmentsProp) ? assignmentsProp : [];
     if (student && student.form) filteredAssignments = filteredAssignments.filter(assignment => matchesStudentClass(assignment.className));
-    setAssignments(filteredAssignments.map((assignment) => ({
-      ...assignment,
-      assignmentFileAttachments: (assignment.assignmentFiles || []).map((url) => ({ ...extractFileInfoFromUrl(url), url })),
-      attachmentAttachments: (assignment.attachments || []).map((url) => ({ ...extractFileInfoFromUrl(url), url }))
-    })));
+    setAssignments(filteredAssignments.map(normalizeAssignmentRecord));
   }, [assignmentsProp, student, matchesStudentClass]);
 
   useEffect(() => {
     let filteredResources = Array.isArray(resourcesProp) ? resourcesProp : [];
     if (student && student.form) filteredResources = filteredResources.filter(resource => matchesStudentClass(resource.className));
-    setResources(filteredResources.map((resource) => ({
-      ...resource,
-      files: (resource.files || []).map(file => {
-        const name = cleanGeneratedFileName(file.name || file.url || 'Untitled');
-        return { ...file, url: file.url, name, extension: file.extension || (name.includes('.') ? name.split('.').pop()?.toLowerCase() : ''), fileType: file.fileType || resource.type || 'document' };
-      })
-    })));
+    setResources(filteredResources.map(normalizeResourceRecord));
   }, [resourcesProp, student, matchesStudentClass]);
 
   useEffect(() => {

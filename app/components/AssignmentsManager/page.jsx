@@ -104,6 +104,36 @@ const safeText = (value) => {
   return '';
 };
 
+const cleanUploadedFileName = (value = 'File') => {
+  const text = safeText(value) || 'File';
+  const withoutQuery = text.split('?')[0].split('#')[0];
+  const lastSegment = withoutQuery.split('/').pop() || withoutQuery;
+  try {
+    return decodeURIComponent(lastSegment).replace(/^\d{10,}[-_]+/, '') || 'File';
+  } catch {
+    return lastSegment.replace(/^\d{10,}[-_]+/, '') || 'File';
+  }
+};
+
+const normalizeUploadedFile = (file, fallbackName = 'File') => {
+  if (!file) return null;
+  if (typeof file === 'string') {
+    return {
+      url: file,
+      name: cleanUploadedFileName(file) || fallbackName,
+    };
+  }
+
+  const url = file.url || file.downloadUrl || file.href || '';
+  if (!url) return null;
+
+  return {
+    ...file,
+    url,
+    name: cleanUploadedFileName(file.fileName || file.name || file.originalName || url) || fallbackName,
+  };
+};
+
 // Modern Loading Spinner Component
 const Spinner = ({ size = 40, color = 'inherit', thickness = 3.6, variant = 'indeterminate', value = 0 }) => {
   return (
@@ -550,7 +580,8 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[...(assignment.assignmentFiles || []), ...(assignment.attachments || [])].map((file, idx) => {
-                      const fileName = typeof file === 'string' ? file.split('/').pop() : file.name || 'File';
+                      const normalizedFile = normalizeUploadedFile(file, `File ${idx + 1}`);
+                      const fileName = normalizedFile?.name || `File ${idx + 1}`;
                       const fileExt = fileName.split('.').pop()?.toLowerCase();
                       
                       return (
@@ -560,7 +591,7 @@ function ModernAssignmentDetailModal({ assignment, onClose, onEdit }) {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-slate-900 truncate">
-                              {fileName.replace(/^[\d-]+/, "")}
+                              {fileName}
                             </p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
                               {fileExt?.toUpperCase()} • Assignment File
@@ -724,25 +755,33 @@ function ModernAssignmentModal({ onClose, onSave, assignment, loading }) {
     if (assignment) {
       // Initialize assignment files
       if (assignment.assignmentFiles && assignment.assignmentFiles.length > 0) {
-        const files = assignment.assignmentFiles.map((url, index) => ({
+        const files = assignment.assignmentFiles.map((file, index) => {
+          const normalizedFile = normalizeUploadedFile(file, `Assignment File ${index + 1}`);
+          if (!normalizedFile) return null;
+          return {
           id: `existing-assignment-${index}`,
-          name: url.split('/').pop() || `Assignment File ${index + 1}`,
-          url: url,
+          name: normalizedFile.name,
+          url: normalizedFile.url,
           isExisting: true,
-          size: 0 // We don't know the size of existing files
-        }));
+          size: normalizedFile.size || 0
+        };
+        }).filter(Boolean);
         setAssignmentFiles(files);
       }
       
       // Initialize attachments
       if (assignment.attachments && assignment.attachments.length > 0) {
-        const attach = assignment.attachments.map((url, index) => ({
+        const attach = assignment.attachments.map((file, index) => {
+          const normalizedFile = normalizeUploadedFile(file, `Attachment ${index + 1}`);
+          if (!normalizedFile) return null;
+          return {
           id: `existing-attachment-${index}`,
-          name: url.split('/').pop() || `Attachment ${index + 1}`,
-          url: url,
+          name: normalizedFile.name,
+          url: normalizedFile.url,
           isExisting: true,
-          size: 0 // We don't know the size of existing files
-        }));
+          size: normalizedFile.size || 0
+        };
+        }).filter(Boolean);
         setAttachments(attach);
       }
     }
@@ -1512,8 +1551,8 @@ export default function AssignmentsManager() {
       priority: apiAssignment.priority || 'medium',
       estimatedTime: apiAssignment.estimatedTime || '',
       instructions: apiAssignment.instructions || '',
-      assignmentFiles: apiAssignment.assignmentFiles || [],
-      attachments: apiAssignment.attachments || [],
+      assignmentFiles: (apiAssignment.assignmentFiles || []).map((file) => normalizeUploadedFile(file)).filter(Boolean),
+      attachments: (apiAssignment.attachments || []).map((file) => normalizeUploadedFile(file)).filter(Boolean),
       additionalWork: apiAssignment.additionalWork || '',
       teacherRemarks: apiAssignment.teacherRemarks || '',
       feedback: apiAssignment.feedback || null,

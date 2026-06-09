@@ -7,6 +7,25 @@ export const metadata = {
   description: "Download learning resources, revision materials, past papers, exams, and academic content from A.I.C Katwanyaa Senior School.",
 };
 
+const fileFromRecord = (file) => {
+  if (!file) return null;
+  if (typeof file === "string") {
+    return {
+      url: file,
+      name: cleanFileRecordName({ url: file }),
+    };
+  }
+
+  const url = file.url || file.downloadUrl || file.href;
+  if (!url) return null;
+
+  return {
+    ...file,
+    url,
+    name: cleanFileRecordName({ ...file, url }),
+  };
+};
+
 export default async function ResourcesExamsPage() {
   const resources = await prisma.resource.findMany({
     where: { isActive: true },
@@ -22,10 +41,7 @@ export default async function ResourcesExamsPage() {
     teacher: resource.teacher,
     category: resource.category,
     dateUploaded: resource.createdAt,
-    files: (Array.isArray(resource.files) ? resource.files : []).map((file) => ({
-      ...file,
-      name: cleanFileRecordName(file),
-    })),
+    files: (Array.isArray(resource.files) ? resource.files : []).map(fileFromRecord).filter(Boolean),
   }));
 
   return (

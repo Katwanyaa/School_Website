@@ -7,10 +7,24 @@ export const metadata = {
   description: "Download current assignments from A.I.C Katwanyaa Senior School.",
 };
 
-const fileFromUrl = (url) => ({
-  url,
-  name: cleanGeneratedFileName(url),
-});
+const fileFromRecord = (file) => {
+  if (!file) return null;
+  if (typeof file === "string") {
+    return {
+      url: file,
+      name: cleanGeneratedFileName(file),
+    };
+  }
+
+  const url = file.url || file.downloadUrl || file.href;
+  if (!url) return null;
+
+  return {
+    ...file,
+    url,
+    name: cleanGeneratedFileName(file.fileName || file.name || file.originalName || url),
+  };
+};
 
 export default async function AssignmentsPage() {
   const assignments = await prisma.assignment.findMany({
@@ -26,9 +40,9 @@ export default async function AssignmentsPage() {
     teacher: assignment.teacher,
     dateUploaded: assignment.createdAt,
     files: [
-      ...(Array.isArray(assignment.assignmentFiles) ? assignment.assignmentFiles.map(fileFromUrl) : []),
-      ...(Array.isArray(assignment.attachments) ? assignment.attachments.map(fileFromUrl) : []),
-    ],
+      ...(Array.isArray(assignment.assignmentFiles) ? assignment.assignmentFiles.map(fileFromRecord) : []),
+      ...(Array.isArray(assignment.attachments) ? assignment.attachments.map(fileFromRecord) : []),
+    ].filter(Boolean),
   }));
 
   return (

@@ -100,6 +100,56 @@ const safeText = (value) => {
   return '';
 };
 
+const cleanUploadedFileName = (value = 'download') => {
+  const text = safeText(value) || 'download';
+  const withoutQuery = text.split('?')[0].split('#')[0];
+  const lastSegment = withoutQuery.split('/').pop() || withoutQuery;
+  try {
+    return decodeURIComponent(lastSegment)
+      .replace(/^\d{10,}[-_]+/, '')
+      .replace(/^file[-_]+/i, '') || 'download';
+  } catch {
+    return lastSegment
+      .replace(/^\d{10,}[-_]+/, '')
+      .replace(/^file[-_]+/i, '') || 'download';
+  }
+};
+
+const normalizeFileExtension = (fileName = '', extension = '') => {
+  const rawExtension = extension || (fileName.includes('.') ? fileName.split('.').pop() : '');
+  if (!rawExtension) return '';
+  const normalized = String(rawExtension).toLowerCase();
+  return normalized.startsWith('.') ? normalized : `.${normalized}`;
+};
+
+const normalizeResourceFile = (file, fallbackType = 'document') => {
+  if (!file) return null;
+  if (typeof file === 'string') {
+    const name = cleanUploadedFileName(file);
+    return {
+      url: file,
+      name,
+      size: 0,
+      extension: normalizeFileExtension(name),
+      fileType: fallbackType,
+    };
+  }
+
+  const url = file.url || file.downloadUrl || file.href || '';
+  if (!url) return null;
+
+  const name = cleanUploadedFileName(file.fileName || file.name || file.originalName || url);
+
+  return {
+    ...file,
+    url,
+    name,
+    size: file.size || 0,
+    extension: normalizeFileExtension(name, file.extension),
+    fileType: file.fileType || file.type || fallbackType,
+  };
+};
+
 const formatDisplayText = (value, fallback = '') => {
   if (value === null || value === undefined || value === '') return fallback;
   if (typeof value === 'string') return value;
@@ -1478,7 +1528,9 @@ export default function ResourcesManager() {
       teacher: apiResource.teacher || '',
       category: apiResource.category || 'General',
       type: apiResource.type || 'document',
-      files: apiResource.files || [],
+      files: (apiResource.files || [])
+        .map((file) => normalizeResourceFile(file, apiResource.type || 'document'))
+        .filter(Boolean),
       accessLevel: apiResource.accessLevel || 'student',
       uploadedBy: apiResource.uploadedBy || 'System',
       downloads: apiResource.downloads || 0,

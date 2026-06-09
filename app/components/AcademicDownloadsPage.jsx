@@ -18,11 +18,25 @@ const formatDate = (value) => {
 
 const normalizeFiles = (files = []) => {
   return files
-    .filter((file) => file?.url)
-    .map((file) => ({
-      ...file,
-      name: cleanFileRecordName(file),
-    }));
+    .map((file) => {
+      if (!file) return null;
+      if (typeof file === "string") {
+        return {
+          url: file,
+          name: cleanFileRecordName({ url: file }),
+        };
+      }
+
+      const url = file.url || file.downloadUrl || file.href;
+      if (!url) return null;
+
+      return {
+        ...file,
+        url,
+        name: cleanFileRecordName({ ...file, url }),
+      };
+    })
+    .filter(Boolean);
 };
 
 const triggerBrowserDownload = (url, fileName) => {

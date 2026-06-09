@@ -989,7 +989,7 @@ const handleLogout = () => {
     },
     { 
       id: 'resources', 
-      label: 'Resources',
+      label: 'Resources and Exams',
       icon: FiFileText,
       badge: 'cyan' 
     },
