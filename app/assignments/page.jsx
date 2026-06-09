@@ -7,6 +7,9 @@ export const metadata = {
   description: "Download current assignments from A.I.C Katwanyaa Senior School.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const fileFromRecord = (file) => {
   if (!file) return null;
   if (typeof file === "string") {

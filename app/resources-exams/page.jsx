@@ -7,6 +7,9 @@ export const metadata = {
   description: "Download learning resources, revision materials, past papers, exams, and academic content from A.I.C Katwanyaa Senior School.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const fileFromRecord = (file) => {
   if (!file) return null;
   if (typeof file === "string") {
